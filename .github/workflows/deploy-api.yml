@@ -5,9 +5,9 @@ on:
     branches:
       - main
     paths:
-      - 'apps/api/**'
-      - 'libs/shared/**'
-      - '.github/workflows/deploy-api.yml'
+      - "apps/api/**"
+      - "libs/shared/**"
+      - ".github/workflows/deploy-api.yml"
 
 env:
   PROJECT_ID: senteng-erp-pro
@@ -38,7 +38,7 @@ jobs:
         working-directory: .
 
       - name: Install API dependencies
-        run: npm ci
+        run: npm install
 
       - name: Build API
         run: npm run build
