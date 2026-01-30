@@ -105,8 +105,11 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_DATABASE: ${{ secrets.DB_DATABASE }}
 
+      - name: Build data-source for migrations
+        run: npx tsc src/data-source.ts --outDir dist --esModuleInterop --module commonjs --skipLibCheck
+
       - name: Run database migrations
-        run: npm run migration:run
+        run: npx typeorm migration:run -d dist/data-source.js --transaction each
         env:
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_PORT: ${{ secrets.DB_PORT }}
