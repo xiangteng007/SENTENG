@@ -1,0 +1,23 @@
+{
+    "name": "@senteng-erp/shared",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "projectType": "library",
+    "sourceRoot": "libs/shared/src",
+    "targets": {
+        "build": {
+            "executor": "@nx/js:tsc",
+            "outputs": [
+                "{options.outputPath}"
+            ],
+            "options": {
+                "outputPath": "dist/libs/shared",
+                "main": "libs/shared/src/index.ts",
+                "tsConfig": "libs/shared/tsconfig.lib.json"
+            }
+        }
+    },
+    "tags": [
+        "type:lib",
+        "scope:shared"
+    ]
+}

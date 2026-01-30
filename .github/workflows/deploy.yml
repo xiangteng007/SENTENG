@@ -1,0 +1,134 @@
+name: Deploy to Cloud Run
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  PROJECT_ID: senteng-erp-pro
+  SERVICE: erp-api
+  REGION: asia-east1
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Sync migrations table for existing schema
+        run: |
+          npm install pg
+          node -e "
+          const { Client } = require('pg');
+          const client = new Client({
+            host: process.env.DB_HOST,
+            port: process.env.DB_PORT,
+            user: process.env.DB_USERNAME,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_DATABASE,
+            ssl: { rejectUnauthorized: false }
+          });
+
+          (async () => {
+            await client.connect();
+            // Create migrations table if not exists
+            await client.query(\`
+              CREATE TABLE IF NOT EXISTS migrations (
+                id SERIAL PRIMARY KEY,
+                timestamp BIGINT NOT NULL,
+                name VARCHAR(255) NOT NULL
+              )
+            \`);
+            
+            // Insert records for existing migrations (skip if already exists)
+            const existingMigrations = [
+              [1704672000001, 'CreatePlatformTenants1704672000001'],
+              [1704672000002, 'CreatePlatformCore1704672000002'],
+              [1704672000003, 'CreateBimDomain1704672000003'],
+              [1704672000004, 'CreateDroneOpsDomain1704672000004'],
+              [1704672000005, 'CreateConstructionDomain1704672000005'],
+              [1704672000006, 'CreateRbacTables1704672000006'],
+              [1736871600000, 'CreateEventsTable1736871600000'],
+              [1736956800000, 'CreateGoogleOAuthAccounts1736956800000'],
+              [1737330000000, 'AddTaiwanInvoiceFields1737330000000'],
+              [1737398400000, 'UnifiedPlatformSchema1737398400000'],
+              [1737849600000, 'CreateCmmDomain1737849600000'],
+              [1737849700000, 'SeedCmmBuildingProfiles1737849700000'],
+              [1769510000000, 'CreateRegulationsTables1769510000000']
+            ];
+            
+            for (const [ts, name] of existingMigrations) {
+              try {
+                await client.query(
+                  'INSERT INTO migrations (timestamp, name) VALUES (\$1, \$2) ON CONFLICT DO NOTHING',
+                  [ts, name]
+                );
+                console.log('Synced:', name);
+              } catch (e) {
+                console.log('Skipped (exists):', name);
+              }
+            }
+            await client.end();
+            console.log('Migration sync complete');
+          })();
+          "
+        env:
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_DATABASE: ${{ secrets.DB_DATABASE }}
+
+      - name: Run database migrations
+        run: npm run migration:run
+        env:
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_DATABASE: ${{ secrets.DB_DATABASE }}
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ env.PROJECT_ID }}
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
+
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE }}:${{ github.sha }} .
+
+      - name: Push Docker image
+        run: |
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE }}:${{ github.sha }}
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy ${{ env.SERVICE }} \
+            --image ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE }}:${{ github.sha }} \
+            --region ${{ env.REGION }} \
+            --platform managed \
+            --allow-unauthenticated \
+            --update-env-vars="GCP_PROJECT_ID=${{ env.PROJECT_ID }},GCP_BUCKET_NAME=senteng-erp-files"

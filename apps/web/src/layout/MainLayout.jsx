@@ -1,0 +1,441 @@
+import React, { useState, useEffect, useMemo } from 'react';
+import { Calendar as CalendarIcon, Briefcase, Users, Wallet, HardHat, Package, Bell, LayoutDashboard, Image as ImageIcon, Menu, X, FileText, Ruler, Calculator, Building2, GripVertical, RotateCcw, LogOut, Settings, ChevronDown, Check, Loader2, Receipt, FileSignature, BarChart3, DollarSign, Wrench, ChevronRight, Link } from 'lucide-react';
+import { NotificationPanel } from '../components/common/NotificationPanel';
+import { GoogleService } from '../services/GoogleService';
+import { useAuth } from '../context/AuthContext';
+import { saveUserMenuOrder, getUserMenuOrder } from '../services/firebase';
+
+// DnD Kit imports
+import {
+    DndContext,
+    closestCenter,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+} from '@dnd-kit/core';
+import {
+    arrayMove,
+    SortableContext,
+    sortableKeyboardCoordinates,
+    useSortable,
+    verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+
+// 所有選單項目定義
+const ALL_MENU_ITEMS = {
+    'dashboard': { id: 'dashboard', icon: LayoutDashboard, label: '儀表板' },
+    'schedule': { id: 'schedule', icon: CalendarIcon, label: '行程管理' },
+    'projects': { id: 'projects', icon: Briefcase, label: '專案管理' },
+    'quotations': { id: 'quotations', icon: FileText, label: '估價單' },
+    'payments': { id: 'payments', icon: Receipt, label: '請款管理' },
+    'contracts': { id: 'contracts', icon: FileSignature, label: '合約管理' },
+    'profit': { id: 'profit', icon: BarChart3, label: '利潤分析' },
+    'cost-entries': { id: 'cost-entries', icon: DollarSign, label: '成本追蹤' },
+    'clients': { id: 'clients', icon: Users, label: '客戶管理' },
+    'finance': { id: 'finance', icon: Wallet, label: '財務管理' },
+    'vendors': { id: 'vendors', icon: HardHat, label: '廠商管理' },
+    'inventory': { id: 'inventory', icon: Package, label: '庫存管理' },
+    'materials': { id: 'materials', icon: ImageIcon, label: '建材資料' },
+    'invoice': { id: 'invoice', icon: FileText, label: '發票小幫手' },
+    'unit': { id: 'unit', icon: Ruler, label: '單位換算' },
+    'cost': { id: 'cost', icon: Calculator, label: '成本估算' },
+    'calc': { id: 'calc', icon: Building2, label: '物料換算' },
+    'user-management': { id: 'user-management', icon: Settings, label: '使用者管理' },
+    'integrations': { id: 'integrations', icon: Link, label: '整合設定', path: '/settings/integrations' },
+};
+
+// 群組定義（新的分組結構）
+const MENU_GROUPS = [
+    {
+        id: 'overview',
+        label: '總覽',
+        icon: LayoutDashboard,
+        items: ['dashboard'],
+        defaultExpanded: true,
+    },
+    {
+        id: 'project',
+        label: '專案執行',
+        icon: Briefcase,
+        items: ['projects', 'schedule', 'contracts'],
+        defaultExpanded: true,
+    },
+    {
+        id: 'finance',
+        label: '財務中心',
+        icon: Wallet,
+        items: ['finance', 'quotations', 'payments', 'cost-entries', 'profit'],
+        defaultExpanded: true,
+    },
+    {
+        id: 'resources',
+        label: '人員與資源',
+        icon: Users,
+        items: ['clients', 'vendors', 'inventory'],
+        defaultExpanded: false,
+    },
+    {
+        id: 'tools',
+        label: '工具箱',
+        icon: Wrench,
+        items: ['materials', 'invoice', 'unit', 'cost', 'calc'],
+        defaultExpanded: false,
+    },
+    {
+        id: 'admin',
+        label: '系統設定',
+        icon: Settings,
+        items: ['user-management', 'integrations'],
+        defaultExpanded: false,
+        adminOnly: true,
+    },
+];
+
+// localStorage key
+const EXPANDED_GROUPS_KEY = 'senteng_expanded_groups';
+
+// 單一選單項目組件
+const SidebarItem = ({ id, icon: Icon, label, active, onClick, compact = false }) => {
+    return (
+        <button
+            onClick={() => onClick(id)}
+            className={`
+                w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 relative
+                ${active
+                    ? 'bg-gradient-to-r from-gray-800 to-gray-700 text-white shadow-soft'
+                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50/80'
+                }
+                ${compact ? 'py-2' : 'py-2.5'}
+            `}
+        >
+            {/* Active indicator bar */}
+            {active && (
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-white/30 rounded-full" />
+            )}
+            <Icon size={compact ? 16 : 18} strokeWidth={active ? 2.2 : 1.8} className="shrink-0" />
+            <span className={`text-sm ${active ? 'font-semibold' : 'font-medium'}`}>{label}</span>
+        </button>
+    );
+};
+
+// 可折疊的群組組件
+const SidebarGroup = ({ group, items, activeTab, onItemClick, isExpanded, onToggleExpand }) => {
+    const GroupIcon = group.icon;
+    const hasActiveItem = items.some(item => item.id === activeTab);
+
+    // 如果群組內有活躍項目，自動展開
+    useEffect(() => {
+        if (hasActiveItem && !isExpanded) {
+            onToggleExpand(group.id, true);
+        }
+    }, [hasActiveItem, isExpanded, group.id, onToggleExpand]);
+
+    // 如果群組只有一個項目（如儀表板），直接顯示為可點擊項目
+    if (items.length === 1) {
+        const item = items[0];
+        return (
+            <SidebarItem
+                key={item.id}
+                {...item}
+                active={activeTab === item.id}
+                onClick={onItemClick}
+            />
+        );
+    }
+
+    return (
+        <div className="mb-1">
+            {/* 群組標題 */}
+            <button
+                onClick={() => onToggleExpand(group.id, !isExpanded)}
+                className={`
+                    w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200
+                    ${hasActiveItem ? 'text-gray-800' : 'text-gray-500'}
+                    hover:bg-gray-50/80 hover:text-gray-700
+                `}
+            >
+                <GroupIcon size={18} strokeWidth={1.8} className="shrink-0 text-gray-400" />
+                <span className="flex-1 text-left text-sm font-medium">{group.label}</span>
+                <ChevronRight
+                    size={16}
+                    className={`text-gray-400 transition-transform duration-200 ${isExpanded ? 'rotate-90' : ''}`}
+                />
+            </button>
+
+            {/* 群組內項目 */}
+            <div
+                className={`
+                    overflow-hidden transition-all duration-300 ease-out
+                    ${isExpanded ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}
+                `}
+            >
+                <div className="pl-4 pt-1 space-y-0.5">
+                    {items.map(item => (
+                        <SidebarItem
+                            key={item.id}
+                            {...item}
+                            active={activeTab === item.id}
+                            onClick={onItemClick}
+                            compact
+                        />
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export const MainLayout = ({ activeTab, setActiveTab, children, addToast }) => {
+    const { user, role, allowedPages, signOut } = useAuth();
+    const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+    const [hasUpcomingEvents, setHasUpcomingEvents] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+    const [expandedGroups, setExpandedGroups] = useState({});
+
+    // 初始化展開狀態
+    useEffect(() => {
+        const saved = localStorage.getItem(EXPANDED_GROUPS_KEY);
+        if (saved) {
+            try {
+                setExpandedGroups(JSON.parse(saved));
+            } catch (e) {
+                // 使用預設值
+                const defaultExpanded = {};
+                MENU_GROUPS.forEach(g => {
+                    defaultExpanded[g.id] = g.defaultExpanded;
+                });
+                setExpandedGroups(defaultExpanded);
+            }
+        } else {
+            const defaultExpanded = {};
+            MENU_GROUPS.forEach(g => {
+                defaultExpanded[g.id] = g.defaultExpanded;
+            });
+            setExpandedGroups(defaultExpanded);
+        }
+    }, []);
+
+    // 切換群組展開狀態
+    const handleToggleExpand = (groupId, expanded) => {
+        setExpandedGroups(prev => {
+            const newState = { ...prev, [groupId]: expanded };
+            localStorage.setItem(EXPANDED_GROUPS_KEY, JSON.stringify(newState));
+            return newState;
+        });
+    };
+
+    // 根據權限過濾群組和項目
+    const visibleGroups = useMemo(() => {
+        return MENU_GROUPS
+            .map(group => {
+                // 過濾群組內的項目 - 純粹基於 allowedPages（RBAC gating）
+                const visibleItems = group.items
+                    .filter(itemId => allowedPages?.includes(itemId))
+                    .map(itemId => ALL_MENU_ITEMS[itemId])
+                    .filter(Boolean);
+
+                return {
+                    ...group,
+                    visibleItems,
+                };
+            })
+            .filter(group => group.visibleItems.length > 0);
+    }, [allowedPages]);
+
+    // 檢查是否有即將到來的行程
+    useEffect(() => {
+        const checkUpcomingEvents = async () => {
+            try {
+                const events = await GoogleService.fetchCalendarEvents();
+                const now = new Date();
+                const in24Hours = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+
+                const upcoming = events.some(event => {
+                    const eventDate = new Date(`${event.date}T${event.time}`);
+                    return eventDate >= now && eventDate <= in24Hours;
+                });
+
+                setHasUpcomingEvents(upcoming);
+            } catch (error) {
+                console.error('Failed to check upcoming events:', error);
+            }
+        };
+
+        checkUpcomingEvents();
+        const interval = setInterval(checkUpcomingEvents, 5 * 60 * 1000);
+        return () => clearInterval(interval);
+    }, []);
+
+    // Close mobile menu when changing tab
+    useEffect(() => {
+        setIsMobileMenuOpen(false);
+    }, [activeTab]);
+
+    return (
+        <div className="flex h-screen bg-morandi-base font-sans text-gray-900 overflow-hidden">
+            {/* Mobile Menu Overlay */}
+            {isMobileMenuOpen && (
+                <div
+                    className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden transition-opacity"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                />
+            )}
+
+            {/* Sidebar - Premium Glass Design with Grouped Navigation */}
+            <aside className={`
+                w-72 glass-card-elevated border-r border-gray-100/50 flex flex-col z-50
+                fixed lg:relative h-full
+                transform transition-all duration-300 ease-smooth
+                ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+            `}>
+                {/* Close button for mobile */}
+                <button
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="lg:hidden absolute top-6 right-6 p-2 text-gray-400 hover:text-gray-600 rounded-xl hover:bg-gray-100 transition-colors"
+                >
+                    <X size={22} />
+                </button>
+
+                {/* Logo Section */}
+                <div className="p-6 pb-4">
+                    <div className="flex items-center gap-3">
+                        <div className="relative group">
+                            <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-600 rounded-xl blur-sm opacity-50 group-hover:opacity-70 transition-opacity" />
+                            <div className="relative w-11 h-11 bg-gradient-to-br from-gray-800 to-gray-700 rounded-xl flex items-center justify-center text-white font-semibold text-lg shadow-lg">
+                                S
+                            </div>
+                        </div>
+                        <div>
+                            <h1 className="text-lg font-bold text-gray-800 tracking-tight">SENTENG</h1>
+                            <p className="text-[10px] text-gray-400 font-medium tracking-widest">ERP SYSTEM</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Divider */}
+                <div className="mx-4 mb-3 divider-gradient" />
+
+                {/* Grouped Navigation */}
+                <nav className="flex-1 px-3 space-y-1 overflow-y-auto custom-scrollbar">
+                    {visibleGroups.map(group => (
+                        <SidebarGroup
+                            key={group.id}
+                            group={group}
+                            items={group.visibleItems}
+                            activeTab={activeTab}
+                            onItemClick={setActiveTab}
+                            isExpanded={expandedGroups[group.id] ?? group.defaultExpanded}
+                            onToggleExpand={handleToggleExpand}
+                        />
+                    ))}
+                </nav>
+
+                {/* Version Info */}
+                <div className="p-4 pt-2 border-t border-gray-100/50 mt-auto">
+                    <div className="flex items-center justify-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                        <span className="text-[11px] text-gray-400 font-medium">v4.0.0 Grouped</span>
+                    </div>
+                </div>
+            </aside>
+
+            <main className="flex-1 flex flex-col h-screen overflow-hidden relative">
+                {/* Header */}
+                <header className="h-16 lg:h-18 flex items-center justify-between px-4 lg:px-8 bg-gradient-to-r from-transparent via-white/30 to-transparent">
+                    {/* Mobile Menu Button */}
+                    <button
+                        onClick={() => setIsMobileMenuOpen(true)}
+                        className="lg:hidden p-2.5 text-gray-600 hover:text-gray-800 rounded-xl hover:bg-white/50 transition-all"
+                    >
+                        <Menu size={22} />
+                    </button>
+
+                    <div className="flex-1 lg:flex-none" />
+
+                    <div className="flex items-center gap-3">
+                        {/* Notification Button */}
+                        <button
+                            onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+                            className="relative p-2.5 text-gray-500 hover:text-gray-700 bg-white/80 hover:bg-white rounded-xl shadow-soft hover:shadow-card transition-all duration-200"
+                        >
+                            <Bell size={18} strokeWidth={1.8} />
+                            {hasUpcomingEvents && (
+                                <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white animate-pulse shadow-sm" />
+                            )}
+                        </button>
+
+                        {/* User Menu */}
+                        <div className="relative">
+                            <button
+                                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                                className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-white/50 transition-all"
+                            >
+                                {user?.photoURL ? (
+                                    <img
+                                        src={user.photoURL}
+                                        alt={user.displayName}
+                                        className="w-9 h-9 lg:w-10 lg:h-10 rounded-full border-2 border-white shadow-soft object-cover"
+                                    />
+                                ) : (
+                                    <div className="w-9 h-9 lg:w-10 lg:h-10 bg-gradient-to-br from-gray-100 to-gray-50 rounded-full border-2 border-white shadow-soft flex items-center justify-center">
+                                        <span className="font-semibold text-gray-600 text-sm lg:text-base">
+                                            {user?.displayName?.[0] || 'U'}
+                                        </span>
+                                    </div>
+                                )}
+                                <ChevronDown size={14} className={`text-gray-400 transition-transform ${isUserMenuOpen ? 'rotate-180' : ''}`} />
+                            </button>
+
+                            {/* User Dropdown */}
+                            {isUserMenuOpen && (
+                                <>
+                                    <div
+                                        className="fixed inset-0 z-40"
+                                        onClick={() => setIsUserMenuOpen(false)}
+                                    />
+                                    <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50">
+                                        <div className="px-4 py-3 border-b border-gray-100">
+                                            <p className="text-sm font-medium text-gray-800">{user?.displayName}</p>
+                                            <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                                            <span className={`inline-block mt-2 px-2 py-0.5 text-xs font-medium rounded-full ${role === 'super_admin' ? 'bg-purple-100 text-purple-700' :
+                                                role === 'admin' ? 'bg-blue-100 text-blue-700' :
+                                                    'bg-gray-100 text-gray-700'
+                                                }`}>
+                                                {role === 'super_admin' ? '最高管理員' : role === 'admin' ? '管理員' : '一般使用者'}
+                                            </span>
+                                        </div>
+                                        <button
+                                            onClick={() => {
+                                                setIsUserMenuOpen(false);
+                                                signOut();
+                                            }}
+                                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                                        >
+                                            <LogOut size={16} />
+                                            登出
+                                        </button>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                </header>
+
+                <NotificationPanel
+                    isOpen={isNotificationOpen}
+                    onClose={() => setIsNotificationOpen(false)}
+                />
+
+                {/* Content Area */}
+                <div className="flex-1 overflow-auto p-4 lg:p-8 pt-2 scroll-smooth">
+                    <div className="max-w-7xl mx-auto h-full">
+                        {children}
+                    </div>
+                </div>
+            </main>
+        </div>
+    );
+};

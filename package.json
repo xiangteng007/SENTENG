@@ -1,0 +1,26 @@
+{
+  "name": "@senteng-erp/source",
+  "version": "0.0.0",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "libs/*"
+  ],
+  "scripts": {
+    "build:api": "nx build api",
+    "build:web": "nx build web",
+    "build:all": "nx run-many --target=build --all",
+    "serve:api": "nx serve api",
+    "serve:web": "nx serve web",
+    "lint:all": "nx run-many --target=lint --all",
+    "test:api": "nx test api",
+    "graph": "nx graph"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@nx/js": "22.4.3",
+    "@nx/workspace": "22.4.3",
+    "nx": "22.4.3"
+  }
+}

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GAS Integration Test</title>
+</head>
+<body>
+    <h1>Google Apps Script Integration Test</h1>
+    
+    <button onclick="testDriveFolder()">Test Drive Folder Creation</button>
+    <button onclick="testSheetsSync()">Test Sheets Sync</button>
+    
+    <pre id="output"></pre>
+    
+    <script>
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbxUrPvBxCavNiXkhVkK-Afqrfkx4N64NEFQFGzXCFUK5h5Qq_5JZlZT7ptrBiTTPvqMfg/exec';
+        
+        function log(message) {
+            document.getElementById('output').textContent += message + '\n';
+            console.log(message);
+        }
+        
+        async function testDriveFolder() {
+            log('Testing Drive Folder Creation...');
+            try {
+                const response = await fetch(GAS_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        action: 'create_drive_folder', 
+                        folderName: 'Test Folder ' + Date.now()
+                    })
+                });
+                const result = await response.json();
+                log('Drive API Response: ' + JSON.stringify(result, null, 2));
+            } catch (error) {
+                log('Error: ' + error.message);
+            }
+        }
+        
+        async function testSheetsSync() {
+            log('Testing Sheets Sync...');
+            try {
+                const response = await fetch(GAS_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        action: 'sync_to_sheet',
+                        sheetName: 'test_vendors',
+                        records: [
+                            { name: 'Test Vendor', phone: '0912345678', company: 'Test Co' }
+                        ]
+                    })
+                });
+                const result = await response.json();
+                log('Sheets API Response: ' + JSON.stringify(result, null, 2));
+            } catch (error) {
+                log('Error: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

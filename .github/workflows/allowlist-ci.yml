@@ -1,0 +1,179 @@
+# .github/workflows/allowlist-ci.yml
+#
+# Makefile 統一入口 CI Pipeline
+#
+# 治理規則：
+# 1. 所有操作只能透過 make <task> 執行
+# 2. 未在 Makefile 定義的任務，CI 會 fail
+# 3. 禁止直接呼叫 npm/docker 指令
+
+name: Allowlist CI
+
+on:
+    push:
+        branches: [main, develop]
+    pull_request:
+        branches: [main, develop]
+
+env:
+    NODE_VERSION: "20"
+
+jobs:
+    # ========================================
+    # 1. 檢查必要 scripts 是否存在
+    # ========================================
+    check-scripts:
+        name: Check Required Scripts
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ env.NODE_VERSION }}
+
+            - name: Check required package.json scripts
+              run: make check-scripts
+
+    # ========================================
+    # 2. Lint（只能用 make lint）
+    # ========================================
+    lint:
+        name: Lint
+        runs-on: ubuntu-latest
+        needs: check-scripts
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ env.NODE_VERSION }}
+                  cache: "npm"
+
+            - name: Install dependencies
+              run: make install
+
+            - name: Run lint
+              run: make lint
+
+    # ========================================
+    # 3. Test（只能用 make test）
+    # ========================================
+    test:
+        name: Test
+        runs-on: ubuntu-latest
+        needs: check-scripts
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ env.NODE_VERSION }}
+                  cache: "npm"
+
+            - name: Install dependencies
+              run: make install
+
+            - name: Run tests
+              run: make test
+
+    # ========================================
+    # 4. Build（只能用 make build）
+    # ========================================
+    build:
+        name: Build
+        runs-on: ubuntu-latest
+        needs: [lint, test]
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ env.NODE_VERSION }}
+                  cache: "npm"
+
+            - name: Install dependencies
+              run: make install
+
+            - name: Build
+              run: make build
+
+            - name: Upload build artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                  name: dist
+                  path: dist/
+                  retention-days: 7
+
+    # ========================================
+    # 5. E2E Test（若需要 DB）
+    # ========================================
+    test-e2e:
+        name: E2E Test
+        runs-on: ubuntu-latest
+        needs: build
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        services:
+            postgres:
+                image: postgres:15
+                env:
+                    POSTGRES_USER: postgres
+                    POSTGRES_PASSWORD: postgres
+                    POSTGRES_DB: senteng_test
+                ports:
+                    - 5432:5432
+                options: >-
+                    --health-cmd pg_isready
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ env.NODE_VERSION }}
+                  cache: "npm"
+
+            - name: Install dependencies
+              run: make install
+
+            - name: Run migrations
+              run: npm run migration:run
+              env:
+                  DB_HOST: localhost
+                  DB_PORT: 5432
+                  DB_USERNAME: postgres
+                  DB_PASSWORD: postgres
+                  DB_DATABASE: senteng_test
+
+            - name: Run E2E tests
+              run: make test-e2e
+              env:
+                  DB_HOST: localhost
+                  DB_PORT: 5432
+                  DB_USERNAME: postgres
+                  DB_PASSWORD: postgres
+                  DB_DATABASE: senteng_test
+
+    # ========================================
+    # 6. CI 完整流程（組合）
+    # ========================================
+    ci-complete:
+        name: CI Complete
+        runs-on: ubuntu-latest
+        needs: [lint, test, build]
+        steps:
+            - name: CI Complete
+              run: echo "✅ All CI checks passed"
