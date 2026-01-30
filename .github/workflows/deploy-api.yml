@@ -1,9 +1,13 @@
-name: Deploy to Cloud Run
+name: Deploy API to Cloud Run
 
 on:
   push:
     branches:
       - main
+    paths:
+      - 'apps/api/**'
+      - 'libs/shared/**'
+      - '.github/workflows/deploy-api.yml'
 
 env:
   PROJECT_ID: senteng-erp-pro
@@ -13,10 +17,15 @@ env:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/api
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -24,10 +33,14 @@ jobs:
           node-version: "20"
           cache: "npm"
 
-      - name: Install dependencies
+      - name: Install root dependencies
+        run: npm ci
+        working-directory: .
+
+      - name: Install API dependencies
         run: npm ci
 
-      - name: Build
+      - name: Build API
         run: npm run build
 
       - name: Sync migrations table for existing schema
@@ -46,7 +59,6 @@ jobs:
 
           (async () => {
             await client.connect();
-            // Create migrations table if not exists
             await client.query(\`
               CREATE TABLE IF NOT EXISTS migrations (
                 id SERIAL PRIMARY KEY,
@@ -55,7 +67,6 @@ jobs:
               )
             \`);
             
-            // Insert records for existing migrations (skip if already exists)
             const existingMigrations = [
               [1704672000001, 'CreatePlatformTenants1704672000001'],
               [1704672000002, 'CreatePlatformCore1704672000002'],
@@ -119,6 +130,7 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE }}:${{ github.sha }} .
+        working-directory: apps/api
 
       - name: Push Docker image
         run: |
