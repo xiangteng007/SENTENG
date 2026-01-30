@@ -5,9 +5,10 @@ on:
     branches:
       - main
     paths:
-      - 'apps/web/**'
-      - 'libs/shared/**'
-      - '.github/workflows/deploy-web.yml'
+      - "apps/web/**"
+      - "libs/shared/**"
+      - ".github/workflows/deploy-web.yml"
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -15,6 +16,9 @@ jobs:
     defaults:
       run:
         working-directory: apps/web
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
     steps:
       - name: Checkout code
@@ -27,7 +31,8 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm ci
+        # Using npm install instead of npm ci because package-lock.json is not committed
+        run: npm install
 
       - name: Build
         run: npm run build
@@ -39,12 +44,9 @@ jobs:
 
       - name: Pull Vercel Environment
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-        working-directory: apps/web
 
       - name: Build for Vercel
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-        working-directory: apps/web
 
       - name: Deploy to Vercel
         run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
-        working-directory: apps/web
