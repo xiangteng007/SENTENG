@@ -8,7 +8,7 @@ on:
       - "apps/api/**"
       - "libs/shared/**"
       - ".github/workflows/deploy-api.yml"
-
+  workflow_dispatch:
 env:
   PROJECT_ID: senteng-erp-pro
   SERVICE: erp-api
