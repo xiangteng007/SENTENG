@@ -12,7 +12,8 @@ COPY tsconfig*.json ./
 COPY nest-cli.json ./
 
 # Install ALL dependencies (including devDependencies for build)
-RUN npm ci
+# Using npm install instead of npm ci because package-lock.json is not committed to the repo
+RUN npm install
 
 # Copy source code
 COPY src ./src
