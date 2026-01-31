@@ -1,4 +1,4 @@
-import {
+﻿import {
   Controller,
   Get,
   Post,
@@ -12,6 +12,7 @@ import {
   Request,
   Res,
 } from '@nestjs/common';
+import type { AuthenticatedRequest } from "../../../common/types";
 import type { Response } from 'express';
 import { ClientsService } from './clients.service';
 import { CreateClientDto, UpdateClientDto } from './client.dto';
@@ -54,7 +55,7 @@ export class ClientsController {
     @Query('status') status: string,
     @Query('search') search: string,
     @Query('format') format: 'xlsx' | 'csv',
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @Res() res: Response
   ) {
     const userId = req.user?.sub || req.user?.id;
@@ -88,14 +89,14 @@ export class ClientsController {
 
   @Post()
   @RequirePermissions('clients:create')
-  async create(@Body() dto: CreateClientDto, @Request() req: any) {
+  async create(@Body() dto: CreateClientDto, @Request() req: AuthenticatedRequest) {
     const userId = req.user?.sub || req.user?.id;
     return this.clientsService.create(dto, userId);
   }
 
   @Patch(':id')
   @RequirePermissions('clients:update')
-  async update(@Param('id') id: string, @Body() dto: UpdateClientDto, @Request() req: any) {
+  async update(@Param('id') id: string, @Body() dto: UpdateClientDto, @Request() req: AuthenticatedRequest) {
     const userId = req.user?.sub || req.user?.id;
     return this.clientsService.update(id, dto, userId);
   }

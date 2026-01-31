@@ -1,4 +1,4 @@
-import {
+﻿import {
   Controller,
   Get,
   Post,
@@ -10,6 +10,7 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
+import type { AuthenticatedRequest } from "../../../common/types";
 import { VendorsService } from './vendors.service';
 import { CreateVendorDto, UpdateVendorDto, VendorQueryDto, AddTradeDto } from './vendor.dto';
 import { JwtAuthGuard } from '../../../common/guards/jwt-auth.guard';
@@ -23,7 +24,7 @@ export class VendorsController {
 
   @Get()
   @RequirePermissions('vendors:read')
-  async findAll(@Query() query: VendorQueryDto, @Request() req: any) {
+  async findAll(@Query() query: VendorQueryDto, @Request() req: AuthenticatedRequest) {
     const userId = req.user?.sub || req.user?.id;
     const userRole = req.user?.role;
     return this.vendorsService.findAll(query, userId, userRole);
@@ -31,7 +32,7 @@ export class VendorsController {
 
   @Get(':id')
   @RequirePermissions('vendors:read')
-  async findOne(@Param('id') id: string, @Request() req: any) {
+  async findOne(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
     const userId = req.user?.sub || req.user?.id;
     const userRole = req.user?.role;
     return this.vendorsService.findOne(id, userId, userRole);
@@ -45,14 +46,14 @@ export class VendorsController {
 
   @Post()
   @RequirePermissions('vendors:create')
-  async create(@Body() dto: CreateVendorDto, @Request() req: any) {
+  async create(@Body() dto: CreateVendorDto, @Request() req: AuthenticatedRequest) {
     const userId = req.user?.sub || req.user?.id;
     return this.vendorsService.create(dto, userId);
   }
 
   @Patch(':id')
   @RequirePermissions('vendors:update')
-  async update(@Param('id') id: string, @Body() dto: UpdateVendorDto, @Request() req: any) {
+  async update(@Param('id') id: string, @Body() dto: UpdateVendorDto, @Request() req: AuthenticatedRequest) {
     const userId = req.user?.sub || req.user?.id;
     const userRole = req.user?.role;
     return this.vendorsService.update(id, dto, userId, userRole);
@@ -60,28 +61,28 @@ export class VendorsController {
 
   @Patch(':id/rating')
   @RequirePermissions('vendors:rate')
-  async updateRating(@Param('id') id: string, @Body('rating') rating: number, @Request() req: any) {
+  async updateRating(@Param('id') id: string, @Body('rating') rating: number, @Request() req: AuthenticatedRequest) {
     const userId = req.user?.sub || req.user?.id;
     return this.vendorsService.updateRating(id, rating, userId);
   }
 
   @Post(':id/blacklist')
   @RequirePermissions('vendors:blacklist')
-  async blacklist(@Param('id') id: string, @Body('reason') reason: string, @Request() req: any) {
+  async blacklist(@Param('id') id: string, @Body('reason') reason: string, @Request() req: AuthenticatedRequest) {
     const userId = req.user?.sub || req.user?.id;
     return this.vendorsService.blacklist(id, reason, userId);
   }
 
   @Post(':id/activate')
   @RequirePermissions('vendors:blacklist')
-  async activate(@Param('id') id: string, @Request() req: any) {
+  async activate(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
     const userId = req.user?.sub || req.user?.id;
     return this.vendorsService.activate(id, userId);
   }
 
   @Delete(':id')
   @RequirePermissions('vendors:delete')
-  async remove(@Param('id') id: string, @Request() req: any) {
+  async remove(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
     const userId = req.user?.sub || req.user?.id;
     const userRole = req.user?.role;
     return this.vendorsService.remove(id, userId, userRole);

@@ -1,4 +1,4 @@
-import {
+﻿import {
   Controller,
   Get,
   Post,
@@ -9,6 +9,7 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
+import type { AuthenticatedRequest } from "../../../common/types";
 import { WorkOrdersService } from './work-orders.service';
 import {
   CreateWorkOrderDto,
@@ -55,7 +56,7 @@ export class WorkOrdersController {
 
   @Post()
   @RequirePermissions('work-orders:create')
-  create(@Body() dto: CreateWorkOrderDto, @Request() req: any) {
+  create(@Body() dto: CreateWorkOrderDto, @Request() req: AuthenticatedRequest) {
     return this.workOrdersService.create(dto, req.user?.sub);
   }
 
@@ -84,7 +85,7 @@ export class WorkOrdersController {
 
   @Patch(':id/complete')
   @RequirePermissions('work-orders:update')
-  complete(@Param('id') id: string, @Body() dto: CompleteWorkOrderDto, @Request() req: any) {
+  complete(@Param('id') id: string, @Body() dto: CompleteWorkOrderDto, @Request() req: AuthenticatedRequest) {
     return this.workOrdersService.complete(id, dto, req.user?.sub);
   }
 

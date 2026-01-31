@@ -34,7 +34,8 @@ export class EventListeners {
     const importantStatuses = ['completed', 'delayed', '已完成', '延遲'];
     if (importantStatuses.includes(event.newStatus.toLowerCase())) {
       try {
-        // TODO: Get project manager LINE ID from database
+        // Enhancement: Fetch project manager's LINE ID from users table
+        // Issue: SENG-TODO-001 - Implement user contact lookup service
         // For now, just log the event
         this.logger.log(
           `Would notify project manager about ${event.projectName} status: ${event.newStatus}`
@@ -52,7 +53,9 @@ export class EventListeners {
   async handleInvoiceOverdue(event: InvoiceOverdueEvent) {
     this.logger.warn(`Invoice ${event.invoiceNumber} is ${event.daysOverdue} days overdue`);
 
-    // TODO: Send reminder to finance team and client
+    // Enhancement: Send reminder to finance team and client
+    // Issue: SENG-TODO-002 - Implement overdue invoice notification workflow
+    // Will use email service when available
   }
 
   /**
@@ -72,7 +75,11 @@ export class EventListeners {
         this.logger.error(`LINE notification failed: ${error}`);
       }
     }
-    // TODO: Handle email notifications
+    // Enhancement: Handle email notifications via EmailService
+    // Issue: SENG-TODO-003 - Implement email notification channel
+    if (event.recipientType === 'email') {
+      this.logger.log(`Email notification pending: ${event.recipientId}`);
+    }
   }
 
   /**

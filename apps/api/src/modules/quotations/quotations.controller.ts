@@ -1,4 +1,4 @@
-import {
+﻿import {
   Controller,
   Get,
   Post,
@@ -10,6 +10,7 @@ import {
   UseGuards,
   Res,
 } from '@nestjs/common';
+import type { AuthenticatedRequest } from "../../common/types";
 import type { Response } from 'express';
 import { QuotationsService } from './quotations.service';
 import { CreateQuotationDto, UpdateQuotationDto } from './quotation.dto';
@@ -75,37 +76,37 @@ export class QuotationsController {
 
   @Post()
   @RequirePermissions('quotations:create')
-  async create(@Body() dto: CreateQuotationDto, @Request() req: any) {
+  async create(@Body() dto: CreateQuotationDto, @Request() req: AuthenticatedRequest) {
     return this.quotationsService.create(dto, req.user?.id);
   }
 
   @Patch(':id')
   @RequirePermissions('quotations:update')
-  async update(@Param('id') id: string, @Body() dto: UpdateQuotationDto, @Request() req: any) {
+  async update(@Param('id') id: string, @Body() dto: UpdateQuotationDto, @Request() req: AuthenticatedRequest) {
     return this.quotationsService.update(id, dto, req.user?.id);
   }
 
   @Post(':id/submit')
   @RequirePermissions('quotations:submit')
-  async submit(@Param('id') id: string, @Request() req: any) {
+  async submit(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
     return this.quotationsService.submit(id, req.user?.id);
   }
 
   @Post(':id/approve')
   @RequirePermissions('quotations:approve')
-  async approve(@Param('id') id: string, @Request() req: any) {
+  async approve(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
     return this.quotationsService.approve(id, req.user?.id);
   }
 
   @Post(':id/reject')
   @RequirePermissions('quotations:reject')
-  async reject(@Param('id') id: string, @Body('reason') reason: string, @Request() req: any) {
+  async reject(@Param('id') id: string, @Body('reason') reason: string, @Request() req: AuthenticatedRequest) {
     return this.quotationsService.reject(id, reason, req.user?.id);
   }
 
   @Post(':id/new-version')
   @RequirePermissions('quotations:create')
-  async createNewVersion(@Param('id') id: string, @Request() req: any) {
+  async createNewVersion(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
     return this.quotationsService.createNewVersion(id, req.user?.id);
   }
 }

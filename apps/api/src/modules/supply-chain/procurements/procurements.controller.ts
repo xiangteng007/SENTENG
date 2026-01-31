@@ -1,4 +1,4 @@
-import {
+﻿import {
   Controller,
   Get,
   Post,
@@ -10,6 +10,7 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
+import type { AuthenticatedRequest } from "../../../common/types";
 import { ProcurementsService } from './procurements.service';
 import {
   CreateProcurementDto,
@@ -48,7 +49,7 @@ export class ProcurementsController {
 
   @Post()
   @RequirePermissions('procurements:create')
-  create(@Body() dto: CreateProcurementDto, @Request() req: any) {
+  create(@Body() dto: CreateProcurementDto, @Request() req: AuthenticatedRequest) {
     return this.procurementsService.create(dto, req.user?.sub || req.user?.id);
   }
 

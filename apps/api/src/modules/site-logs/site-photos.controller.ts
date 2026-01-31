@@ -1,4 +1,4 @@
-/**
+﻿/**
  * site-photos.controller.ts
  *
  * 工地照片 API 控制器
@@ -19,6 +19,7 @@ import {
   UploadedFile,
   Req,
 } from '@nestjs/common';
+import type { AuthenticatedRequest } from "../../common/types";
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiConsumes, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -39,7 +40,7 @@ export class SitePhotosController {
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('file'))
   async uploadPhoto(
-    @Req() req: any,
+    @Req() req: AuthenticatedRequest,
     @UploadedFile() file: Express.Multer.File,
     @Body('projectId') projectId: string,
     @Body('description') description?: string,
@@ -64,7 +65,7 @@ export class SitePhotosController {
   @Get('project/:projectId')
   @ApiOperation({ summary: '取得專案照片列表' })
   async getPhotosByProject(
-    @Req() req: any,
+    @Req() req: AuthenticatedRequest,
     @Param('projectId') projectId: string,
     @Query('includeDeleted') includeDeleted?: string
   ) {
@@ -86,7 +87,7 @@ export class SitePhotosController {
    */
   @Delete(':id')
   @ApiOperation({ summary: '刪除照片' })
-  async deletePhoto(@Req() req: any, @Param('id') id: string) {
+  async deletePhoto(@Req() req: AuthenticatedRequest, @Param('id') id: string) {
     const userId = req.user?.id || req.user?.sub;
     await this.sitePhotosService.deletePhoto(userId, id);
     return { success: true, message: '照片已刪除' };

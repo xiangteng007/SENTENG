@@ -1,4 +1,4 @@
-import {
+﻿import {
   Controller,
   Get,
   Post,
@@ -10,6 +10,7 @@ import {
   UseGuards,
   Res,
 } from '@nestjs/common';
+import type { AuthenticatedRequest } from "../../common/types";
 import type { Response } from 'express';
 import { ContractsService } from './contracts.service';
 import { CreateContractDto, UpdateContractDto, ConvertFromQuotationDto } from './contract.dto';
@@ -37,7 +38,7 @@ export class ContractsController {
     @Query('projectId') projectId: string,
     @Query('status') status: string,
     @Query('format') format: 'xlsx' | 'csv',
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @Res() res: Response
   ) {
     const userId = req.user?.sub || req.user?.id;
@@ -69,32 +70,32 @@ export class ContractsController {
   }
 
   @Post()
-  async create(@Body() dto: CreateContractDto, @Request() req: any) {
+  async create(@Body() dto: CreateContractDto, @Request() req: AuthenticatedRequest) {
     return this.contractsService.create(dto, req.user?.id);
   }
 
   @Post('from-quotation')
-  async convertFromQuotation(@Body() dto: ConvertFromQuotationDto, @Request() req: any) {
+  async convertFromQuotation(@Body() dto: ConvertFromQuotationDto, @Request() req: AuthenticatedRequest) {
     return this.contractsService.convertFromQuotation(dto, req.user?.id);
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() dto: UpdateContractDto, @Request() req: any) {
+  async update(@Param('id') id: string, @Body() dto: UpdateContractDto, @Request() req: AuthenticatedRequest) {
     return this.contractsService.update(id, dto, req.user?.id);
   }
 
   @Post(':id/sign')
-  async sign(@Param('id') id: string, @Body('signDate') signDate: string, @Request() req: any) {
+  async sign(@Param('id') id: string, @Body('signDate') signDate: string, @Request() req: AuthenticatedRequest) {
     return this.contractsService.sign(id, signDate, req.user?.id);
   }
 
   @Post(':id/complete')
-  async complete(@Param('id') id: string, @Request() req: any) {
+  async complete(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
     return this.contractsService.complete(id, req.user?.id);
   }
 
   @Post(':id/close')
-  async close(@Param('id') id: string, @Request() req: any) {
+  async close(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
     return this.contractsService.close(id, req.user?.id);
   }
 }

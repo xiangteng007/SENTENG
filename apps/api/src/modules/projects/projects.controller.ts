@@ -1,4 +1,4 @@
-import {
+﻿import {
   Controller,
   Get,
   Post,
@@ -10,6 +10,7 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
+import type { AuthenticatedRequest } from "../../common/types";
 import { ProjectsService } from './projects.service';
 import {
   CreateProjectDto,
@@ -31,13 +32,13 @@ export class ProjectsController {
 
   @Get()
   @RequirePermissions('projects:read')
-  findAll(@Query() query: ProjectQueryDto, @Request() req: any) {
+  findAll(@Query() query: ProjectQueryDto, @Request() req: AuthenticatedRequest) {
     return this.projectsService.findAll(query, req.user?.sub || req.user?.id, req.user?.role);
   }
 
   @Get(':id')
   @RequirePermissions('projects:read')
-  findOne(@Param('id') id: string, @Request() req: any) {
+  findOne(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
     return this.projectsService.findOne(id, req.user?.sub || req.user?.id, req.user?.role);
   }
 
@@ -67,13 +68,13 @@ export class ProjectsController {
 
   @Post()
   @RequirePermissions('projects:create')
-  create(@Body() dto: CreateProjectDto, @Request() req: any) {
+  create(@Body() dto: CreateProjectDto, @Request() req: AuthenticatedRequest) {
     return this.projectsService.create(dto, req.user?.sub || req.user?.id);
   }
 
   @Patch(':id')
   @RequirePermissions('projects:update')
-  update(@Param('id') id: string, @Body() dto: UpdateProjectDto, @Request() req: any) {
+  update(@Param('id') id: string, @Body() dto: UpdateProjectDto, @Request() req: AuthenticatedRequest) {
     return this.projectsService.update(id, dto, req.user?.sub || req.user?.id);
   }
 

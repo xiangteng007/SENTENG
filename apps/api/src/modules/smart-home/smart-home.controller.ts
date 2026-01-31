@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Query, Param, Body, Request, UseGuards } from '@nestjs/common';
+﻿import { Controller, Get, Post, Query, Param, Body, Request, UseGuards } from '@nestjs/common';
+import type { AuthenticatedRequest } from "../../common/types";
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { SmartHomeService } from './smart-home.service';
 import { SmartHomeProduct } from './entities/smart-home-product.entity';
@@ -68,7 +69,7 @@ export class SmartHomeController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized or Google account not connected' })
   async exportToGoogleSheets(
-    @Request() req: any,
+    @Request() req: AuthenticatedRequest,
     @Body() dto: ExportSmartHomeDto
   ): Promise<ExportSmartHomeResponseDto> {
     const userId = req.user.id || req.user.userId || req.user.sub;

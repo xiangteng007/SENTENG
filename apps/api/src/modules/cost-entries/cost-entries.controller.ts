@@ -1,4 +1,4 @@
-import {
+﻿import {
   Controller,
   Get,
   Post,
@@ -10,6 +10,7 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
+import type { AuthenticatedRequest } from "../../common/types";
 import { CostEntriesService } from './cost-entries.service';
 import { CreateCostEntryDto, UpdateCostEntryDto, MarkPaidDto } from './cost-entry.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -51,19 +52,19 @@ export class CostEntriesController {
 
   @Post()
   @RequirePermissions('cost-entries:create')
-  async create(@Body() dto: CreateCostEntryDto, @Request() req: any) {
+  async create(@Body() dto: CreateCostEntryDto, @Request() req: AuthenticatedRequest) {
     return this.costEntriesService.create(dto, req.user?.id);
   }
 
   @Patch(':id')
   @RequirePermissions('cost-entries:update')
-  async update(@Param('id') id: string, @Body() dto: UpdateCostEntryDto, @Request() req: any) {
+  async update(@Param('id') id: string, @Body() dto: UpdateCostEntryDto, @Request() req: AuthenticatedRequest) {
     return this.costEntriesService.update(id, dto, req.user?.id);
   }
 
   @Post(':id/mark-paid')
   @RequirePermissions('cost-entries:update')
-  async markPaid(@Param('id') id: string, @Body() dto: MarkPaidDto, @Request() req: any) {
+  async markPaid(@Param('id') id: string, @Body() dto: MarkPaidDto, @Request() req: AuthenticatedRequest) {
     return this.costEntriesService.markPaid(id, dto, req.user?.id);
   }
 

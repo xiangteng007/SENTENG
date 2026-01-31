@@ -1,4 +1,4 @@
-import {
+﻿import {
   Controller,
   Get,
   Post,
@@ -9,6 +9,7 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
+import type { AuthenticatedRequest } from "../../common/types";
 import { PaymentsService } from './payments.service';
 import { CreatePaymentDto, UpdatePaymentDto, CreateReceiptDto } from './payment.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -44,37 +45,37 @@ export class PaymentsController {
 
   @Post()
   @RequirePermissions('payments:create')
-  async create(@Body() dto: CreatePaymentDto, @Request() req: any) {
+  async create(@Body() dto: CreatePaymentDto, @Request() req: AuthenticatedRequest) {
     return this.paymentsService.create(dto, req.user?.id);
   }
 
   @Post('receipts')
   @RequirePermissions('payments:create')
-  async addReceipt(@Body() dto: CreateReceiptDto, @Request() req: any) {
+  async addReceipt(@Body() dto: CreateReceiptDto, @Request() req: AuthenticatedRequest) {
     return this.paymentsService.addReceipt(dto, req.user?.id);
   }
 
   @Patch(':id')
   @RequirePermissions('payments:update')
-  async update(@Param('id') id: string, @Body() dto: UpdatePaymentDto, @Request() req: any) {
+  async update(@Param('id') id: string, @Body() dto: UpdatePaymentDto, @Request() req: AuthenticatedRequest) {
     return this.paymentsService.update(id, dto, req.user?.id);
   }
 
   @Post(':id/submit')
   @RequirePermissions('payments:submit')
-  async submit(@Param('id') id: string, @Request() req: any) {
+  async submit(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
     return this.paymentsService.submit(id, req.user?.id);
   }
 
   @Post(':id/approve')
   @RequirePermissions('payments:approve')
-  async approve(@Param('id') id: string, @Request() req: any) {
+  async approve(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
     return this.paymentsService.approve(id, req.user?.id);
   }
 
   @Post(':id/reject')
   @RequirePermissions('payments:reject')
-  async reject(@Param('id') id: string, @Body('reason') reason: string, @Request() req: any) {
+  async reject(@Param('id') id: string, @Body('reason') reason: string, @Request() req: AuthenticatedRequest) {
     return this.paymentsService.reject(id, reason, req.user?.id);
   }
 }

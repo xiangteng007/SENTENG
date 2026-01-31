@@ -1,4 +1,4 @@
-import {
+﻿import {
   Controller,
   Get,
   Post,
@@ -10,6 +10,7 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
+import type { AuthenticatedRequest } from "../../common/types";
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { PermissionGuard } from '../../common/guards/permission.guard';
 import { RequirePermissions } from '../../common/decorators/permissions.decorator';
@@ -50,28 +51,28 @@ export class EventsController {
 
   @Post()
   @RequirePermissions('events:create')
-  async create(@Body() dto: CreateEventDto, @Request() req: any) {
+  async create(@Body() dto: CreateEventDto, @Request() req: AuthenticatedRequest) {
     const userId = req.user?.id;
     return this.eventsService.create(dto, userId);
   }
 
   @Patch(':id')
   @RequirePermissions('events:update')
-  async update(@Param('id') id: string, @Body() dto: UpdateEventDto, @Request() req: any) {
+  async update(@Param('id') id: string, @Body() dto: UpdateEventDto, @Request() req: AuthenticatedRequest) {
     const userId = req.user?.id;
     return this.eventsService.update(id, dto, userId);
   }
 
   @Post(':id/complete')
   @RequirePermissions('events:update')
-  async complete(@Param('id') id: string, @Request() req: any) {
+  async complete(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
     const userId = req.user?.id;
     return this.eventsService.complete(id, userId);
   }
 
   @Post(':id/cancel')
   @RequirePermissions('events:update')
-  async cancel(@Param('id') id: string, @Request() req: any) {
+  async cancel(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
     const userId = req.user?.id;
     return this.eventsService.cancel(id, userId);
   }

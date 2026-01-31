@@ -12,6 +12,7 @@ import {
   Res,
 } from '@nestjs/common';
 import type { Response } from 'express';
+import type { AuthenticatedRequest } from '../../common/types';
 import { InvoicesService } from './invoices.service';
 import { CreateInvoiceDto, UpdateInvoiceDto, QueryInvoiceDto, InvoiceState } from './invoice.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -27,7 +28,7 @@ export class InvoicesController {
    * GET /api/v1/invoices?page=1&limit=20&search=xxx&docType=INVOICE_B2B
    */
   @Get()
-  async findAll(@Query() query: QueryInvoiceDto, @Request() req: any) {
+  async findAll(@Query() query: QueryInvoiceDto, @Request() req: AuthenticatedRequest) {
     const userId = req.user?.userId;
     const userRole = req.user?.role;
     return this.invoicesService.findAll(query, userId, userRole);
@@ -38,7 +39,7 @@ export class InvoicesController {
    * GET /api/v1/invoices/stats
    */
   @Get('stats')
-  async getStats(@Request() req: any) {
+  async getStats(@Request() req: AuthenticatedRequest) {
     const userId = req.user?.userId;
     const userRole = req.user?.role;
     return this.invoicesService.getStats(userId, userRole);
@@ -52,7 +53,7 @@ export class InvoicesController {
   async getMonthlyStats(
     @Query('year') year: string,
     @Query('month') month: string,
-    @Request() req: any
+    @Request() req: AuthenticatedRequest
   ) {
     const userId = req.user?.userId;
     const userRole = req.user?.role;
@@ -68,7 +69,7 @@ export class InvoicesController {
    * GET /api/v1/invoices/export/excel?format=xlsx|csv&...filters
    */
   @Get('export/excel')
-  async exportExcel(@Query() query: ExportExcelDto, @Request() req: any, @Res() res: Response) {
+  async exportExcel(@Query() query: ExportExcelDto, @Request() req: AuthenticatedRequest, @Res() res: Response) {
     const userId = req.user?.userId;
     const userRole = req.user?.role;
     const buffer = await this.invoicesService.exportToExcel(query, userId, userRole);
@@ -93,7 +94,7 @@ export class InvoicesController {
    * GET /api/v1/invoices/export/401?period=1-2&buyerTaxId=12345678
    */
   @Get('export/401')
-  async export401(@Query() query: Export401Dto, @Request() req: any, @Res() res: Response) {
+  async export401(@Query() query: Export401Dto, @Request() req: AuthenticatedRequest, @Res() res: Response) {
     const userId = req.user?.userId;
     const userRole = req.user?.role;
     const content = await this.invoicesService.exportTo401(query, userId, userRole);
@@ -110,7 +111,7 @@ export class InvoicesController {
    * GET /api/v1/invoices/export/pdf?...filters
    */
   @Get('export/pdf')
-  async exportPdf(@Query() query: ExportPdfDto, @Request() req: any, @Res() res: Response) {
+  async exportPdf(@Query() query: ExportPdfDto, @Request() req: AuthenticatedRequest, @Res() res: Response) {
     const userId = req.user?.userId;
     const userRole = req.user?.role;
     const buffer = await this.invoicesService.exportToPdf(query, userId, userRole);
@@ -129,7 +130,7 @@ export class InvoicesController {
    * GET /api/v1/invoices/:id
    */
   @Get(':id')
-  async findOne(@Param('id') id: string, @Request() req: any) {
+  async findOne(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
     const userId = req.user?.userId;
     const userRole = req.user?.role;
     return this.invoicesService.findOne(id, userId, userRole);
@@ -140,7 +141,7 @@ export class InvoicesController {
    * POST /api/v1/invoices
    */
   @Post()
-  async create(@Body() dto: CreateInvoiceDto, @Request() req: any) {
+  async create(@Body() dto: CreateInvoiceDto, @Request() req: AuthenticatedRequest) {
     const userId = req.user?.userId;
     return this.invoicesService.create(dto, userId);
   }
@@ -150,7 +151,7 @@ export class InvoicesController {
    * PATCH /api/v1/invoices/:id
    */
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() dto: UpdateInvoiceDto, @Request() req: any) {
+  async update(@Param('id') id: string, @Body() dto: UpdateInvoiceDto, @Request() req: AuthenticatedRequest) {
     const userId = req.user?.userId;
     const userRole = req.user?.role;
     return this.invoicesService.update(id, dto, userId, userRole);
@@ -164,7 +165,7 @@ export class InvoicesController {
   async changeState(
     @Param('id') id: string,
     @Body('state') state: InvoiceState,
-    @Request() req: any
+    @Request() req: AuthenticatedRequest
   ) {
     const userId = req.user?.userId;
     const userRole = req.user?.role;
@@ -176,7 +177,7 @@ export class InvoicesController {
    * POST /api/v1/invoices/:id/submit
    */
   @Post(':id/submit')
-  async submit(@Param('id') id: string, @Request() req: any) {
+  async submit(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
     const userId = req.user?.userId;
     const userRole = req.user?.role;
     return this.invoicesService.changeState(id, InvoiceState.PENDING_APPROVAL, userId, userRole);
@@ -187,7 +188,7 @@ export class InvoicesController {
    * POST /api/v1/invoices/:id/approve
    */
   @Post(':id/approve')
-  async approve(@Param('id') id: string, @Request() req: any) {
+  async approve(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
     const userId = req.user?.userId;
     const userRole = req.user?.role;
     return this.invoicesService.changeState(id, InvoiceState.APPROVED, userId, userRole);
@@ -198,7 +199,7 @@ export class InvoicesController {
    * POST /api/v1/invoices/:id/reject
    */
   @Post(':id/reject')
-  async reject(@Param('id') id: string, @Request() req: any) {
+  async reject(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
     const userId = req.user?.userId;
     const userRole = req.user?.role;
     return this.invoicesService.changeState(id, InvoiceState.REJECTED, userId, userRole);
@@ -212,7 +213,7 @@ export class InvoicesController {
   async recordPayment(
     @Param('id') id: string,
     @Body('amount') amount: number,
-    @Request() req: any
+    @Request() req: AuthenticatedRequest
   ) {
     const userId = req.user?.userId;
     const userRole = req.user?.role;
@@ -224,7 +225,7 @@ export class InvoicesController {
    * POST /api/v1/invoices/:id/void
    */
   @Post(':id/void')
-  async void(@Param('id') id: string, @Body('reason') reason: string, @Request() req: any) {
+  async void(@Param('id') id: string, @Body('reason') reason: string, @Request() req: AuthenticatedRequest) {
     const userId = req.user?.userId;
     const userRole = req.user?.role;
     return this.invoicesService.void(id, reason, userId, userRole);
@@ -235,7 +236,7 @@ export class InvoicesController {
    * DELETE /api/v1/invoices/:id
    */
   @Delete(':id')
-  async delete(@Param('id') id: string, @Request() req: any) {
+  async delete(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
     const userId = req.user?.userId;
     const userRole = req.user?.role;
     await this.invoicesService.softDelete(id, userId, userRole);

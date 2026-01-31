@@ -1,4 +1,4 @@
-import {
+﻿import {
   Controller,
   Get,
   Post,
@@ -9,6 +9,7 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
+import type { AuthenticatedRequest } from "../../../common/types";
 import { SitesService } from './sites.service';
 import { CreateJobSiteDto, UpdateJobSiteDto } from './dto/sites.dto';
 import { JwtAuthGuard } from '../../../common/guards/jwt-auth.guard';
@@ -44,7 +45,7 @@ export class SitesController {
 
   @Post()
   @RequirePermissions('sites:create')
-  create(@Body() dto: CreateJobSiteDto, @Request() req: any) {
+  create(@Body() dto: CreateJobSiteDto, @Request() req: AuthenticatedRequest) {
     return this.sitesService.create(dto, req.user?.sub);
   }
 

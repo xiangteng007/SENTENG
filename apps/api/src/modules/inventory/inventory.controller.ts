@@ -1,4 +1,4 @@
-import {
+﻿import {
   Controller,
   Get,
   Post,
@@ -11,6 +11,7 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
+import type { AuthenticatedRequest } from "../../common/types";
 import { InventoryService } from './inventory.service';
 import {
   CreateInventoryDto,
@@ -76,7 +77,7 @@ export class InventoryController {
   @Post('movements')
   @RequirePermissions('inventory:create')
   @HttpCode(HttpStatus.CREATED)
-  async addMovement(@Body() dto: CreateMovementDto, @Request() req: any) {
+  async addMovement(@Body() dto: CreateMovementDto, @Request() req: AuthenticatedRequest) {
     return this.inventoryService.addMovement(dto, req.user?.sub);
   }
 

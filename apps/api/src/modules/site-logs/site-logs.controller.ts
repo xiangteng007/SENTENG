@@ -1,4 +1,4 @@
-import {
+﻿import {
   Controller,
   Get,
   Post,
@@ -10,6 +10,7 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
+import type { AuthenticatedRequest } from "../../common/types";
 import { SiteLogsService } from './site-logs.service';
 import { CreateSiteLogDto, UpdateSiteLogDto, SiteLogQueryDto } from './site-log.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -45,7 +46,7 @@ export class SiteLogsController {
 
   @Post()
   @RequirePermissions('site-logs:create')
-  create(@Body() dto: CreateSiteLogDto, @Request() req: any) {
+  create(@Body() dto: CreateSiteLogDto, @Request() req: AuthenticatedRequest) {
     return this.siteLogsService.create(dto, req.user?.sub || req.user?.id);
   }
 
@@ -57,13 +58,13 @@ export class SiteLogsController {
 
   @Post(':id/submit')
   @RequirePermissions('site-logs:submit')
-  submit(@Param('id') id: string, @Request() req: any) {
+  submit(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
     return this.siteLogsService.submit(id, req.user?.sub || req.user?.id);
   }
 
   @Post(':id/approve')
   @RequirePermissions('site-logs:approve')
-  approve(@Param('id') id: string, @Request() req: any) {
+  approve(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
     return this.siteLogsService.approve(id, req.user?.sub || req.user?.id);
   }
 

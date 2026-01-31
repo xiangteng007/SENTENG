@@ -1,4 +1,4 @@
-import {
+﻿import {
   Controller,
   Get,
   Post,
@@ -10,6 +10,7 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
+import type { AuthenticatedRequest } from "../../common/types";
 import { CustomersService } from './customers.service';
 import {
   CreateCustomerDto,
@@ -29,7 +30,7 @@ export class CustomersController {
 
   @Get()
   @RequirePermissions('customers:read')
-  async findAll(@Query() query: CustomerQueryDto, @Request() req: any) {
+  async findAll(@Query() query: CustomerQueryDto, @Request() req: AuthenticatedRequest) {
     const userId = req.user?.sub || req.user?.id;
     const userRole = req.user?.role;
     return this.customersService.findAll(query, userId, userRole);
@@ -37,7 +38,7 @@ export class CustomersController {
 
   @Get(':id')
   @RequirePermissions('customers:read')
-  async findOne(@Param('id') id: string, @Request() req: any) {
+  async findOne(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
     const userId = req.user?.sub || req.user?.id;
     const userRole = req.user?.role;
     return this.customersService.findOne(id, userId, userRole);
@@ -51,14 +52,14 @@ export class CustomersController {
 
   @Post()
   @RequirePermissions('customers:create')
-  async create(@Body() dto: CreateCustomerDto, @Request() req: any) {
+  async create(@Body() dto: CreateCustomerDto, @Request() req: AuthenticatedRequest) {
     const userId = req.user?.sub || req.user?.id;
     return this.customersService.create(dto, userId);
   }
 
   @Patch(':id')
   @RequirePermissions('customers:update')
-  async update(@Param('id') id: string, @Body() dto: UpdateCustomerDto, @Request() req: any) {
+  async update(@Param('id') id: string, @Body() dto: UpdateCustomerDto, @Request() req: AuthenticatedRequest) {
     const userId = req.user?.sub || req.user?.id;
     const userRole = req.user?.role;
     return this.customersService.update(id, dto, userId, userRole);
@@ -69,7 +70,7 @@ export class CustomersController {
   async updatePipeline(
     @Param('id') id: string,
     @Body('stage') stage: PipelineStage,
-    @Request() req: any
+    @Request() req: AuthenticatedRequest
   ) {
     const userId = req.user?.sub || req.user?.id;
     const userRole = req.user?.role;
@@ -78,7 +79,7 @@ export class CustomersController {
 
   @Delete(':id')
   @RequirePermissions('customers:delete')
-  async remove(@Param('id') id: string, @Request() req: any) {
+  async remove(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
     const userId = req.user?.sub || req.user?.id;
     const userRole = req.user?.role;
     return this.customersService.remove(id, userId, userRole);
@@ -87,7 +88,7 @@ export class CustomersController {
   // Contact endpoints
   @Post(':id/contacts')
   @RequirePermissions('customers:update')
-  async addContact(@Param('id') id: string, @Body() dto: CreateContactDto, @Request() req: any) {
+  async addContact(@Param('id') id: string, @Body() dto: CreateContactDto, @Request() req: AuthenticatedRequest) {
     const userId = req.user?.sub || req.user?.id;
     const userRole = req.user?.role;
     return this.customersService.addContact(id, dto, userId, userRole);

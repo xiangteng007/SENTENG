@@ -1,4 +1,4 @@
-import {
+﻿import {
   Controller,
   Get,
   Post,
@@ -9,6 +9,7 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
+import type { AuthenticatedRequest } from "../../common/types";
 import { ChangeOrdersService } from './change-orders.service';
 import { CreateChangeOrderDto, UpdateChangeOrderDto } from './change-order.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -38,31 +39,31 @@ export class ChangeOrdersController {
 
   @Post()
   @RequirePermissions('change-orders:create')
-  async create(@Body() dto: CreateChangeOrderDto, @Request() req: any) {
+  async create(@Body() dto: CreateChangeOrderDto, @Request() req: AuthenticatedRequest) {
     return this.changeOrdersService.create(dto, req.user?.id);
   }
 
   @Patch(':id')
   @RequirePermissions('change-orders:update')
-  async update(@Param('id') id: string, @Body() dto: UpdateChangeOrderDto, @Request() req: any) {
+  async update(@Param('id') id: string, @Body() dto: UpdateChangeOrderDto, @Request() req: AuthenticatedRequest) {
     return this.changeOrdersService.update(id, dto, req.user?.id);
   }
 
   @Post(':id/submit')
   @RequirePermissions('change-orders:submit')
-  async submit(@Param('id') id: string, @Request() req: any) {
+  async submit(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
     return this.changeOrdersService.submit(id, req.user?.id);
   }
 
   @Post(':id/approve')
   @RequirePermissions('change-orders:approve')
-  async approve(@Param('id') id: string, @Request() req: any) {
+  async approve(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
     return this.changeOrdersService.approve(id, req.user?.id);
   }
 
   @Post(':id/reject')
   @RequirePermissions('change-orders:reject')
-  async reject(@Param('id') id: string, @Body('reason') reason: string, @Request() req: any) {
+  async reject(@Param('id') id: string, @Body('reason') reason: string, @Request() req: AuthenticatedRequest) {
     return this.changeOrdersService.reject(id, reason, req.user?.id);
   }
 }
