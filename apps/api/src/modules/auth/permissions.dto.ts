@@ -94,6 +94,7 @@ export const ROLE_PAGES: Record<number, string[]> = {
     'change-orders',
     'cost-entries',
     'inventory',
+    'procurements',
     'finance',
     'profit',
     'schedule',
@@ -107,7 +108,7 @@ export const ROLE_PAGES: Record<number, string[]> = {
     'unit',
     'cost',
     'calc',
-    'material-calc',
+    'materials-calc',
   ],
   // Level 5: admin - 全部功能
   5: [
@@ -121,6 +122,7 @@ export const ROLE_PAGES: Record<number, string[]> = {
     'change-orders',
     'cost-entries',
     'inventory',
+    'procurements',
     'finance',
     'profit',
     'schedule',
@@ -135,7 +137,7 @@ export const ROLE_PAGES: Record<number, string[]> = {
     'unit',
     'cost',
     'calc',
-    'material-calc',
+    'materials-calc',
   ],
   // Level 6: super_admin - 全部功能
   6: [
@@ -149,6 +151,7 @@ export const ROLE_PAGES: Record<number, string[]> = {
     'change-orders',
     'cost-entries',
     'inventory',
+    'procurements',
     'finance',
     'profit',
     'schedule',
@@ -163,7 +166,7 @@ export const ROLE_PAGES: Record<number, string[]> = {
     'unit',
     'cost',
     'calc',
-    'material-calc',
+    'materials-calc',
   ],
 };
 
