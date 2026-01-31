@@ -2,10 +2,11 @@
 import './instrument';
 
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, Logger } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as Sentry from '@sentry/nestjs';
 import helmet from 'helmet';
+import { DataSource } from 'typeorm';
 
 const cookieParser = require('cookie-parser');
 import { AppModule } from './app.module';
@@ -13,7 +14,41 @@ import { AuditLogInterceptor } from './common/interceptors/audit-log.interceptor
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { CsrfMiddleware } from './common/middleware/csrf.middleware';
 
+async function runMigrations() {
+  const logger = new Logger('Migrations');
+  if (process.env.RUN_MIGRATIONS === 'true') {
+    logger.log('Running database migrations...');
+    try {
+      const dataSource = new DataSource({
+        type: 'postgres',
+        host: process.env.DB_HOST || 'localhost',
+        port: parseInt(process.env.DB_PORT || '5432', 10),
+        username: process.env.DB_USERNAME || 'postgres',
+        password: process.env.DB_PASSWORD || 'postgres',
+        database: process.env.DB_DATABASE || 'erp',
+        migrations: [__dirname + '/migrations/*.js'],
+        logging: true,
+      });
+      await dataSource.initialize();
+      const pendingMigrations = await dataSource.showMigrations();
+      if (pendingMigrations) {
+        await dataSource.runMigrations({ transaction: 'each' });
+        logger.log('Migrations completed successfully');
+      } else {
+        logger.log('No pending migrations');
+      }
+      await dataSource.destroy();
+    } catch (error) {
+      logger.error('Migration failed:', error);
+      // Don't throw - allow app to start even if migrations fail
+    }
+  }
+}
+
 async function bootstrap() {
+  // Run migrations before starting the app
+  await runMigrations();
+  
   const app = await NestFactory.create(AppModule);
 
   // Enable cookie parsing for HttpOnly JWT tokens
