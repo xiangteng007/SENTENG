@@ -6,6 +6,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CommonModule } from './common/common.module';
+import { CoreModule } from './core';
 import { CustomersModule } from './modules/customers/customers.module';
 import { ClientsModule } from './modules/clients/clients.module';
 import { ProjectsModule } from './modules/projects/projects.module';
@@ -47,6 +48,8 @@ import { SchedulesModule } from './modules/schedules/schedules.module';
 // Waste (Phase 2.4)
 import { WasteModule } from './modules/waste/waste.module';
 import { ScheduleModule } from '@nestjs/schedule';
+// CRM Domain (Phase 2 consolidation)
+import { CrmModule } from './modules/crm/crm.module';
 
 @Module({
   imports: [
@@ -61,6 +64,7 @@ import { ScheduleModule } from '@nestjs/schedule';
       },
     ]),
     CommonModule,
+    CoreModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
@@ -116,6 +120,8 @@ import { ScheduleModule } from '@nestjs/schedule';
     SchedulesModule,
     // Waste (Phase 2.4)
     WasteModule,
+    // CRM Domain (Phase 2 consolidation)
+    CrmModule,
   ],
   controllers: [AppController],
   providers: [
