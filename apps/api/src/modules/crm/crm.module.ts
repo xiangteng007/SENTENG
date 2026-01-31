@@ -12,6 +12,9 @@ import { Contact } from './contacts/contact.entity';
 import { ContactsService } from './contacts/contacts.service';
 import { ContactsController } from './contacts/contacts.controller';
 
+// ClientContact for Google Contacts sync (used by ClientContactsController)
+import { ClientContact } from '../integrations/entities/client-contact.entity';
+
 /**
  * CRM 領域模組 - 統一客戶關係管理
  * 
@@ -20,7 +23,7 @@ import { ContactsController } from './contacts/contacts.controller';
  */
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Client, Contact]),
+    TypeOrmModule.forFeature([Client, Contact, ClientContact]),
   ],
   controllers: [
     ClientsController,
