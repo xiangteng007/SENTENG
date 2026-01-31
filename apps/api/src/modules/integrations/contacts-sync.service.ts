@@ -11,7 +11,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { google, people_v1 } from 'googleapis';
 import { ClientContact } from './entities/client-contact.entity';
-import { VendorContact } from './entities/vendor-contact.entity';
+import { VendorContact } from '../supply-chain/vendors/vendor-contact.entity';
 import { GoogleOAuthService } from './google-oauth.service';
 import { SyncResultDto, BulkSyncResultDto } from './dto';
 import { AuditService, AuditContext } from '../platform/audit/audit.service';
