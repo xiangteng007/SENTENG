@@ -8,6 +8,7 @@
     "libs/*"
   ],
   "scripts": {
+    "build": "cd apps/web && npm install && npm run build",
     "build:api": "nx build api",
     "build:web": "nx build web",
     "build:all": "nx run-many --target=build --all",
