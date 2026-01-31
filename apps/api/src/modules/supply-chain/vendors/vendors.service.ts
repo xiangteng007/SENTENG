@@ -5,8 +5,8 @@ import { Vendor, VendorStatus } from './vendor.entity';
 import { VendorContact } from './vendor-contact.entity';
 import { VendorTrade } from './vendor-trade.entity';
 import { CreateVendorDto, UpdateVendorDto, VendorQueryDto, AddTradeDto } from './vendor.dto';
-import { isAdminRole } from '../../common/constants/roles';
-import { IdGeneratorService, checkResourceOwnership } from '../../core';
+import { isAdminRole } from '../../../common/constants/roles';
+import { IdGeneratorService, checkResourceOwnership } from '../../../core';
 
 @Injectable()
 export class VendorsService {

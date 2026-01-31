@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like, In } from 'typeorm';
 import { Customer, PipelineStage } from './customer.entity';
@@ -10,6 +10,7 @@ import {
   CreateContactDto,
 } from './customer.dto';
 import { isAdminRole } from '../../common/constants/roles';
+import { IdGeneratorService, checkResourceOwnership } from '../../core';
 
 @Injectable()
 export class CustomersService {
@@ -17,7 +18,8 @@ export class CustomersService {
     @InjectRepository(Customer)
     private customerRepo: Repository<Customer>,
     @InjectRepository(CustomerContact)
-    private contactRepo: Repository<CustomerContact>
+    private contactRepo: Repository<CustomerContact>,
+    private readonly idGenerator: IdGeneratorService,
   ) {}
 
   async findAll(
@@ -58,7 +60,7 @@ export class CustomersService {
       relations: ['contacts'],
     });
     if (!customer) throw new NotFoundException(`Customer ${id} not found`);
-    this.checkOwnership(customer, userId, userRole);
+    checkResourceOwnership(customer, userId, userRole, 'customer');
     return customer;
   }
 
@@ -69,7 +71,7 @@ export class CustomersService {
   }
 
   async create(dto: CreateCustomerDto, userId?: string): Promise<Customer> {
-    const id = await this.generateId();
+    const id = await this.idGenerator.generateForTable('customers', 'CLT');
     const customer = this.customerRepo.create({
       ...dto,
       id,
@@ -125,29 +127,7 @@ export class CustomersService {
     await this.contactRepo.delete(contactId);
   }
 
-  private checkOwnership(customer: Customer, userId?: string, userRole?: string): void {
-    if (!userId || !userRole) return;
-    if (isAdminRole(userRole)) return;
-    if (customer.createdBy !== userId) {
-      throw new ForbiddenException('You do not have access to this customer');
-    }
-  }
-
-  private async generateId(): Promise<string> {
-    const date = new Date();
-    const prefix = `CLT-${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}-`;
-
-    const last = await this.customerRepo
-      .createQueryBuilder('c')
-      .where('c.id LIKE :prefix', { prefix: `${prefix}%` })
-      .orderBy('c.id', 'DESC')
-      .getOne();
-
-    let seq = 1;
-    if (last) {
-      const lastSeq = parseInt(last.id.split('-')[2], 10);
-      seq = lastSeq + 1;
-    }
-    return `${prefix}${String(seq).padStart(4, '0')}`;
-  }
+  // checkOwnership and generateId moved to Core Layer
+  // Use: checkResourceOwnership(entity, userId, userRole, 'entityName')
+  // Use: this.idGenerator.generateForTable('tableName', 'PREFIX')
 }

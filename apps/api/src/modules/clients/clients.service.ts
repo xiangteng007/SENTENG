@@ -1,15 +1,17 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like } from 'typeorm';
 import { Client } from './client.entity';
 import { CreateClientDto, UpdateClientDto } from './client.dto';
 import { isAdminRole } from '../../common/constants/roles';
+import { IdGeneratorService, checkResourceOwnership } from '../../core';
 
 @Injectable()
 export class ClientsService {
   constructor(
     @InjectRepository(Client)
-    private clientsRepository: Repository<Client>
+    private clientsRepository: Repository<Client>,
+    private readonly idGenerator: IdGeneratorService,
   ) {}
 
   async findAll(
@@ -50,12 +52,12 @@ export class ClientsService {
     if (!client) {
       throw new NotFoundException(`Client ${id} not found`);
     }
-    this.checkOwnership(client, userId, userRole);
+    checkResourceOwnership(client, userId, userRole, 'client');
     return client;
   }
 
   async create(dto: CreateClientDto, userId?: string): Promise<Client> {
-    const id = await this.generateId();
+    const id = await this.idGenerator.generateForTable('clients', 'CLT');
     const client = this.clientsRepository.create({
       ...dto,
       id,
@@ -80,35 +82,7 @@ export class ClientsService {
     await this.clientsRepository.remove(client);
   }
 
-  /**
-   * IDOR Protection: Verify user has access to the resource
-   */
-  private checkOwnership(client: Client, userId?: string, userRole?: string): void {
-    if (!userId || !userRole) return;
-    if (isAdminRole(userRole)) return;
-    if (client.createdBy !== userId) {
-      throw new ForbiddenException('You do not have access to this client');
-    }
-  }
-
-  private async generateId(): Promise<string> {
-    const date = new Date();
-    const prefix = `CLT-${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}-`;
-
-    const lastClient = await this.clientsRepository
-      .createQueryBuilder('client')
-      .where('client.id LIKE :prefix', { prefix: `${prefix}%` })
-      .orderBy('client.id', 'DESC')
-      .getOne();
-
-    let seq = 1;
-    if (lastClient) {
-      const lastSeq = parseInt(lastClient.id.split('-')[2], 10);
-      seq = lastSeq + 1;
-    }
-
-    return `${prefix}${String(seq).padStart(4, '0')}`;
-  }
+  // checkOwnership and generateId moved to Core Layer
 
   /**
    * Export clients to Excel/CSV

@@ -14,6 +14,7 @@ import {
   CreateTaskDto,
 } from './project.dto';
 import { isAdminRole } from '../../common/constants/roles';
+import { IdGeneratorService } from '../../core';
 
 @Injectable()
 export class ProjectsService {
@@ -21,7 +22,8 @@ export class ProjectsService {
     @InjectRepository(Project) private projectRepo: Repository<Project>,
     @InjectRepository(ProjectPhase) private phaseRepo: Repository<ProjectPhase>,
     @InjectRepository(ProjectVendor) private pvRepo: Repository<ProjectVendor>,
-    @InjectRepository(ProjectTask) private taskRepo: Repository<ProjectTask>
+    @InjectRepository(ProjectTask) private taskRepo: Repository<ProjectTask>,
+    private readonly idGenerator: IdGeneratorService,
   ) {}
 
   async findAll(query: ProjectQueryDto, userId?: string, userRole?: string) {
@@ -99,7 +101,7 @@ export class ProjectsService {
   }
 
   async create(dto: CreateProjectDto, userId?: string) {
-    const id = await this.generateId();
+    const id = await this.idGenerator.generateForTable('projects', 'PRJ');
     const project = this.projectRepo.create({
       ...dto,
       id,
@@ -165,16 +167,6 @@ export class ProjectsService {
     await this.taskRepo.delete(taskId);
   }
 
-  private async generateId() {
-    const date = new Date();
-    const prefix = `PRJ-${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}-`;
-    const last = await this.projectRepo
-      .createQueryBuilder('p')
-      .where('p.id LIKE :prefix', { prefix: `${prefix}%` })
-      .orderBy('p.id', 'DESC')
-      .getOne();
-    let seq = 1;
-    if (last) seq = parseInt(last.id.split('-')[2], 10) + 1;
-    return `${prefix}${String(seq).padStart(4, '0')}`;
-  }
+  // generateId moved to Core Layer
+  // Use: this.idGenerator.generateForTable('projects', 'PRJ')
 }

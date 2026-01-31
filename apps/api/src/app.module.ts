@@ -18,7 +18,7 @@ import { PaymentsModule } from './modules/payments/payments.module';
 import { ChangeOrdersModule } from './modules/change-orders/change-orders.module';
 import { CostEntriesModule } from './modules/cost-entries/cost-entries.module';
 import { InvoicesModule } from './modules/invoices/invoices.module';
-import { VendorsModule } from './modules/vendors/vendors.module';
+import { SupplyChainModule } from './modules/supply-chain';
 import { InventoryModule } from './modules/inventory/inventory.module';
 import { FinanceModule } from './modules/finance/finance.module';
 import { ProfitAnalysisModule } from './modules/profit-analysis/profit-analysis.module';
@@ -31,7 +31,6 @@ import { ConstructionModule } from './modules/construction/construction.module';
 import { EventsModule } from './modules/events/events.module';
 import { IntegrationsModule } from './modules/integrations/integrations.module';
 import { RealtimeModule } from './modules/realtime/realtime.module';
-import { ProcurementsModule } from './modules/procurements/procurements.module';
 import { SiteLogsModule } from './modules/site-logs/site-logs.module';
 // CMM Domain (Phase 2)
 import { CmmModule } from './modules/cmm/cmm.module';
@@ -90,7 +89,7 @@ import { CrmModule } from './modules/crm/crm.module';
     ChangeOrdersModule,
     CostEntriesModule,
     InvoicesModule,
-    VendorsModule,
+    SupplyChainModule, // Phase 2: Consolidated vendors + procurements
     InventoryModule,
     FinanceModule,
     ProfitAnalysisModule,
@@ -103,7 +102,6 @@ import { CrmModule } from './modules/crm/crm.module';
     EventsModule,
     IntegrationsModule,
     RealtimeModule,
-    ProcurementsModule,
     SiteLogsModule,
     // CMM Domain
     CmmModule,
