@@ -140,15 +140,17 @@ const SidebarItem = ({ id, icon: Icon, label, active, onClick, compact = false }
 const SidebarGroup = ({ group, items, activeTab, onItemClick, isExpanded, onToggleExpand }) => {
     const GroupIcon = group.icon;
     const hasActiveItem = items.some(item => item.id === activeTab);
+    const [hasAutoExpanded, setHasAutoExpanded] = useState(false);
 
-    // 如果群組內有活躍項目，自動展開
+    // 只在首次發現活躍項目時自動展開（不會阻止手動收回）
     useEffect(() => {
-        if (hasActiveItem && !isExpanded) {
+        if (hasActiveItem && !hasAutoExpanded && !isExpanded) {
             onToggleExpand(group.id, true);
+            setHasAutoExpanded(true);
         }
-    }, [hasActiveItem, isExpanded, group.id, onToggleExpand]);
+    }, [hasActiveItem]);
 
-    // 如果群組只有一個項目（如儀表板），直接顯示為可點擊項目
+    // 如果群組只有一個項目，直接顯示為可點擊項目
     if (items.length === 1) {
         const item = items[0];
         return (
