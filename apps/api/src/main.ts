@@ -15,44 +15,47 @@ import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { CsrfMiddleware } from './common/middleware/csrf.middleware';
 
 async function runMigrations() {
-  if (process.env.RUN_MIGRATIONS !== 'true') {
-    return; // Skip migrations if not explicitly enabled
-  }
-  
   const logger = new Logger('Migrations');
-  logger.log('Running database migrations...');
-  try {
-    const timeout = parseInt(process.env.MIGRATION_TIMEOUT || '30000', 10);
-    const timeoutPromise = new Promise<never>((_, reject) => {
-      setTimeout(() => reject(new Error(`Migration timeout after ${timeout}ms`)), timeout);
-    });
-
-    const migrationPromise = (async () => {
-      const dataSource = new DataSource({
-        type: 'postgres',
-        host: process.env.DB_HOST || 'localhost',
-        port: parseInt(process.env.DB_PORT || '5432', 10),
-        username: process.env.DB_USERNAME || 'postgres',
-        password: process.env.DB_PASSWORD || 'postgres',
-        database: process.env.DB_DATABASE || 'erp',
-        migrations: [__dirname + '/migrations/*.js'],
-        logging: true,
-        connectTimeoutMS: 10000,
+  if (process.env.RUN_MIGRATIONS === 'true') {
+    logger.log('Running database migrations...');
+    try {
+      // Create a promise that rejects after timeout
+      const timeout = parseInt(process.env.MIGRATION_TIMEOUT || '30000', 10);
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error(`Migration timeout after ${timeout}ms`)), timeout);
       });
-      await dataSource.initialize();
-      const pendingMigrations = await dataSource.showMigrations();
-      if (pendingMigrations) {
-        await dataSource.runMigrations({ transaction: 'each' });
-        logger.log('Migrations completed successfully');
-      } else {
-        logger.log('No pending migrations');
-      }
-      await dataSource.destroy();
-    })();
 
-    await Promise.race([migrationPromise, timeoutPromise]);
-  } catch (error) {
-    logger.error('Migration failed (non-blocking):', error instanceof Error ? error.message : error);
+      const migrationPromise = (async () => {
+        const dataSource = new DataSource({
+          type: 'postgres',
+          host: process.env.DB_HOST || 'localhost',
+          port: parseInt(process.env.DB_PORT || '5432', 10),
+          username: process.env.DB_USERNAME || 'postgres',
+          password: process.env.DB_PASSWORD || 'postgres',
+          database: process.env.DB_DATABASE || 'erp',
+          migrations: [__dirname + '/migrations/*.js'],
+          logging: true,
+          connectTimeoutMS: 10000,
+        });
+        await dataSource.initialize();
+        const pendingMigrations = await dataSource.showMigrations();
+        if (pendingMigrations) {
+          await dataSource.runMigrations({ transaction: 'each' });
+          logger.log('Migrations completed successfully');
+        } else {
+          logger.log('No pending migrations');
+        }
+        await dataSource.destroy();
+      })();
+
+      await Promise.race([migrationPromise, timeoutPromise]);
+    } catch (error) {
+      logger.error('Migration failed (non-blocking):', error instanceof Error ? error.message : error);
+      // Don't throw - allow app to start even if migrations fail
+    }
+  } else {
+    const logger = new Logger('Migrations');
+    logger.log('RUN_MIGRATIONS is not set to true, skipping migrations');
   }
 }
 
