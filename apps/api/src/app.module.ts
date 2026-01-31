@@ -8,7 +8,7 @@ import { AppService } from './app.service';
 import { CommonModule } from './common/common.module';
 import { CoreModule } from './core';
 import { CustomersModule } from './modules/customers/customers.module';
-import { ClientsModule } from './modules/clients/clients.module';
+// ClientsModule removed - deprecated, merged into CrmModule
 import { ProjectsModule } from './modules/projects/projects.module';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
@@ -94,7 +94,6 @@ import { CrmModule } from './modules/crm/crm.module';
     AuthModule,
     UsersModule,
     CustomersModule,
-    ClientsModule,
     ProjectsModule,
     QuotationsModule,
     ContractsModule,

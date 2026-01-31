@@ -10,7 +10,7 @@ import {
   JoinColumn,
   Index,
 } from 'typeorm';
-import { Client } from '../clients/client.entity';
+import { Client } from '../crm/clients/client.entity';
 import { ProjectPhase } from './project-phase.entity';
 import { ProjectVendor } from './project-vendor.entity';
 import { ProjectTask } from './project-task.entity';

@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { Project } from '../projects/project.entity';
 import { Contract } from '../contracts/contract.entity';
-import { Client } from '../clients/client.entity';
+import { Client } from '../crm/clients/client.entity';
 import { Vendor } from '../supply-chain/vendors/vendor.entity';
 
 /**

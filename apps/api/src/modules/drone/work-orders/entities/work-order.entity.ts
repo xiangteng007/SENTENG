@@ -10,7 +10,7 @@ import {
   Index,
 } from 'typeorm';
 import { Project } from '../../../projects/project.entity';
-import { Client } from '../../../clients/client.entity';
+import { Client } from '../../../crm/clients/client.entity';
 import { BusinessUnit } from '../../../platform/tenants/entities/business-unit.entity';
 import { JobSite } from '../../../platform/sites/entities/job-site.entity';
 import { ServiceCatalog } from '../../catalog/entities/service-catalog.entity';

@@ -14,7 +14,7 @@ import {
   JoinColumn,
   Index,
 } from 'typeorm';
-import { Client } from '../../clients/client.entity';
+import { Client } from '../../crm/clients/client.entity';
 
 @Entity('client_contacts')
 export class ClientContact {

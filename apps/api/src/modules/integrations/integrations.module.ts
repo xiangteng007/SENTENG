@@ -20,7 +20,7 @@ import { AccountingExportService } from './accounting-export.service';
 import { BankingIntegrationService } from './banking-integration.service';
 import { GoogleOAuthAccount, ClientContact, VendorContact } from './entities';
 import { Event } from '../events/event.entity';
-import { Client } from '../clients/client.entity';
+import { Client } from '../crm/clients/client.entity';
 import { Vendor } from '../supply-chain/vendors/vendor.entity';
 import { AuditModule } from '../platform/audit/audit.module';
 
