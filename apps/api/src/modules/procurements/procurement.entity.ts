@@ -10,7 +10,7 @@ import {
   Index,
 } from 'typeorm';
 import { Project } from '../projects/project.entity';
-import { Vendor } from '../vendors/vendor.entity';
+import { Vendor } from '../supply-chain/vendors/vendor.entity';
 
 export enum ProcurementStatus {
   DRAFT = 'DRAFT',

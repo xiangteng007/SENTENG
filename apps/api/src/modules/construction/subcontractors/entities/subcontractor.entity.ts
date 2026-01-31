@@ -7,7 +7,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { Vendor } from '../../../vendors/vendor.entity';
+import { Vendor } from '../../../supply-chain/vendors/vendor.entity';
 import { Project } from '../../../projects/project.entity';
 
 /**

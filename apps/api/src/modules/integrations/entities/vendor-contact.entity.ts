@@ -14,7 +14,7 @@ import {
   JoinColumn,
   Index,
 } from 'typeorm';
-import { Vendor } from '../../vendors/vendor.entity';
+import { Vendor } from '../../supply-chain/vendors/vendor.entity';
 
 @Entity('vendor_contacts')
 export class VendorContact {

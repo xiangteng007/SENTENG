@@ -9,7 +9,7 @@ import {
   Index,
 } from 'typeorm';
 import { Project } from './project.entity';
-import { Vendor } from '../vendors/vendor.entity';
+import { Vendor } from '../supply-chain/vendors/vendor.entity';
 
 export enum VendorRole {
   SUBCONTRACTOR = 'SUBCONTRACTOR',

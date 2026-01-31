@@ -11,7 +11,7 @@ import {
 import { Project } from '../projects/project.entity';
 import { Contract } from '../contracts/contract.entity';
 import { Client } from '../clients/client.entity';
-import { Vendor } from '../vendors/vendor.entity';
+import { Vendor } from '../supply-chain/vendors/vendor.entity';
 
 /**
  * 台灣發票管理實體
