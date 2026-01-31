@@ -28,6 +28,7 @@ import Contracts from './pages/Contracts';
 import ProfitAnalysis from './pages/ProfitAnalysis';
 import CostEntries from './pages/CostEntries';
 import IntegrationsPage from './pages/IntegrationsPage';
+import Procurements from './pages/Procurements';
 
 // Loading Screen Component
 const LoadingScreen = () => (
@@ -229,6 +230,16 @@ const AppContent = () => {
         <Route path="/inventory" element={
           <ProtectedRoute pageId="inventory">
             <Inventory data={data.inventory} loading={loading} addToast={addToast} onUpdateInventory={(d) => handleUpdate('inventory', d)} />
+          </ProtectedRoute>
+        } />
+        <Route path="/procurements" element={
+          <ProtectedRoute pageId="procurements">
+            <Procurements addToast={addToast} />
+          </ProtectedRoute>
+        } />
+        <Route path="/materials-calc" element={
+          <ProtectedRoute pageId="materials-calc">
+            <MaterialCalculator addToast={addToast} vendors={data.vendors} />
           </ProtectedRoute>
         } />
         <Route path="/materials" element={
