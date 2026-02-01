@@ -16,13 +16,23 @@ import {
   HttpCode,
   HttpStatus,
 } from "@nestjs/common";
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+} from "@nestjs/swagger";
 import type { Response } from "express";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
 import { PermissionGuard } from "../../common/guards/permission.guard";
 import { RequirePermissions } from "../../common/decorators/permissions.decorator";
 import { Public } from "../../common/decorators/public.decorator";
 import type { AuthenticatedRequest } from "../../common/types";
-import { GoogleOAuthService, CalendarSyncService, ContactsSyncService } from "./google";
+import {
+  GoogleOAuthService,
+  CalendarSyncService,
+  ContactsSyncService,
+} from "./google";
 import {
   GoogleIntegrationStatusDto,
   GoogleConnectResponseDto,
@@ -41,6 +51,8 @@ interface AuditContext {
   userAgent?: string;
 }
 
+@ApiTags("Integrations - Google")
+@ApiBearerAuth()
 @Controller("integrations/google")
 @UseGuards(JwtAuthGuard, PermissionGuard)
 export class IntegrationsController {

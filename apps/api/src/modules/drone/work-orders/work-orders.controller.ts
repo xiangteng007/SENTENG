@@ -9,6 +9,12 @@
   UseGuards,
   Request,
 } from "@nestjs/common";
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+} from "@nestjs/swagger";
 import type { AuthenticatedRequest } from "../../../common/types";
 import { WorkOrdersService } from "./work-orders.service";
 import {
@@ -21,6 +27,8 @@ import { JwtAuthGuard } from "../../../common/guards/jwt-auth.guard";
 import { PermissionGuard } from "../../../common/guards/permission.guard";
 import { RequirePermissions } from "../../../common/decorators/permissions.decorator";
 
+@ApiTags("Drone - Work Orders")
+@ApiBearerAuth()
 @Controller("drone/work-orders")
 @UseGuards(JwtAuthGuard, PermissionGuard)
 export class WorkOrdersController {

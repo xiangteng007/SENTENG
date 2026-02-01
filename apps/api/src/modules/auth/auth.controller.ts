@@ -10,6 +10,7 @@ import {
   UseGuards,
   InternalServerErrorException,
 } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 import { InjectDataSource } from "@nestjs/typeorm";
 import { DataSource } from "typeorm";
 import type { Response, Request } from "express";
@@ -22,6 +23,7 @@ import {
   ROLE_ACTIONS,
 } from "./permissions.dto";
 
+@ApiTags("Authentication")
 @Controller("auth")
 export class AuthController {
   constructor(

@@ -10,6 +10,7 @@
   UseGuards,
   Request,
 } from "@nestjs/common";
+import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
 import type { AuthenticatedRequest } from "../../common/types";
 import { ProjectsService } from "./projects.service";
 import {
@@ -25,6 +26,8 @@ import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
 import { PermissionGuard } from "../../common/guards/permission.guard";
 import { RequirePermissions } from "../../common/decorators/permissions.decorator";
 
+@ApiTags("Projects")
+@ApiBearerAuth()
 @Controller("projects")
 @UseGuards(JwtAuthGuard, PermissionGuard)
 export class ProjectsController {

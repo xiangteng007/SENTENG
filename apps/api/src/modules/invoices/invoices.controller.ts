@@ -11,6 +11,7 @@ import {
   Request,
   Res,
 } from "@nestjs/common";
+import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
 import type { Response } from "express";
 import type { AuthenticatedRequest } from "../../common/types";
 import { InvoicesService } from "./invoices.service";
@@ -28,6 +29,8 @@ import {
   ExportFormat,
 } from "./invoice-export.dto";
 
+@ApiTags("Invoices")
+@ApiBearerAuth()
 @Controller("invoices")
 @UseGuards(JwtAuthGuard)
 export class InvoicesController {

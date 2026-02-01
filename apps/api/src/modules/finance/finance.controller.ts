@@ -10,6 +10,12 @@ import {
   HttpStatus,
   UseGuards,
 } from "@nestjs/common";
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+} from "@nestjs/swagger";
 import { FinanceService } from "./finance.service";
 import {
   CreateAccountDto,
@@ -23,6 +29,8 @@ import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
 import { PermissionGuard } from "../../common/guards/permission.guard";
 import { RequirePermissions } from "../../common/decorators/permissions.decorator";
 
+@ApiTags("Finance")
+@ApiBearerAuth()
 @Controller("finance")
 @UseGuards(JwtAuthGuard, PermissionGuard)
 export class FinanceController {
