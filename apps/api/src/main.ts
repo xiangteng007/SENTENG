@@ -2,14 +2,8 @@
 import "./instrument";
 
 // Early environment logging - MUST be before any other imports that might use env vars
-console.log("[EARLY BOOT] Environment at startup:", {
-  DB_HOST: process.env.DB_HOST,
-  DB_PORT: process.env.DB_PORT,
-  DB_DATABASE: process.env.DB_DATABASE,
-  NODE_ENV: process.env.NODE_ENV,
-  PORT: process.env.PORT,
-  timestamp: new Date().toISOString(),
-});
+// Note: Using console.log here as Logger isn't available yet at module load time
+console.log("[BOOT] Starting with DB_HOST:", process.env.DB_HOST);
 
 import { NestFactory } from "@nestjs/core";
 import { ValidationPipe, Logger } from "@nestjs/common";
@@ -200,11 +194,10 @@ async function bootstrap() {
   });
 
   const port = process.env.PORT || 3000;
+  const logger = new Logger("Bootstrap");
   await app.listen(port, "0.0.0.0");
-  console.log(`🚀 API Server running on http://localhost:${port}/api/v1`);
-  console.log(`📚 Swagger Docs: http://localhost:${port}/api/docs`);
-  console.log(
-    `🔐 Security features enabled: HttpOnly Cookies, Audit Logging, Rate Limiting, Helmet`,
-  );
+  logger.log(`🚀 API Server running on http://localhost:${port}/api/v1`);
+  logger.log(`📚 Swagger Docs: http://localhost:${port}/api/docs`);
+  logger.log(`🔐 Security: HttpOnly Cookies, Audit Logging, Rate Limiting`);
 }
 bootstrap();

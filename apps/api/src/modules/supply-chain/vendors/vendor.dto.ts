@@ -11,6 +11,24 @@ import { Transform } from "class-transformer";
 import { VendorType, VendorStatus, PaymentTerms } from "./vendor.entity";
 import { TradeCode, CapabilityLevel } from "./vendor-trade.entity";
 
+/** Vendor certification record */
+export interface VendorCertification {
+  name: string;
+  issuer?: string;
+  validFrom?: string;
+  validTo?: string;
+  fileUrl?: string;
+}
+
+/** Vendor review/evaluation record */
+export interface VendorReview {
+  projectId?: string;
+  rating: number;
+  comment?: string;
+  reviewedBy?: string;
+  reviewedAt?: string;
+}
+
 export class CreateVendorDto {
   @IsString()
   @MaxLength(100)
@@ -195,11 +213,11 @@ export class UpdateVendorDto {
 
   @IsOptional()
   @IsArray()
-  certifications?: any[];
+  certifications?: VendorCertification[];
 
   @IsOptional()
   @IsArray()
-  reviews?: any[];
+  reviews?: VendorReview[];
 
   @IsOptional()
   @IsString()

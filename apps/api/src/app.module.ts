@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module, Logger } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
@@ -50,6 +50,8 @@ import { ScheduleModule } from "@nestjs/schedule";
 // CRM Domain (Phase 2 consolidation)
 import { CrmModule } from "./modules/crm/crm.module";
 
+const logger = new Logger("TypeORM");
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -69,15 +71,9 @@ import { CrmModule } from "./modules/crm/crm.module";
         const dbHost = process.env.DB_HOST || "localhost";
         const isUnixSocket = dbHost.startsWith("/cloudsql/");
 
-        console.log("[TypeORM] Bootstrap - DB_HOST:", dbHost);
-        console.log("[TypeORM] Bootstrap - isUnixSocket:", isUnixSocket);
-        console.log("[TypeORM] Bootstrap - All DB env vars:", {
-          DB_HOST: process.env.DB_HOST,
-          DB_PORT: process.env.DB_PORT,
-          DB_USERNAME: process.env.DB_USERNAME,
-          DB_DATABASE: process.env.DB_DATABASE,
-          NODE_ENV: process.env.NODE_ENV,
-        });
+        logger.log(
+          `DB connection: ${isUnixSocket ? "Unix Socket" : "TCP"} to ${dbHost}`,
+        );
 
         return {
           type: "postgres" as const,

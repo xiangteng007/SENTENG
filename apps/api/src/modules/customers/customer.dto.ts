@@ -10,6 +10,21 @@ import {
 import { Transform } from "class-transformer";
 import { PipelineStage, CustomerType } from "./customer.entity";
 
+/** Custom field for flexible customer data */
+export interface CustomField {
+  key: string;
+  value: string | number | boolean;
+  type?: "text" | "number" | "boolean" | "date";
+}
+
+/** Contact log entry */
+export interface ContactLogEntry {
+  date: string;
+  type: "call" | "email" | "meeting" | "visit" | "other";
+  summary: string;
+  contactedBy?: string;
+}
+
 export class CreateCustomerDto {
   @IsString()
   @MaxLength(100)
@@ -83,7 +98,7 @@ export class CreateCustomerDto {
 
   @IsOptional()
   @IsArray()
-  customFields?: Record<string, any>[];
+  customFields?: CustomField[];
 
   @IsOptional()
   @IsString()
@@ -172,7 +187,7 @@ export class UpdateCustomerDto {
 
   @IsOptional()
   @IsArray()
-  contactLogs?: any[];
+  contactLogs?: ContactLogEntry[];
 
   @IsOptional()
   @IsString()
