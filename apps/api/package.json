@@ -28,7 +28,7 @@
     "smoke": "npx ts-node scripts/smoke-test.ts"
   },
   "dependencies": {
-    "@google-cloud/storage": "^7.12.0",
+    "@google-cloud/storage": "^7.18.0",
     "@google/generative-ai": "^0.24.1",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^1.1.5",
@@ -110,5 +110,8 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "overrides": {
+    "fast-xml-parser": "5.3.4"
   }
 }
