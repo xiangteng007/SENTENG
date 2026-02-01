@@ -12,6 +12,7 @@
   Request,
   Res,
 } from "@nestjs/common";
+import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
 import type { AuthenticatedRequest } from "../../../common/types";
 import type { Response } from "express";
 import { ClientsService } from "./clients.service";
@@ -28,6 +29,8 @@ import {
  * @deprecated This API is deprecated. Please migrate to /api/v1/customers
  * Sunset date: 2026-06-01
  */
+@ApiTags("CRM - Clients (Deprecated)")
+@ApiBearerAuth()
 @Controller("clients")
 @UseGuards(JwtAuthGuard, PermissionGuard)
 @UseInterceptors(DeprecationInterceptor)

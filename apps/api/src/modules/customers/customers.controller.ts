@@ -10,6 +10,7 @@
   UseGuards,
   Request,
 } from "@nestjs/common";
+import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
 import type { AuthenticatedRequest } from "../../common/types";
 import { CustomersService } from "./customers.service";
 import {
@@ -23,6 +24,8 @@ import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
 import { PermissionGuard } from "../../common/guards/permission.guard";
 import { RequirePermissions } from "../../common/decorators/permissions.decorator";
 
+@ApiTags("Customers")
+@ApiBearerAuth()
 @Controller("customers")
 @UseGuards(JwtAuthGuard, PermissionGuard)
 export class CustomersController {

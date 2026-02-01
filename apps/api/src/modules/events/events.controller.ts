@@ -10,6 +10,7 @@
   UseGuards,
   Request,
 } from "@nestjs/common";
+import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
 import type { AuthenticatedRequest } from "../../common/types";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
 import { PermissionGuard } from "../../common/guards/permission.guard";
@@ -17,6 +18,8 @@ import { RequirePermissions } from "../../common/decorators/permissions.decorato
 import { EventsService } from "./events.service";
 import { CreateEventDto, UpdateEventDto, QueryEventsDto } from "./event.dto";
 
+@ApiTags("Events")
+@ApiBearerAuth()
 @Controller("events")
 @UseGuards(JwtAuthGuard, PermissionGuard)
 @RequirePermissions("events:read")

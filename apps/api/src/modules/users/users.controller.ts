@@ -9,12 +9,15 @@ import {
   Query,
   UseGuards,
 } from "@nestjs/common";
+import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
 import { UsersService } from "./users.service";
 import { CreateUserDto, UpdateUserDto, ListUsersQueryDto } from "./user.dto";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
 import { PermissionGuard } from "../../common/guards/permission.guard";
 import { RequirePermissions } from "../../common/decorators/permissions.decorator";
 
+@ApiTags("Users")
+@ApiBearerAuth()
 @Controller("users")
 @UseGuards(JwtAuthGuard, PermissionGuard)
 export class UsersController {
