@@ -68,21 +68,26 @@ import { CrmModule } from './modules/crm/crm.module';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
         const isProduction = process.env.NODE_ENV === 'production';
+        const dbHost = configService.get('DB_HOST') || 'localhost';
+        const isUnixSocket = dbHost.startsWith('/cloudsql/');
+        
         return {
           type: 'postgres',
-          host: configService.get('DB_HOST'),
-          port: +configService.get('DB_PORT'),
+          // For Unix socket (Cloud SQL), host is the socket directory
+          host: dbHost,
+          // Port is ignored for Unix socket connections
+          port: isUnixSocket ? undefined : +configService.get('DB_PORT'),
           username: configService.get('DB_USERNAME'),
           password: configService.get('DB_PASSWORD'),
           database: configService.get('DB_DATABASE'),
           autoLoadEntities: true,
           synchronize: false, // Important: use migrations in production
-          // SSL required for Cloud Run -> Cloud SQL connection
-          ssl: isProduction ? { rejectUnauthorized: false } : false,
+          // Unix socket doesn't need SSL; TCP connections use SSL in production
+          ssl: isUnixSocket ? false : (isProduction ? { rejectUnauthorized: false } : false),
           // Connection timeout settings for Cloud Run
           extra: isProduction
             ? {
-                connectionTimeoutMillis: 10000,
+                connectionTimeoutMillis: 15000, // Increased for Cloud SQL startup
                 idleTimeoutMillis: 30000,
                 max: 10,
               }
