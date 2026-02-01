@@ -1,8 +1,8 @@
 // Sentry must be imported first before any other modules
-import './instrument';
+import "./instrument";
 
 // Early environment logging - MUST be before any other imports that might use env vars
-console.log('[EARLY BOOT] Environment at startup:', {
+console.log("[EARLY BOOT] Environment at startup:", {
   DB_HOST: process.env.DB_HOST,
   DB_PORT: process.env.DB_PORT,
   DB_DATABASE: process.env.DB_DATABASE,
@@ -11,37 +11,39 @@ console.log('[EARLY BOOT] Environment at startup:', {
   timestamp: new Date().toISOString(),
 });
 
-import { NestFactory } from '@nestjs/core';
-import { ValidationPipe, Logger } from '@nestjs/common';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import * as Sentry from '@sentry/nestjs';
-import helmet from 'helmet';
-import { DataSource } from 'typeorm';
+import { NestFactory } from "@nestjs/core";
+import { ValidationPipe, Logger } from "@nestjs/common";
+import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
+import * as Sentry from "@sentry/nestjs";
+import helmet from "helmet";
+import { DataSource } from "typeorm";
 
-const cookieParser = require('cookie-parser');
-import { AppModule } from './app.module';
-import { AuditLogInterceptor } from './common/interceptors/audit-log.interceptor';
-import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
-import { CsrfMiddleware } from './common/middleware/csrf.middleware';
+const cookieParser = require("cookie-parser");
+import { AppModule } from "./app.module";
+import { AuditLogInterceptor } from "./common/interceptors/audit-log.interceptor";
+import { AllExceptionsFilter } from "./common/filters/all-exceptions.filter";
+import { CsrfMiddleware } from "./common/middleware/csrf.middleware";
 
 async function runMigrations() {
-  const logger = new Logger('Migrations');
-  if (process.env.RUN_MIGRATIONS === 'true') {
-    logger.log('Running database migrations...');
-    const dbHost = process.env.DB_HOST || 'localhost';
-    const isUnixSocket = dbHost.startsWith('/cloudsql/');
+  const logger = new Logger("Migrations");
+  if (process.env.RUN_MIGRATIONS === "true") {
+    logger.log("Running database migrations...");
+    const dbHost = process.env.DB_HOST || "localhost";
+    const isUnixSocket = dbHost.startsWith("/cloudsql/");
     logger.log(`DB_HOST: ${dbHost}, isUnixSocket: ${isUnixSocket}`);
-    
+
     try {
       const dataSource = new DataSource({
-        type: 'postgres',
+        type: "postgres",
         host: dbHost,
         // Port must be undefined for Unix socket connections
-        port: isUnixSocket ? undefined : parseInt(process.env.DB_PORT || '5432', 10),
-        username: process.env.DB_USERNAME || 'postgres',
-        password: process.env.DB_PASSWORD || 'postgres',
-        database: process.env.DB_DATABASE || 'erp',
-        migrations: [__dirname + '/migrations/*.js'],
+        port: isUnixSocket
+          ? undefined
+          : parseInt(process.env.DB_PORT || "5432", 10),
+        username: process.env.DB_USERNAME || "postgres",
+        password: process.env.DB_PASSWORD || "postgres",
+        database: process.env.DB_DATABASE || "erp",
+        migrations: [__dirname + "/migrations/*.js"],
         logging: true,
         // Unix socket doesn't need SSL
         ssl: isUnixSocket ? false : undefined,
@@ -49,14 +51,14 @@ async function runMigrations() {
       await dataSource.initialize();
       const pendingMigrations = await dataSource.showMigrations();
       if (pendingMigrations) {
-        await dataSource.runMigrations({ transaction: 'each' });
-        logger.log('Migrations completed successfully');
+        await dataSource.runMigrations({ transaction: "each" });
+        logger.log("Migrations completed successfully");
       } else {
-        logger.log('No pending migrations');
+        logger.log("No pending migrations");
       }
       await dataSource.destroy();
     } catch (error) {
-      logger.error('Migration failed:', error);
+      logger.error("Migration failed:", error);
       // Don't throw - allow app to start even if migrations fail
     }
   }
@@ -65,7 +67,7 @@ async function runMigrations() {
 async function bootstrap() {
   // Run migrations before starting the app
   await runMigrations();
-  
+
   const app = await NestFactory.create(AppModule);
 
   // Enable cookie parsing for HttpOnly JWT tokens
@@ -74,43 +76,45 @@ async function bootstrap() {
   // CSRF Protection using Double Submit Cookie pattern
   // Must be after cookie-parser
   const csrfMiddleware = new CsrfMiddleware();
-  app.use((req: any, res: any, next: any) => csrfMiddleware.use(req, res, next));
+  app.use((req: any, res: any, next: any) =>
+    csrfMiddleware.use(req, res, next),
+  );
 
   // Security headers with Helmet
   app.use(
     helmet({
       contentSecurityPolicy: false, // Disable CSP for API (frontend handles it)
       crossOriginEmbedderPolicy: false, // Allow embedding from other origins
-    })
+    }),
   );
 
   // Enable CORS with credentials for cookies
   // Production: Set CORS_ORIGINS env var (comma-separated)
-  const isProduction = process.env.NODE_ENV === 'production';
+  const isProduction = process.env.NODE_ENV === "production";
   const defaultOrigins = isProduction
     ? [
-        'https://senteng.co',
-        'https://senteng-erp.web.app',
-        'https://senteng-erp.firebaseapp.com',
-        'https://senteng-4d9cb.web.app',
-        'https://senteng-4d9cb.firebaseapp.com',
+        "https://senteng.co",
+        "https://senteng-erp.web.app",
+        "https://senteng-erp.firebaseapp.com",
+        "https://senteng-4d9cb.web.app",
+        "https://senteng-4d9cb.firebaseapp.com",
       ]
     : [
-        'http://localhost:5173',
-        'http://localhost:5176',
-        'https://senteng.co',
-        'https://senteng-erp.web.app',
-        'https://senteng-erp.firebaseapp.com',
-        'https://senteng-4d9cb.web.app',
-        'https://senteng-4d9cb.firebaseapp.com',
+        "http://localhost:5173",
+        "http://localhost:5176",
+        "https://senteng.co",
+        "https://senteng-erp.web.app",
+        "https://senteng-erp.firebaseapp.com",
+        "https://senteng-4d9cb.web.app",
+        "https://senteng-4d9cb.firebaseapp.com",
       ];
   const corsOrigins = process.env.CORS_ORIGINS
-    ? process.env.CORS_ORIGINS.split(',')
+    ? process.env.CORS_ORIGINS.split(",")
     : defaultOrigins;
   app.enableCors({
     origin: corsOrigins,
-    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true, // Required for cookies
   });
 
@@ -123,19 +127,20 @@ async function bootstrap() {
       whitelist: true,
       transform: true,
       forbidNonWhitelisted: true,
-    })
+    }),
   );
 
   // Global security audit logging
   app.useGlobalInterceptors(new AuditLogInterceptor());
 
   // Global prefix
-  app.setGlobalPrefix('api/v1');
+  app.setGlobalPrefix("api/v1");
 
   // OpenAPI/Swagger Documentation (P2 - Production Readiness)
   const config = new DocumentBuilder()
-    .setTitle('SENTENG ERP API')
-    .setDescription(`
+    .setTitle("SENTENG ERP API")
+    .setDescription(
+      `
 ## 盛騰 ERP 系統 API 文檔
 
 ### 模組概覽
@@ -155,51 +160,51 @@ async function bootstrap() {
 - CSRF 雙重提交保護
 - 速率限制 (60 req/min)
 - Audit Log 安全日誌
-    `)
-    .setVersion('1.0.0')
-    .setContact('SENTENG Tech', 'https://senteng.co', 'dev@senteng.co')
+    `,
+    )
+    .setVersion("1.0.0")
+    .setContact("SENTENG Tech", "https://senteng.co", "dev@senteng.co")
     .addBearerAuth(
       {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        description: 'Enter JWT token',
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+        description: "Enter JWT token",
       },
-      'JWT-auth'
+      "JWT-auth",
     )
-    .addTag('auth', '認證相關 API')
-    .addTag('users', '使用者管理')
-    .addTag('clients', '客戶管理')
-    .addTag('vendors', '供應商管理')
-    .addTag('projects', '專案管理')
-    .addTag('quotations', '報價單')
-    .addTag('contracts', '合約管理')
-    .addTag('payments', '請款管理')
-    .addTag('finance', '財務管理')
-    .addTag('inventory', '庫存管理')
-    .addTag('integrations', 'Google 整合')
-    .addTag('health', '健康檢查')
+    .addTag("auth", "認證相關 API")
+    .addTag("users", "使用者管理")
+    .addTag("clients", "客戶管理")
+    .addTag("vendors", "供應商管理")
+    .addTag("projects", "專案管理")
+    .addTag("quotations", "報價單")
+    .addTag("contracts", "合約管理")
+    .addTag("payments", "請款管理")
+    .addTag("finance", "財務管理")
+    .addTag("inventory", "庫存管理")
+    .addTag("integrations", "Google 整合")
+    .addTag("health", "健康檢查")
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document, {
-    customSiteTitle: 'SENTENG ERP API Docs',
-    customCss: '.swagger-ui .topbar { display: none }',
+  SwaggerModule.setup("api/docs", app, document, {
+    customSiteTitle: "SENTENG ERP API Docs",
+    customCss: ".swagger-ui .topbar { display: none }",
     swaggerOptions: {
       persistAuthorization: true,
-      docExpansion: 'none',
+      docExpansion: "none",
       filter: true,
       showExtensions: true,
     },
   });
 
   const port = process.env.PORT || 3000;
-  await app.listen(port, '0.0.0.0');
+  await app.listen(port, "0.0.0.0");
   console.log(`🚀 API Server running on http://localhost:${port}/api/v1`);
   console.log(`📚 Swagger Docs: http://localhost:${port}/api/docs`);
   console.log(
-    `🔐 Security features enabled: HttpOnly Cookies, Audit Logging, Rate Limiting, Helmet`
+    `🔐 Security features enabled: HttpOnly Cookies, Audit Logging, Rate Limiting, Helmet`,
   );
 }
 bootstrap();
-

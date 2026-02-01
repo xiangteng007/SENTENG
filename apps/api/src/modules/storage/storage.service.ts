@@ -1,6 +1,10 @@
-import { Injectable, Logger, InternalServerErrorException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { Storage, Bucket } from '@google-cloud/storage';
+import {
+  Injectable,
+  Logger,
+  InternalServerErrorException,
+} from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { Storage, Bucket } from "@google-cloud/storage";
 
 /**
  * StorageService
@@ -29,14 +33,16 @@ export class StorageService {
   private readonly isEnabled: boolean;
 
   constructor(private readonly configService: ConfigService) {
-    const projectId = this.configService.get<string>('GCP_PROJECT_ID');
-    const keyFilePath = this.configService.get<string>('GCP_KEY_FILE_PATH');
-    this.bucketName = this.configService.get<string>('GCP_BUCKET_NAME') || '';
+    const projectId = this.configService.get<string>("GCP_PROJECT_ID");
+    const keyFilePath = this.configService.get<string>("GCP_KEY_FILE_PATH");
+    this.bucketName = this.configService.get<string>("GCP_BUCKET_NAME") || "";
 
     // Check if GCS is configured
     if (!this.bucketName) {
       this.isEnabled = false;
-      this.logger.warn('StorageService: GCP_BUCKET_NAME not set. Storage features are disabled.');
+      this.logger.warn(
+        "StorageService: GCP_BUCKET_NAME not set. Storage features are disabled.",
+      );
       return;
     }
 
@@ -55,7 +61,9 @@ export class StorageService {
     }
 
     this.bucket = this.storage.bucket(this.bucketName);
-    this.logger.log(`StorageService initialized with bucket: ${this.bucketName}`);
+    this.logger.log(
+      `StorageService initialized with bucket: ${this.bucketName}`,
+    );
   }
 
   /**
@@ -71,7 +79,7 @@ export class StorageService {
   private ensureEnabled(): void {
     if (!this.isEnabled || !this.bucket) {
       throw new InternalServerErrorException(
-        'Storage not configured. Please set GCP_BUCKET_NAME environment variable.'
+        "Storage not configured. Please set GCP_BUCKET_NAME environment variable.",
       );
     }
   }
@@ -89,7 +97,10 @@ export class StorageService {
    * const url = await storageService.uploadFile(file, 'avatars');
    * // 回傳: https://storage.googleapis.com/bucket/avatars/abc123.jpg?signature=...
    */
-  async uploadFile(file: Express.Multer.File, destination: string): Promise<string> {
+  async uploadFile(
+    file: Express.Multer.File,
+    destination: string,
+  ): Promise<string> {
     this.ensureEnabled();
 
     try {
@@ -122,7 +133,7 @@ export class StorageService {
       return signedUrl;
     } catch (error) {
       this.logger.error(`Failed to upload file: ${error.message}`, error.stack);
-      throw new InternalServerErrorException('檔案上傳失敗，請稍後再試');
+      throw new InternalServerErrorException("檔案上傳失敗，請稍後再試");
     }
   }
 
@@ -163,7 +174,7 @@ export class StorageService {
       this.logger.log(`File deleted successfully: ${fileName}`);
     } catch (error) {
       this.logger.error(`Failed to delete file: ${error.message}`, error.stack);
-      throw new InternalServerErrorException('檔案刪除失敗，請稍後再試');
+      throw new InternalServerErrorException("檔案刪除失敗，請稍後再試");
     }
   }
 
@@ -174,14 +185,17 @@ export class StorageService {
    * @param expiresInDays - URL 有效天數 (預設 7 天)
    * @returns Signed URL
    */
-  async generateSignedUrl(fileName: string, expiresInDays: number = 7): Promise<string> {
+  async generateSignedUrl(
+    fileName: string,
+    expiresInDays: number = 7,
+  ): Promise<string> {
     this.ensureEnabled();
 
     const file = this.bucket!.file(fileName);
 
     const [signedUrl] = await file.getSignedUrl({
-      version: 'v4',
-      action: 'read',
+      version: "v4",
+      action: "read",
       expires: Date.now() + expiresInDays * 24 * 60 * 60 * 1000,
     });
 
@@ -202,8 +216,8 @@ export class StorageService {
    * 從檔名取得副檔名
    */
   private getFileExtension(filename: string): string {
-    const lastDot = filename.lastIndexOf('.');
-    if (lastDot === -1) return '';
+    const lastDot = filename.lastIndexOf(".");
+    if (lastDot === -1) return "";
     return filename.substring(lastDot).toLowerCase();
   }
 
@@ -220,18 +234,18 @@ export class StorageService {
     if (!fileUrl) return null;
 
     // 移除 Signed URL 的 query parameters
-    const urlWithoutQuery = fileUrl.split('?')[0];
+    const urlWithoutQuery = fileUrl.split("?")[0];
 
     // Pattern 1: https://storage.googleapis.com/bucket-name/...
     const googleStoragePattern = new RegExp(
-      `https?://storage\\.googleapis\\.com/${this.bucketName}/(.+)`
+      `https?://storage\\.googleapis\\.com/${this.bucketName}/(.+)`,
     );
     const match1 = urlWithoutQuery.match(googleStoragePattern);
     if (match1) return match1[1];
 
     // Pattern 2: https://storage.cloud.google.com/bucket-name/...
     const cloudStoragePattern = new RegExp(
-      `https?://storage\\.cloud\\.google\\.com/${this.bucketName}/(.+)`
+      `https?://storage\\.cloud\\.google\\.com/${this.bucketName}/(.+)`,
     );
     const match2 = urlWithoutQuery.match(cloudStoragePattern);
     if (match2) return match2[1];
@@ -242,7 +256,10 @@ export class StorageService {
     if (match3) return match3[1];
 
     // Pattern 4: 直接是檔案路徑
-    if (!urlWithoutQuery.startsWith('http') && !urlWithoutQuery.startsWith('gs://')) {
+    if (
+      !urlWithoutQuery.startsWith("http") &&
+      !urlWithoutQuery.startsWith("gs://")
+    ) {
       return urlWithoutQuery;
     }
 

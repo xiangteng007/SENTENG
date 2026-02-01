@@ -3,14 +3,18 @@ import {
   NotFoundException,
   ForbiddenException,
   BadRequestException,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Contract } from './contract.entity';
-import { CreateContractDto, UpdateContractDto, ConvertFromQuotationDto } from './contract.dto';
-import { QuotationsService } from '../quotations/quotations.service';
-import { ProjectsService } from '../projects/projects.service';
-import { isAdminRole } from '../../common/constants/roles';
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { Contract } from "./contract.entity";
+import {
+  CreateContractDto,
+  UpdateContractDto,
+  ConvertFromQuotationDto,
+} from "./contract.dto";
+import { QuotationsService } from "../quotations/quotations.service";
+import { ProjectsService } from "../projects/projects.service";
+import { isAdminRole } from "../../common/constants/roles";
 
 @Injectable()
 export class ContractsService {
@@ -18,13 +22,13 @@ export class ContractsService {
     @InjectRepository(Contract)
     private contractsRepository: Repository<Contract>,
     private quotationsService: QuotationsService,
-    private projectsService: ProjectsService
+    private projectsService: ProjectsService,
   ) {}
 
   async findAll(
     options: { projectId?: string; status?: string },
     userId?: string,
-    userRole?: string
+    userRole?: string,
   ): Promise<Contract[]> {
     const where: any = {};
     if (options.projectId) where.projectId = options.projectId;
@@ -37,15 +41,19 @@ export class ContractsService {
 
     return this.contractsRepository.find({
       where,
-      relations: ['project', 'quotation'],
-      order: { createdAt: 'DESC' },
+      relations: ["project", "quotation"],
+      order: { createdAt: "DESC" },
     });
   }
 
-  async findOne(id: string, userId?: string, userRole?: string): Promise<Contract> {
+  async findOne(
+    id: string,
+    userId?: string,
+    userRole?: string,
+  ): Promise<Contract> {
     const contract = await this.contractsRepository.findOne({
       where: { id },
-      relations: ['project', 'quotation'],
+      relations: ["project", "quotation"],
     });
     if (!contract) {
       throw new NotFoundException(`Contract ${id} not found`);
@@ -65,19 +73,22 @@ export class ContractsService {
       id,
       currentAmount: dto.originalAmount,
       retentionAmount: dto.originalAmount * ((dto.retentionRate || 0) / 100),
-      status: 'CTR_DRAFT',
+      status: "CTR_DRAFT",
     });
 
     return this.contractsRepository.save(contract);
   }
 
-  async convertFromQuotation(dto: ConvertFromQuotationDto, userId?: string): Promise<Contract> {
+  async convertFromQuotation(
+    dto: ConvertFromQuotationDto,
+    userId?: string,
+  ): Promise<Contract> {
     // 取得估價單
     const quotation = await this.quotationsService.findOne(dto.quotationId);
 
     // 檢查估價單是否已核准
-    if (quotation.status !== 'QUO_APPROVED') {
-      throw new BadRequestException('只有已核准的估價單可轉換為合約');
+    if (quotation.status !== "QUO_APPROVED") {
+      throw new BadRequestException("只有已核准的估價單可轉換為合約");
     }
 
     // 檢查是否已有合約
@@ -85,7 +96,7 @@ export class ContractsService {
       where: { quotationId: dto.quotationId },
     });
     if (existingContract) {
-      throw new BadRequestException('此估價單已轉換為合約');
+      throw new BadRequestException("此估價單已轉換為合約");
     }
 
     const id = await this.generateId();
@@ -97,33 +108,39 @@ export class ContractsService {
       projectId: quotation.projectId,
       quotationId: dto.quotationId,
       contractNo: dto.contractNo,
-      title: quotation.title || `${quotation.project?.name || ''} 合約`,
+      title: quotation.title || `${quotation.project?.name || ""} 合約`,
       currency: quotation.currency,
       originalAmount,
       currentAmount: originalAmount,
       retentionRate,
       retentionAmount: originalAmount * (retentionRate / 100),
-      paymentTerms: dto.paymentTerms || 'PROGRESS',
+      paymentTerms: dto.paymentTerms || "PROGRESS",
       warrantyMonths: dto.warrantyMonths || 12,
-      status: 'CTR_DRAFT',
+      status: "CTR_DRAFT",
     });
 
     return this.contractsRepository.save(contract);
   }
 
-  async update(id: string, dto: UpdateContractDto, userId?: string): Promise<Contract> {
+  async update(
+    id: string,
+    dto: UpdateContractDto,
+    userId?: string,
+  ): Promise<Contract> {
     const contract = await this.findOne(id);
 
     // 檢查鎖定
     if (contract.lockedAt) {
       // 簽約後只能改特定欄位
-      const allowedFields = ['notes', 'warrantyMonths'];
+      const allowedFields = ["notes", "warrantyMonths"];
       const updateKeys = Object.keys(dto);
-      const hasDisallowed = updateKeys.some(key => !allowedFields.includes(key));
+      const hasDisallowed = updateKeys.some(
+        (key) => !allowedFields.includes(key),
+      );
       if (hasDisallowed) {
         throw new ForbiddenException({
-          code: 'LOCKED',
-          message: '合約已簽訂，僅可修改備註',
+          code: "LOCKED",
+          message: "合約已簽訂，僅可修改備註",
         });
       }
     }
@@ -138,14 +155,18 @@ export class ContractsService {
     return this.contractsRepository.save(contract);
   }
 
-  async sign(id: string, signDate?: string, userId?: string): Promise<Contract> {
+  async sign(
+    id: string,
+    signDate?: string,
+    userId?: string,
+  ): Promise<Contract> {
     const contract = await this.findOne(id);
 
-    if (contract.status !== 'CTR_DRAFT') {
-      throw new BadRequestException('只有草稿狀態可簽約');
+    if (contract.status !== "CTR_DRAFT") {
+      throw new BadRequestException("只有草稿狀態可簽約");
     }
 
-    contract.status = 'CTR_ACTIVE';
+    contract.status = "CTR_ACTIVE";
     contract.signDate = signDate ? new Date(signDate) : new Date();
     contract.lockedAt = new Date();
     if (userId) contract.lockedBy = userId;
@@ -153,7 +174,7 @@ export class ContractsService {
     // 更新專案狀態
     if (contract.projectId) {
       await this.projectsService.update(contract.projectId, {
-        status: 'IN_PROGRESS',
+        status: "IN_PROGRESS",
       });
     }
 
@@ -163,18 +184,18 @@ export class ContractsService {
   async complete(id: string, userId?: string): Promise<Contract> {
     const contract = await this.findOne(id);
 
-    if (contract.status !== 'CTR_ACTIVE') {
-      throw new BadRequestException('只有執行中合約可完工');
+    if (contract.status !== "CTR_ACTIVE") {
+      throw new BadRequestException("只有執行中合約可完工");
     }
 
-    contract.status = 'CTR_COMPLETED';
+    contract.status = "CTR_COMPLETED";
 
     // 計算保固到期日
     if (contract.warrantyMonths) {
       const warrantyEnd = new Date();
       warrantyEnd.setMonth(warrantyEnd.getMonth() + contract.warrantyMonths);
       contract.warrantyEnd = warrantyEnd;
-      contract.status = 'CTR_WARRANTY';
+      contract.status = "CTR_WARRANTY";
     }
 
     return this.contractsRepository.save(contract);
@@ -183,55 +204,59 @@ export class ContractsService {
   async close(id: string, userId?: string): Promise<Contract> {
     const contract = await this.findOne(id);
 
-    if (!['CTR_COMPLETED', 'CTR_WARRANTY'].includes(contract.status)) {
-      throw new BadRequestException('只有已完工或保固中合約可結案');
+    if (!["CTR_COMPLETED", "CTR_WARRANTY"].includes(contract.status)) {
+      throw new BadRequestException("只有已完工或保固中合約可結案");
     }
 
-    contract.status = 'CTR_CLOSED';
+    contract.status = "CTR_CLOSED";
     return this.contractsRepository.save(contract);
   }
 
   /**
    * IDOR Protection: Verify user has access to the contract
    */
-  private checkOwnership(contract: Contract, userId?: string, userRole?: string): void {
+  private checkOwnership(
+    contract: Contract,
+    userId?: string,
+    userRole?: string,
+  ): void {
     if (!userId || !userRole) return; // Skip if no user context
     if (isAdminRole(userRole)) return; // Admin bypass
 
     if (contract.createdBy !== userId) {
-      throw new ForbiddenException('You do not have access to this contract');
+      throw new ForbiddenException("You do not have access to this contract");
     }
   }
 
   private async generateId(): Promise<string> {
     const date = new Date();
-    const prefix = `CTR-${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}-`;
+    const prefix = `CTR-${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, "0")}-`;
 
     const last = await this.contractsRepository
-      .createQueryBuilder('c')
-      .where('c.id LIKE :prefix', { prefix: `${prefix}%` })
-      .orderBy('c.id', 'DESC')
+      .createQueryBuilder("c")
+      .where("c.id LIKE :prefix", { prefix: `${prefix}%` })
+      .orderBy("c.id", "DESC")
       .getOne();
 
     let seq = 1;
     if (last) {
-      const lastSeq = parseInt(last.id.split('-')[2], 10);
+      const lastSeq = parseInt(last.id.split("-")[2], 10);
       seq = lastSeq + 1;
     }
 
-    return `${prefix}${String(seq).padStart(4, '0')}`;
+    return `${prefix}${String(seq).padStart(4, "0")}`;
   }
 
   /**
    * Export contracts to Excel/CSV
    */
   async exportToExcel(
-    options: { projectId?: string; status?: string; format?: 'xlsx' | 'csv' },
+    options: { projectId?: string; status?: string; format?: "xlsx" | "csv" },
     userId?: string,
-    userRole?: string
+    userRole?: string,
   ): Promise<Buffer> {
-    const ExcelJS = await import('exceljs');
-    const { projectId, status, format = 'xlsx' } = options;
+    const ExcelJS = await import("exceljs");
+    const { projectId, status, format = "xlsx" } = options;
 
     const where: any = {};
     if (projectId) where.projectId = projectId;
@@ -242,49 +267,53 @@ export class ContractsService {
 
     const contracts = await this.contractsRepository.find({
       where,
-      relations: ['project'],
-      order: { createdAt: 'DESC' },
+      relations: ["project"],
+      order: { createdAt: "DESC" },
     });
 
     const workbook = new ExcelJS.Workbook();
-    const sheet = workbook.addWorksheet('Contracts');
+    const sheet = workbook.addWorksheet("Contracts");
 
     sheet.columns = [
-      { header: '合約編號', key: 'id', width: 20 },
-      { header: '合約號碼', key: 'contractNo', width: 20 },
-      { header: '專案名稱', key: 'projectName', width: 25 },
-      { header: '標題', key: 'title', width: 30 },
-      { header: '原始金額', key: 'originalAmount', width: 15 },
-      { header: '現行金額', key: 'currentAmount', width: 15 },
-      { header: '保留款', key: 'retentionAmount', width: 15 },
-      { header: '狀態', key: 'status', width: 15 },
-      { header: '簽約日期', key: 'signDate', width: 15 },
-      { header: '保固期限', key: 'warrantyEnd', width: 15 },
+      { header: "合約編號", key: "id", width: 20 },
+      { header: "合約號碼", key: "contractNo", width: 20 },
+      { header: "專案名稱", key: "projectName", width: 25 },
+      { header: "標題", key: "title", width: 30 },
+      { header: "原始金額", key: "originalAmount", width: 15 },
+      { header: "現行金額", key: "currentAmount", width: 15 },
+      { header: "保留款", key: "retentionAmount", width: 15 },
+      { header: "狀態", key: "status", width: 15 },
+      { header: "簽約日期", key: "signDate", width: 15 },
+      { header: "保固期限", key: "warrantyEnd", width: 15 },
     ];
 
     for (const c of contracts) {
       sheet.addRow({
         id: c.id,
-        contractNo: c.contractNo || '',
-        projectName: c.project?.name || '',
-        title: c.title || '',
+        contractNo: c.contractNo || "",
+        projectName: c.project?.name || "",
+        title: c.title || "",
         originalAmount: c.originalAmount,
         currentAmount: c.currentAmount,
         retentionAmount: c.retentionAmount,
         status: c.status,
-        signDate: c.signDate ? new Date(c.signDate).toLocaleDateString('zh-TW') : '',
-        warrantyEnd: c.warrantyEnd ? new Date(c.warrantyEnd).toLocaleDateString('zh-TW') : '',
+        signDate: c.signDate
+          ? new Date(c.signDate).toLocaleDateString("zh-TW")
+          : "",
+        warrantyEnd: c.warrantyEnd
+          ? new Date(c.warrantyEnd).toLocaleDateString("zh-TW")
+          : "",
       });
     }
 
     sheet.getRow(1).font = { bold: true };
     sheet.getRow(1).fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: 'FFE0E0E0' },
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "FFE0E0E0" },
     };
 
-    if (format === 'csv') {
+    if (format === "csv") {
       return Buffer.from(await workbook.csv.writeBuffer());
     }
     return Buffer.from(await workbook.xlsx.writeBuffer());

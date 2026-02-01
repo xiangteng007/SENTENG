@@ -6,9 +6,9 @@ import {
   IsArray,
   MaxLength,
   IsDateString,
-} from 'class-validator';
-import { Transform } from 'class-transformer';
-import { ProcurementType, ProcurementStatus } from './procurement.entity';
+} from "class-validator";
+import { Transform } from "class-transformer";
+import { ProcurementType, ProcurementStatus } from "./procurement.entity";
 
 export class CreateProcurementDto {
   @IsString()

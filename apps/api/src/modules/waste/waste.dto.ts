@@ -14,9 +14,9 @@ import {
   IsEnum,
   MaxLength,
   Min,
-} from 'class-validator';
-import { Type, Transform } from 'class-transformer';
-import type { WasteType, DisposalMethod } from './waste.entity';
+} from "class-validator";
+import { Type, Transform } from "class-transformer";
+import type { WasteType, DisposalMethod } from "./waste.entity";
 
 // WasteRecord DTOs
 export class CreateWasteRecordDto {
@@ -40,8 +40,8 @@ export class CreateWasteRecordDto {
   quantity: number;
 
   @IsOptional()
-  @IsEnum(['ton', 'cubic_meter', 'kg', 'piece'])
-  unit?: 'ton' | 'cubic_meter' | 'kg' | 'piece';
+  @IsEnum(["ton", "cubic_meter", "kg", "piece"])
+  unit?: "ton" | "cubic_meter" | "kg" | "piece";
 
   @IsOptional()
   @IsString()
@@ -75,7 +75,7 @@ export class CreateWasteRecordDto {
 
   @IsOptional()
   @IsBoolean()
-  @Transform(({ value }) => value === 'true' || value === true)
+  @Transform(({ value }) => value === "true" || value === true)
   isRecyclable?: boolean;
 
   @IsOptional()
@@ -105,8 +105,8 @@ export class UpdateWasteRecordDto {
   quantity?: number;
 
   @IsOptional()
-  @IsEnum(['generated', 'stored', 'transported', 'disposed', 'recycled'])
-  status?: 'generated' | 'stored' | 'transported' | 'disposed' | 'recycled';
+  @IsEnum(["generated", "stored", "transported", "disposed", "recycled"])
+  status?: "generated" | "stored" | "transported" | "disposed" | "recycled";
 
   @IsOptional()
   @IsString()
@@ -153,7 +153,7 @@ export class UpdateWasteRecordDto {
 
   @IsOptional()
   @IsBoolean()
-  @Transform(({ value }) => value === 'true' || value === true)
+  @Transform(({ value }) => value === "true" || value === true)
   manifestSubmitted?: boolean;
 
   @IsOptional()
@@ -193,7 +193,7 @@ export class WasteRecordQueryDto {
   wasteType?: WasteType;
 
   @IsOptional()
-  @IsEnum(['generated', 'stored', 'transported', 'disposed', 'recycled'])
+  @IsEnum(["generated", "stored", "transported", "disposed", "recycled"])
   status?: string;
 
   @IsOptional()
@@ -206,7 +206,7 @@ export class WasteRecordQueryDto {
 
   @IsOptional()
   @IsBoolean()
-  @Transform(({ value }) => value === 'true' || value === true)
+  @Transform(({ value }) => value === "true" || value === true)
   isRecyclable?: boolean;
 }
 
@@ -237,7 +237,12 @@ export class SubmitMonthlyReportDto {
 export interface WasteStatistics {
   projectId: string;
   period: { startDate: string; endDate: string };
-  byType: { wasteType: WasteType; quantity: number; unit: string; count: number }[];
+  byType: {
+    wasteType: WasteType;
+    quantity: number;
+    unit: string;
+    count: number;
+  }[];
   totals: {
     totalQuantity: number;
     recycledQuantity: number;

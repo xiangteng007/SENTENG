@@ -1,4 +1,4 @@
 /**
  * Core Errors Module - Barrel Export
  */
-export * from './error-codes';
+export * from "./error-codes";

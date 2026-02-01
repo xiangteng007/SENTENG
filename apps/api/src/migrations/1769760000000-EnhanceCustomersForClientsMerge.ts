@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from "typeorm";
 
 /**
  * Migration: Enhance customers table for clients merge
@@ -7,7 +7,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  * - Prepares for clients → customers consolidation
  */
 export class EnhanceCustomersForClientsMerge1769760000000 implements MigrationInterface {
-  name = 'EnhanceCustomersForClientsMerge1769760000000';
+  name = "EnhanceCustomersForClientsMerge1769760000000";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Add contact_name column to customers table

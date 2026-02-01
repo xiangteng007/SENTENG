@@ -4,7 +4,7 @@
  * 聯絡人相關 DTOs
  */
 
-import { IsArray, IsBoolean, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsOptional, IsString } from "class-validator";
 
 /**
  * 建立聯絡人請求

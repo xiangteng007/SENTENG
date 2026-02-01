@@ -1,8 +1,8 @@
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Account, Transaction, Loan } from './entities';
-import { FinanceService } from './finance.service';
-import { FinanceController } from './finance.controller';
+import { Module } from "@nestjs/common";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { Account, Transaction, Loan } from "./entities";
+import { FinanceService } from "./finance.service";
+import { FinanceController } from "./finance.controller";
 
 @Module({
   imports: [TypeOrmModule.forFeature([Account, Transaction, Loan])],

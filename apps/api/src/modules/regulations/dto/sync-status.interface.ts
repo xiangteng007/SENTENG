@@ -1,6 +1,6 @@
 export interface SyncStatus {
   jobId: string;
-  status: 'pending' | 'running' | 'completed' | 'failed';
+  status: "pending" | "running" | "completed" | "failed";
   startedAt: Date;
   completedAt?: Date;
   progress: number;
@@ -9,6 +9,6 @@ export interface SyncStatus {
 }
 
 export interface IdleSyncStatus {
-  status: 'idle';
+  status: "idle";
   message: string;
 }

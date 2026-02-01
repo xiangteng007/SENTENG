@@ -4,12 +4,15 @@
  * Web Push notification service - Mock mode when web-push is not installed
  */
 
-import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { NotificationLog, NotificationStatus } from './notification-log.entity';
-import { NotificationTemplate, NotificationChannel } from './notification-template.entity';
+import { Injectable, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { NotificationLog, NotificationStatus } from "./notification-log.entity";
+import {
+  NotificationTemplate,
+  NotificationChannel,
+} from "./notification-template.entity";
 
 interface PushSubscription {
   endpoint: string;
@@ -41,35 +44,42 @@ export class PushNotificationService {
     @InjectRepository(NotificationLog)
     private readonly logRepository: Repository<NotificationLog>,
     @InjectRepository(NotificationTemplate)
-    private readonly templateRepository: Repository<NotificationTemplate>
+    private readonly templateRepository: Repository<NotificationTemplate>,
   ) {
     this.initWebPush();
   }
 
   private initWebPush(): void {
     try {
-      const webpush = require('web-push');
-      const vapidPublicKey = this.configService.get('VAPID_PUBLIC_KEY');
-      const vapidPrivateKey = this.configService.get('VAPID_PRIVATE_KEY');
-      const vapidEmail = this.configService.get('VAPID_EMAIL', 'mailto:admin@senteng.com.tw');
+      const webpush = require("web-push");
+      const vapidPublicKey = this.configService.get("VAPID_PUBLIC_KEY");
+      const vapidPrivateKey = this.configService.get("VAPID_PRIVATE_KEY");
+      const vapidEmail = this.configService.get(
+        "VAPID_EMAIL",
+        "mailto:admin@senteng.com.tw",
+      );
 
       if (!vapidPublicKey || !vapidPrivateKey) {
-        this.logger.warn('VAPID keys not configured. Push service will operate in mock mode.');
+        this.logger.warn(
+          "VAPID keys not configured. Push service will operate in mock mode.",
+        );
         return;
       }
 
       webpush.setVapidDetails(vapidEmail, vapidPublicKey, vapidPrivateKey);
       this.webpush = webpush;
-      this.logger.log('Push notification service initialized');
+      this.logger.log("Push notification service initialized");
     } catch {
-      this.logger.warn('web-push not installed. Push service will operate in mock mode.');
+      this.logger.warn(
+        "web-push not installed. Push service will operate in mock mode.",
+      );
     }
   }
 
   async send(
     subscription: PushSubscription,
     options: PushOptions,
-    userId?: string
+    userId?: string,
   ): Promise<SendPushResult> {
     const log = this.logRepository.create({
       channel: NotificationChannel.PUSH,
@@ -93,8 +103,8 @@ export class PushNotificationService {
         notification: {
           title: options.title,
           body: options.body,
-          icon: options.icon || '/assets/icons/icon-192x192.png',
-          badge: options.badge || '/assets/icons/badge-72x72.png',
+          icon: options.icon || "/assets/icons/icon-192x192.png",
+          badge: options.badge || "/assets/icons/badge-72x72.png",
           data: options.data,
           actions: options.actions,
         },
@@ -110,7 +120,7 @@ export class PushNotificationService {
       log.status = NotificationStatus.FAILED;
       log.errorMessage = error instanceof Error ? error.message : String(error);
       await this.logRepository.save(log);
-      this.logger.error('Failed to send push notification', error);
+      this.logger.error("Failed to send push notification", error);
       return { success: false, error: log.errorMessage };
     }
   }
@@ -119,19 +129,23 @@ export class PushNotificationService {
     templateCode: string,
     subscription: PushSubscription,
     variables: Record<string, string>,
-    userId?: string
+    userId?: string,
   ): Promise<SendPushResult> {
     const template = await this.templateRepository.findOne({
-      where: { code: templateCode, channel: NotificationChannel.PUSH, isActive: true },
+      where: {
+        code: templateCode,
+        channel: NotificationChannel.PUSH,
+        isActive: true,
+      },
     });
 
     if (!template) {
       return { success: false, error: `Template ${templateCode} not found` };
     }
 
-    let body = template.messageBody || '';
+    let body = template.messageBody || "";
     for (const [key, value] of Object.entries(variables)) {
-      const regex = new RegExp(`{{\\s*${key}\\s*}}`, 'g');
+      const regex = new RegExp(`{{\\s*${key}\\s*}}`, "g");
       body = body.replace(regex, value);
     }
 
@@ -140,12 +154,14 @@ export class PushNotificationService {
 
   async broadcast(
     subscriptions: PushSubscription[],
-    options: PushOptions
+    options: PushOptions,
   ): Promise<{ success: number; failed: number }> {
-    const results = await Promise.all(subscriptions.map(sub => this.send(sub, options)));
+    const results = await Promise.all(
+      subscriptions.map((sub) => this.send(sub, options)),
+    );
     return {
-      success: results.filter(r => r.success).length,
-      failed: results.filter(r => !r.success).length,
+      success: results.filter((r) => r.success).length,
+      failed: results.filter((r) => !r.success).length,
     };
   }
 
@@ -154,20 +170,20 @@ export class PushNotificationService {
     alertType: string,
     location: string,
     description: string,
-    userId?: string
+    userId?: string,
   ): Promise<SendPushResult> {
     return this.send(
       subscription,
       {
         title: `⚠️ ${alertType}`,
         body: `${location}: ${description}`,
-        data: { type: 'weather_alert', alertType, location },
+        data: { type: "weather_alert", alertType, location },
         actions: [
-          { action: 'view', title: '查看詳情' },
-          { action: 'dismiss', title: '忽略' },
+          { action: "view", title: "查看詳情" },
+          { action: "dismiss", title: "忽略" },
         ],
       },
-      userId
+      userId,
     );
   }
 }

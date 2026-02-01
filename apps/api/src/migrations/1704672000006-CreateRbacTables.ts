@@ -1,10 +1,10 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from "typeorm";
 
 /**
  * 建立 RBAC 表並設定預設角色與權限
  */
 export class CreateRbacTables1704672000006 implements MigrationInterface {
-  name = 'CreateRbacTables1704672000006';
+  name = "CreateRbacTables1704672000006";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Permissions
@@ -145,8 +145,12 @@ export class CreateRbacTables1704672000006 implements MigrationInterface {
     `);
 
     // Indexes
-    await queryRunner.query(`CREATE INDEX "idx_user_roles_user" ON "user_roles"("user_id")`);
-    await queryRunner.query(`CREATE INDEX "idx_permissions_module" ON "permissions"("module")`);
+    await queryRunner.query(
+      `CREATE INDEX "idx_user_roles_user" ON "user_roles"("user_id")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "idx_permissions_module" ON "permissions"("module")`,
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

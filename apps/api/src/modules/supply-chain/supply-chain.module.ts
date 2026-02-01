@@ -1,18 +1,18 @@
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { Module } from "@nestjs/common";
+import { TypeOrmModule } from "@nestjs/typeorm";
 
 // Vendors
-import { Vendor } from './vendors/vendor.entity';
-import { VendorContact } from './vendors/vendor-contact.entity';
-import { VendorTrade } from './vendors/vendor-trade.entity';
-import { VendorRating } from './vendors/vendor-rating.entity';
-import { VendorsService } from './vendors/vendors.service';
-import { VendorsController } from './vendors/vendors.controller';
+import { Vendor } from "./vendors/vendor.entity";
+import { VendorContact } from "./vendors/vendor-contact.entity";
+import { VendorTrade } from "./vendors/vendor-trade.entity";
+import { VendorRating } from "./vendors/vendor-rating.entity";
+import { VendorsService } from "./vendors/vendors.service";
+import { VendorsController } from "./vendors/vendors.controller";
 
 // Procurements
-import { Procurement, ProcurementBid } from './procurements/procurement.entity';
-import { ProcurementsService } from './procurements/procurements.service';
-import { ProcurementsController } from './procurements/procurements.controller';
+import { Procurement, ProcurementBid } from "./procurements/procurement.entity";
+import { ProcurementsService } from "./procurements/procurements.service";
+import { ProcurementsController } from "./procurements/procurements.controller";
 
 /**
  * Supply Chain Domain Module

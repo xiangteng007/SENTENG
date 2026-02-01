@@ -4,9 +4,14 @@
  * 自動捕獲所有未處理的例外並發送到 Sentry
  * 與現有的 AllExceptionsFilter 協同工作
  */
-import { Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
-import { BaseExceptionFilter } from '@nestjs/core';
-import * as Sentry from '@sentry/nestjs';
+import {
+  Catch,
+  ArgumentsHost,
+  HttpException,
+  HttpStatus,
+} from "@nestjs/common";
+import { BaseExceptionFilter } from "@nestjs/core";
+import * as Sentry from "@sentry/nestjs";
 
 @Catch()
 export class SentryExceptionFilter extends BaseExceptionFilter {
@@ -26,7 +31,7 @@ export class SentryExceptionFilter extends BaseExceptionFilter {
       }
 
       // 設置請求上下文
-      Sentry.setContext('request', {
+      Sentry.setContext("request", {
         method: request?.method,
         url: request?.url,
         params: request?.params,

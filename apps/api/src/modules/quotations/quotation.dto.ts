@@ -8,8 +8,8 @@ import {
   IsIn,
   IsDateString,
   MaxLength,
-} from 'class-validator';
-import { Type } from 'class-transformer';
+} from "class-validator";
+import { Type } from "class-transformer";
 
 export class QuotationItemDto {
   @IsOptional()
@@ -35,7 +35,7 @@ export class QuotationItemDto {
 
   @IsOptional()
   @IsString()
-  unit?: string = '式';
+  unit?: string = "式";
 
   @IsNumber()
   quantity: number;
@@ -62,8 +62,8 @@ export class CreateQuotationDto {
   title?: string;
 
   @IsOptional()
-  @IsIn(['TWD', 'CNY', 'USD'])
-  currency?: string = 'TWD';
+  @IsIn(["TWD", "CNY", "USD"])
+  currency?: string = "TWD";
 
   @IsOptional()
   @IsBoolean()

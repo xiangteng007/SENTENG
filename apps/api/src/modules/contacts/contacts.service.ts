@@ -1,17 +1,23 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like, FindOptionsWhere } from 'typeorm';
-import { Contact, ContactOwnerType, ContactSyncStatus } from './contact.entity';
-import { CreateContactDto, UpdateContactDto, ContactQueryDto } from './contact.dto';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository, Like, FindOptionsWhere } from "typeorm";
+import { Contact, ContactOwnerType, ContactSyncStatus } from "./contact.entity";
+import {
+  CreateContactDto,
+  UpdateContactDto,
+  ContactQueryDto,
+} from "./contact.dto";
 
 @Injectable()
 export class ContactsService {
   constructor(
     @InjectRepository(Contact)
-    private readonly contactRepository: Repository<Contact>
+    private readonly contactRepository: Repository<Contact>,
   ) {}
 
-  async findAll(query: ContactQueryDto): Promise<{ items: Contact[]; total: number }> {
+  async findAll(
+    query: ContactQueryDto,
+  ): Promise<{ items: Contact[]; total: number }> {
     const where: FindOptionsWhere<Contact> = { isActive: true };
 
     if (query.ownerType) {
@@ -35,16 +41,19 @@ export class ContactsService {
 
     const [items, total] = await this.contactRepository.findAndCount({
       where,
-      order: { isPrimary: 'DESC', name: 'ASC' },
+      order: { isPrimary: "DESC", name: "ASC" },
     });
 
     return { items, total };
   }
 
-  async findByOwner(ownerType: ContactOwnerType, ownerId: string): Promise<Contact[]> {
+  async findByOwner(
+    ownerType: ContactOwnerType,
+    ownerId: string,
+  ): Promise<Contact[]> {
     return this.contactRepository.find({
       where: { ownerType, ownerId, isActive: true },
-      order: { isPrimary: 'DESC', name: 'ASC' },
+      order: { isPrimary: "DESC", name: "ASC" },
     });
   }
 
@@ -61,7 +70,7 @@ export class ContactsService {
     if (dto.isPrimary) {
       await this.contactRepository.update(
         { ownerType: dto.ownerType, ownerId: dto.ownerId, isPrimary: true },
-        { isPrimary: false }
+        { isPrimary: false },
       );
     }
 
@@ -83,7 +92,7 @@ export class ContactsService {
           ownerId: contact.ownerId,
           isPrimary: true,
         },
-        { isPrimary: false }
+        { isPrimary: false },
       );
     }
 

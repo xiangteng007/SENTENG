@@ -1,4 +1,11 @@
-import { IsString, IsNumber, IsOptional, Min, IsIn, IsUUID } from 'class-validator';
+import {
+  IsString,
+  IsNumber,
+  IsOptional,
+  Min,
+  IsIn,
+  IsUUID,
+} from "class-validator";
 
 export class CreateInventoryDto {
   @IsString()
@@ -79,7 +86,7 @@ export class UpdateInventoryDto {
 
 export class StockMovementDto {
   @IsString()
-  type: 'in' | 'out';
+  type: "in" | "out";
 
   @IsNumber()
   @Min(1)
@@ -98,7 +105,7 @@ export class CreateMovementDto {
   projectId?: string;
 
   @IsString()
-  @IsIn(['IN', 'OUT', 'TRANSFER', 'ADJUST'])
+  @IsIn(["IN", "OUT", "TRANSFER", "ADJUST"])
   movementType: string;
 
   @IsNumber()

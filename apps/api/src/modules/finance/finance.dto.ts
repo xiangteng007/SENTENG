@@ -1,4 +1,10 @@
-import { IsString, IsNumber, IsOptional, IsDateString, Min } from 'class-validator';
+import {
+  IsString,
+  IsNumber,
+  IsOptional,
+  IsDateString,
+  Min,
+} from "class-validator";
 
 // ==================== Account DTOs ====================
 export class CreateAccountDto {

@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from "typeorm";
 
 /**
  * Migration: Migrate clients data to customers table
@@ -8,11 +8,11 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  * - Preserves all relationships
  */
 export class MigrateClientsToCustomers1769760100000 implements MigrationInterface {
-  name = 'MigrateClientsToCustomers1769760100000';
+  name = "MigrateClientsToCustomers1769760100000";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Check if clients table exists
-    const hasClientsTable = await queryRunner.hasTable('clients');
+    const hasClientsTable = await queryRunner.hasTable("clients");
     if (!hasClientsTable) {
       return; // No clients table to migrate
     }

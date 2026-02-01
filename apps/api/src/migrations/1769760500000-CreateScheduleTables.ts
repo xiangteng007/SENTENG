@@ -1,10 +1,10 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from "typeorm";
 
 /**
  * Phase 2.3: Schedule/Gantt Module Tables
  */
 export class CreateScheduleTables1769760500000 implements MigrationInterface {
-  name = 'CreateScheduleTables1769760500000';
+  name = "CreateScheduleTables1769760500000";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Schedule tasks (Gantt chart items)

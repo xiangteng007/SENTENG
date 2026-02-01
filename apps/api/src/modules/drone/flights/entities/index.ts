@@ -1,1 +1,1 @@
-export * from './flight-log.entity';
+export * from "./flight-log.entity";

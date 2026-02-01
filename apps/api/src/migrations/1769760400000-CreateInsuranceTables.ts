@@ -1,16 +1,20 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from "typeorm";
 
 /**
  * Phase 2.2: Insurance Module Tables
  */
 export class CreateInsuranceTables1769760400000 implements MigrationInterface {
-  name = 'CreateInsuranceTables1769760400000';
+  name = "CreateInsuranceTables1769760400000";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Drop existing tables that may have corrupted/mismatched schema
     // These are Phase 2.2 tables that may have been partially created
-    await queryRunner.query(`DROP TABLE IF EXISTS "project_insurances" CASCADE`);
-    await queryRunner.query(`DROP TABLE IF EXISTS "insurance_rate_references" CASCADE`);
+    await queryRunner.query(
+      `DROP TABLE IF EXISTS "project_insurances" CASCADE`,
+    );
+    await queryRunner.query(
+      `DROP TABLE IF EXISTS "insurance_rate_references" CASCADE`,
+    );
 
     // Create insurance_rate_references table with correct schema
     await queryRunner.query(`

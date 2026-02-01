@@ -4,11 +4,11 @@ import {
   ExecutionContext,
   CallHandler,
   SetMetadata,
-} from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { Reflector } from '@nestjs/core';
+} from "@nestjs/common";
+import { Observable } from "rxjs";
+import { Reflector } from "@nestjs/core";
 
-export const DEPRECATION_KEY = 'deprecation';
+export const DEPRECATION_KEY = "deprecation";
 
 /**
  * Decorator to mark an endpoint or controller as deprecated
@@ -32,15 +32,18 @@ export class DeprecationInterceptor implements NestInterceptor {
       const response = context.switchToHttp().getResponse();
 
       // Add standard deprecation headers
-      response.setHeader('Deprecation', 'true');
-      response.setHeader('X-Deprecated', deprecation.message);
+      response.setHeader("Deprecation", "true");
+      response.setHeader("X-Deprecated", deprecation.message);
 
       if (deprecation.sunset) {
-        response.setHeader('Sunset', deprecation.sunset);
+        response.setHeader("Sunset", deprecation.sunset);
       }
 
       // Add Link header pointing to the new API
-      response.setHeader('Link', '</api/v1/customers>; rel="successor-version"');
+      response.setHeader(
+        "Link",
+        '</api/v1/customers>; rel="successor-version"',
+      );
     }
 
     return next.handle();

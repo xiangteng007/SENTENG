@@ -9,68 +9,83 @@
   Query,
   Request,
   UseGuards,
-} from '@nestjs/common';
+} from "@nestjs/common";
 import type { AuthenticatedRequest } from "../../common/types";
-import { CostEntriesService } from './cost-entries.service';
-import { CreateCostEntryDto, UpdateCostEntryDto, MarkPaidDto } from './cost-entry.dto';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { PermissionGuard } from '../../common/guards/permission.guard';
-import { RequirePermissions } from '../../common/decorators/permissions.decorator';
+import { CostEntriesService } from "./cost-entries.service";
+import {
+  CreateCostEntryDto,
+  UpdateCostEntryDto,
+  MarkPaidDto,
+} from "./cost-entry.dto";
+import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
+import { PermissionGuard } from "../../common/guards/permission.guard";
+import { RequirePermissions } from "../../common/decorators/permissions.decorator";
 
-@Controller('cost-entries')
+@Controller("cost-entries")
 @UseGuards(JwtAuthGuard, PermissionGuard)
 export class CostEntriesController {
   constructor(private readonly costEntriesService: CostEntriesService) {}
 
   @Get()
-  @RequirePermissions('cost-entries:read')
+  @RequirePermissions("cost-entries:read")
   async findAll(
-    @Query('projectId') projectId?: string,
-    @Query('contractId') contractId?: string,
-    @Query('category') category?: string,
-    @Query('isPaid') isPaid?: string
+    @Query("projectId") projectId?: string,
+    @Query("contractId") contractId?: string,
+    @Query("category") category?: string,
+    @Query("isPaid") isPaid?: string,
   ) {
     return this.costEntriesService.findAll({
       projectId,
       contractId,
       category,
-      isPaid: isPaid === 'true' ? true : isPaid === 'false' ? false : undefined,
+      isPaid: isPaid === "true" ? true : isPaid === "false" ? false : undefined,
     });
   }
 
-  @Get('summary/:projectId')
-  @RequirePermissions('cost-entries:read')
-  async getSummary(@Param('projectId') projectId: string) {
+  @Get("summary/:projectId")
+  @RequirePermissions("cost-entries:read")
+  async getSummary(@Param("projectId") projectId: string) {
     return this.costEntriesService.getSummary(projectId);
   }
 
-  @Get(':id')
-  @RequirePermissions('cost-entries:read')
-  async findOne(@Param('id') id: string) {
+  @Get(":id")
+  @RequirePermissions("cost-entries:read")
+  async findOne(@Param("id") id: string) {
     return this.costEntriesService.findOne(id);
   }
 
   @Post()
-  @RequirePermissions('cost-entries:create')
-  async create(@Body() dto: CreateCostEntryDto, @Request() req: AuthenticatedRequest) {
+  @RequirePermissions("cost-entries:create")
+  async create(
+    @Body() dto: CreateCostEntryDto,
+    @Request() req: AuthenticatedRequest,
+  ) {
     return this.costEntriesService.create(dto, req.user?.id);
   }
 
-  @Patch(':id')
-  @RequirePermissions('cost-entries:update')
-  async update(@Param('id') id: string, @Body() dto: UpdateCostEntryDto, @Request() req: AuthenticatedRequest) {
+  @Patch(":id")
+  @RequirePermissions("cost-entries:update")
+  async update(
+    @Param("id") id: string,
+    @Body() dto: UpdateCostEntryDto,
+    @Request() req: AuthenticatedRequest,
+  ) {
     return this.costEntriesService.update(id, dto, req.user?.id);
   }
 
-  @Post(':id/mark-paid')
-  @RequirePermissions('cost-entries:update')
-  async markPaid(@Param('id') id: string, @Body() dto: MarkPaidDto, @Request() req: AuthenticatedRequest) {
+  @Post(":id/mark-paid")
+  @RequirePermissions("cost-entries:update")
+  async markPaid(
+    @Param("id") id: string,
+    @Body() dto: MarkPaidDto,
+    @Request() req: AuthenticatedRequest,
+  ) {
     return this.costEntriesService.markPaid(id, dto, req.user?.id);
   }
 
-  @Delete(':id')
-  @RequirePermissions('cost-entries:delete')
-  async delete(@Param('id') id: string) {
+  @Delete(":id")
+  @RequirePermissions("cost-entries:delete")
+  async delete(@Param("id") id: string) {
     await this.costEntriesService.delete(id);
     return { success: true };
   }

@@ -1,6 +1,12 @@
-import { Entity, Column, PrimaryColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
 
-@Entity('users')
+@Entity("users")
 export class User {
   @PrimaryColumn({ length: 20 })
   id: string;
@@ -14,33 +20,33 @@ export class User {
   @Column({ length: 20, nullable: true })
   phone: string;
 
-  @Column({ name: 'avatar_url', length: 500, nullable: true })
+  @Column({ name: "avatar_url", length: 500, nullable: true })
   avatarUrl: string;
 
-  @Column({ name: 'auth_provider', length: 20, default: 'GOOGLE' })
+  @Column({ name: "auth_provider", length: 20, default: "GOOGLE" })
   authProvider: string;
 
-  @Column({ name: 'auth_uid', length: 100, nullable: true })
+  @Column({ name: "auth_uid", length: 100, nullable: true })
   authUid: string;
 
-  @Column({ name: 'is_active', default: true })
+  @Column({ name: "is_active", default: true })
   isActive: boolean;
 
-  @Column({ length: 20, default: 'user' })
+  @Column({ length: 20, default: "user" })
   role: string;
 
-  @Column({ name: 'last_login_at', nullable: true })
+  @Column({ name: "last_login_at", nullable: true })
   lastLoginAt: Date;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
-  @Column({ name: 'created_by', length: 20, nullable: true })
+  @Column({ name: "created_by", length: 20, nullable: true })
   createdBy: string;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: "updated_at" })
   updatedAt: Date;
 
-  @Column({ name: 'updated_by', type: 'varchar', length: 20, nullable: true })
+  @Column({ name: "updated_by", type: "varchar", length: 20, nullable: true })
   updatedBy: string | null;
 }

@@ -11,42 +11,42 @@
 
 export const EventNames = {
   // Project Events
-  PROJECT_CREATED: 'project.created',
-  PROJECT_UPDATED: 'project.updated',
-  PROJECT_STATUS_CHANGED: 'project.status.changed',
-  PROJECT_COMPLETED: 'project.completed',
+  PROJECT_CREATED: "project.created",
+  PROJECT_UPDATED: "project.updated",
+  PROJECT_STATUS_CHANGED: "project.status.changed",
+  PROJECT_COMPLETED: "project.completed",
 
   // Contract Events
-  CONTRACT_SIGNED: 'contract.signed',
-  CONTRACT_EXPIRED: 'contract.expired',
-  CONTRACT_AMOUNT_CHANGED: 'contract.amount.changed',
+  CONTRACT_SIGNED: "contract.signed",
+  CONTRACT_EXPIRED: "contract.expired",
+  CONTRACT_AMOUNT_CHANGED: "contract.amount.changed",
 
   // Invoice Events
-  INVOICE_ISSUED: 'invoice.issued',
-  INVOICE_PAID: 'invoice.paid',
-  INVOICE_OVERDUE: 'invoice.overdue',
-  INVOICE_VOIDED: 'invoice.voided',
+  INVOICE_ISSUED: "invoice.issued",
+  INVOICE_PAID: "invoice.paid",
+  INVOICE_OVERDUE: "invoice.overdue",
+  INVOICE_VOIDED: "invoice.voided",
 
   // Payment Events
-  PAYMENT_RECEIVED: 'payment.received',
-  PAYMENT_DUE: 'payment.due',
-  PAYMENT_OVERDUE: 'payment.overdue',
+  PAYMENT_RECEIVED: "payment.received",
+  PAYMENT_DUE: "payment.due",
+  PAYMENT_OVERDUE: "payment.overdue",
 
   // Client Events
-  CLIENT_CREATED: 'client.created',
-  CLIENT_UPDATED: 'client.updated',
+  CLIENT_CREATED: "client.created",
+  CLIENT_UPDATED: "client.updated",
 
   // User Events
-  USER_LOGGED_IN: 'user.logged.in',
-  USER_PERMISSIONS_CHANGED: 'user.permissions.changed',
+  USER_LOGGED_IN: "user.logged.in",
+  USER_PERMISSIONS_CHANGED: "user.permissions.changed",
 
   // Notification Events
-  NOTIFICATION_SEND: 'notification.send',
-  NOTIFICATION_BROADCAST: 'notification.broadcast',
+  NOTIFICATION_SEND: "notification.send",
+  NOTIFICATION_BROADCAST: "notification.broadcast",
 
   // Sync Events
-  SYNC_GOOGLE_CALENDAR: 'sync.google.calendar',
-  SYNC_GOOGLE_CONTACTS: 'sync.google.contacts',
+  SYNC_GOOGLE_CALENDAR: "sync.google.calendar",
+  SYNC_GOOGLE_CONTACTS: "sync.google.contacts",
 } as const;
 
 // ==========================================
@@ -148,14 +148,14 @@ export interface PaymentReceivedEvent extends BaseEvent {
 
 export interface NotificationSendEvent extends BaseEvent {
   recipientId: string;
-  recipientType: 'user' | 'line' | 'email';
+  recipientType: "user" | "line" | "email";
   title: string;
   message: string;
   metadata?: Record<string, any>;
 }
 
 export interface NotificationBroadcastEvent extends BaseEvent {
-  channel: 'line' | 'email' | 'all';
+  channel: "line" | "email" | "all";
   title: string;
   message: string;
   metadata?: Record<string, any>;

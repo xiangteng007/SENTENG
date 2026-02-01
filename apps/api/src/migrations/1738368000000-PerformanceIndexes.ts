@@ -91,30 +91,48 @@ export class PerformanceIndexes1738368000000 implements MigrationInterface {
   public async down(queryRunner: QueryRunner): Promise<void> {
     // Invoices
     await queryRunner.query(`DROP INDEX IF EXISTS idx_invoices_invoice_date;`);
-    await queryRunner.query(`DROP INDEX IF EXISTS idx_invoices_payment_status;`);
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS idx_invoices_payment_status;`,
+    );
     await queryRunner.query(`DROP INDEX IF EXISTS idx_invoices_status_date;`);
 
     // Projects
-    await queryRunner.query(`DROP INDEX IF EXISTS idx_projects_status_customer;`);
-    await queryRunner.query(`DROP INDEX IF EXISTS idx_projects_status_created;`);
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS idx_projects_status_customer;`,
+    );
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS idx_projects_status_created;`,
+    );
 
     // Vendors
     await queryRunner.query(`DROP INDEX IF EXISTS idx_vendors_status_type;`);
 
     // Transactions
-    await queryRunner.query(`DROP INDEX IF EXISTS idx_transactions_project_date;`);
-    await queryRunner.query(`DROP INDEX IF EXISTS idx_transactions_account_date;`);
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS idx_transactions_project_date;`,
+    );
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS idx_transactions_account_date;`,
+    );
 
     // Work Orders
-    await queryRunner.query(`DROP INDEX IF EXISTS idx_work_orders_status_date;`);
-    await queryRunner.query(`DROP INDEX IF EXISTS idx_work_orders_project_client;`);
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS idx_work_orders_status_date;`,
+    );
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS idx_work_orders_project_client;`,
+    );
 
     // Site Logs
     await queryRunner.query(`DROP INDEX IF EXISTS idx_site_logs_project_date;`);
 
     // Audit Logs
-    await queryRunner.query(`DROP INDEX IF EXISTS idx_audit_logs_user_timestamp;`);
-    await queryRunner.query(`DROP INDEX IF EXISTS idx_audit_logs_entity_action;`);
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS idx_audit_logs_user_timestamp;`,
+    );
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS idx_audit_logs_entity_action;`,
+    );
 
     console.log("Performance indexes dropped");
   }

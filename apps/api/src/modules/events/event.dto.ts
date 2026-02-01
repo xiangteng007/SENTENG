@@ -7,7 +7,7 @@ import {
   MaxLength,
   Min,
   IsIn,
-} from 'class-validator';
+} from "class-validator";
 
 export class CreateEventDto {
   @IsString()
@@ -32,7 +32,7 @@ export class CreateEventDto {
   @IsOptional()
   @IsString()
   @MaxLength(30)
-  @IsIn(['general', 'meeting', 'deadline', 'reminder', 'milestone'])
+  @IsIn(["general", "meeting", "deadline", "reminder", "milestone"])
   category?: string;
 
   @IsOptional()
@@ -90,7 +90,7 @@ export class UpdateEventDto {
   @IsOptional()
   @IsString()
   @MaxLength(30)
-  @IsIn(['general', 'meeting', 'deadline', 'reminder', 'milestone'])
+  @IsIn(["general", "meeting", "deadline", "reminder", "milestone"])
   category?: string;
 
   @IsOptional()
@@ -124,7 +124,7 @@ export class UpdateEventDto {
 
   @IsOptional()
   @IsString()
-  @IsIn(['scheduled', 'completed', 'cancelled'])
+  @IsIn(["scheduled", "completed", "cancelled"])
   status?: string;
 }
 

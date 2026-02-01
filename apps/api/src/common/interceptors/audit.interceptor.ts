@@ -5,9 +5,9 @@ import {
   CallHandler,
   Inject,
   Optional,
-} from '@nestjs/common';
-import { Observable, tap } from 'rxjs';
-import { Reflector } from '@nestjs/core';
+} from "@nestjs/common";
+import { Observable, tap } from "rxjs";
+import { Reflector } from "@nestjs/core";
 
 // Note: AuditService will be injected dynamically to avoid circular dependency
 interface AuditServiceInterface {
@@ -16,7 +16,7 @@ interface AuditServiceInterface {
     entityId: string,
     oldValues: any,
     newValues: any,
-    context?: any
+    context?: any,
   ): Promise<any>;
 }
 
@@ -24,19 +24,20 @@ interface AuditServiceInterface {
  * 需要審計的實體類型
  */
 export const AUDITED_ENTITIES = [
-  'contracts',
-  'payments',
-  'invoices',
-  'change_orders',
-  'work_orders',
-  'chemical_lots',
-  'bim_models',
+  "contracts",
+  "payments",
+  "invoices",
+  "change_orders",
+  "work_orders",
+  "chemical_lots",
+  "bim_models",
 ];
 
 /**
  * 裝飾器: 標記需要審計的控制器或方法
  */
-export const Audited = (entityType: string) => Reflect.metadata('auditedEntity', entityType);
+export const Audited = (entityType: string) =>
+  Reflect.metadata("auditedEntity", entityType);
 
 /**
  * AuditInterceptor
@@ -48,20 +49,20 @@ export const Audited = (entityType: string) => Reflect.metadata('auditedEntity',
 export class AuditInterceptor implements NestInterceptor {
   constructor(
     @Optional()
-    @Inject('AUDIT_SERVICE')
+    @Inject("AUDIT_SERVICE")
     private readonly auditService: AuditServiceInterface | null,
-    private readonly reflector: Reflector
+    private readonly reflector: Reflector,
   ) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest();
     const method = request.method;
     const entityType =
-      this.reflector.get<string>('auditedEntity', context.getHandler()) ||
-      this.reflector.get<string>('auditedEntity', context.getClass());
+      this.reflector.get<string>("auditedEntity", context.getHandler()) ||
+      this.reflector.get<string>("auditedEntity", context.getClass());
 
     // Only audit mutations on marked entities
-    if (!entityType || !['POST', 'PATCH', 'PUT', 'DELETE'].includes(method)) {
+    if (!entityType || !["POST", "PATCH", "PUT", "DELETE"].includes(method)) {
       return next.handle();
     }
 
@@ -75,43 +76,43 @@ export class AuditInterceptor implements NestInterceptor {
     const oldBody = request.body;
 
     return next.handle().pipe(
-      tap(async responseData => {
+      tap(async (responseData) => {
         try {
           const action = this.getAction(method);
           const newValues = responseData || request.body;
 
           await this.auditService!.logUpdate(
             entityType,
-            entityId || newValues?.id || 'unknown',
-            action === 'CREATE' ? null : oldBody,
+            entityId || newValues?.id || "unknown",
+            action === "CREATE" ? null : oldBody,
             newValues,
             {
               userId: user?.sub,
               userEmail: user?.email,
               userName: user?.name,
               ipAddress: request.ip,
-              userAgent: request.headers?.['user-agent'],
-            }
+              userAgent: request.headers?.["user-agent"],
+            },
           );
         } catch (error) {
           // Log error but don't fail the request
-          console.error('Audit logging failed:', error);
+          console.error("Audit logging failed:", error);
         }
-      })
+      }),
     );
   }
 
   private getAction(method: string): string {
     switch (method) {
-      case 'POST':
-        return 'CREATE';
-      case 'PATCH':
-      case 'PUT':
-        return 'UPDATE';
-      case 'DELETE':
-        return 'DELETE';
+      case "POST":
+        return "CREATE";
+      case "PATCH":
+      case "PUT":
+        return "UPDATE";
+      case "DELETE":
+        return "DELETE";
       default:
-        return 'UNKNOWN';
+        return "UNKNOWN";
     }
   }
 }

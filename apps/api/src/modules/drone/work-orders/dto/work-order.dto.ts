@@ -1,4 +1,11 @@
-import { IsString, IsOptional, IsNumber, MaxLength, IsDateString, IsIn } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsNumber,
+  MaxLength,
+  IsDateString,
+  IsIn,
+} from "class-validator";
 
 export class CreateWorkOrderDto {
   @IsString()
@@ -65,7 +72,7 @@ export class CreateWorkOrderDto {
 
   @IsOptional()
   @IsString()
-  @IsIn(['LOW', 'NORMAL', 'HIGH', 'CRITICAL'])
+  @IsIn(["LOW", "NORMAL", "HIGH", "CRITICAL"])
   priority?: string;
 
   @IsOptional()

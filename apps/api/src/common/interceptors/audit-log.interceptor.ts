@@ -1,6 +1,12 @@
-import { Injectable, NestInterceptor, ExecutionContext, CallHandler, Logger } from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import {
+  Injectable,
+  NestInterceptor,
+  ExecutionContext,
+  CallHandler,
+  Logger,
+} from "@nestjs/common";
+import { Observable } from "rxjs";
+import { tap } from "rxjs/operators";
 
 /**
  * Security Audit Logger Interceptor
@@ -14,74 +20,77 @@ import { tap } from 'rxjs/operators';
  */
 @Injectable()
 export class AuditLogInterceptor implements NestInterceptor {
-  private readonly logger = new Logger('SecurityAudit');
+  private readonly logger = new Logger("SecurityAudit");
 
   // Track failed login attempts for brute force detection
-  private readonly failedLoginAttempts = new Map<string, { count: number; lastAttempt: number }>();
+  private readonly failedLoginAttempts = new Map<
+    string,
+    { count: number; lastAttempt: number }
+  >();
   private readonly BRUTE_FORCE_THRESHOLD = 5;
   private readonly BRUTE_FORCE_WINDOW_MS = 5 * 60 * 1000; // 5 minutes
 
   // Sensitive operations that should always be logged
   private readonly sensitivePatterns = [
     {
-      method: 'POST',
+      method: "POST",
       pattern: /\/auth\/login/i,
-      action: 'USER_LOGIN',
-      severity: 'INFO',
+      action: "USER_LOGIN",
+      severity: "INFO",
     },
     {
-      method: 'POST',
+      method: "POST",
       pattern: /\/auth\/logout/i,
-      action: 'USER_LOGOUT',
-      severity: 'INFO',
+      action: "USER_LOGOUT",
+      severity: "INFO",
     },
     {
-      method: 'POST',
+      method: "POST",
       pattern: /\/(clients|projects|contracts|quotations|payments)/i,
-      action: 'RESOURCE_CREATE',
-      severity: 'INFO',
+      action: "RESOURCE_CREATE",
+      severity: "INFO",
     },
     {
-      method: 'PATCH',
+      method: "PATCH",
       pattern: /\/(clients|projects|contracts|quotations|payments)/i,
-      action: 'RESOURCE_UPDATE',
-      severity: 'INFO',
+      action: "RESOURCE_UPDATE",
+      severity: "INFO",
     },
     {
-      method: 'DELETE',
+      method: "DELETE",
       pattern: /\/.+/i,
-      action: 'RESOURCE_DELETE',
-      severity: 'WARNING',
+      action: "RESOURCE_DELETE",
+      severity: "WARNING",
     },
     {
-      method: 'POST',
+      method: "POST",
       pattern: /\/approve/i,
-      action: 'APPROVAL_ACTION',
-      severity: 'INFO',
+      action: "APPROVAL_ACTION",
+      severity: "INFO",
     },
     {
-      method: 'POST',
+      method: "POST",
       pattern: /\/reject/i,
-      action: 'REJECTION_ACTION',
-      severity: 'INFO',
+      action: "REJECTION_ACTION",
+      severity: "INFO",
     },
     {
-      method: 'POST',
+      method: "POST",
       pattern: /\/blacklist/i,
-      action: 'BLACKLIST_ACTION',
-      severity: 'WARNING',
+      action: "BLACKLIST_ACTION",
+      severity: "WARNING",
     },
     {
-      method: 'POST',
+      method: "POST",
       pattern: /\/finance\//i,
-      action: 'FINANCIAL_OPERATION',
-      severity: 'WARNING',
+      action: "FINANCIAL_OPERATION",
+      severity: "WARNING",
     },
     {
-      method: 'POST',
+      method: "POST",
       pattern: /\/users/i,
-      action: 'USER_MANAGEMENT',
-      severity: 'WARNING',
+      action: "USER_MANAGEMENT",
+      severity: "WARNING",
     },
   ];
 
@@ -98,12 +107,13 @@ export class AuditLogInterceptor implements NestInterceptor {
       return next.handle();
     }
 
-    const clientIp = ip || headers['x-forwarded-for']?.split(',')[0]?.trim() || 'unknown';
+    const clientIp =
+      ip || headers["x-forwarded-for"]?.split(",")[0]?.trim() || "unknown";
 
     // Create structured audit entry for Cloud Logging
     const auditEntry = {
       // GCP Cloud Logging fields
-      logType: 'SECURITY_AUDIT',
+      logType: "SECURITY_AUDIT",
       severity: patternMatch.severity,
 
       // Audit details
@@ -113,51 +123,51 @@ export class AuditLogInterceptor implements NestInterceptor {
       url: this.sanitizeUrl(url),
 
       // User context
-      userId: user?.sub || user?.id || 'anonymous',
-      userEmail: user?.email || 'unknown',
-      userRole: user?.role || 'unknown',
+      userId: user?.sub || user?.id || "anonymous",
+      userEmail: user?.email || "unknown",
+      userRole: user?.role || "unknown",
 
       // Request context
       clientIp,
-      userAgent: headers['user-agent']?.substring(0, 100) || 'unknown',
+      userAgent: headers["user-agent"]?.substring(0, 100) || "unknown",
 
       // Payload metadata (not sensitive content)
       bodyKeys: body ? Object.keys(body) : [],
-      hasAuthHeader: !!headers['authorization'],
+      hasAuthHeader: !!headers["authorization"],
     };
 
     return next.handle().pipe(
       tap({
-        next: response => {
+        next: (response) => {
           const duration = Date.now() - startTime;
 
           // Clear failed login attempts on success
-          if (patternMatch.action === 'USER_LOGIN') {
+          if (patternMatch.action === "USER_LOGIN") {
             this.failedLoginAttempts.delete(clientIp);
           }
 
           this.logger.log(
             JSON.stringify({
               ...auditEntry,
-              status: 'SUCCESS',
+              status: "SUCCESS",
               durationMs: duration,
               responseId: response?.id || null,
-            })
+            }),
           );
         },
-        error: error => {
+        error: (error) => {
           const duration = Date.now() - startTime;
 
           // Detect brute force attempts
           let bruteForceAlert = false;
-          if (patternMatch.action === 'USER_LOGIN') {
+          if (patternMatch.action === "USER_LOGIN") {
             bruteForceAlert = this.trackFailedLogin(clientIp);
           }
 
           const errorLog = {
             ...auditEntry,
-            severity: bruteForceAlert ? 'CRITICAL' : 'WARNING',
-            status: 'FAILED',
+            severity: bruteForceAlert ? "CRITICAL" : "WARNING",
+            status: "FAILED",
             durationMs: duration,
             error: error.message,
             statusCode: error.status || 500,
@@ -170,7 +180,7 @@ export class AuditLogInterceptor implements NestInterceptor {
             this.logger.warn(JSON.stringify(errorLog));
           }
         },
-      })
+      }),
     );
   }
 
@@ -185,7 +195,7 @@ export class AuditLogInterceptor implements NestInterceptor {
 
   private sanitizeUrl(url: string): string {
     // Remove query parameters that might contain sensitive data
-    return url.split('?')[0];
+    return url.split("?")[0];
   }
 
   /**

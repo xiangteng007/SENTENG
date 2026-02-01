@@ -10,12 +10,12 @@ import {
   UseInterceptors,
   UploadedFile,
   BadRequestException,
-} from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { PermissionGuard } from '../../common/guards/permission.guard';
-import { RequirePermissions } from '../../common/decorators/permissions.decorator';
-import { StorageService } from './storage.service';
+} from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
+import { PermissionGuard } from "../../common/guards/permission.guard";
+import { RequirePermissions } from "../../common/decorators/permissions.decorator";
+import { StorageService } from "./storage.service";
 
 /**
  * StorageController
@@ -24,7 +24,7 @@ import { StorageService } from './storage.service';
  *
  * @route /api/v1/storage
  */
-@Controller('storage')
+@Controller("storage")
 @UseGuards(JwtAuthGuard, PermissionGuard)
 export class StorageController {
   constructor(private readonly storageService: StorageService) {}
@@ -33,14 +33,14 @@ export class StorageController {
    * 檢查 Storage 服務狀態
    * GET /storage/status
    */
-  @Get('status')
-  @RequirePermissions('storage:read')
+  @Get("status")
+  @RequirePermissions("storage:read")
   getStatus() {
     return {
       enabled: this.storageService.enabled,
       message: this.storageService.enabled
-        ? 'Storage service is enabled'
-        : 'Storage service is disabled. GCP_BUCKET_NAME not configured.',
+        ? "Storage service is enabled"
+        : "Storage service is disabled. GCP_BUCKET_NAME not configured.",
     };
   }
 
@@ -52,27 +52,27 @@ export class StorageController {
    * @param destination - 目標資料夾 (query param, 例如: avatars, documents)
    * @returns { url: string } - 檔案的 Signed URL
    */
-  @Post('upload')
-  @RequirePermissions('storage:upload')
+  @Post("upload")
+  @RequirePermissions("storage:upload")
   @UseInterceptors(
-    FileInterceptor('file', {
+    FileInterceptor("file", {
       limits: {
         fileSize: 10 * 1024 * 1024, // 10MB limit
       },
       fileFilter: (req, file, callback) => {
         // 允許的檔案類型
         const allowedMimes = [
-          'image/jpeg',
-          'image/png',
-          'image/gif',
-          'image/webp',
-          'application/pdf',
-          'application/msword',
-          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-          'application/vnd.ms-excel',
-          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-          'text/csv',
-          'text/plain',
+          "image/jpeg",
+          "image/png",
+          "image/gif",
+          "image/webp",
+          "application/pdf",
+          "application/msword",
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          "application/vnd.ms-excel",
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          "text/csv",
+          "text/plain",
         ];
 
         if (allowedMimes.includes(file.mimetype)) {
@@ -80,26 +80,26 @@ export class StorageController {
         } else {
           callback(
             new BadRequestException(
-              `不支援的檔案類型: ${file.mimetype}. 支援的類型: 圖片(jpg,png,gif,webp), PDF, Word, Excel, CSV, TXT`
+              `不支援的檔案類型: ${file.mimetype}. 支援的類型: 圖片(jpg,png,gif,webp), PDF, Word, Excel, CSV, TXT`,
             ),
-            false
+            false,
           );
         }
       },
-    })
+    }),
   )
   async uploadFile(
     @UploadedFile() file: Express.Multer.File,
-    @Query('destination') destination: string = 'uploads'
+    @Query("destination") destination: string = "uploads",
   ) {
     if (!file) {
-      throw new BadRequestException('請提供要上傳的檔案');
+      throw new BadRequestException("請提供要上傳的檔案");
     }
 
     // 驗證 destination 路徑 (防止路徑遍歷攻擊)
-    const safeDestination = destination.replace(/[^a-zA-Z0-9\-_\/]/g, '');
-    if (safeDestination.includes('..')) {
-      throw new BadRequestException('無效的目標資料夾路徑');
+    const safeDestination = destination.replace(/[^a-zA-Z0-9\-_\/]/g, "");
+    if (safeDestination.includes("..")) {
+      throw new BadRequestException("無效的目標資料夾路徑");
     }
 
     const url = await this.storageService.uploadFile(file, safeDestination);
@@ -129,14 +129,19 @@ export class StorageController {
    * @param body.expiresInDays - URL 有效天數 (預設 7 天)
    * @returns { url: string } - Signed URL
    */
-  @Post('signed-url')
-  @RequirePermissions('storage:read')
-  async generateSignedUrl(@Body() body: { fileName: string; expiresInDays?: number }) {
+  @Post("signed-url")
+  @RequirePermissions("storage:read")
+  async generateSignedUrl(
+    @Body() body: { fileName: string; expiresInDays?: number },
+  ) {
     if (!body.fileName) {
-      throw new BadRequestException('請提供檔案路徑 (fileName)');
+      throw new BadRequestException("請提供檔案路徑 (fileName)");
     }
 
-    const url = await this.storageService.generateSignedUrl(body.fileName, body.expiresInDays || 7);
+    const url = await this.storageService.generateSignedUrl(
+      body.fileName,
+      body.expiresInDays || 7,
+    );
 
     return {
       success: true,
@@ -151,22 +156,22 @@ export class StorageController {
    *
    * @param encodedFileName - Base64 編碼的檔案路徑
    */
-  @Delete(':encodedFileName')
-  @RequirePermissions('storage:delete')
-  async deleteFile(@Param('encodedFileName') encodedFileName: string) {
+  @Delete(":encodedFileName")
+  @RequirePermissions("storage:delete")
+  async deleteFile(@Param("encodedFileName") encodedFileName: string) {
     // 解碼 Base64 檔案名稱
     let fileName: string;
     try {
-      fileName = Buffer.from(encodedFileName, 'base64').toString('utf-8');
+      fileName = Buffer.from(encodedFileName, "base64").toString("utf-8");
     } catch {
-      throw new BadRequestException('無效的檔案路徑編碼');
+      throw new BadRequestException("無效的檔案路徑編碼");
     }
 
     await this.storageService.deleteFile(fileName);
 
     return {
       success: true,
-      message: '檔案已刪除',
+      message: "檔案已刪除",
       fileName,
     };
   }

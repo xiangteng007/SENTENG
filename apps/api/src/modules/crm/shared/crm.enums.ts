@@ -4,17 +4,17 @@
  */
 export enum PipelineStage {
   /** 潛在客戶 - 初次接觸 */
-  LEAD = 'lead',
+  LEAD = "lead",
   /** 已接洽 - 主動聯繫中 */
-  CONTACTED = 'contacted',
+  CONTACTED = "contacted",
   /** 報價中 - 已提供估價單 */
-  QUOTED = 'quoted',
+  QUOTED = "quoted",
   /** 議價中 - 價格協商階段 */
-  NEGOTIATING = 'negotiating',
+  NEGOTIATING = "negotiating",
   /** 已成交 - 簽約完成 */
-  WON = 'won',
+  WON = "won",
   /** 失敗 - 客戶流失 */
-  LOST = 'lost',
+  LOST = "lost",
 }
 
 /**
@@ -22,11 +22,11 @@ export enum PipelineStage {
  */
 export enum ClientStatus {
   /** 活躍客戶 */
-  ACTIVE = 'active',
+  ACTIVE = "active",
   /** 非活躍客戶 */
-  INACTIVE = 'inactive',
+  INACTIVE = "inactive",
   /** VIP 客戶 */
-  VIP = 'vip',
+  VIP = "vip",
 }
 
 /**
@@ -34,11 +34,11 @@ export enum ClientStatus {
  */
 export enum ContactType {
   /** 主要聯絡人 */
-  PRIMARY = 'primary',
+  PRIMARY = "primary",
   /** 技術聯絡人 */
-  TECHNICAL = 'technical',
+  TECHNICAL = "technical",
   /** 財務聯絡人 */
-  BILLING = 'billing',
+  BILLING = "billing",
   /** 一般聯絡人 */
-  GENERAL = 'general',
+  GENERAL = "general",
 }

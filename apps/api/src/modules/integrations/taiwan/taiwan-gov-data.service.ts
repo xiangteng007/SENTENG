@@ -7,8 +7,8 @@
  * - 公司登記查詢 (Company Registry - GCIS)
  */
 
-import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 
 export interface TenderSearchParams {
   keyword?: string;
@@ -17,7 +17,7 @@ export interface TenderSearchParams {
   endDate?: string;
   budgetMin?: number;
   budgetMax?: number;
-  category?: 'construction' | 'engineering' | 'all';
+  category?: "construction" | "engineering" | "all";
   page?: number;
   pageSize?: number;
 }
@@ -105,12 +105,12 @@ export class TaiwanGovDataService {
   private readonly dataGovApiKey: string;
 
   // API endpoints
-  private readonly GCIS_BASE_URL = 'https://data.gcis.nat.gov.tw/od/data/api';
-  private readonly PCC_BASE_URL = 'https://pcc.g0v.ronny.tw/api';
+  private readonly GCIS_BASE_URL = "https://data.gcis.nat.gov.tw/od/data/api";
+  private readonly PCC_BASE_URL = "https://pcc.g0v.ronny.tw/api";
 
   constructor(private readonly configService: ConfigService) {
-    this.pccApiKey = this.configService.get('PCC_API_KEY', '');
-    this.dataGovApiKey = this.configService.get('DATA_GOV_API_KEY', '');
+    this.pccApiKey = this.configService.get("PCC_API_KEY", "");
+    this.dataGovApiKey = this.configService.get("DATA_GOV_API_KEY", "");
   }
 
   /**
@@ -119,18 +119,18 @@ export class TaiwanGovDataService {
    * API: https://pcc.g0v.ronny.tw/api/
    */
   async searchTenders(
-    params: TenderSearchParams
+    params: TenderSearchParams,
   ): Promise<{ data: TenderResult[]; total: number }> {
     this.logger.log(`Searching tenders with params: ${JSON.stringify(params)}`);
 
     try {
       const queryParams = new URLSearchParams();
-      if (params.keyword) queryParams.append('query', params.keyword);
-      if (params.page) queryParams.append('page', params.page.toString());
+      if (params.keyword) queryParams.append("query", params.keyword);
+      if (params.page) queryParams.append("page", params.page.toString());
 
       const url = `${this.PCC_BASE_URL}/search?${queryParams.toString()}`;
       const response = await fetch(url, {
-        headers: { Accept: 'application/json' },
+        headers: { Accept: "application/json" },
       });
 
       if (!response.ok) {
@@ -143,17 +143,20 @@ export class TaiwanGovDataService {
 
       return {
         data: records.map((r: Record<string, unknown>) => ({
-          tenderId: typeof r.id === 'string' || typeof r.id === 'number' ? String(r.id) : '',
-          title: typeof r.name === 'string' ? r.name : '',
-          orgName: typeof r.unit === 'string' ? r.unit : '',
-          budgetAmount: typeof r.price === 'number' ? r.price : 0,
-          publishDate: typeof r.publish === 'string' ? r.publish : '',
-          closeDate: typeof r.end_date === 'string' ? String(r.end_date) : '',
-          category: typeof r.category === 'string' ? r.category : '工程',
-          location: typeof r.location === 'string' ? r.location : '',
-          url: `https://web.pcc.gov.tw/tps/QueryTender/query/searchTenderDetail?pk=${typeof r.id === 'string' || typeof r.id === 'number' ? r.id : ''}`,
+          tenderId:
+            typeof r.id === "string" || typeof r.id === "number"
+              ? String(r.id)
+              : "",
+          title: typeof r.name === "string" ? r.name : "",
+          orgName: typeof r.unit === "string" ? r.unit : "",
+          budgetAmount: typeof r.price === "number" ? r.price : 0,
+          publishDate: typeof r.publish === "string" ? r.publish : "",
+          closeDate: typeof r.end_date === "string" ? String(r.end_date) : "",
+          category: typeof r.category === "string" ? r.category : "工程",
+          location: typeof r.location === "string" ? r.location : "",
+          url: `https://web.pcc.gov.tw/tps/QueryTender/query/searchTenderDetail?pk=${typeof r.id === "string" || typeof r.id === "number" ? r.id : ""}`,
         })),
-        total: typeof data.total === 'number' ? data.total : records.length,
+        total: typeof data.total === "number" ? data.total : records.length,
       };
     } catch (error) {
       this.logger.error(`Failed to fetch tenders: ${error}`);
@@ -165,15 +168,15 @@ export class TaiwanGovDataService {
     return {
       data: [
         {
-          tenderId: 'PCC-2026-001234',
-          title: '○○區○○路道路改善工程',
-          orgName: '臺北市政府工務局',
+          tenderId: "PCC-2026-001234",
+          title: "○○區○○路道路改善工程",
+          orgName: "臺北市政府工務局",
           budgetAmount: 15000000,
-          publishDate: '2026-01-15',
-          closeDate: '2026-02-15',
-          category: '工程',
-          location: '臺北市',
-          url: 'https://web.pcc.gov.tw/tps/pss/tender.do?method=showPublish&searchMode=1&pkPmsMain=PCC-2026-001234',
+          publishDate: "2026-01-15",
+          closeDate: "2026-02-15",
+          category: "工程",
+          location: "臺北市",
+          url: "https://web.pcc.gov.tw/tps/pss/tender.do?method=showPublish&searchMode=1&pkPmsMain=PCC-2026-001234",
         },
       ],
       total: 1,
@@ -183,9 +186,12 @@ export class TaiwanGovDataService {
   /**
    * 最新標案通知
    */
-  async getLatestTenders(category?: string, limit?: number): Promise<TenderResult[]> {
+  async getLatestTenders(
+    category?: string,
+    limit?: number,
+  ): Promise<TenderResult[]> {
     const result = await this.searchTenders({
-      category: (category as TenderSearchParams['category']) || 'construction',
+      category: (category as TenderSearchParams["category"]) || "construction",
       pageSize: limit || 10,
     });
     return result.data;
@@ -197,9 +203,11 @@ export class TaiwanGovDataService {
    * Note: Building permit data requires specific city APIs
    */
   async searchBuildingPermits(
-    params: BuildingPermitSearchParams
+    params: BuildingPermitSearchParams,
   ): Promise<{ data: BuildingPermitResult[]; total: number }> {
-    this.logger.log(`Searching building permits with params: ${JSON.stringify(params)}`);
+    this.logger.log(
+      `Searching building permits with params: ${JSON.stringify(params)}`,
+    );
 
     // Building permits require city-specific APIs or the national platform
     // For now, return mock data with proper structure
@@ -207,18 +215,18 @@ export class TaiwanGovDataService {
     return {
       data: [
         {
-          permitNo: '113建都造字第00123號',
-          issueDate: '2024-03-15',
-          address: params.address || '臺北市大安區某某路100號',
-          city: params.city || '臺北市',
-          district: params.district || '大安區',
-          permitType: '建造執照',
-          buildingType: '住宅',
+          permitNo: "113建都造字第00123號",
+          issueDate: "2024-03-15",
+          address: params.address || "臺北市大安區某某路100號",
+          city: params.city || "臺北市",
+          district: params.district || "大安區",
+          permitType: "建造執照",
+          buildingType: "住宅",
           floors: 12,
           totalArea: 5200.5,
-          applicant: '○○建設股份有限公司',
-          builder: '○○營造股份有限公司',
-          status: '核准',
+          applicant: "○○建設股份有限公司",
+          builder: "○○營造股份有限公司",
+          status: "核准",
         },
       ],
       total: 1,
@@ -231,9 +239,11 @@ export class TaiwanGovDataService {
    * API: https://data.gcis.nat.gov.tw/od/
    */
   async searchCompanies(
-    params: CompanySearchParams
+    params: CompanySearchParams,
   ): Promise<{ data: CompanyResult[]; total: number }> {
-    this.logger.log(`Searching companies with params: ${JSON.stringify(params)}`);
+    this.logger.log(
+      `Searching companies with params: ${JSON.stringify(params)}`,
+    );
 
     try {
       // Use GCIS unified business number lookup
@@ -257,12 +267,12 @@ export class TaiwanGovDataService {
    * Look up company by unified business number (統一編號)
    */
   private async lookupByUnifiedBusinessNo(
-    ubn: string
+    ubn: string,
   ): Promise<{ data: CompanyResult[]; total: number }> {
     const url = `${this.GCIS_BASE_URL}/6BM8-UPYP?$format=json&$filter=Business_Accounting_NO eq ${ubn}`;
 
     const response = await fetch(url, {
-      headers: { Accept: 'application/json' },
+      headers: { Accept: "application/json" },
     });
 
     if (!response.ok) {
@@ -277,7 +287,7 @@ export class TaiwanGovDataService {
     }
 
     return {
-      data: data.map(company => this.mapGcisToCompanyResult(company)),
+      data: data.map((company) => this.mapGcisToCompanyResult(company)),
       total: data.length,
     };
   }
@@ -286,12 +296,12 @@ export class TaiwanGovDataService {
    * Search companies by name
    */
   private async searchByCompanyName(
-    name: string
+    name: string,
   ): Promise<{ data: CompanyResult[]; total: number }> {
     const url = `${this.GCIS_BASE_URL}/6BM8-UPYP?$format=json&$filter=Company_Name like ${encodeURIComponent(name)}&$top=20`;
 
     const response = await fetch(url, {
-      headers: { Accept: 'application/json' },
+      headers: { Accept: "application/json" },
     });
 
     if (!response.ok) {
@@ -306,7 +316,7 @@ export class TaiwanGovDataService {
     }
 
     return {
-      data: data.map(company => this.mapGcisToCompanyResult(company)),
+      data: data.map((company) => this.mapGcisToCompanyResult(company)),
       total: data.length,
     };
   }
@@ -338,14 +348,14 @@ export class TaiwanGovDataService {
     return {
       data: [
         {
-          unifiedBusinessNo: '12345678',
-          companyName: '森騰營造股份有限公司',
-          representative: '王大明',
-          address: '臺北市中山區○○路123號',
+          unifiedBusinessNo: "12345678",
+          companyName: "森騰營造股份有限公司",
+          representative: "王大明",
+          address: "臺北市中山區○○路123號",
           capital: 50000000,
-          establishDate: '2010-05-20',
-          status: '核准設立',
-          industry: ['土木工程業', '建築工程業'],
+          establishDate: "2010-05-20",
+          status: "核准設立",
+          industry: ["土木工程業", "建築工程業"],
         },
       ],
       total: 1,
@@ -355,7 +365,9 @@ export class TaiwanGovDataService {
   /**
    * 驗證公司統一編號
    */
-  async verifyCompany(unifiedBusinessNo: string): Promise<CompanyResult | null> {
+  async verifyCompany(
+    unifiedBusinessNo: string,
+  ): Promise<CompanyResult | null> {
     const result = await this.searchCompanies({ unifiedBusinessNo });
     return result.data.length > 0 ? result.data[0] : null;
   }
@@ -363,7 +375,9 @@ export class TaiwanGovDataService {
   /**
    * 查詢建照歷史
    */
-  async getBuildingPermitHistory(address: string): Promise<BuildingPermitResult[]> {
+  async getBuildingPermitHistory(
+    address: string,
+  ): Promise<BuildingPermitResult[]> {
     const result = await this.searchBuildingPermits({ address });
     return result.data;
   }

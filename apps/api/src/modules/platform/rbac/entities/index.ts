@@ -1,1 +1,1 @@
-export * from './rbac.entity';
+export * from "./rbac.entity";

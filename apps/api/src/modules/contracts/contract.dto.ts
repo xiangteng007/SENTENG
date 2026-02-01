@@ -1,4 +1,11 @@
-import { IsString, IsOptional, IsNumber, IsIn, IsDateString, MaxLength } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsNumber,
+  IsIn,
+  IsDateString,
+  MaxLength,
+} from "class-validator";
 
 export class CreateContractDto {
   @IsString()
@@ -18,12 +25,12 @@ export class CreateContractDto {
   title: string;
 
   @IsOptional()
-  @IsIn(['FIXED_PRICE', 'COST_PLUS', 'UNIT_PRICE'])
-  contractType?: string = 'FIXED_PRICE';
+  @IsIn(["FIXED_PRICE", "COST_PLUS", "UNIT_PRICE"])
+  contractType?: string = "FIXED_PRICE";
 
   @IsOptional()
-  @IsIn(['TWD', 'CNY', 'USD'])
-  currency?: string = 'TWD';
+  @IsIn(["TWD", "CNY", "USD"])
+  currency?: string = "TWD";
 
   @IsNumber()
   originalAmount: number;
@@ -33,8 +40,8 @@ export class CreateContractDto {
   retentionRate?: number = 0;
 
   @IsOptional()
-  @IsIn(['PROGRESS', 'MILESTONE', 'FIXED_INSTALLMENT'])
-  paymentTerms?: string = 'PROGRESS';
+  @IsIn(["PROGRESS", "MILESTONE", "FIXED_INSTALLMENT"])
+  paymentTerms?: string = "PROGRESS";
 
   @IsOptional()
   @IsDateString()
@@ -69,7 +76,7 @@ export class UpdateContractDto {
   retentionRate?: number;
 
   @IsOptional()
-  @IsIn(['PROGRESS', 'MILESTONE', 'FIXED_INSTALLMENT'])
+  @IsIn(["PROGRESS", "MILESTONE", "FIXED_INSTALLMENT"])
   paymentTerms?: string;
 
   @IsOptional()
@@ -103,8 +110,8 @@ export class ConvertFromQuotationDto {
   retentionRate?: number = 0;
 
   @IsOptional()
-  @IsIn(['PROGRESS', 'MILESTONE', 'FIXED_INSTALLMENT'])
-  paymentTerms?: string = 'PROGRESS';
+  @IsIn(["PROGRESS", "MILESTONE", "FIXED_INSTALLMENT"])
+  paymentTerms?: string = "PROGRESS";
 
   @IsOptional()
   @IsNumber()

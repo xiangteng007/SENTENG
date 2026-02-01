@@ -1,6 +1,6 @@
-import { SetMetadata } from '@nestjs/common';
+import { SetMetadata } from "@nestjs/common";
 
-export const PERMISSIONS_KEY = 'requiredPermissions';
+export const PERMISSIONS_KEY = "requiredPermissions";
 
 /**
  * Decorator to specify required permissions for an endpoint

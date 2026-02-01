@@ -1,11 +1,11 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from "typeorm";
 
 /**
  * 建立 DroneOps 領域表
  * Note: FK constraints are added later by migration 1769447303639
  */
 export class CreateDroneOpsDomain1704672000004 implements MigrationInterface {
-  name = 'CreateDroneOpsDomain1704672000004';
+  name = "CreateDroneOpsDomain1704672000004";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Service Catalog - Note: FK to business_units added later
@@ -226,24 +226,28 @@ export class CreateDroneOpsDomain1704672000004 implements MigrationInterface {
 
     // Indexes
     await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS "idx_work_orders_project_status" ON "work_orders"("project_id", "status")`
+      `CREATE INDEX IF NOT EXISTS "idx_work_orders_project_status" ON "work_orders"("project_id", "status")`,
     );
     await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS "idx_work_orders_scheduled" ON "work_orders"("scheduled_date")`
+      `CREATE INDEX IF NOT EXISTS "idx_work_orders_scheduled" ON "work_orders"("scheduled_date")`,
     );
     await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS "idx_flight_logs_work_order" ON "flight_logs"("work_order_id")`
+      `CREATE INDEX IF NOT EXISTS "idx_flight_logs_work_order" ON "flight_logs"("work_order_id")`,
     );
     await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS "idx_chemical_lots_status" ON "chemical_lots"("status")`
+      `CREATE INDEX IF NOT EXISTS "idx_chemical_lots_status" ON "chemical_lots"("status")`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`DROP INDEX IF EXISTS "idx_chemical_lots_status"`);
-    await queryRunner.query(`DROP INDEX IF EXISTS "idx_flight_logs_work_order"`);
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "idx_flight_logs_work_order"`,
+    );
     await queryRunner.query(`DROP INDEX IF EXISTS "idx_work_orders_scheduled"`);
-    await queryRunner.query(`DROP INDEX IF EXISTS "idx_work_orders_project_status"`);
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "idx_work_orders_project_status"`,
+    );
     await queryRunner.query(`DROP TABLE IF EXISTS "application_records"`);
     await queryRunner.query(`DROP TABLE IF EXISTS "mixture_batches"`);
     await queryRunner.query(`DROP TABLE IF EXISTS "chemical_lots"`);

@@ -1,9 +1,13 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { ChangeOrder, ChangeOrderItem } from './change-order.entity';
-import { CreateChangeOrderDto, UpdateChangeOrderDto } from './change-order.dto';
-import { ContractsService } from '../contracts/contracts.service';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { ChangeOrder, ChangeOrderItem } from "./change-order.entity";
+import { CreateChangeOrderDto, UpdateChangeOrderDto } from "./change-order.dto";
+import { ContractsService } from "../contracts/contracts.service";
 
 @Injectable()
 export class ChangeOrdersService {
@@ -12,7 +16,7 @@ export class ChangeOrdersService {
     private changeOrdersRepository: Repository<ChangeOrder>,
     @InjectRepository(ChangeOrderItem)
     private itemsRepository: Repository<ChangeOrderItem>,
-    private contractsService: ContractsService
+    private contractsService: ContractsService,
   ) {}
 
   async findAll(options: {
@@ -27,15 +31,15 @@ export class ChangeOrdersService {
 
     return this.changeOrdersRepository.find({
       where,
-      relations: ['contract', 'project', 'items'],
-      order: { createdAt: 'DESC' },
+      relations: ["contract", "project", "items"],
+      order: { createdAt: "DESC" },
     });
   }
 
   async findOne(id: string): Promise<ChangeOrder> {
     const co = await this.changeOrdersRepository.findOne({
       where: { id },
-      relations: ['contract', 'project', 'items'],
+      relations: ["contract", "project", "items"],
     });
     if (!co) {
       throw new NotFoundException(`Change Order ${id} not found`);
@@ -43,11 +47,14 @@ export class ChangeOrdersService {
     return co;
   }
 
-  async create(dto: CreateChangeOrderDto, userId?: string): Promise<ChangeOrder> {
+  async create(
+    dto: CreateChangeOrderDto,
+    userId?: string,
+  ): Promise<ChangeOrder> {
     const contract = await this.contractsService.findOne(dto.contractId);
 
-    if (!['CTR_ACTIVE', 'CTR_WARRANTY'].includes(contract.status)) {
-      throw new BadRequestException('只有執行中或保固中的合約可新增變更單');
+    if (!["CTR_ACTIVE", "CTR_WARRANTY"].includes(contract.status)) {
+      throw new BadRequestException("只有執行中或保固中的合約可新增變更單");
     }
 
     const id = await this.generateId();
@@ -57,13 +64,16 @@ export class ChangeOrdersService {
     const items =
       dto.items?.map((item, idx) => ({
         ...item,
-        id: `${id}-${String(idx + 1).padStart(3, '0')}`,
+        id: `${id}-${String(idx + 1).padStart(3, "0")}`,
         changeOrderId: id,
         itemOrder: idx + 1,
         amount: item.quantity * item.unitPrice,
       })) || [];
 
-    const totalAmount = items.reduce((sum, item) => sum + Number(item.amount), 0);
+    const totalAmount = items.reduce(
+      (sum, item) => sum + Number(item.amount),
+      0,
+    );
 
     const changeOrder = this.changeOrdersRepository.create({
       id,
@@ -75,7 +85,7 @@ export class ChangeOrdersService {
       amount: totalAmount,
       daysImpact: dto.daysImpact || 0,
       notes: dto.notes,
-      status: 'CO_DRAFT',
+      status: "CO_DRAFT",
     });
 
     await this.changeOrdersRepository.save(changeOrder);
@@ -87,11 +97,15 @@ export class ChangeOrdersService {
     return this.findOne(id);
   }
 
-  async update(id: string, dto: UpdateChangeOrderDto, userId?: string): Promise<ChangeOrder> {
+  async update(
+    id: string,
+    dto: UpdateChangeOrderDto,
+    userId?: string,
+  ): Promise<ChangeOrder> {
     const co = await this.findOne(id);
 
-    if (co.status !== 'CO_DRAFT') {
-      throw new BadRequestException('只有草稿狀態可修改');
+    if (co.status !== "CO_DRAFT") {
+      throw new BadRequestException("只有草稿狀態可修改");
     }
 
     if (dto.items) {
@@ -99,7 +113,7 @@ export class ChangeOrdersService {
 
       const items = dto.items.map((item, idx) => ({
         ...item,
-        id: `${id}-${String(idx + 1).padStart(3, '0')}`,
+        id: `${id}-${String(idx + 1).padStart(3, "0")}`,
         changeOrderId: id,
         itemOrder: idx + 1,
         amount: item.quantity * item.unitPrice,
@@ -107,7 +121,10 @@ export class ChangeOrdersService {
 
       await this.itemsRepository.save(items);
 
-      const totalAmount = items.reduce((sum, item) => sum + Number(item.amount), 0);
+      const totalAmount = items.reduce(
+        (sum, item) => sum + Number(item.amount),
+        0,
+      );
       (co as any).amount = totalAmount;
     }
 
@@ -119,22 +136,22 @@ export class ChangeOrdersService {
   async submit(id: string, userId?: string): Promise<ChangeOrder> {
     const co = await this.findOne(id);
 
-    if (co.status !== 'CO_DRAFT') {
-      throw new BadRequestException('只有草稿狀態可提交');
+    if (co.status !== "CO_DRAFT") {
+      throw new BadRequestException("只有草稿狀態可提交");
     }
 
-    co.status = 'CO_PENDING';
+    co.status = "CO_PENDING";
     return this.changeOrdersRepository.save(co);
   }
 
   async approve(id: string, userId?: string): Promise<ChangeOrder> {
     const co = await this.findOne(id);
 
-    if (co.status !== 'CO_PENDING') {
-      throw new BadRequestException('只有待審核狀態可核准');
+    if (co.status !== "CO_PENDING") {
+      throw new BadRequestException("只有待審核狀態可核准");
     }
 
-    co.status = 'CO_APPROVED';
+    co.status = "CO_APPROVED";
     co.approvedAt = new Date();
     if (userId) co.approvedBy = userId;
 
@@ -150,41 +167,45 @@ export class ChangeOrdersService {
     return this.changeOrdersRepository.save(co);
   }
 
-  async reject(id: string, reason: string, userId?: string): Promise<ChangeOrder> {
+  async reject(
+    id: string,
+    reason: string,
+    userId?: string,
+  ): Promise<ChangeOrder> {
     const co = await this.findOne(id);
 
-    if (co.status !== 'CO_PENDING') {
-      throw new BadRequestException('只有待審核狀態可駁回');
+    if (co.status !== "CO_PENDING") {
+      throw new BadRequestException("只有待審核狀態可駁回");
     }
 
-    co.status = 'CO_DRAFT';
-    co.notes = `[駁回] ${reason}\n${co.notes || ''}`;
+    co.status = "CO_DRAFT";
+    co.notes = `[駁回] ${reason}\n${co.notes || ""}`;
     return this.changeOrdersRepository.save(co);
   }
 
   private async generateId(): Promise<string> {
     const date = new Date();
-    const prefix = `CO-${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}-`;
+    const prefix = `CO-${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, "0")}-`;
 
     const last = await this.changeOrdersRepository
-      .createQueryBuilder('co')
-      .where('co.id LIKE :prefix', { prefix: `${prefix}%` })
-      .orderBy('co.id', 'DESC')
+      .createQueryBuilder("co")
+      .where("co.id LIKE :prefix", { prefix: `${prefix}%` })
+      .orderBy("co.id", "DESC")
       .getOne();
 
     let seq = 1;
     if (last) {
-      const lastSeq = parseInt(last.id.split('-')[2], 10);
+      const lastSeq = parseInt(last.id.split("-")[2], 10);
       seq = lastSeq + 1;
     }
 
-    return `${prefix}${String(seq).padStart(4, '0')}`;
+    return `${prefix}${String(seq).padStart(4, "0")}`;
   }
 
   private async generateCoNumber(contractId: string): Promise<string> {
     const existing = await this.changeOrdersRepository.count({
       where: { contractId },
     });
-    return `CO-${String(existing + 1).padStart(3, '0')}`;
+    return `CO-${String(existing + 1).padStart(3, "0")}`;
   }
 }

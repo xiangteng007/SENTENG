@@ -1,7 +1,11 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm';
-import { Role, Permission, UserRole } from './entities';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository, In } from "typeorm";
+import { Role, Permission, UserRole } from "./entities";
 
 @Injectable()
 export class RbacService {
@@ -11,7 +15,7 @@ export class RbacService {
     @InjectRepository(Permission)
     private readonly permissionRepo: Repository<Permission>,
     @InjectRepository(UserRole)
-    private readonly userRoleRepo: Repository<UserRole>
+    private readonly userRoleRepo: Repository<UserRole>,
   ) {}
 
   // ========== Roles ==========
@@ -19,15 +23,15 @@ export class RbacService {
   async findAllRoles(): Promise<Role[]> {
     return this.roleRepo.find({
       where: { isActive: true },
-      relations: ['permissions'],
-      order: { level: 'DESC' },
+      relations: ["permissions"],
+      order: { level: "DESC" },
     });
   }
 
   async findRoleById(id: string): Promise<Role> {
     const role = await this.roleRepo.findOne({
       where: { id },
-      relations: ['permissions'],
+      relations: ["permissions"],
     });
     if (!role) throw new NotFoundException(`Role ${id} not found`);
     return role;
@@ -37,14 +41,14 @@ export class RbacService {
 
   async findAllPermissions(): Promise<Permission[]> {
     return this.permissionRepo.find({
-      order: { module: 'ASC', action: 'ASC' },
+      order: { module: "ASC", action: "ASC" },
     });
   }
 
   async findPermissionsByModule(module: string): Promise<Permission[]> {
     return this.permissionRepo.find({
       where: { module },
-      order: { action: 'ASC' },
+      order: { action: "ASC" },
     });
   }
 
@@ -56,7 +60,10 @@ export class RbacService {
     });
   }
 
-  async getUserPermissions(userId: string, businessUnitId?: string): Promise<string[]> {
+  async getUserPermissions(
+    userId: string,
+    businessUnitId?: string,
+  ): Promise<string[]> {
     // Get all active roles for user
     const userRoles = await this.userRoleRepo.find({
       where: { userId, isActive: true },
@@ -66,22 +73,22 @@ export class RbacService {
 
     // Filter by business unit if provided
     const applicableRoles = userRoles.filter(
-      ur => ur.businessUnitId === '*' || ur.businessUnitId === businessUnitId
+      (ur) => ur.businessUnitId === "*" || ur.businessUnitId === businessUnitId,
     );
 
-    const roleIds = applicableRoles.map(ur => ur.roleId);
+    const roleIds = applicableRoles.map((ur) => ur.roleId);
     if (roleIds.length === 0) return [];
 
     // Get roles with permissions
     const roles = await this.roleRepo.find({
       where: { id: In(roleIds), isActive: true },
-      relations: ['permissions'],
+      relations: ["permissions"],
     });
 
     // Collect unique permissions
     const permissionSet = new Set<string>();
-    roles.forEach(role => {
-      role.permissions?.forEach(p => permissionSet.add(p.id));
+    roles.forEach((role) => {
+      role.permissions?.forEach((p) => permissionSet.add(p.id));
     });
 
     return Array.from(permissionSet);
@@ -90,7 +97,7 @@ export class RbacService {
   async hasPermission(
     userId: string,
     permissionId: string,
-    businessUnitId?: string
+    businessUnitId?: string,
   ): Promise<boolean> {
     const permissions = await this.getUserPermissions(userId, businessUnitId);
     return permissions.includes(permissionId);
@@ -99,8 +106,8 @@ export class RbacService {
   async assignRoleToUser(
     userId: string,
     roleId: string,
-    businessUnitId: string = '*',
-    grantedBy?: string
+    businessUnitId: string = "*",
+    grantedBy?: string,
   ): Promise<UserRole> {
     // Verify role exists
     await this.findRoleById(roleId);
@@ -128,9 +135,12 @@ export class RbacService {
   async revokeRoleFromUser(
     userId: string,
     roleId: string,
-    businessUnitId: string = '*'
+    businessUnitId: string = "*",
   ): Promise<void> {
-    await this.userRoleRepo.update({ userId, roleId, businessUnitId }, { isActive: false });
+    await this.userRoleRepo.update(
+      { userId, roleId, businessUnitId },
+      { isActive: false },
+    );
   }
 
   // ========== Authorization Check ==========
@@ -138,9 +148,13 @@ export class RbacService {
   async checkAccess(
     userId: string,
     requiredPermission: string,
-    businessUnitId?: string
+    businessUnitId?: string,
   ): Promise<void> {
-    const hasAccess = await this.hasPermission(userId, requiredPermission, businessUnitId);
+    const hasAccess = await this.hasPermission(
+      userId,
+      requiredPermission,
+      businessUnitId,
+    );
     if (!hasAccess) {
       throw new ForbiddenException(`Missing permission: ${requiredPermission}`);
     }

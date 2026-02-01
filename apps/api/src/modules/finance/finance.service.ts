@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Account, Transaction, Loan } from './entities';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { Account, Transaction, Loan } from "./entities";
 import {
   CreateAccountDto,
   UpdateAccountDto,
@@ -9,7 +9,7 @@ import {
   UpdateTransactionDto,
   CreateLoanDto,
   UpdateLoanDto,
-} from './finance.dto';
+} from "./finance.dto";
 
 @Injectable()
 export class FinanceService {
@@ -19,13 +19,13 @@ export class FinanceService {
     @InjectRepository(Transaction)
     private transactionRepository: Repository<Transaction>,
     @InjectRepository(Loan)
-    private loanRepository: Repository<Loan>
+    private loanRepository: Repository<Loan>,
   ) {}
 
   // ==================== Account Methods ====================
   async findAllAccounts(): Promise<Account[]> {
     return this.accountRepository.find({
-      order: { sortOrder: 'ASC', createdAt: 'DESC' },
+      order: { sortOrder: "ASC", createdAt: "DESC" },
     });
   }
 
@@ -58,19 +58,19 @@ export class FinanceService {
   async findAllTransactions(): Promise<Transaction[]> {
     try {
       return await this.transactionRepository.find({
-        order: { date: 'DESC', createdAt: 'DESC' },
-        relations: ['account'],
+        order: { date: "DESC", createdAt: "DESC" },
+        relations: ["account"],
       });
     } catch (error) {
-      console.error('Error in findAllTransactions:', error);
+      console.error("Error in findAllTransactions:", error);
       // If relation fails, try without it
       try {
-        console.log('Retrying without relations...');
+        console.log("Retrying without relations...");
         return await this.transactionRepository.find({
-          order: { date: 'DESC', createdAt: 'DESC' },
+          order: { date: "DESC", createdAt: "DESC" },
         });
       } catch (innerError) {
-        console.error('Still failed without relations:', innerError);
+        console.error("Still failed without relations:", innerError);
         throw innerError;
       }
     }
@@ -79,7 +79,7 @@ export class FinanceService {
   async findTransactionById(id: string): Promise<Transaction> {
     const transaction = await this.transactionRepository.findOne({
       where: { id },
-      relations: ['account'],
+      relations: ["account"],
     });
     if (!transaction) {
       throw new NotFoundException(`Transaction with ID "${id}" not found`);
@@ -93,7 +93,10 @@ export class FinanceService {
     return this.transactionRepository.save(transaction);
   }
 
-  async updateTransaction(id: string, dto: UpdateTransactionDto): Promise<Transaction> {
+  async updateTransaction(
+    id: string,
+    dto: UpdateTransactionDto,
+  ): Promise<Transaction> {
     const transaction = await this.findTransactionById(id);
     Object.assign(transaction, dto);
     return this.transactionRepository.save(transaction);
@@ -109,7 +112,7 @@ export class FinanceService {
    * With deduplication check using referenceType + referenceId
    */
   async createTransactionFromSource(params: {
-    type: '收入' | '支出';
+    type: "收入" | "支出";
     amount: number;
     date: Date;
     category?: string;
@@ -154,15 +157,15 @@ export class FinanceService {
   async findTransactionsByProject(projectId: string): Promise<Transaction[]> {
     return this.transactionRepository.find({
       where: { projectId },
-      order: { date: 'DESC' },
-      relations: ['account'],
+      order: { date: "DESC" },
+      relations: ["account"],
     });
   }
 
   // ==================== Loan Methods ====================
   async findAllLoans(): Promise<Loan[]> {
     return this.loanRepository.find({
-      order: { createdAt: 'DESC' },
+      order: { createdAt: "DESC" },
     });
   }
 
@@ -199,13 +202,13 @@ export class FinanceService {
     const loan = await this.findLoanById(id);
     loan.paidTerms += 1;
     if (loan.paidTerms >= loan.totalTerms) {
-      loan.status = 'completed';
+      loan.status = "completed";
     }
     // Update remaining principal
     if (loan.monthlyPayment) {
       loan.remainingPrincipal = Math.max(
         0,
-        Number(loan.remainingPrincipal) - Number(loan.monthlyPayment)
+        Number(loan.remainingPrincipal) - Number(loan.monthlyPayment),
       );
     }
     return this.loanRepository.save(loan);

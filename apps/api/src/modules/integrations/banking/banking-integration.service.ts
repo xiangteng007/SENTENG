@@ -6,8 +6,8 @@
  * - Batch Transfer API
  */
 
-import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 
 export interface VirtualAccountRequest {
   projectId: string;
@@ -46,7 +46,7 @@ export interface BatchTransferRequest {
 
 export interface BatchTransferResult {
   batchId: string;
-  status: 'pending' | 'processing' | 'completed' | 'failed';
+  status: "pending" | "processing" | "completed" | "failed";
   totalAmount: number;
   entryCount: number;
   successCount: number;
@@ -72,15 +72,19 @@ export class BankingIntegrationService {
   private readonly merchantId: string;
 
   constructor(private readonly configService: ConfigService) {
-    this.bankApiKey = this.configService.get('BANK_API_KEY', '');
-    this.merchantId = this.configService.get('BANK_MERCHANT_ID', '');
+    this.bankApiKey = this.configService.get("BANK_API_KEY", "");
+    this.merchantId = this.configService.get("BANK_MERCHANT_ID", "");
   }
 
   /**
    * 產生虛擬帳號
    */
-  async generateVirtualAccount(request: VirtualAccountRequest): Promise<VirtualAccountResult> {
-    this.logger.log(`Generating virtual account for project: ${request.projectId}`);
+  async generateVirtualAccount(
+    request: VirtualAccountRequest,
+  ): Promise<VirtualAccountResult> {
+    this.logger.log(
+      `Generating virtual account for project: ${request.projectId}`,
+    );
 
     // TODO: Implement actual bank API integration
     // Common providers: 玉山銀行 eSun, 中國信託 CTBC, 永豐銀行 SinoPac
@@ -89,15 +93,15 @@ export class BankingIntegrationService {
 
     return {
       virtualAccountNo,
-      bankCode: '808',
-      bankName: '玉山銀行',
+      bankCode: "808",
+      bankName: "玉山銀行",
       amount: request.amount,
       dueDate: request.dueDate,
       qrCodeData: `TWQRP://TWQRP?VA=${virtualAccountNo}&AMT=${request.amount}`,
-      barcodeData: `9${virtualAccountNo.padStart(14, '0')}${request.amount.toString().padStart(8, '0')}`,
+      barcodeData: `9${virtualAccountNo.padStart(14, "0")}${request.amount.toString().padStart(8, "0")}`,
       createdAt: new Date().toISOString(),
       expiresAt: new Date(
-        new Date(request.dueDate).getTime() + 30 * 24 * 60 * 60 * 1000
+        new Date(request.dueDate).getTime() + 30 * 24 * 60 * 60 * 1000,
       ).toISOString(),
     };
   }
@@ -122,9 +126,11 @@ export class BankingIntegrationService {
   /**
    * 批次轉帳
    */
-  async submitBatchTransfer(request: BatchTransferRequest): Promise<BatchTransferResult> {
+  async submitBatchTransfer(
+    request: BatchTransferRequest,
+  ): Promise<BatchTransferResult> {
     this.logger.log(
-      `Submitting batch transfer: ${request.batchId} with ${request.entries.length} entries`
+      `Submitting batch transfer: ${request.batchId} with ${request.entries.length} entries`,
     );
 
     // TODO: Implement actual bank API integration
@@ -134,7 +140,7 @@ export class BankingIntegrationService {
 
     return {
       batchId: request.batchId,
-      status: 'pending',
+      status: "pending",
       totalAmount,
       entryCount: request.entries.length,
       successCount: 0,
@@ -152,7 +158,7 @@ export class BankingIntegrationService {
     // TODO: Implement actual bank API query
     return {
       batchId,
-      status: 'pending',
+      status: "pending",
       totalAmount: 0,
       entryCount: 0,
       successCount: 0,
@@ -170,10 +176,10 @@ export class BankingIntegrationService {
     // TODO: Implement actual bank API query
     return {
       accountNo,
-      bankName: '玉山銀行',
+      bankName: "玉山銀行",
       balance: 0,
       availableBalance: 0,
-      currency: 'TWD',
+      currency: "TWD",
       lastUpdated: new Date().toISOString(),
     };
   }
@@ -184,7 +190,7 @@ export class BankingIntegrationService {
   async generatePaymentBarcode(
     amount: number,
     dueDate: string,
-    reference: string
+    reference: string,
   ): Promise<{
     barcode1: string;
     barcode2: string;
@@ -197,9 +203,9 @@ export class BankingIntegrationService {
     // Common providers: 7-11 ibon, 全家 FamiPort, 萊爾富 Life-ET
 
     return {
-      barcode1: `9${this.merchantId.padStart(4, '0')}`,
-      barcode2: reference.padStart(16, '0'),
-      barcode3: `${amount.toString().padStart(8, '0')}${dueDate.replace(/-/g, '')}`,
+      barcode1: `9${this.merchantId.padStart(4, "0")}`,
+      barcode2: reference.padStart(16, "0"),
+      barcode3: `${amount.toString().padStart(8, "0")}${dueDate.replace(/-/g, "")}`,
       expiresAt: dueDate,
     };
   }

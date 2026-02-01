@@ -1,8 +1,8 @@
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Document, DocumentVersion, MediaAsset } from './entities';
+import { Module } from "@nestjs/common";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { JwtModule } from "@nestjs/jwt";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { Document, DocumentVersion, MediaAsset } from "./entities";
 
 @Module({
   imports: [
@@ -10,7 +10,7 @@ import { Document, DocumentVersion, MediaAsset } from './entities';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'),
+        secret: configService.get<string>("JWT_SECRET"),
       }),
       inject: [ConfigService],
     }),

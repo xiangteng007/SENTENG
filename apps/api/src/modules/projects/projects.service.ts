@@ -1,10 +1,14 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Project, ProjectStatus } from './project.entity';
-import { ProjectPhase } from './project-phase.entity';
-import { ProjectVendor } from './project-vendor.entity';
-import { ProjectTask, TaskStatus } from './project-task.entity';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { Project, ProjectStatus } from "./project.entity";
+import { ProjectPhase } from "./project-phase.entity";
+import { ProjectVendor } from "./project-vendor.entity";
+import { ProjectTask, TaskStatus } from "./project-task.entity";
 import {
   CreateProjectDto,
   UpdateProjectDto,
@@ -12,9 +16,9 @@ import {
   CreatePhaseDto,
   AddVendorDto,
   CreateTaskDto,
-} from './project.dto';
-import { isAdminRole } from '../../common/constants/roles';
-import { IdGeneratorService } from '../../core';
+} from "./project.dto";
+import { isAdminRole } from "../../common/constants/roles";
+import { IdGeneratorService } from "../../core";
 
 @Injectable()
 export class ProjectsService {
@@ -27,25 +31,35 @@ export class ProjectsService {
   ) {}
 
   async findAll(query: ProjectQueryDto, userId?: string, userRole?: string) {
-    const { page = 1, limit = 20, status, projectType, customerId, search } = query;
-    const qb = this.projectRepo.createQueryBuilder('p').leftJoinAndSelect('p.client', 'client');
+    const {
+      page = 1,
+      limit = 20,
+      status,
+      projectType,
+      customerId,
+      search,
+    } = query;
+    const qb = this.projectRepo
+      .createQueryBuilder("p")
+      .leftJoinAndSelect("p.client", "client");
 
-    if (status) qb.andWhere('p.status = :status', { status });
-    if (projectType) qb.andWhere('p.projectType = :projectType', { projectType });
-    if (customerId) qb.andWhere('p.customerId = :customerId', { customerId });
+    if (status) qb.andWhere("p.status = :status", { status });
+    if (projectType)
+      qb.andWhere("p.projectType = :projectType", { projectType });
+    if (customerId) qb.andWhere("p.customerId = :customerId", { customerId });
     if (search)
-      qb.andWhere('(p.name ILIKE :search OR p.address ILIKE :search)', {
+      qb.andWhere("(p.name ILIKE :search OR p.address ILIKE :search)", {
         search: `%${search}%`,
       });
 
     if (userId && userRole && !isAdminRole(userRole)) {
-      qb.andWhere('(p.createdBy = :userId OR p.pmUserId = :userId)', {
+      qb.andWhere("(p.createdBy = :userId OR p.pmUserId = :userId)", {
         userId,
       });
     }
 
     const [items, total] = await qb
-      .orderBy('p.createdAt', 'DESC')
+      .orderBy("p.createdAt", "DESC")
       .skip((page - 1) * limit)
       .take(limit)
       .getManyAndCount();
@@ -55,24 +69,30 @@ export class ProjectsService {
   async findOne(id: string, userId?: string, userRole?: string) {
     const project = await this.projectRepo.findOne({
       where: { id },
-      relations: ['client', 'phases', 'projectVendors', 'projectVendors.vendor', 'tasks'],
+      relations: [
+        "client",
+        "phases",
+        "projectVendors",
+        "projectVendors.vendor",
+        "tasks",
+      ],
     });
     if (!project) throw new NotFoundException(`Project ${id} not found`);
     return project;
   }
 
   async findVendors(projectId: string) {
-    return this.pvRepo.find({ where: { projectId }, relations: ['vendor'] });
+    return this.pvRepo.find({ where: { projectId }, relations: ["vendor"] });
   }
 
   async findPhases(projectId: string) {
-    return this.phaseRepo.find({ where: { projectId }, order: { seq: 'ASC' } });
+    return this.phaseRepo.find({ where: { projectId }, order: { seq: "ASC" } });
   }
 
   async findTasks(projectId: string) {
     return this.taskRepo.find({
       where: { projectId },
-      order: { dueDate: 'ASC' },
+      order: { dueDate: "ASC" },
     });
   }
 
@@ -84,15 +104,16 @@ export class ProjectsService {
     return {
       contractAmount: project.contractAmount,
       changeAmount: project.changeAmount,
-      currentAmount: Number(project.contractAmount) + Number(project.changeAmount),
+      currentAmount:
+        Number(project.contractAmount) + Number(project.changeAmount),
       costBudget: project.costBudget,
       costActual: project.costActual,
-      phaseBreakdown: phases.map(p => ({
+      phaseBreakdown: phases.map((p) => ({
         phase: p.name,
         budget: p.budgetAmount,
         actual: p.actualAmount,
       })),
-      vendorBreakdown: vendors.map(v => ({
+      vendorBreakdown: vendors.map((v) => ({
         vendor: v.vendor?.name,
         amount: v.contractAmount,
         paid: v.paidAmount,
@@ -101,7 +122,7 @@ export class ProjectsService {
   }
 
   async create(dto: CreateProjectDto, userId?: string) {
-    const id = await this.idGenerator.generateForTable('projects', 'PRJ');
+    const id = await this.idGenerator.generateForTable("projects", "PRJ");
     const project = this.projectRepo.create({
       ...dto,
       id,
@@ -115,7 +136,8 @@ export class ProjectsService {
     const project = await this.findOne(id);
     Object.assign(project, dto, { updatedBy: userId });
     if (dto.contractAmount !== undefined || dto.changeAmount !== undefined) {
-      project.currentAmount = Number(project.contractAmount) + Number(project.changeAmount);
+      project.currentAmount =
+        Number(project.contractAmount) + Number(project.changeAmount);
     }
     return this.projectRepo.save(project);
   }

@@ -1,9 +1,9 @@
-import { Controller, Get } from '@nestjs/common';
-import { InjectConnection } from '@nestjs/typeorm';
-import { Connection } from 'typeorm';
+import { Controller, Get } from "@nestjs/common";
+import { InjectConnection } from "@nestjs/typeorm";
+import { Connection } from "typeorm";
 
 export interface HealthStatus {
-  status: 'healthy' | 'degraded' | 'unhealthy';
+  status: "healthy" | "degraded" | "unhealthy";
   timestamp: string;
   version: string;
   uptime: number;
@@ -14,7 +14,7 @@ export interface HealthStatus {
 }
 
 export interface HealthCheckResult {
-  status: 'up' | 'down';
+  status: "up" | "down";
   responseTime?: number;
   details?: Record<string, any>;
 }
@@ -24,13 +24,11 @@ export interface HealthCheckResult {
  * Provides endpoints for load balancers and monitoring
  * Phase 3 optimization - Production readiness
  */
-@Controller('health')
+@Controller("health")
 export class HealthController {
   private readonly startTime = Date.now();
 
-  constructor(
-    @InjectConnection() private readonly connection: Connection,
-  ) {}
+  constructor(@InjectConnection() private readonly connection: Connection) {}
 
   /**
    * Liveness probe - Quick check if the service is running
@@ -38,25 +36,25 @@ export class HealthController {
    */
   @Get()
   async liveness(): Promise<{ status: string }> {
-    return { status: 'ok' };
+    return { status: "ok" };
   }
 
   /**
    * Readiness probe - Full health check
    * Used by load balancers to determine if the service can receive traffic
    */
-  @Get('ready')
+  @Get("ready")
   async readiness(): Promise<HealthStatus> {
     const dbCheck = await this.checkDatabase();
     const memoryCheck = this.checkMemory();
 
-    const allUp = dbCheck.status === 'up' && memoryCheck.status === 'up';
-    const anyDown = dbCheck.status === 'down' || memoryCheck.status === 'down';
+    const allUp = dbCheck.status === "up" && memoryCheck.status === "up";
+    const anyDown = dbCheck.status === "down" || memoryCheck.status === "down";
 
     return {
-      status: allUp ? 'healthy' : anyDown ? 'unhealthy' : 'degraded',
+      status: allUp ? "healthy" : anyDown ? "unhealthy" : "degraded",
       timestamp: new Date().toISOString(),
-      version: process.env.npm_package_version || '1.0.0',
+      version: process.env.npm_package_version || "1.0.0",
       uptime: Math.floor((Date.now() - this.startTime) / 1000),
       checks: {
         database: dbCheck,
@@ -68,10 +66,12 @@ export class HealthController {
   /**
    * Detailed health check for monitoring dashboards
    */
-  @Get('details')
-  async details(): Promise<HealthStatus & { environment: Record<string, any> }> {
+  @Get("details")
+  async details(): Promise<
+    HealthStatus & { environment: Record<string, any> }
+  > {
     const health = await this.readiness();
-    
+
     return {
       ...health,
       environment: {
@@ -88,9 +88,9 @@ export class HealthController {
   private async checkDatabase(): Promise<HealthCheckResult> {
     const startTime = Date.now();
     try {
-      await this.connection.query('SELECT 1');
+      await this.connection.query("SELECT 1");
       return {
-        status: 'up',
+        status: "up",
         responseTime: Date.now() - startTime,
         details: {
           connected: this.connection.isConnected,
@@ -99,7 +99,7 @@ export class HealthController {
       };
     } catch (error) {
       return {
-        status: 'down',
+        status: "down",
         responseTime: Date.now() - startTime,
         details: {
           error: error.message,
@@ -115,7 +115,7 @@ export class HealthController {
     const usagePercent = (heapUsedMB / heapTotalMB) * 100;
 
     return {
-      status: usagePercent < 90 ? 'up' : 'down',
+      status: usagePercent < 90 ? "up" : "down",
       details: {
         heapUsedMB: Math.round(heapUsedMB),
         heapTotalMB: Math.round(heapTotalMB),

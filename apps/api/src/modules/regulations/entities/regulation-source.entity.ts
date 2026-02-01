@@ -5,12 +5,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
-} from 'typeorm';
-import { RegulationArticle } from './regulation-article.entity';
+} from "typeorm";
+import { RegulationArticle } from "./regulation-article.entity";
 
-@Entity('regulation_sources')
+@Entity("regulation_sources")
 export class RegulationSource {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column({ unique: true, length: 20 })
@@ -22,10 +22,10 @@ export class RegulationSource {
   @Column({ length: 50 })
   category: string;
 
-  @Column({ type: 'date', nullable: true })
+  @Column({ type: "date", nullable: true })
   lastUpdated: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: "timestamp", nullable: true })
   lastSyncedAt: Date;
 
   @Column({ default: 0 })
@@ -37,6 +37,6 @@ export class RegulationSource {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => RegulationArticle, article => article.source)
+  @OneToMany(() => RegulationArticle, (article) => article.source)
   articles: RegulationArticle[];
 }

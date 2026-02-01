@@ -1,57 +1,57 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, ILike } from 'typeorm';
-import * as cheerio from 'cheerio';
+import { Injectable, Logger } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository, ILike } from "typeorm";
+import * as cheerio from "cheerio";
 import {
   RegulationSource,
   RegulationArticle,
   MaterialRegulationMapping,
   CnsStandard,
-} from './entities';
-import { CnsCategory } from './entities/cns-standard.entity';
+} from "./entities";
+import { CnsCategory } from "./entities/cns-standard.entity";
 
 // 預設法規來源配置
 const REGULATION_SOURCES = [
   {
-    pcode: 'D0070115',
-    name: '建築技術規則建築設計施工編',
-    category: '建築技術規則',
+    pcode: "D0070115",
+    name: "建築技術規則建築設計施工編",
+    category: "建築技術規則",
   },
   {
-    pcode: 'D0070116',
-    name: '建築技術規則建築設備編',
-    category: '建築技術規則',
+    pcode: "D0070116",
+    name: "建築技術規則建築設備編",
+    category: "建築技術規則",
   },
   {
-    pcode: 'D0070117',
-    name: '建築技術規則建築構造編',
-    category: '建築技術規則',
+    pcode: "D0070117",
+    name: "建築技術規則建築構造編",
+    category: "建築技術規則",
   },
-  { pcode: 'D0070114', name: '建築技術規則總則編', category: '建築技術規則' },
+  { pcode: "D0070114", name: "建築技術規則總則編", category: "建築技術規則" },
   {
-    pcode: 'D0070148',
-    name: '建築物室內裝修管理辦法',
-    category: '室內裝修管理',
+    pcode: "D0070148",
+    name: "建築物室內裝修管理辦法",
+    category: "室內裝修管理",
   },
 ];
 
 // 材料關鍵字對應
 const MATERIAL_KEYWORDS = {
-  混凝土: ['混凝土', '水泥', 'RC', '鋼筋混凝土', '預拌'],
-  鋼筋: ['鋼筋', '鋼材', '鋼構'],
-  磁磚: ['磁磚', '瓷磚', '面磚', '地磚', '壁磚'],
-  油漆: ['油漆', '塗料', '粉刷', '漆'],
-  防水: ['防水', '防潮', '止水'],
-  門窗: ['門', '窗', '鋁窗', '氣密窗'],
-  消防: ['消防', '防火', '逃生', '滅火'],
-  電氣: ['電線', '配電', '電力', '迴路'],
-  給排水: ['給水', '排水', '污水', '管線'],
-  裝修: ['裝修', '裝潢', '室內裝修'],
+  混凝土: ["混凝土", "水泥", "RC", "鋼筋混凝土", "預拌"],
+  鋼筋: ["鋼筋", "鋼材", "鋼構"],
+  磁磚: ["磁磚", "瓷磚", "面磚", "地磚", "壁磚"],
+  油漆: ["油漆", "塗料", "粉刷", "漆"],
+  防水: ["防水", "防潮", "止水"],
+  門窗: ["門", "窗", "鋁窗", "氣密窗"],
+  消防: ["消防", "防火", "逃生", "滅火"],
+  電氣: ["電線", "配電", "電力", "迴路"],
+  給排水: ["給水", "排水", "污水", "管線"],
+  裝修: ["裝修", "裝潢", "室內裝修"],
 };
 
 interface SyncStatus {
   jobId: string;
-  status: 'pending' | 'running' | 'completed' | 'failed';
+  status: "pending" | "running" | "completed" | "failed";
   startedAt: Date;
   completedAt?: Date;
   progress: number;
@@ -72,7 +72,7 @@ export class RegulationsService {
     @InjectRepository(MaterialRegulationMapping)
     private readonly mappingRepo: Repository<MaterialRegulationMapping>,
     @InjectRepository(CnsStandard)
-    private readonly cnsRepo: Repository<CnsStandard>
+    private readonly cnsRepo: Repository<CnsStandard>,
   ) {}
 
   /**
@@ -85,26 +85,28 @@ export class RegulationsService {
   /**
    * 手動觸發法規同步
    */
-  async syncRegulations(pcodes?: string[]): Promise<{ jobId: string; status: string }> {
+  async syncRegulations(
+    pcodes?: string[],
+  ): Promise<{ jobId: string; status: string }> {
     const jobId = `sync-${Date.now()}`;
 
     this.syncStatus = {
       jobId,
-      status: 'running',
+      status: "running",
       startedAt: new Date(),
       progress: 0,
     };
 
     // 非同步執行爬蟲
-    this.runCrawler(pcodes).catch(err => {
-      this.logger.error('Crawler failed', err);
+    this.runCrawler(pcodes).catch((err) => {
+      this.logger.error("Crawler failed", err);
       if (this.syncStatus) {
-        this.syncStatus.status = 'failed';
+        this.syncStatus.status = "failed";
         this.syncStatus.message = err.message;
       }
     });
 
-    return { jobId, status: 'started' };
+    return { jobId, status: "started" };
   }
 
   /**
@@ -112,7 +114,7 @@ export class RegulationsService {
    */
   private async runCrawler(pcodes?: string[]): Promise<void> {
     const sources = pcodes?.length
-      ? REGULATION_SOURCES.filter(s => pcodes.includes(s.pcode))
+      ? REGULATION_SOURCES.filter((s) => pcodes.includes(s.pcode))
       : REGULATION_SOURCES;
 
     const totalSources = sources.length;
@@ -120,7 +122,9 @@ export class RegulationsService {
 
     for (const sourceConfig of sources) {
       try {
-        this.logger.log(`Crawling ${sourceConfig.name} (${sourceConfig.pcode})`);
+        this.logger.log(
+          `Crawling ${sourceConfig.name} (${sourceConfig.pcode})`,
+        );
 
         // 確保來源存在
         let source = await this.sourceRepo.findOne({
@@ -133,7 +137,9 @@ export class RegulationsService {
 
         // 爬取條文
         const articles = await this.crawlArticles(sourceConfig.pcode);
-        this.logger.log(`Found ${articles.length} articles for ${sourceConfig.pcode}`);
+        this.logger.log(
+          `Found ${articles.length} articles for ${sourceConfig.pcode}`,
+        );
 
         // 儲存條文
         for (const articleData of articles) {
@@ -147,7 +153,9 @@ export class RegulationsService {
 
         processedSources++;
         if (this.syncStatus) {
-          this.syncStatus.progress = Math.round((processedSources / totalSources) * 100);
+          this.syncStatus.progress = Math.round(
+            (processedSources / totalSources) * 100,
+          );
         }
 
         // 爬蟲禮儀：間隔 500ms
@@ -161,7 +169,7 @@ export class RegulationsService {
     await this.updateMaterialMappings();
 
     if (this.syncStatus) {
-      this.syncStatus.status = 'completed';
+      this.syncStatus.status = "completed";
       this.syncStatus.completedAt = new Date();
       this.syncStatus.progress = 100;
     }
@@ -183,9 +191,9 @@ export class RegulationsService {
     try {
       const response = await fetch(baseUrl, {
         headers: {
-          'User-Agent':
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-          'Accept-Language': 'zh-TW,zh;q=0.9,en;q=0.8',
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+          "Accept-Language": "zh-TW,zh;q=0.9,en;q=0.8",
         },
       });
 
@@ -203,25 +211,29 @@ export class RegulationsService {
       }> = [];
 
       // 解析條文結構
-      let currentChapter = '';
+      let currentChapter = "";
 
       // 找到條文列表區域
-      $('.law-reg-content .row').each((_, row) => {
+      $(".law-reg-content .row").each((_, row) => {
         const $row = $(row);
 
         // 檢查是否為章節標題
-        const chapterEl = $row.find('.col-no');
-        if (chapterEl.length && chapterEl.text().includes('章')) {
+        const chapterEl = $row.find(".col-no");
+        if (chapterEl.length && chapterEl.text().includes("章")) {
           currentChapter = chapterEl.text().trim();
           return;
         }
 
         // 解析條文
-        const articleNoEl = $row.find('.col-no a');
-        const contentEl = $row.find('.col-data');
+        const articleNoEl = $row.find(".col-no a");
+        const contentEl = $row.find(".col-data");
 
         if (articleNoEl.length && contentEl.length) {
-          const articleNo = articleNoEl.text().replace('第', '').replace('條', '').trim();
+          const articleNo = articleNoEl
+            .text()
+            .replace("第", "")
+            .replace("條", "")
+            .trim();
           const content = contentEl.text().trim();
           const sourceUrl = `https://law.moj.gov.tw/LawClass/LawSingle.aspx?pcode=${pcode}&flno=${articleNo}`;
 
@@ -239,13 +251,13 @@ export class RegulationsService {
       // 備用解析方式：直接找條文連結
       if (articles.length === 0) {
         $('a[href*="LawSingle.aspx"]').each((_, el) => {
-          const href = $(el).attr('href') || '';
+          const href = $(el).attr("href") || "";
           const match = href.match(/flno=([0-9-]+)/);
           if (match) {
             const articleNo = match[1];
             articles.push({
               articleNo,
-              content: '(內容需單獨抓取)',
+              content: "(內容需單獨抓取)",
               sourceUrl: `https://law.moj.gov.tw/LawClass/LawSingle.aspx?pcode=${pcode}&flno=${articleNo}`,
             });
           }
@@ -269,7 +281,7 @@ export class RegulationsService {
       chapter?: string;
       content: string;
       sourceUrl: string;
-    }
+    },
   ): Promise<void> {
     // 從內容提取關鍵字
     const keywords = this.extractKeywords(data.content);
@@ -283,7 +295,7 @@ export class RegulationsService {
         keywords,
         sourceUrl: data.sourceUrl,
       },
-      ['sourceId', 'articleNo']
+      ["sourceId", "articleNo"],
     );
   }
 
@@ -315,8 +327,8 @@ export class RegulationsService {
     // 為每個材料類別建立對應
     for (const [category, terms] of Object.entries(MATERIAL_KEYWORDS)) {
       const articles = await this.articleRepo
-        .createQueryBuilder('article')
-        .where('article.keywords && ARRAY[:...terms]', { terms: [category] })
+        .createQueryBuilder("article")
+        .where("article.keywords && ARRAY[:...terms]", { terms: [category] })
         .getMany();
 
       for (const article of articles) {
@@ -335,7 +347,7 @@ export class RegulationsService {
    */
   async getSources(): Promise<RegulationSource[]> {
     return this.sourceRepo.find({
-      order: { category: 'ASC', name: 'ASC' },
+      order: { category: "ASC", name: "ASC" },
     });
   }
 
@@ -344,13 +356,13 @@ export class RegulationsService {
    */
   async getArticles(pcode?: string, limit = 50): Promise<RegulationArticle[]> {
     const query = this.articleRepo
-      .createQueryBuilder('article')
-      .leftJoinAndSelect('article.source', 'source')
-      .orderBy('article.articleNo', 'ASC')
+      .createQueryBuilder("article")
+      .leftJoinAndSelect("article.source", "source")
+      .orderBy("article.articleNo", "ASC")
       .take(limit);
 
     if (pcode) {
-      query.andWhere('source.pcode = :pcode', { pcode });
+      query.andWhere("source.pcode = :pcode", { pcode });
     }
 
     return query.getMany();
@@ -362,17 +374,17 @@ export class RegulationsService {
   async searchArticles(
     queryText: string,
     pcode?: string,
-    limit = 20
+    limit = 20,
   ): Promise<RegulationArticle[]> {
     const query = this.articleRepo
-      .createQueryBuilder('article')
-      .leftJoinAndSelect('article.source', 'source')
-      .where('article.content ILIKE :search', { search: `%${queryText}%` })
-      .orderBy('article.articleNo', 'ASC')
+      .createQueryBuilder("article")
+      .leftJoinAndSelect("article.source", "source")
+      .where("article.content ILIKE :search", { search: `%${queryText}%` })
+      .orderBy("article.articleNo", "ASC")
       .take(limit);
 
     if (pcode) {
-      query.andWhere('source.pcode = :pcode', { pcode });
+      query.andWhere("source.pcode = :pcode", { pcode });
     }
 
     return query.getMany();
@@ -393,23 +405,23 @@ export class RegulationsService {
   }> {
     const mappings = await this.mappingRepo.find({
       where: { materialCategory: category },
-      relations: ['article', 'article.source'],
+      relations: ["article", "article.source"],
     });
 
     return {
       category,
-      regulations: mappings.map(m => ({
+      regulations: mappings.map((m) => ({
         articleId: m.articleId,
-        articleNo: m.article?.articleNo || '',
-        sourceName: m.article?.source?.name || '',
-        content: m.article?.content || '',
-        sourceUrl: m.article?.sourceUrl || '',
+        articleNo: m.article?.articleNo || "",
+        sourceName: m.article?.source?.name || "",
+        content: m.article?.content || "",
+        sourceUrl: m.article?.sourceUrl || "",
       })),
     };
   }
 
   private delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   // ==========================================
@@ -419,7 +431,10 @@ export class RegulationsService {
   /**
    * 查詢 CNS 標準
    */
-  async getCnsStandards(category?: string, search?: string): Promise<CnsStandard[]> {
+  async getCnsStandards(
+    category?: string,
+    search?: string,
+  ): Promise<CnsStandard[]> {
     const where: any = { isActive: true };
 
     if (category) {
@@ -428,50 +443,52 @@ export class RegulationsService {
 
     if (search) {
       return this.cnsRepo
-        .createQueryBuilder('cns')
-        .where('cns.isActive = true')
-        .andWhere(category ? 'cns.category = :category' : '1=1', { category })
+        .createQueryBuilder("cns")
+        .where("cns.isActive = true")
+        .andWhere(category ? "cns.category = :category" : "1=1", { category })
         .andWhere(
-          '(cns.title ILIKE :search OR cns.cnsNumber ILIKE :search OR cns.description ILIKE :search)',
-          { search: `%${search}%` }
+          "(cns.title ILIKE :search OR cns.cnsNumber ILIKE :search OR cns.description ILIKE :search)",
+          { search: `%${search}%` },
         )
-        .orderBy('cns.cnsNumber', 'ASC')
+        .orderBy("cns.cnsNumber", "ASC")
         .getMany();
     }
 
     return this.cnsRepo.find({
       where,
-      order: { cnsNumber: 'ASC' },
+      order: { cnsNumber: "ASC" },
     });
   }
 
   /**
    * 取得 CNS 分類列表
    */
-  async getCnsCategories(): Promise<{ category: string; count: number; label: string }[]> {
+  async getCnsCategories(): Promise<
+    { category: string; count: number; label: string }[]
+  > {
     const results = await this.cnsRepo
-      .createQueryBuilder('cns')
-      .select('cns.category', 'category')
-      .addSelect('COUNT(*)', 'count')
-      .where('cns.isActive = true')
-      .groupBy('cns.category')
-      .orderBy('cns.category', 'ASC')
+      .createQueryBuilder("cns")
+      .select("cns.category", "category")
+      .addSelect("COUNT(*)", "count")
+      .where("cns.isActive = true")
+      .groupBy("cns.category")
+      .orderBy("cns.category", "ASC")
       .getRawMany();
 
     const categoryLabels: Record<string, string> = {
-      steel: '鋼筋鋼材',
-      concrete: '混凝土骨材',
-      board: '板材',
-      wood: '木材夾板',
-      coating: '塗料油漆',
-      tile: '磁磚石材',
-      glass: '玻璃',
-      insulation: '隔熱隔音',
-      drafting: '製圖標準',
-      other: '其他',
+      steel: "鋼筋鋼材",
+      concrete: "混凝土骨材",
+      board: "板材",
+      wood: "木材夾板",
+      coating: "塗料油漆",
+      tile: "磁磚石材",
+      glass: "玻璃",
+      insulation: "隔熱隔音",
+      drafting: "製圖標準",
+      other: "其他",
     };
 
-    return results.map(r => ({
+    return results.map((r) => ({
       category: r.category,
       count: parseInt(r.count, 10),
       label: categoryLabels[r.category] || r.category,
@@ -493,7 +510,7 @@ export class RegulationsService {
   async getArticleById(articleId: string): Promise<RegulationArticle | null> {
     return this.articleRepo.findOne({
       where: { id: articleId },
-      relations: ['source'],
+      relations: ["source"],
     });
   }
 }

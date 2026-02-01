@@ -1,4 +1,12 @@
-import { IsString, IsOptional, IsEmail, IsIn, MaxLength, IsBoolean, IsUrl } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsEmail,
+  IsIn,
+  MaxLength,
+  IsBoolean,
+  IsUrl,
+} from "class-validator";
 
 export class CreateUserDto {
   @IsEmail()
@@ -18,8 +26,8 @@ export class CreateUserDto {
   avatarUrl?: string;
 
   @IsOptional()
-  @IsIn(['GOOGLE', 'LINE', 'EMAIL'])
-  authProvider?: string = 'GOOGLE';
+  @IsIn(["GOOGLE", "LINE", "EMAIL"])
+  authProvider?: string = "GOOGLE";
 
   @IsOptional()
   @IsString()
@@ -27,8 +35,8 @@ export class CreateUserDto {
   authUid?: string;
 
   @IsOptional()
-  @IsIn(['super_admin', 'admin', 'manager', 'user', 'viewer'])
-  role?: string = 'user';
+  @IsIn(["super_admin", "admin", "manager", "user", "viewer"])
+  role?: string = "user";
 }
 
 export class UpdateUserDto {
@@ -47,7 +55,7 @@ export class UpdateUserDto {
   avatarUrl?: string;
 
   @IsOptional()
-  @IsIn(['super_admin', 'admin', 'manager', 'user', 'viewer'])
+  @IsIn(["super_admin", "admin", "manager", "user", "viewer"])
   role?: string;
 
   @IsOptional()
@@ -57,7 +65,7 @@ export class UpdateUserDto {
 
 export class ListUsersQueryDto {
   @IsOptional()
-  @IsIn(['super_admin', 'admin', 'manager', 'user', 'viewer'])
+  @IsIn(["super_admin", "admin", "manager", "user", "viewer"])
   role?: string;
 
   @IsOptional()

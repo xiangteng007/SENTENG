@@ -6,9 +6,9 @@ import {
   IsEnum,
   IsArray,
   MaxLength,
-} from 'class-validator';
-import { PartialType } from '@nestjs/mapped-types';
-import { ContactOwnerType, ContactRole } from './contact.entity';
+} from "class-validator";
+import { PartialType } from "@nestjs/mapped-types";
+import { ContactOwnerType, ContactRole } from "./contact.entity";
 
 export class CreateContactDto {
   @IsEnum(ContactOwnerType)

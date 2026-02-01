@@ -1,12 +1,15 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, ILike, Not } from 'typeorm';
-import { Cron } from '@nestjs/schedule';
-import { SmartHomeProduct } from './entities/smart-home-product.entity';
-import { AqaraCrawlerService } from './aqara-crawler.service';
-import { SyncResultDto, SmartHomeQueryDto } from './dto/smart-home.dto';
-import { ExportSmartHomeItemDto, ExportSmartHomeResponseDto } from './dto/export-smart-home.dto';
-import { GoogleSheetsService } from '../integrations/google-sheets.service';
+import { Injectable, Logger } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository, ILike, Not } from "typeorm";
+import { Cron } from "@nestjs/schedule";
+import { SmartHomeProduct } from "./entities/smart-home-product.entity";
+import { AqaraCrawlerService } from "./aqara-crawler.service";
+import { SyncResultDto, SmartHomeQueryDto } from "./dto/smart-home.dto";
+import {
+  ExportSmartHomeItemDto,
+  ExportSmartHomeResponseDto,
+} from "./dto/export-smart-home.dto";
+import { GoogleSheetsService } from "../integrations/google/google-sheets.service";
 
 @Injectable()
 export class SmartHomeService {
@@ -17,17 +20,18 @@ export class SmartHomeService {
     @InjectRepository(SmartHomeProduct)
     private readonly productRepo: Repository<SmartHomeProduct>,
     private readonly crawlerService: AqaraCrawlerService,
-    private readonly googleSheetsService: GoogleSheetsService
+    private readonly googleSheetsService: GoogleSheetsService,
   ) {}
 
   // Run every Sunday at 3:00 AM
-  @Cron('0 3 * * 0')
+  @Cron("0 3 * * 0")
   async scheduledSync(): Promise<void> {
-    this.logger.log('Starting scheduled weekly sync...');
+    this.logger.log("Starting scheduled weekly sync...");
     try {
       await this.syncProducts();
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       this.logger.error(`Scheduled sync failed: ${errorMessage}`);
     }
   }
@@ -40,7 +44,7 @@ export class SmartHomeService {
         totalProducts: 0,
         newProducts: 0,
         updatedProducts: 0,
-        errors: ['Sync already in progress'],
+        errors: ["Sync already in progress"],
       };
     }
 
@@ -55,7 +59,7 @@ export class SmartHomeService {
     };
 
     try {
-      this.logger.log('Starting product sync from Aqara...');
+      this.logger.log("Starting product sync from Aqara...");
 
       const products = await this.crawlerService.crawlProducts();
       result.totalProducts = products.length;
@@ -90,24 +94,28 @@ export class SmartHomeService {
               detailUrl: product.detailUrl,
               protocols: product.protocols,
               specs: product.specs,
-              source: 'aqara',
+              source: "aqara",
               lastSyncedAt: new Date(),
             });
             await this.productRepo.save(newProduct);
             result.newProducts++;
           }
         } catch (error: unknown) {
-          const errorMessage = error instanceof Error ? error.message : String(error);
+          const errorMessage =
+            error instanceof Error ? error.message : String(error);
           result.errors = result.errors || [];
-          result.errors.push(`Error processing ${product.productId}: ${errorMessage}`);
+          result.errors.push(
+            `Error processing ${product.productId}: ${errorMessage}`,
+          );
         }
       }
 
       this.logger.log(
-        `Sync completed: ${result.newProducts} new, ${result.updatedProducts} updated`
+        `Sync completed: ${result.newProducts} new, ${result.updatedProducts} updated`,
       );
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       result.success = false;
       result.errors = result.errors || [];
       result.errors.push(errorMessage);
@@ -140,7 +148,7 @@ export class SmartHomeService {
 
     return this.productRepo.find({
       where,
-      order: { category: 'ASC', name: 'ASC' },
+      order: { category: "ASC", name: "ASC" },
     });
   }
 
@@ -150,35 +158,40 @@ export class SmartHomeService {
 
   async getCategories(): Promise<{ category: string; count: number }[]> {
     const result = await this.productRepo
-      .createQueryBuilder('p')
-      .select('p.category', 'category')
-      .addSelect('COUNT(*)', 'count')
-      .where('p.isActive = true')
-      .groupBy('p.category')
-      .orderBy('p.category', 'ASC')
+      .createQueryBuilder("p")
+      .select("p.category", "category")
+      .addSelect("COUNT(*)", "count")
+      .where("p.isActive = true")
+      .groupBy("p.category")
+      .orderBy("p.category", "ASC")
       .getRawMany();
 
     return result;
   }
 
-  async getSubcategories(category: string): Promise<{ subcategory: string; count: number }[]> {
+  async getSubcategories(
+    category: string,
+  ): Promise<{ subcategory: string; count: number }[]> {
     const result = await this.productRepo
-      .createQueryBuilder('p')
-      .select('p.subcategory', 'subcategory')
-      .addSelect('COUNT(*)', 'count')
-      .where('p.category = :category', { category })
-      .andWhere('p.isActive = true')
-      .groupBy('p.subcategory')
-      .orderBy('p.subcategory', 'ASC')
+      .createQueryBuilder("p")
+      .select("p.subcategory", "subcategory")
+      .addSelect("COUNT(*)", "count")
+      .where("p.category = :category", { category })
+      .andWhere("p.isActive = true")
+      .groupBy("p.subcategory")
+      .orderBy("p.subcategory", "ASC")
       .getRawMany();
 
     return result;
   }
 
-  async getSyncStatus(): Promise<{ isSyncing: boolean; lastSync: Date | null }> {
+  async getSyncStatus(): Promise<{
+    isSyncing: boolean;
+    lastSync: Date | null;
+  }> {
     const lastProduct = await this.productRepo.findOne({
       where: { lastSyncedAt: Not(null) } as any,
-      order: { lastSyncedAt: 'DESC' },
+      order: { lastSyncedAt: "DESC" },
     });
 
     return {
@@ -190,19 +203,19 @@ export class SmartHomeService {
   async exportToGoogleSheets(
     userId: string,
     items: ExportSmartHomeItemDto[],
-    options?: { title?: string; projectName?: string }
+    options?: { title?: string; projectName?: string },
   ): Promise<ExportSmartHomeResponseDto> {
     this.logger.log(
-      `Exporting ${items.length} smart home items to Google Sheets for user ${userId}`
+      `Exporting ${items.length} smart home items to Google Sheets for user ${userId}`,
     );
 
-    const estimateLines = items.map(item => ({
+    const estimateLines = items.map((item) => ({
       id: item.productId,
-      categoryL1: 'smart_home',
-      categoryL2: item.subcategory || '智慧家居',
+      categoryL1: "smart_home",
+      categoryL2: item.subcategory || "智慧家居",
       name: item.name,
-      spec: item.spec || '',
-      unit: '組',
+      spec: item.spec || "",
+      unit: "組",
       quantity: item.quantity,
       unitPrice: item.unitPrice,
     }));
@@ -210,7 +223,7 @@ export class SmartHomeService {
     return this.googleSheetsService.exportEstimate(userId, {
       estimateLines,
       options: {
-        title: options?.title || '智慧家居報價清單',
+        title: options?.title || "智慧家居報價清單",
         projectName: options?.projectName,
         includeMetadata: true,
       },

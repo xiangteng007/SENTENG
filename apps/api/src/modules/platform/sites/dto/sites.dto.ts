@@ -1,4 +1,11 @@
-import { IsString, IsOptional, IsBoolean, IsNumber, MaxLength, IsIn } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsBoolean,
+  IsNumber,
+  MaxLength,
+  IsIn,
+} from "class-validator";
 
 export class CreateJobSiteDto {
   @IsString()
@@ -28,7 +35,7 @@ export class CreateJobSiteDto {
 
   @IsOptional()
   @IsString()
-  @IsIn(['LOW', 'MEDIUM', 'HIGH'])
+  @IsIn(["LOW", "MEDIUM", "HIGH"])
   riskLevel?: string;
 
   @IsOptional()
@@ -78,7 +85,7 @@ export class UpdateJobSiteDto {
 
   @IsOptional()
   @IsString()
-  @IsIn(['LOW', 'MEDIUM', 'HIGH'])
+  @IsIn(["LOW", "MEDIUM", "HIGH"])
   riskLevel?: string;
 
   @IsOptional()

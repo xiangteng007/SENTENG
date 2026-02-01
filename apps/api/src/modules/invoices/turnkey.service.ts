@@ -1,6 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { Invoice } from './invoice.entity';
+import { Injectable, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { Invoice } from "./invoice.entity";
 
 /**
  * 財政部電子發票 Turnkey API 服務
@@ -24,7 +24,7 @@ export interface TurnkeyConfig {
   sftpPort: number;
   sftpUsername: string;
   sftpPrivateKeyPath: string;
-  migVersion: '4.0' | '4.1';
+  migVersion: "4.0" | "4.1";
   isProduction: boolean;
 }
 
@@ -43,8 +43,8 @@ export interface C0401Invoice {
   sellerName: string;
   buyerIdentifier: string;
   buyerName: string;
-  invoiceType: '07' | '08';
-  donateMark: 'Y' | 'N';
+  invoiceType: "07" | "08";
+  donateMark: "Y" | "N";
   carrierType?: string;
   carrierNum?: string;
   loveCode?: string;
@@ -70,15 +70,19 @@ export class TurnkeyService {
 
   constructor(private readonly configService: ConfigService) {
     this.config = {
-      merchantId: this.configService.get<string>('TURNKEY_MERCHANT_ID') || '',
-      merchantName: this.configService.get<string>('TURNKEY_MERCHANT_NAME') || '',
+      merchantId: this.configService.get<string>("TURNKEY_MERCHANT_ID") || "",
+      merchantName:
+        this.configService.get<string>("TURNKEY_MERCHANT_NAME") || "",
       sftpHost:
-        this.configService.get<string>('TURNKEY_SFTP_HOST') || 'turnkey.einvoice.nat.gov.tw',
-      sftpPort: this.configService.get<number>('TURNKEY_SFTP_PORT') || 22,
-      sftpUsername: this.configService.get<string>('TURNKEY_SFTP_USERNAME') || '',
-      sftpPrivateKeyPath: this.configService.get<string>('TURNKEY_SFTP_KEY_PATH') || '',
-      migVersion: '4.1',
-      isProduction: this.configService.get<string>('NODE_ENV') === 'production',
+        this.configService.get<string>("TURNKEY_SFTP_HOST") ||
+        "turnkey.einvoice.nat.gov.tw",
+      sftpPort: this.configService.get<number>("TURNKEY_SFTP_PORT") || 22,
+      sftpUsername:
+        this.configService.get<string>("TURNKEY_SFTP_USERNAME") || "",
+      sftpPrivateKeyPath:
+        this.configService.get<string>("TURNKEY_SFTP_KEY_PATH") || "",
+      migVersion: "4.1",
+      isProduction: this.configService.get<string>("NODE_ENV") === "production",
     };
   }
 
@@ -87,26 +91,33 @@ export class TurnkeyService {
    */
   generateC0401Xml(invoice: Invoice): string {
     const now = new Date();
-    const invoiceNo = (invoice.invoiceTrack || '') + (invoice.invoiceNumber || '');
+    const invoiceNo =
+      (invoice.invoiceTrack || "") + (invoice.invoiceNumber || "");
     const c0401: C0401Invoice = {
-      invoiceNumber: invoiceNo || invoice.invoiceNo || '',
+      invoiceNumber: invoiceNo || invoice.invoiceNo || "",
       invoiceDate:
-        invoice.invoiceDate?.toISOString().split('T')[0] || now.toISOString().split('T')[0],
-      invoiceTime: now.toTimeString().split(' ')[0],
+        invoice.invoiceDate?.toISOString().split("T")[0] ||
+        now.toISOString().split("T")[0],
+      invoiceTime: now.toTimeString().split(" ")[0],
       sellerIdentifier: invoice.sellerTaxId || this.config.merchantId,
       sellerName: invoice.sellerName || this.config.merchantName,
-      buyerIdentifier: invoice.buyerTaxId || '0000000000',
-      buyerName: '消費者',
-      invoiceType: '07',
-      donateMark: 'N',
-      salesAmount: Number(invoice.amountNet) || Math.round(Number(invoice.totalAmount) / 1.05),
+      buyerIdentifier: invoice.buyerTaxId || "0000000000",
+      buyerName: "消費者",
+      invoiceType: "07",
+      donateMark: "N",
+      salesAmount:
+        Number(invoice.amountNet) ||
+        Math.round(Number(invoice.totalAmount) / 1.05),
       taxAmount:
         Number(invoice.amountTax) ||
-        Math.round(Number(invoice.totalAmount) - Number(invoice.totalAmount) / 1.05),
-      totalAmount: Number(invoice.totalAmount) || Number(invoice.amountGross) || 0,
+        Math.round(
+          Number(invoice.totalAmount) - Number(invoice.totalAmount) / 1.05,
+        ),
+      totalAmount:
+        Number(invoice.totalAmount) || Number(invoice.amountGross) || 0,
       items: [
         {
-          description: invoice.description || '商品一批',
+          description: invoice.description || "商品一批",
           quantity: 1,
           unitPrice: Number(invoice.totalAmount) || 0,
           amount: Number(invoice.totalAmount) || 0,
@@ -125,22 +136,22 @@ export class TurnkeyService {
   private buildC0401Xml(data: C0401Invoice): string {
     const itemsXml = data.items
       .map(
-        item => `
+        (item) => `
         <ProductItem>
           <Description>${this.escapeXml(item.description)}</Description>
           <Quantity>${item.quantity}</Quantity>
           <UnitPrice>${item.unitPrice}</UnitPrice>
           <Amount>${item.amount}</Amount>
           <SequenceNumber>${item.sequenceNumber}</SequenceNumber>
-        </ProductItem>`
+        </ProductItem>`,
       )
-      .join('');
+      .join("");
 
     return `<?xml version="1.0" encoding="UTF-8"?>
 <Invoice xmlns="urn:GEINV:eInvoiceMessage:C0401:4.1">
   <Main>
     <InvoiceNumber>${data.invoiceNumber}</InvoiceNumber>
-    <InvoiceDate>${data.invoiceDate.replace(/-/g, '')}</InvoiceDate>
+    <InvoiceDate>${data.invoiceDate.replace(/-/g, "")}</InvoiceDate>
     <InvoiceTime>${data.invoiceTime}</InvoiceTime>
     <Seller>
       <Identifier>${data.sellerIdentifier}</Identifier>
@@ -152,9 +163,9 @@ export class TurnkeyService {
     </Buyer>
     <InvoiceType>${data.invoiceType}</InvoiceType>
     <DonateMark>${data.donateMark}</DonateMark>
-    <CarrierType>${data.carrierType || ''}</CarrierType>
-    <CarrierNum>${data.carrierNum || ''}</CarrierNum>
-    <LoveCode>${data.loveCode || ''}</LoveCode>
+    <CarrierType>${data.carrierType || ""}</CarrierType>
+    <CarrierNum>${data.carrierNum || ""}</CarrierNum>
+    <LoveCode>${data.loveCode || ""}</LoveCode>
     <RandomNumber>${data.randomNumber}</RandomNumber>
   </Main>
   <Details>${itemsXml}
@@ -174,8 +185,8 @@ export class TurnkeyService {
    */
   generateC0501Xml(invoiceNumber: string, voidReason: string): string {
     const now = new Date();
-    const dateStr = now.toISOString().split('T')[0].replace(/-/g, '');
-    const timeStr = now.toTimeString().split(' ')[0];
+    const dateStr = now.toISOString().split("T")[0].replace(/-/g, "");
+    const timeStr = now.toTimeString().split(" ")[0];
 
     return `<?xml version="1.0" encoding="UTF-8"?>
 <CancelInvoice xmlns="urn:GEINV:eInvoiceMessage:C0501:4.1">
@@ -196,7 +207,7 @@ export class TurnkeyService {
    */
   async uploadToTurnkey(
     xml: string,
-    messageType: 'C0401' | 'C0501' | 'C0701'
+    messageType: "C0401" | "C0501" | "C0701",
   ): Promise<TurnkeyUploadResult> {
     const messageId = `${this.config.merchantId}_${messageType}_${Date.now()}`;
     const filename = `${messageId}.xml`;
@@ -204,12 +215,12 @@ export class TurnkeyService {
     this.logger.log(`Uploading ${messageType} to Turnkey: ${filename}`);
 
     if (!this.config.sftpUsername) {
-      this.logger.warn('Turnkey SFTP not configured. Skipping upload.');
+      this.logger.warn("Turnkey SFTP not configured. Skipping upload.");
       return {
         success: false,
         messageId,
         timestamp: new Date().toISOString(),
-        errorMessage: 'Turnkey SFTP credentials not configured',
+        errorMessage: "Turnkey SFTP credentials not configured",
       };
     }
 
@@ -227,9 +238,11 @@ export class TurnkeyService {
   /**
    * 查詢上傳狀態
    */
-  async checkUploadStatus(messageId: string): Promise<{ status: string; message?: string }> {
+  async checkUploadStatus(
+    messageId: string,
+  ): Promise<{ status: string; message?: string }> {
     this.logger.debug(`Checking status for: ${messageId}`);
-    return { status: 'PENDING', message: 'Status check not implemented' };
+    return { status: "PENDING", message: "Status check not implemented" };
   }
 
   private generateRandomNumber(): string {
@@ -238,10 +251,10 @@ export class TurnkeyService {
 
   private escapeXml(str: string): string {
     return str
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&apos;');
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&apos;");
   }
 }

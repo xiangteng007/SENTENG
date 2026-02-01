@@ -4,12 +4,15 @@
  * Email notification service - Mock mode when nodemailer is not installed
  */
 
-import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { NotificationLog, NotificationStatus } from './notification-log.entity';
-import { NotificationTemplate, NotificationChannel } from './notification-template.entity';
+import { Injectable, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { NotificationLog, NotificationStatus } from "./notification-log.entity";
+import {
+  NotificationTemplate,
+  NotificationChannel,
+} from "./notification-template.entity";
 
 interface EmailOptions {
   to: string | string[];
@@ -41,7 +44,7 @@ export class EmailService {
     @InjectRepository(NotificationLog)
     private readonly logRepository: Repository<NotificationLog>,
     @InjectRepository(NotificationTemplate)
-    private readonly templateRepository: Repository<NotificationTemplate>
+    private readonly templateRepository: Repository<NotificationTemplate>,
   ) {
     this.initTransporter();
   }
@@ -50,35 +53,41 @@ export class EmailService {
     try {
       // Try to load nodemailer - optional dependency
 
-      const nodemailer = require('nodemailer');
+      const nodemailer = require("nodemailer");
 
-      const smtpHost = this.configService.get('SMTP_HOST');
-      const smtpPort = this.configService.get('SMTP_PORT');
-      const smtpUser = this.configService.get('SMTP_USER');
-      const smtpPass = this.configService.get('SMTP_PASS');
+      const smtpHost = this.configService.get("SMTP_HOST");
+      const smtpPort = this.configService.get("SMTP_PORT");
+      const smtpUser = this.configService.get("SMTP_USER");
+      const smtpPass = this.configService.get("SMTP_PASS");
 
       if (!smtpHost || !smtpUser) {
-        this.logger.warn('SMTP not configured. Email service will operate in mock mode.');
+        this.logger.warn(
+          "SMTP not configured. Email service will operate in mock mode.",
+        );
         return;
       }
 
       this.transporter = nodemailer.createTransport({
         host: smtpHost,
-        port: parseInt(smtpPort || '587', 10),
-        secure: smtpPort === '465',
+        port: parseInt(smtpPort || "587", 10),
+        secure: smtpPort === "465",
         auth: { user: smtpUser, pass: smtpPass },
       });
 
-      this.logger.log('Email service initialized successfully');
+      this.logger.log("Email service initialized successfully");
     } catch {
-      this.logger.warn('Nodemailer not installed. Email service will operate in mock mode.');
+      this.logger.warn(
+        "Nodemailer not installed. Email service will operate in mock mode.",
+      );
     }
   }
 
   async send(options: EmailOptions, userId?: string): Promise<SendEmailResult> {
     const log = this.logRepository.create({
       channel: NotificationChannel.EMAIL,
-      recipientEmail: Array.isArray(options.to) ? options.to.join(', ') : options.to,
+      recipientEmail: Array.isArray(options.to)
+        ? options.to.join(", ")
+        : options.to,
       subject: options.subject,
       message: options.html,
       userId,
@@ -87,14 +96,19 @@ export class EmailService {
 
     try {
       if (!this.transporter) {
-        this.logger.warn(`[MOCK] Would send email to ${options.to}: ${options.subject}`);
+        this.logger.warn(
+          `[MOCK] Would send email to ${options.to}: ${options.subject}`,
+        );
         log.status = NotificationStatus.SENT;
         log.sentAt = new Date();
         await this.logRepository.save(log);
-        return { success: true, messageId: 'mock-' + Date.now() };
+        return { success: true, messageId: "mock-" + Date.now() };
       }
 
-      const fromAddress = this.configService.get('SMTP_FROM', 'noreply@senteng.com.tw');
+      const fromAddress = this.configService.get(
+        "SMTP_FROM",
+        "noreply@senteng.com.tw",
+      );
       const result = await this.transporter.sendMail({
         from: fromAddress,
         to: options.to,
@@ -124,21 +138,25 @@ export class EmailService {
     templateCode: string,
     to: string | string[],
     variables: Record<string, string>,
-    userId?: string
+    userId?: string,
   ): Promise<SendEmailResult> {
     const template = await this.templateRepository.findOne({
-      where: { code: templateCode, channel: NotificationChannel.EMAIL, isActive: true },
+      where: {
+        code: templateCode,
+        channel: NotificationChannel.EMAIL,
+        isActive: true,
+      },
     });
 
     if (!template) {
       return { success: false, error: `Template ${templateCode} not found` };
     }
 
-    let subject = template.emailSubject || '';
-    let html = template.emailBody || '';
+    let subject = template.emailSubject || "";
+    let html = template.emailBody || "";
 
     for (const [key, value] of Object.entries(variables)) {
-      const regex = new RegExp(`{{\\s*${key}\\s*}}`, 'g');
+      const regex = new RegExp(`{{\\s*${key}\\s*}}`, "g");
       subject = subject.replace(regex, value);
       html = html.replace(regex, value);
     }
@@ -149,18 +167,23 @@ export class EmailService {
   async sendWelcomeEmail(
     email: string,
     userName: string,
-    userId?: string
+    userId?: string,
   ): Promise<SendEmailResult> {
-    return this.sendFromTemplate('WELCOME_USER', email, { userName }, userId);
+    return this.sendFromTemplate("WELCOME_USER", email, { userName }, userId);
   }
 
   async sendProjectCreatedEmail(
     email: string,
     projectName: string,
     projectUrl: string,
-    userId?: string
+    userId?: string,
   ): Promise<SendEmailResult> {
-    return this.sendFromTemplate('PROJECT_CREATED', email, { projectName, projectUrl }, userId);
+    return this.sendFromTemplate(
+      "PROJECT_CREATED",
+      email,
+      { projectName, projectUrl },
+      userId,
+    );
   }
 
   async sendPaymentReminderEmail(
@@ -168,13 +191,13 @@ export class EmailService {
     invoiceNumber: string,
     amount: string,
     dueDate: string,
-    userId?: string
+    userId?: string,
   ): Promise<SendEmailResult> {
     return this.sendFromTemplate(
-      'PAYMENT_REMINDER',
+      "PAYMENT_REMINDER",
       email,
       { invoiceNumber, amount, dueDate },
-      userId
+      userId,
     );
   }
 }

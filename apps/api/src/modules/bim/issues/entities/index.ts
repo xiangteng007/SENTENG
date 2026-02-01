@@ -1,1 +1,1 @@
-export * from './bcf-issue.entity';
+export * from "./bcf-issue.entity";

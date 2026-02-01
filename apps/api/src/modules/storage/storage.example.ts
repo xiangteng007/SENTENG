@@ -19,15 +19,15 @@ import {
   ParseFilePipe,
   MaxFileSizeValidator,
   FileTypeValidator,
-} from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { StorageService } from '../storage/storage.service';
+} from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { StorageService } from "../storage/storage.service";
 // import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
 
 /**
  * 使用者頭像上傳 Controller
  */
-@Controller('users')
+@Controller("users")
 // @UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private readonly storageService: StorageService) {}
@@ -37,10 +37,10 @@ export class UsersController {
    *
    * @route POST /users/:id/avatar
    */
-  @Post(':id/avatar')
-  @UseInterceptors(FileInterceptor('file'))
+  @Post(":id/avatar")
+  @UseInterceptors(FileInterceptor("file"))
   async uploadAvatar(
-    @Param('id') userId: string,
+    @Param("id") userId: string,
     @UploadedFile(
       new ParseFilePipe({
         validators: [
@@ -49,19 +49,22 @@ export class UsersController {
           // 限制檔案類型: 僅圖片
           new FileTypeValidator({ fileType: /^image\/(jpeg|png|gif|webp)$/ }),
         ],
-      })
+      }),
     )
-    file: Express.Multer.File
+    file: Express.Multer.File,
   ) {
     // 上傳到 GCS，目標路徑: avatars/{userId}/
-    const avatarUrl = await this.storageService.uploadFile(file, `avatars/${userId}`);
+    const avatarUrl = await this.storageService.uploadFile(
+      file,
+      `avatars/${userId}`,
+    );
 
     // TODO: 將 avatarUrl 儲存到資料庫
     // await this.usersService.updateAvatar(userId, avatarUrl);
 
     return {
       success: true,
-      message: '頭像上傳成功',
+      message: "頭像上傳成功",
       data: {
         avatarUrl,
       },
@@ -73,13 +76,13 @@ export class UsersController {
    *
    * @route DELETE /users/:id/avatar
    */
-  @Delete(':id/avatar')
-  async deleteAvatar(@Param('id') userId: string) {
+  @Delete(":id/avatar")
+  async deleteAvatar(@Param("id") userId: string) {
     // TODO: 從資料庫取得目前的頭像 URL
     // const user = await this.usersService.findOne(userId);
     // const currentAvatarUrl = user.avatarUrl;
 
-    const currentAvatarUrl = 'avatars/user123/1704672000000-abc123.jpg'; // 範例
+    const currentAvatarUrl = "avatars/user123/1704672000000-abc123.jpg"; // 範例
 
     if (currentAvatarUrl) {
       await this.storageService.deleteFile(currentAvatarUrl);
@@ -90,7 +93,7 @@ export class UsersController {
 
     return {
       success: true,
-      message: '頭像刪除成功',
+      message: "頭像刪除成功",
     };
   }
 }
@@ -99,14 +102,14 @@ export class UsersController {
 // 2. Service 範例 (users.service.ts)
 // ============================================================================
 
-import { Injectable } from '@nestjs/common';
+import { Injectable } from "@nestjs/common";
 // import { StorageService } from '../storage/storage.service';
 
 @Injectable()
 export class UsersServiceExample {
   constructor(
     // private readonly usersRepository: Repository<User>,
-    private readonly storageService: StorageService
+    private readonly storageService: StorageService,
   ) {}
 
   /**
@@ -122,7 +125,10 @@ export class UsersServiceExample {
     // }
 
     // 3. 上傳新頭像
-    const newAvatarUrl = await this.storageService.uploadFile(file, `avatars/${userId}`);
+    const newAvatarUrl = await this.storageService.uploadFile(
+      file,
+      `avatars/${userId}`,
+    );
 
     // 4. 更新資料庫
     // user.avatarUrl = newAvatarUrl;
@@ -138,7 +144,10 @@ export class UsersServiceExample {
     const uploadedUrls: string[] = [];
 
     for (const file of files) {
-      const url = await this.storageService.uploadFile(file, `documents/${userId}`);
+      const url = await this.storageService.uploadFile(
+        file,
+        `documents/${userId}`,
+      );
       uploadedUrls.push(url);
     }
 

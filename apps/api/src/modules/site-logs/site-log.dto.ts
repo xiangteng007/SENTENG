@@ -6,8 +6,8 @@ import {
   IsBoolean,
   IsDateString,
   MaxLength,
-} from 'class-validator';
-import { Transform } from 'class-transformer';
+} from "class-validator";
+import { Transform } from "class-transformer";
 
 export class CreateSiteLogDto {
   @IsString()
@@ -178,6 +178,6 @@ export class SiteLogQueryDto {
 
   @IsOptional()
   @IsBoolean()
-  @Transform(({ value }) => value === 'true')
+  @Transform(({ value }) => value === "true")
   approved?: boolean;
 }

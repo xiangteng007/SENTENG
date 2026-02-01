@@ -1,16 +1,20 @@
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { Module } from "@nestjs/common";
+import { TypeOrmModule } from "@nestjs/typeorm";
 
 // Entities
-import { ServiceCatalog } from './catalog/entities';
-import { WorkOrder } from './work-orders/entities';
-import { DispatchAssignment, PreflightChecklist } from './dispatch/entities';
-import { FlightLog, OperationLog } from './flights/entities';
-import { DroneAsset, MaintenanceRecord } from './assets/entities';
-import { ChemicalLot, MixtureBatch, ApplicationRecord } from './chemicals/entities';
+import { ServiceCatalog } from "./catalog/entities";
+import { WorkOrder } from "./work-orders/entities";
+import { DispatchAssignment, PreflightChecklist } from "./dispatch/entities";
+import { FlightLog, OperationLog } from "./flights/entities";
+import { DroneAsset, MaintenanceRecord } from "./assets/entities";
+import {
+  ChemicalLot,
+  MixtureBatch,
+  ApplicationRecord,
+} from "./chemicals/entities";
 
 // Modules
-import { WorkOrdersModule } from './work-orders/work-orders.module';
+import { WorkOrdersModule } from "./work-orders/work-orders.module";
 
 /**
  * DroneModule

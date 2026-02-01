@@ -14,10 +14,14 @@ import {
   HttpException,
   HttpStatus,
   Logger,
-} from '@nestjs/common';
-import { Request, Response } from 'express';
-import { v4 as uuidv4 } from 'uuid';
-import { ApiErrorResponse, getErrorMessage, ERROR_CODES } from '../dto/api-error.dto';
+} from "@nestjs/common";
+import { Request, Response } from "express";
+import { v4 as uuidv4 } from "uuid";
+import {
+  ApiErrorResponse,
+  getErrorMessage,
+  ERROR_CODES,
+} from "../dto/api-error.dto";
 
 /**
  * 全域例外過濾器
@@ -87,9 +91,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
     // 從 HttpException 取得自訂錯誤代碼
     if (exception instanceof HttpException) {
       const response = exception.getResponse();
-      if (typeof response === 'object' && response !== null) {
+      if (typeof response === "object" && response !== null) {
         const resp = response as Record<string, unknown>;
-        if (typeof resp.error === 'string' && ERROR_CODES[resp.error]) {
+        if (typeof resp.error === "string" && ERROR_CODES[resp.error]) {
           return resp.error;
         }
       }
@@ -98,17 +102,17 @@ export class AllExceptionsFilter implements ExceptionFilter {
     // 根據狀態碼對應錯誤代碼
     switch (status) {
       case HttpStatus.BAD_REQUEST:
-        return 'BAD_REQUEST';
+        return "BAD_REQUEST";
       case HttpStatus.UNAUTHORIZED:
-        return 'UNAUTHORIZED';
+        return "UNAUTHORIZED";
       case HttpStatus.FORBIDDEN:
-        return 'FORBIDDEN';
+        return "FORBIDDEN";
       case HttpStatus.NOT_FOUND:
-        return 'NOT_FOUND';
+        return "NOT_FOUND";
       case HttpStatus.CONFLICT:
-        return 'CONFLICT';
+        return "CONFLICT";
       default:
-        return 'INTERNAL_ERROR';
+        return "INTERNAL_ERROR";
     }
   }
 
@@ -117,23 +121,26 @@ export class AllExceptionsFilter implements ExceptionFilter {
    */
   private getMessage(exception: unknown, errorCode: string): string {
     // 生產環境隱藏內部錯誤訊息
-    if (process.env.NODE_ENV === 'production' && errorCode === 'INTERNAL_ERROR') {
-      return getErrorMessage('INTERNAL_ERROR', 'zh');
+    if (
+      process.env.NODE_ENV === "production" &&
+      errorCode === "INTERNAL_ERROR"
+    ) {
+      return getErrorMessage("INTERNAL_ERROR", "zh");
     }
 
     // 從 HttpException 取得訊息
     if (exception instanceof HttpException) {
       const response = exception.getResponse();
-      if (typeof response === 'string') {
+      if (typeof response === "string") {
         return response;
       }
-      if (typeof response === 'object' && response !== null) {
+      if (typeof response === "object" && response !== null) {
         const resp = response as Record<string, unknown>;
-        if (typeof resp.message === 'string') {
+        if (typeof resp.message === "string") {
           return resp.message;
         }
         if (Array.isArray(resp.message)) {
-          return resp.message.join(', ');
+          return resp.message.join(", ");
         }
       }
     }
@@ -144,7 +151,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     }
 
     // 預設訊息
-    return getErrorMessage(errorCode, 'zh');
+    return getErrorMessage(errorCode, "zh");
   }
 
   /**
@@ -160,7 +167,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     }
 
     const response = exception.getResponse();
-    if (typeof response !== 'object' || response === null) {
+    if (typeof response !== "object" || response === null) {
       return [];
     }
 
@@ -178,13 +185,13 @@ export class AllExceptionsFilter implements ExceptionFilter {
       if (match) {
         return {
           field: match[1],
-          reason: 'VALIDATION_FAILED',
+          reason: "VALIDATION_FAILED",
           message: msg,
         };
       }
       return {
-        field: 'unknown',
-        reason: 'VALIDATION_FAILED',
+        field: "unknown",
+        reason: "VALIDATION_FAILED",
         message: msg,
       };
     });
@@ -193,17 +200,24 @@ export class AllExceptionsFilter implements ExceptionFilter {
   /**
    * 記錄錯誤日誌
    */
-  private logError(exception: unknown, traceId: string, request: Request): void {
+  private logError(
+    exception: unknown,
+    traceId: string,
+    request: Request,
+  ): void {
     const status = this.getStatus(exception);
     const method = request.method;
     const url = request.url;
-    const userAgent = request.get('user-agent') || '';
+    const userAgent = request.get("user-agent") || "";
 
     const logMessage = `[${traceId}] ${method} ${url} - ${status}`;
 
     if (status >= 500) {
       // 5xx 錯誤記錄完整堆疊
-      this.logger.error(logMessage, exception instanceof Error ? exception.stack : undefined);
+      this.logger.error(
+        logMessage,
+        exception instanceof Error ? exception.stack : undefined,
+      );
     } else if (status >= 400) {
       // 4xx 錯誤記錄警告
       this.logger.warn(`${logMessage} - ${userAgent}`);

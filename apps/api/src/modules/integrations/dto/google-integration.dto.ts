@@ -4,7 +4,7 @@
  * Google 整合相關 DTOs
  */
 
-import { IsBoolean, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsOptional, IsString } from "class-validator";
 
 /**
  * Google 整合狀態回應

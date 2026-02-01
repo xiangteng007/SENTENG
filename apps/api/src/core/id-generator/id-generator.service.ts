@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import { Injectable } from "@nestjs/common";
+import { DataSource } from "typeorm";
 
 /**
  * IdGeneratorService - 統一 ID 生成服務
@@ -22,11 +22,11 @@ export class IdGeneratorService {
    */
   async generate(prefix: string): Promise<string> {
     const date = new Date();
-    const dateStr = `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}`;
+    const dateStr = `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, "0")}`;
     const fullPrefix = `${prefix}-${dateStr}-`;
 
     const seq = await this.getNextSequence(fullPrefix);
-    return `${fullPrefix}${String(seq).padStart(4, '0')}`;
+    return `${fullPrefix}${String(seq).padStart(4, "0")}`;
   }
 
   /**
@@ -53,7 +53,7 @@ export class IdGeneratorService {
     }
 
     const lastId = result[0].id;
-    const lastSeq = parseInt(lastId.split('-')[2], 10);
+    const lastSeq = parseInt(lastId.split("-")[2], 10);
     return lastSeq + 1;
   }
 
@@ -64,7 +64,7 @@ export class IdGeneratorService {
    */
   async generateForTable(tableName: string, prefix: string): Promise<string> {
     const date = new Date();
-    const dateStr = `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}`;
+    const dateStr = `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, "0")}`;
     const fullPrefix = `${prefix}-${dateStr}-`;
 
     const result = await this.dataSource.query(
@@ -74,10 +74,10 @@ export class IdGeneratorService {
 
     let seq = 1;
     if (result.length > 0) {
-      const lastSeq = parseInt(result[0].id.split('-')[2], 10);
+      const lastSeq = parseInt(result[0].id.split("-")[2], 10);
       seq = lastSeq + 1;
     }
 
-    return `${fullPrefix}${String(seq).padStart(4, '0')}`;
+    return `${fullPrefix}${String(seq).padStart(4, "0")}`;
   }
 }

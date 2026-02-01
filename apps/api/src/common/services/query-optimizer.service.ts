@@ -1,5 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { DataSource, EntityMetadata, SelectQueryBuilder } from 'typeorm';
+import { Injectable, Logger } from "@nestjs/common";
+import { DataSource, EntityMetadata, SelectQueryBuilder } from "typeorm";
 
 /**
  * 查詢優化服務
@@ -41,12 +41,14 @@ export class QueryOptimizerService {
     const metadata = this.dataSource.getMetadata(entityName);
     const suggestions: string[] = [];
 
-    const relations = metadata.relations.map(rel => {
+    const relations = metadata.relations.map((rel) => {
       const isEager = rel.isEager;
 
       // 建議優化
-      if (isEager && rel.relationType === 'one-to-many') {
-        suggestions.push(`考慮將 ${rel.propertyName} 改為 lazy loading 以避免載入大量資料`);
+      if (isEager && rel.relationType === "one-to-many") {
+        suggestions.push(
+          `考慮將 ${rel.propertyName} 改為 lazy loading 以避免載入大量資料`,
+        );
       }
 
       return {
@@ -56,8 +58,8 @@ export class QueryOptimizerService {
       };
     });
 
-    if (relations.filter(r => r.eager).length > 3) {
-      suggestions.push('Eager relations 過多，建議使用 QueryBuilder 按需載入');
+    if (relations.filter((r) => r.eager).length > 3) {
+      suggestions.push("Eager relations 過多，建議使用 QueryBuilder 按需載入");
     }
 
     return { entity: entityName, relations, suggestions };
@@ -72,8 +74,8 @@ export class QueryOptimizerService {
     eagerRelations: number;
     hasIssues: boolean;
   }[] {
-    return this.dataSource.entityMetadatas.map(metadata => {
-      const eagerCount = metadata.relations.filter(r => r.isEager).length;
+    return this.dataSource.entityMetadatas.map((metadata) => {
+      const eagerCount = metadata.relations.filter((r) => r.isEager).length;
       return {
         entity: metadata.name,
         relations: metadata.relations.length,
@@ -89,11 +91,14 @@ export class QueryOptimizerService {
 
   suggestOptimization(
     qb: SelectQueryBuilder<any>,
-    options: { includeRelations?: string[]; pagination?: { page: number; limit: number } }
+    options: {
+      includeRelations?: string[];
+      pagination?: { page: number; limit: number };
+    },
   ): SelectQueryBuilder<any> {
     // 自動加入必要的 relations
     if (options.includeRelations) {
-      options.includeRelations.forEach(relation => {
+      options.includeRelations.forEach((relation) => {
         qb.leftJoinAndSelect(`${qb.alias}.${relation}`, relation);
       });
     }
@@ -114,20 +119,20 @@ export class QueryOptimizerService {
     const patterns: N1Detection[] = [];
 
     // 1. 巡覽所有 entities
-    this.dataSource.entityMetadatas.forEach(metadata => {
+    this.dataSource.entityMetadatas.forEach((metadata) => {
       // 檢查 one-to-many 沒有設 cascade
       const oneToManyWithoutOptimization = metadata.relations.filter(
-        r => r.relationType === 'one-to-many' && !r.isEager
+        (r) => r.relationType === "one-to-many" && !r.isEager,
       );
 
       if (oneToManyWithoutOptimization.length > 0) {
         patterns.push({
-          pattern: 'Lazy OneToMany without QueryBuilder',
+          pattern: "Lazy OneToMany without QueryBuilder",
           occurrences: oneToManyWithoutOptimization.length,
           affectedEntities: oneToManyWithoutOptimization.map(
-            r => `${metadata.name}.${r.propertyName}`
+            (r) => `${metadata.name}.${r.propertyName}`,
           ),
-          solution: '使用 QueryBuilder.leftJoinAndSelect() 一次載入關聯資料',
+          solution: "使用 QueryBuilder.leftJoinAndSelect() 一次載入關聯資料",
         });
       }
     });
@@ -149,20 +154,22 @@ export class QueryOptimizerService {
       reason: string;
     }[] = [];
 
-    this.dataSource.entityMetadatas.forEach(metadata => {
+    this.dataSource.entityMetadatas.forEach((metadata) => {
       // 檢查外鍵是否有索引
-      metadata.relations.forEach(rel => {
+      metadata.relations.forEach((rel) => {
         if (rel.foreignKeys.length > 0) {
-          rel.foreignKeys.forEach(fk => {
-            const hasIndex = metadata.indices.some(idx =>
-              idx.columns.some(col => fk.columnNames.includes(col.propertyName))
+          rel.foreignKeys.forEach((fk) => {
+            const hasIndex = metadata.indices.some((idx) =>
+              idx.columns.some((col) =>
+                fk.columnNames.includes(col.propertyName),
+              ),
             );
 
             if (!hasIndex) {
               suggestions.push({
                 table: metadata.tableName,
-                column: fk.columnNames.join(', '),
-                reason: `外鍵欄位 ${fk.columnNames.join(', ')} 建議建立索引以加速 JOIN`,
+                column: fk.columnNames.join(", "),
+                reason: `外鍵欄位 ${fk.columnNames.join(", ")} 建議建立索引以加速 JOIN`,
               });
             }
           });
@@ -170,11 +177,11 @@ export class QueryOptimizerService {
       });
 
       // 檢查常用查詢欄位
-      const commonQueryFields = ['status', 'createdAt', 'type', 'category'];
-      metadata.columns.forEach(col => {
+      const commonQueryFields = ["status", "createdAt", "type", "category"];
+      metadata.columns.forEach((col) => {
         if (commonQueryFields.includes(col.propertyName)) {
-          const hasIndex = metadata.indices.some(idx =>
-            idx.columns.some(c => c.propertyName === col.propertyName)
+          const hasIndex = metadata.indices.some((idx) =>
+            idx.columns.some((c) => c.propertyName === col.propertyName),
           );
 
           if (!hasIndex) {
@@ -213,11 +220,12 @@ export class QueryOptimizerService {
       summary: {
         entities: entityAnalysis.length,
         relations: entityAnalysis.reduce((sum, e) => sum + e.relations, 0),
-        issues: entityAnalysis.filter(e => e.hasIssues).length + n1Patterns.length,
+        issues:
+          entityAnalysis.filter((e) => e.hasIssues).length + n1Patterns.length,
       },
       n1Patterns,
       indexSuggestions: indexSuggestions.slice(0, 20), // 限制數量
-      entityAnalysis: entityAnalysis.filter(e => e.hasIssues),
+      entityAnalysis: entityAnalysis.filter((e) => e.hasIssues),
     };
   }
 }

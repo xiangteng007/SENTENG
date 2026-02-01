@@ -6,16 +6,16 @@
  * 使用 NestJS bootstrap 確保正確的 DB 連接
  */
 
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from '../../app.module';
-import { DataSource } from 'typeorm';
-import { seedCmmData } from './cmm.seed';
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "../../app.module";
+import { DataSource } from "typeorm";
+import { seedCmmData } from "./cmm.seed";
 
 async function bootstrap() {
-  console.log('🚀 Starting NestJS application for CMM seeding...');
+  console.log("🚀 Starting NestJS application for CMM seeding...");
 
   const app = await NestFactory.createApplicationContext(AppModule, {
-    logger: ['error', 'warn'],
+    logger: ["error", "warn"],
   });
 
   try {
@@ -27,20 +27,20 @@ async function bootstrap() {
 
     await seedCmmData(dataSource);
   } catch (error) {
-    console.error('❌ Seed failed:', error);
+    console.error("❌ Seed failed:", error);
     throw error;
   } finally {
     await app.close();
-    console.log('🔌 Application closed');
+    console.log("🔌 Application closed");
   }
 }
 
 bootstrap()
   .then(() => {
-    console.log('✅ Seed completed successfully');
+    console.log("✅ Seed completed successfully");
     process.exit(0);
   })
-  .catch(error => {
-    console.error('❌ Fatal error:', error.message);
+  .catch((error) => {
+    console.error("❌ Fatal error:", error.message);
     process.exit(1);
   });

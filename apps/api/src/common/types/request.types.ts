@@ -65,3 +65,35 @@ export interface PaginatedResult<T> {
     totalPages: number;
   };
 }
+
+/**
+ * TypeORM FindOptionsWhere 條件類型
+ * 用於取代 service 中的 `where: any` 宣告
+ */
+export type WhereConditions<T> = {
+  [K in keyof T]?: T[K] | undefined;
+};
+
+/**
+ * Error 類型安全處理
+ * 用於 catch 區塊中取代 `error: any`
+ */
+export function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  if (typeof error === "string") return error;
+  return "Unknown error occurred";
+}
+
+/**
+ * Audit context for logging user actions
+ */
+export interface AuditContext {
+  userId: string;
+  userEmail?: string;
+  userName?: string;
+  ipAddress?: string;
+  userAgent?: string;
+  action?: string;
+  resource?: string;
+  resourceId?: string;
+}

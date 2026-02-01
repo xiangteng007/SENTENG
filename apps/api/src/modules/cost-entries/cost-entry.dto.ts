@@ -6,7 +6,7 @@ import {
   IsDateString,
   IsIn,
   MaxLength,
-} from 'class-validator';
+} from "class-validator";
 
 export class CreateCostEntryDto {
   @IsString()
@@ -19,7 +19,7 @@ export class CreateCostEntryDto {
   @IsDateString()
   entryDate: string;
 
-  @IsIn(['MATERIAL', 'LABOR', 'EQUIPMENT', 'SUBCONTRACT', 'OVERHEAD', 'OTHER'])
+  @IsIn(["MATERIAL", "LABOR", "EQUIPMENT", "SUBCONTRACT", "OVERHEAD", "OTHER"])
   category: string;
 
   @IsString()
@@ -54,7 +54,7 @@ export class UpdateCostEntryDto {
   entryDate?: string;
 
   @IsOptional()
-  @IsIn(['MATERIAL', 'LABOR', 'EQUIPMENT', 'SUBCONTRACT', 'OVERHEAD', 'OTHER'])
+  @IsIn(["MATERIAL", "LABOR", "EQUIPMENT", "SUBCONTRACT", "OVERHEAD", "OTHER"])
   category?: string;
 
   @IsOptional()
@@ -86,6 +86,6 @@ export class MarkPaidDto {
   paidAt?: string;
 
   @IsOptional()
-  @IsIn(['BANK_TRANSFER', 'CHECK', 'CASH', 'CREDIT_CARD', 'OTHER'])
-  paymentMethod?: string = 'BANK_TRANSFER';
+  @IsIn(["BANK_TRANSFER", "CHECK", "CASH", "CREDIT_CARD", "OTHER"])
+  paymentMethod?: string = "BANK_TRANSFER";
 }

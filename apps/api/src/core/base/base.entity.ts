@@ -4,7 +4,7 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   Column,
-} from 'typeorm';
+} from "typeorm";
 
 /**
  * BaseEntity - 所有 Entity 的基礎類別
@@ -15,21 +15,21 @@ import {
  * - createdBy, updatedBy: 操作者追蹤
  */
 export abstract class BaseEntity {
-  @PrimaryColumn({ type: 'varchar', length: 50 })
+  @PrimaryColumn({ type: "varchar", length: 50 })
   id: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: "updated_at" })
   updatedAt: Date;
 
-  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
+  @DeleteDateColumn({ name: "deleted_at", nullable: true })
   deletedAt?: Date;
 
-  @Column({ name: 'created_by', nullable: true })
+  @Column({ name: "created_by", nullable: true })
   createdBy?: string;
 
-  @Column({ name: 'updated_by', nullable: true })
+  @Column({ name: "updated_by", nullable: true })
   updatedBy?: string;
 }

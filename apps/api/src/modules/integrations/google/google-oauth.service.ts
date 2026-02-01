@@ -6,17 +6,17 @@
  * 使用 google-auth-library 進行實際 API 呼叫
  */
 
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { OAuth2Client, Credentials } from 'google-auth-library';
-import { GoogleOAuthAccount } from './entities/google-oauth-account.entity';
+import { Injectable, Logger, UnauthorizedException } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { OAuth2Client, Credentials } from "google-auth-library";
+import { GoogleOAuthAccount } from "../entities/google-oauth-account.entity";
 
-const CALENDAR_SCOPE = 'https://www.googleapis.com/auth/calendar';
-const CONTACTS_SCOPE = 'https://www.googleapis.com/auth/contacts';
-const USERINFO_EMAIL_SCOPE = 'https://www.googleapis.com/auth/userinfo.email';
-const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file'; // For site photos
+const CALENDAR_SCOPE = "https://www.googleapis.com/auth/calendar";
+const CONTACTS_SCOPE = "https://www.googleapis.com/auth/contacts";
+const USERINFO_EMAIL_SCOPE = "https://www.googleapis.com/auth/userinfo.email";
+const DRIVE_SCOPE = "https://www.googleapis.com/auth/drive.file"; // For site photos
 
 @Injectable()
 export class GoogleOAuthService {
@@ -26,16 +26,18 @@ export class GoogleOAuthService {
   constructor(
     @InjectRepository(GoogleOAuthAccount)
     private readonly oauthRepo: Repository<GoogleOAuthAccount>,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
   ) {
     // 初始化 OAuth2 Client
-    const clientId = this.configService.get<string>('GOOGLE_CLIENT_ID');
-    const clientSecret = this.configService.get<string>('GOOGLE_CLIENT_SECRET');
+    const clientId = this.configService.get<string>("GOOGLE_CLIENT_ID");
+    const clientSecret = this.configService.get<string>("GOOGLE_CLIENT_SECRET");
     const redirectUri =
-      this.configService.get<string>('GOOGLE_REDIRECT_URI') ||
-      'http://localhost:3000/api/v1/integrations/google/callback';
+      this.configService.get<string>("GOOGLE_REDIRECT_URI") ||
+      "http://localhost:3000/api/v1/integrations/google/callback";
 
-    this.logger.log(`Initializing OAuth2Client with redirect_uri: ${redirectUri}`);
+    this.logger.log(
+      `Initializing OAuth2Client with redirect_uri: ${redirectUri}`,
+    );
     this.oauth2Client = new OAuth2Client(clientId, clientSecret, redirectUri);
   }
 
@@ -43,12 +45,17 @@ export class GoogleOAuthService {
    * 取得授權 URL
    */
   getAuthUrl(userId: string): string {
-    const scopes = [CALENDAR_SCOPE, CONTACTS_SCOPE, USERINFO_EMAIL_SCOPE, DRIVE_SCOPE];
+    const scopes = [
+      CALENDAR_SCOPE,
+      CONTACTS_SCOPE,
+      USERINFO_EMAIL_SCOPE,
+      DRIVE_SCOPE,
+    ];
 
     const authUrl = this.oauth2Client.generateAuthUrl({
-      access_type: 'offline',
+      access_type: "offline",
       scope: scopes,
-      prompt: 'consent',
+      prompt: "consent",
       state: userId,
     });
 
@@ -57,23 +64,30 @@ export class GoogleOAuthService {
   /**
    * 處理 OAuth callback，交換 token
    */
-  async handleCallback(code: string, userId: string): Promise<GoogleOAuthAccount> {
+  async handleCallback(
+    code: string,
+    userId: string,
+  ): Promise<GoogleOAuthAccount> {
     this.logger.log(`OAuth callback received for user ${userId}`);
 
     // Log the redirect_uri being used for debugging
     const redirectUri =
-      this.configService.get<string>('GOOGLE_REDIRECT_URI') ||
-      'http://localhost:3000/api/v1/integrations/google/callback';
+      this.configService.get<string>("GOOGLE_REDIRECT_URI") ||
+      "http://localhost:3000/api/v1/integrations/google/callback";
     this.logger.log(`Using redirect_uri for token exchange: ${redirectUri}`);
 
     try {
       // 使用 authorization code 交換 tokens
       // 創建新的 OAuth2Client 確保使用正確的 redirect_uri
-      const clientId = this.configService.get<string>('GOOGLE_CLIENT_ID');
-      const clientSecret = this.configService.get<string>('GOOGLE_CLIENT_SECRET');
+      const clientId = this.configService.get<string>("GOOGLE_CLIENT_ID");
+      const clientSecret = this.configService.get<string>(
+        "GOOGLE_CLIENT_SECRET",
+      );
       const tokenClient = new OAuth2Client(clientId, clientSecret, redirectUri);
 
-      this.logger.log(`Token exchange using client with redirect_uri: ${redirectUri}`);
+      this.logger.log(
+        `Token exchange using client with redirect_uri: ${redirectUri}`,
+      );
       const { tokens } = await tokenClient.getToken(code);
       this.oauth2Client.setCredentials(tokens);
 
@@ -86,7 +100,7 @@ export class GoogleOAuthService {
 
       if (account) {
         // 更新現有授權
-        account.accessToken = tokens.access_token || '';
+        account.accessToken = tokens.access_token || "";
         account.refreshToken = tokens.refresh_token || account.refreshToken; // 保留舊的 refresh token 如果沒有新的
         account.tokenExpiresAt = tokens.expiry_date
           ? new Date(tokens.expiry_date)
@@ -98,28 +112,32 @@ export class GoogleOAuthService {
         // 建立新授權
         account = this.oauthRepo.create({
           userId,
-          accessToken: tokens.access_token || '',
-          refreshToken: tokens.refresh_token || '',
+          accessToken: tokens.access_token || "",
+          refreshToken: tokens.refresh_token || "",
           tokenExpiresAt: tokens.expiry_date
             ? new Date(tokens.expiry_date)
             : new Date(Date.now() + 3600 * 1000),
           googleAccountEmail: googleEmail,
           scopes: [CALENDAR_SCOPE, CONTACTS_SCOPE, DRIVE_SCOPE],
-          calendarId: 'primary',
-          contactsLabel: 'Senteng ERP',
+          calendarId: "primary",
+          contactsLabel: "Senteng ERP",
           autoSyncEvents: true,
           autoSyncContacts: true,
           isActive: true,
         });
       }
 
-      this.logger.log(`Successfully connected Google account: ${googleEmail} for user ${userId}`);
+      this.logger.log(
+        `Successfully connected Google account: ${googleEmail} for user ${userId}`,
+      );
       return this.oauthRepo.save(account);
     } catch (error: any) {
       // Enhanced error logging for debugging
       this.logger.error(`Failed to exchange token: ${error.message}`);
       if (error.response?.data) {
-        this.logger.error(`Google API error details: ${JSON.stringify(error.response.data)}`);
+        this.logger.error(
+          `Google API error details: ${JSON.stringify(error.response.data)}`,
+        );
       }
       if (error.code) {
         this.logger.error(`Error code: ${error.code}`);
@@ -133,11 +151,14 @@ export class GoogleOAuthService {
    */
   private async getUserInfo(tokens: Credentials): Promise<{ email?: string }> {
     try {
-      const response = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-        headers: {
-          Authorization: `Bearer ${tokens.access_token}`,
+      const response = await fetch(
+        "https://www.googleapis.com/oauth2/v2/userinfo",
+        {
+          headers: {
+            Authorization: `Bearer ${tokens.access_token}`,
+          },
         },
-      });
+      );
       if (!response.ok) {
         throw new Error(`Failed to fetch user info: ${response.status}`);
       }
@@ -161,7 +182,7 @@ export class GoogleOAuthService {
   async getValidAccessToken(userId: string): Promise<string> {
     const account = await this.getAccountByUserId(userId);
     if (!account) {
-      throw new UnauthorizedException('Google 帳號未連結');
+      throw new UnauthorizedException("Google 帳號未連結");
     }
 
     // 檢查 token 是否過期（提前 5 分鐘判斷）
@@ -180,9 +201,11 @@ export class GoogleOAuthService {
   /**
    * Refresh access token
    */
-  private async refreshAccessToken(account: GoogleOAuthAccount): Promise<string> {
+  private async refreshAccessToken(
+    account: GoogleOAuthAccount,
+  ): Promise<string> {
     if (!account.refreshToken) {
-      throw new UnauthorizedException('沒有 refresh token，請重新授權');
+      throw new UnauthorizedException("沒有 refresh token，請重新授權");
     }
 
     try {
@@ -193,7 +216,7 @@ export class GoogleOAuthService {
       const { credentials } = await this.oauth2Client.refreshAccessToken();
 
       // 更新 account
-      account.accessToken = credentials.access_token || '';
+      account.accessToken = credentials.access_token || "";
       account.tokenExpiresAt = credentials.expiry_date
         ? new Date(credentials.expiry_date)
         : new Date(Date.now() + 3600 * 1000);
@@ -208,7 +231,7 @@ export class GoogleOAuthService {
       account.isActive = false;
       account.lastSyncError = `Token refresh failed: ${error.message}`;
       await this.oauthRepo.save(account);
-      throw new UnauthorizedException('Token 更新失敗，請重新授權');
+      throw new UnauthorizedException("Token 更新失敗，請重新授權");
     }
   }
 
@@ -220,12 +243,12 @@ export class GoogleOAuthService {
     const account = await this.getAccountByUserId(userId);
 
     if (!account) {
-      throw new UnauthorizedException('Google 帳號未連結');
+      throw new UnauthorizedException("Google 帳號未連結");
     }
 
     const client = new OAuth2Client(
-      this.configService.get<string>('GOOGLE_CLIENT_ID'),
-      this.configService.get<string>('GOOGLE_CLIENT_SECRET')
+      this.configService.get<string>("GOOGLE_CLIENT_ID"),
+      this.configService.get<string>("GOOGLE_CLIENT_SECRET"),
     );
 
     client.setCredentials({
@@ -246,11 +269,11 @@ export class GoogleOAuthService {
       contactsLabel?: string;
       autoSyncEvents?: boolean;
       autoSyncContacts?: boolean;
-    }
+    },
   ): Promise<GoogleOAuthAccount> {
     const account = await this.getAccountByUserId(userId);
     if (!account) {
-      throw new UnauthorizedException('Google 帳號未連結');
+      throw new UnauthorizedException("Google 帳號未連結");
     }
 
     if (config.calendarId !== undefined) {
@@ -302,7 +325,7 @@ export class GoogleOAuthService {
     const account = await this.getAccountByUserId(userId);
     if (account) {
       account.lastSyncedAt = new Date();
-      account.lastSyncError = error || '';
+      account.lastSyncError = error || "";
       await this.oauthRepo.save(account);
     }
   }

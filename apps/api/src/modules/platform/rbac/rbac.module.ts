@@ -1,7 +1,7 @@
-import { Module, Global } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Role, Permission, UserRole } from './entities';
-import { RbacService } from './rbac.service';
+import { Module, Global } from "@nestjs/common";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { Role, Permission, UserRole } from "./entities";
+import { RbacService } from "./rbac.service";
 
 @Global()
 @Module({

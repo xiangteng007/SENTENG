@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from "typeorm";
 
 /**
  * 新增所有 Controller 遷移到 PermissionGuard 所需的權限
@@ -9,7 +9,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  * - sites, tenants, integrations
  */
 export class AddPermissionGuardPermissions1738079700000 implements MigrationInterface {
-  name = 'AddPermissionGuardPermissions1738079700000';
+  name = "AddPermissionGuardPermissions1738079700000";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Insert new permissions for all migrated controllers
@@ -203,73 +203,76 @@ export class AddPermissionGuardPermissions1738079700000 implements MigrationInte
   public async down(queryRunner: QueryRunner): Promise<void> {
     // Remove role_permissions first
     const permissionIds = [
-      'users:read',
-      'users:create',
-      'users:update',
-      'users:delete',
-      'storage:read',
-      'storage:upload',
-      'storage:delete',
-      'finance:read',
-      'finance:create',
-      'finance:update',
-      'finance:delete',
-      'inventory:read',
-      'inventory:create',
-      'inventory:update',
-      'inventory:delete',
-      'quotations:read',
-      'quotations:create',
-      'quotations:update',
-      'quotations:submit',
-      'quotations:approve',
-      'clients:read',
-      'clients:create',
-      'clients:update',
-      'clients:delete',
-      'client-contacts:read',
-      'client-contacts:create',
-      'client-contacts:update',
-      'client-contacts:delete',
-      'events:read',
-      'events:create',
-      'events:update',
-      'events:delete',
-      'cmm:read',
-      'cmm:create',
-      'cmm:update',
-      'cmm:admin',
-      'change-orders:read',
-      'change-orders:create',
-      'change-orders:update',
-      'change-orders:submit',
-      'change-orders:approve',
-      'change-orders:reject',
-      'cost-entries:read',
-      'cost-entries:create',
-      'cost-entries:update',
-      'cost-entries:delete',
-      'profit-analysis:read',
-      'sites:read',
-      'sites:create',
-      'sites:update',
-      'work-orders:read',
-      'work-orders:create',
-      'work-orders:update',
-      'work-orders:delete',
-      'tenants:read',
-      'tenants:update',
-      'tenants:admin',
-      'integrations:sync',
-      'integrations:manage',
-      'integrations:admin',
+      "users:read",
+      "users:create",
+      "users:update",
+      "users:delete",
+      "storage:read",
+      "storage:upload",
+      "storage:delete",
+      "finance:read",
+      "finance:create",
+      "finance:update",
+      "finance:delete",
+      "inventory:read",
+      "inventory:create",
+      "inventory:update",
+      "inventory:delete",
+      "quotations:read",
+      "quotations:create",
+      "quotations:update",
+      "quotations:submit",
+      "quotations:approve",
+      "clients:read",
+      "clients:create",
+      "clients:update",
+      "clients:delete",
+      "client-contacts:read",
+      "client-contacts:create",
+      "client-contacts:update",
+      "client-contacts:delete",
+      "events:read",
+      "events:create",
+      "events:update",
+      "events:delete",
+      "cmm:read",
+      "cmm:create",
+      "cmm:update",
+      "cmm:admin",
+      "change-orders:read",
+      "change-orders:create",
+      "change-orders:update",
+      "change-orders:submit",
+      "change-orders:approve",
+      "change-orders:reject",
+      "cost-entries:read",
+      "cost-entries:create",
+      "cost-entries:update",
+      "cost-entries:delete",
+      "profit-analysis:read",
+      "sites:read",
+      "sites:create",
+      "sites:update",
+      "work-orders:read",
+      "work-orders:create",
+      "work-orders:update",
+      "work-orders:delete",
+      "tenants:read",
+      "tenants:update",
+      "tenants:admin",
+      "integrations:sync",
+      "integrations:manage",
+      "integrations:admin",
     ];
 
     for (const permId of permissionIds) {
-      await queryRunner.query(`DELETE FROM "role_permissions" WHERE "permission_id" = $1`, [
+      await queryRunner.query(
+        `DELETE FROM "role_permissions" WHERE "permission_id" = $1`,
+        [permId],
+      );
+      await queryRunner.query(`DELETE FROM "permissions" WHERE "id" = $1`, [
         permId,
       ]);
-      await queryRunner.query(`DELETE FROM "permissions" WHERE "id" = $1`, [permId]);
     }
   }
 }

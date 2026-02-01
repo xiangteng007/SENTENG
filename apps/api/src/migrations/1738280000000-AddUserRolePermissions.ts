@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from "typeorm";
 
 /**
  * 為 'user' 角色新增基本權限
@@ -9,7 +9,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  * 因此使用 transaction = false 並包裹在 try-catch 中以優雅處理。
  */
 export class AddUserRolePermissions1738280000000 implements MigrationInterface {
-  name = 'AddUserRolePermissions1738280000000';
+  name = "AddUserRolePermissions1738280000000";
 
   // Run without transaction so FK failures don't abort the entire migration
   transaction = false as const;
@@ -62,8 +62,10 @@ export class AddUserRolePermissions1738280000000 implements MigrationInterface {
     } catch (e: any) {
       // 23503: foreign_key_violation - permissions not seeded yet
       // 42P01: undefined_table - table doesn't exist in E2E environment
-      if (e.code === '23503' || e.code === '42P01') {
-        console.log('Skipping AddUserRolePermissions: permissions table may be empty or not exist');
+      if (e.code === "23503" || e.code === "42P01") {
+        console.log(
+          "Skipping AddUserRolePermissions: permissions table may be empty or not exist",
+        );
       } else {
         throw e;
       }
@@ -72,29 +74,29 @@ export class AddUserRolePermissions1738280000000 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     const userPermissions = [
-      'projects:read',
-      'clients:read',
-      'client-contacts:read',
-      'vendors:read',
-      'storage:read',
-      'events:read',
-      'cmm:read',
-      'inventory:read',
-      'quotations:read',
-      'cost-entries:read',
-      'finance:read',
-      'sites:read',
-      'contracts:read',
-      'payments:read',
-      'procurements:read',
-      'tenants:read',
+      "projects:read",
+      "clients:read",
+      "client-contacts:read",
+      "vendors:read",
+      "storage:read",
+      "events:read",
+      "cmm:read",
+      "inventory:read",
+      "quotations:read",
+      "cost-entries:read",
+      "finance:read",
+      "sites:read",
+      "contracts:read",
+      "payments:read",
+      "procurements:read",
+      "tenants:read",
     ];
 
     for (const permId of userPermissions) {
       try {
         await queryRunner.query(
           `DELETE FROM "role_permissions" WHERE "role_id" = 'user' AND "permission_id" = $1`,
-          [permId]
+          [permId],
         );
       } catch {
         // Ignore errors in rollback

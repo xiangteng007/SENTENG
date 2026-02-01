@@ -1,10 +1,10 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from "typeorm";
 
 /**
  * Phase 2.4: Waste Management Module Tables
  */
 export class CreateWasteTables1769760600000 implements MigrationInterface {
-  name = 'CreateWasteTables1769760600000';
+  name = "CreateWasteTables1769760600000";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Waste records table

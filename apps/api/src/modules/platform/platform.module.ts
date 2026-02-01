@@ -1,9 +1,9 @@
-import { Module } from '@nestjs/common';
-import { TenantsModule } from './tenants/tenants.module';
-import { SitesModule } from './sites/sites.module';
-import { DmsModule } from './dms/dms.module';
-import { AuditModule } from './audit/audit.module';
-import { RbacModule } from './rbac/rbac.module';
+import { Module } from "@nestjs/common";
+import { TenantsModule } from "./tenants/tenants.module";
+import { SitesModule } from "./sites/sites.module";
+import { DmsModule } from "./dms/dms.module";
+import { AuditModule } from "./audit/audit.module";
+import { RbacModule } from "./rbac/rbac.module";
 
 /**
  * PlatformModule

@@ -1,16 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like, In } from 'typeorm';
-import { Customer, PipelineStage } from './customer.entity';
-import { CustomerContact } from './customer-contact.entity';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository, Like, In } from "typeorm";
+import { Customer, PipelineStage } from "./customer.entity";
+import { CustomerContact } from "./customer-contact.entity";
 import {
   CreateCustomerDto,
   UpdateCustomerDto,
   CustomerQueryDto,
   CreateContactDto,
-} from './customer.dto';
-import { isAdminRole } from '../../common/constants/roles';
-import { IdGeneratorService, checkResourceOwnership } from '../../core';
+} from "./customer.dto";
+import { isAdminRole } from "../../common/constants/roles";
+import { IdGeneratorService, checkResourceOwnership } from "../../core";
 
 @Injectable()
 export class CustomersService {
@@ -25,28 +25,32 @@ export class CustomersService {
   async findAll(
     query: CustomerQueryDto,
     userId?: string,
-    userRole?: string
+    userRole?: string,
   ): Promise<{ items: Customer[]; total: number }> {
     const { page = 1, limit = 20, status, pipelineStage, search, tag } = query;
-    const qb = this.customerRepo.createQueryBuilder('c');
+    const qb = this.customerRepo.createQueryBuilder("c");
 
     // Filters
-    if (status) qb.andWhere('c.status = :status', { status });
-    if (pipelineStage) qb.andWhere('c.pipelineStage = :pipelineStage', { pipelineStage });
+    if (status) qb.andWhere("c.status = :status", { status });
+    if (pipelineStage)
+      qb.andWhere("c.pipelineStage = :pipelineStage", { pipelineStage });
     if (search) {
-      qb.andWhere('(c.name ILIKE :search OR c.phone ILIKE :search OR c.email ILIKE :search)', {
-        search: `%${search}%`,
-      });
+      qb.andWhere(
+        "(c.name ILIKE :search OR c.phone ILIKE :search OR c.email ILIKE :search)",
+        {
+          search: `%${search}%`,
+        },
+      );
     }
-    if (tag) qb.andWhere(':tag = ANY(c.tags)', { tag });
+    if (tag) qb.andWhere(":tag = ANY(c.tags)", { tag });
 
     // IDOR: Non-admin sees only their created customers
     if (userId && userRole && !isAdminRole(userRole)) {
-      qb.andWhere('c.createdBy = :userId', { userId });
+      qb.andWhere("c.createdBy = :userId", { userId });
     }
 
     const [items, total] = await qb
-      .orderBy('c.createdAt', 'DESC')
+      .orderBy("c.createdAt", "DESC")
       .skip((page - 1) * limit)
       .take(limit)
       .getManyAndCount();
@@ -54,13 +58,17 @@ export class CustomersService {
     return { items, total };
   }
 
-  async findOne(id: string, userId?: string, userRole?: string): Promise<Customer> {
+  async findOne(
+    id: string,
+    userId?: string,
+    userRole?: string,
+  ): Promise<Customer> {
     const customer = await this.customerRepo.findOne({
       where: { id },
-      relations: ['contacts'],
+      relations: ["contacts"],
     });
     if (!customer) throw new NotFoundException(`Customer ${id} not found`);
-    checkResourceOwnership(customer, userId, userRole, 'customer');
+    checkResourceOwnership(customer, userId, userRole, "customer");
     return customer;
   }
 
@@ -71,7 +79,7 @@ export class CustomersService {
   }
 
   async create(dto: CreateCustomerDto, userId?: string): Promise<Customer> {
-    const id = await this.idGenerator.generateForTable('customers', 'CLT');
+    const id = await this.idGenerator.generateForTable("customers", "CLT");
     const customer = this.customerRepo.create({
       ...dto,
       id,
@@ -84,7 +92,7 @@ export class CustomersService {
     id: string,
     dto: UpdateCustomerDto,
     userId?: string,
-    userRole?: string
+    userRole?: string,
   ): Promise<Customer> {
     const customer = await this.findOne(id, userId, userRole);
     Object.assign(customer, dto, { updatedBy: userId });
@@ -95,7 +103,7 @@ export class CustomersService {
     id: string,
     stage: PipelineStage,
     userId?: string,
-    userRole?: string
+    userRole?: string,
   ): Promise<Customer> {
     const customer = await this.findOne(id, userId, userRole);
     customer.pipelineStage = stage;
@@ -113,7 +121,7 @@ export class CustomersService {
     customerId: string,
     dto: CreateContactDto,
     userId?: string,
-    userRole?: string
+    userRole?: string,
   ): Promise<CustomerContact> {
     await this.findOne(customerId, userId, userRole);
     const contact = this.contactRepo.create({

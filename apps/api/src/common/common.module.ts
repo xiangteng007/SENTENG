@@ -1,9 +1,9 @@
-import { Module, Global } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { RolesGuard } from './guards/roles.guard';
-import { PermissionGuard } from './guards/permission.guard';
+import { Module, Global } from "@nestjs/common";
+import { JwtModule } from "@nestjs/jwt";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { JwtAuthGuard } from "./guards/jwt-auth.guard";
+import { RolesGuard } from "./guards/roles.guard";
+import { PermissionGuard } from "./guards/permission.guard";
 
 @Global()
 @Module({
@@ -11,8 +11,8 @@ import { PermissionGuard } from './guards/permission.guard';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
-        secret: configService.get('JWT_SECRET'),
-        signOptions: { expiresIn: configService.get('JWT_EXPIRES_IN') || '1h' },
+        secret: configService.get("JWT_SECRET"),
+        signOptions: { expiresIn: configService.get("JWT_EXPIRES_IN") || "1h" },
       }),
       inject: [ConfigService],
     }),

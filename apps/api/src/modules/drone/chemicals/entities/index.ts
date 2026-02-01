@@ -1,1 +1,1 @@
-export * from './chemical.entity';
+export * from "./chemical.entity";

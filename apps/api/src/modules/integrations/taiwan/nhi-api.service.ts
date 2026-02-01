@@ -1,5 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 
 /**
  * 勞動部 勞保局 API 服務
@@ -24,7 +24,7 @@ export interface LaborInsuranceRecord {
   withdrawalDate?: string;
   insuranceGrade: number; // 投保級距
   premiumAmount: number;
-  status: 'active' | 'withdrawn';
+  status: "active" | "withdrawn";
 }
 
 export interface HealthInsuranceRecord {
@@ -33,7 +33,7 @@ export interface HealthInsuranceRecord {
   cardNumber: string;
   dependents: number;
   premiumAmount: number;
-  status: 'active' | 'suspended';
+  status: "active" | "suspended";
 }
 
 export interface PremiumCalculation {
@@ -91,9 +91,11 @@ export class NhiApiService {
 
   constructor(private readonly configService: ConfigService) {
     this.config = {
-      apiKey: this.configService.get<string>('NHI_API_KEY') || '',
-      apiHost: this.configService.get<string>('NHI_API_HOST') || 'https://eservice.bli.gov.tw/api',
-      unitId: this.configService.get<string>('NHI_UNIT_ID') || '',
+      apiKey: this.configService.get<string>("NHI_API_KEY") || "",
+      apiHost:
+        this.configService.get<string>("NHI_API_HOST") ||
+        "https://eservice.bli.gov.tw/api",
+      unitId: this.configService.get<string>("NHI_UNIT_ID") || "",
     };
   }
 
@@ -112,7 +114,7 @@ export class NhiApiService {
     insurableSalary: number;
   } {
     const matched = this.INSURANCE_GRADES.find(
-      g => monthlySalary >= g.minSalary && monthlySalary <= g.maxSalary
+      (g) => monthlySalary >= g.minSalary && monthlySalary <= g.maxSalary,
     );
 
     if (matched) {
@@ -132,14 +134,19 @@ export class NhiApiService {
 
     // 勞保
     const laborInsuranceTotal = insurableSalary * this.RATES.laborInsurance;
-    const laborInsuranceEmployer = laborInsuranceTotal * this.RATES.laborInsuranceEmployerRatio;
-    const laborInsuranceEmployee = laborInsuranceTotal * this.RATES.laborInsuranceEmployeeRatio;
+    const laborInsuranceEmployer =
+      laborInsuranceTotal * this.RATES.laborInsuranceEmployerRatio;
+    const laborInsuranceEmployee =
+      laborInsuranceTotal * this.RATES.laborInsuranceEmployeeRatio;
 
     // 健保
     const healthInsuranceTotal = insurableSalary * this.RATES.healthInsurance;
-    const healthInsuranceEmployer = healthInsuranceTotal * this.RATES.healthInsuranceEmployerRatio;
+    const healthInsuranceEmployer =
+      healthInsuranceTotal * this.RATES.healthInsuranceEmployerRatio;
     const healthInsuranceEmployee =
-      healthInsuranceTotal * this.RATES.healthInsuranceEmployeeRatio * (1 + dependents * 0.3);
+      healthInsuranceTotal *
+      this.RATES.healthInsuranceEmployeeRatio *
+      (1 + dependents * 0.3);
 
     // 補充保費 (月薪超過 4 倍投保金額時)
     let supplementaryPremium = 0;
@@ -175,7 +182,9 @@ export class NhiApiService {
   /**
    * 批次計算員工保費
    */
-  calculateBatchPremiums(employees: { id: string; salary: number; dependents: number }[]): {
+  calculateBatchPremiums(
+    employees: { id: string; salary: number; dependents: number }[],
+  ): {
     employees: { id: string; premiums: PremiumCalculation }[];
     totals: {
       totalEmployerCost: number;
@@ -185,7 +194,7 @@ export class NhiApiService {
     let totalEmployerCost = 0;
     let totalEmployeeCost = 0;
 
-    const results = employees.map(emp => {
+    const results = employees.map((emp) => {
       const premiums = this.calculatePremiums(emp.salary, emp.dependents);
 
       totalEmployerCost +=
@@ -194,7 +203,8 @@ export class NhiApiService {
         premiums.laborPension.employerContribution;
 
       totalEmployeeCost +=
-        premiums.laborInsurance.employeePremium + premiums.healthInsurance.employeePremium;
+        premiums.laborInsurance.employeePremium +
+        premiums.healthInsurance.employeePremium;
 
       return { id: emp.id, premiums };
     });
@@ -208,14 +218,18 @@ export class NhiApiService {
   /**
    * 查詢勞保資料 (需 API 權限)
    */
-  async queryLaborInsurance(nationalId: string): Promise<LaborInsuranceRecord | null> {
+  async queryLaborInsurance(
+    nationalId: string,
+  ): Promise<LaborInsuranceRecord | null> {
     if (!this.isConfigured()) {
-      this.logger.warn('NHI API not configured');
+      this.logger.warn("NHI API not configured");
       return null;
     }
 
     // TODO: Implement actual API call when credentials are available
-    this.logger.log(`Querying labor insurance for ${nationalId.substring(0, 3)}***`);
+    this.logger.log(
+      `Querying labor insurance for ${nationalId.substring(0, 3)}***`,
+    );
 
     return null;
   }

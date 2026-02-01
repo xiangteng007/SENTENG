@@ -1,21 +1,34 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, Index } from 'typeorm';
+import { Injectable, Logger } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  Index,
+} from "typeorm";
 
 /**
  * 審計日誌實體
  */
-@Entity('audit_logs')
-@Index(['entityType', 'entityId'])
-@Index(['userId', 'createdAt'])
-@Index(['action', 'createdAt'])
+@Entity("audit_logs")
+@Index(["entityType", "entityId"])
+@Index(["userId", "createdAt"])
+@Index(["action", "createdAt"])
 export class AuditLog {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column({ length: 50 })
-  action: 'CREATE' | 'UPDATE' | 'DELETE' | 'VIEW' | 'EXPORT' | 'LOGIN' | 'LOGOUT';
+  action:
+    | "CREATE"
+    | "UPDATE"
+    | "DELETE"
+    | "VIEW"
+    | "EXPORT"
+    | "LOGIN"
+    | "LOGOUT";
 
   @Column({ length: 100 })
   entityType: string;
@@ -26,7 +39,7 @@ export class AuditLog {
   @Column({ length: 100, nullable: true })
   entityName: string;
 
-  @Column({ type: 'uuid', nullable: true })
+  @Column({ type: "uuid", nullable: true })
   userId: string;
 
   @Column({ length: 255, nullable: true })
@@ -35,19 +48,19 @@ export class AuditLog {
   @Column({ length: 100, nullable: true })
   userName: string;
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: "jsonb", nullable: true })
   oldValue: Record<string, unknown>;
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: "jsonb", nullable: true })
   newValue: Record<string, unknown>;
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: "jsonb", nullable: true })
   changes: { field: string; oldValue: unknown; newValue: unknown }[];
 
   @Column({ length: 45, nullable: true })
   ipAddress: string;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: "text", nullable: true })
   userAgent: string;
 
   @Column({ length: 255, nullable: true })
@@ -56,7 +69,7 @@ export class AuditLog {
   @Column({ length: 10, nullable: true })
   requestMethod: string;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: "text", nullable: true })
   description: string;
 
   @CreateDateColumn()
@@ -74,7 +87,7 @@ export class AuditLogService {
 
   constructor(
     @InjectRepository(AuditLog)
-    private readonly auditLogRepo: Repository<AuditLog>
+    private readonly auditLogRepo: Repository<AuditLog>,
   ) {}
 
   /**
@@ -85,10 +98,10 @@ export class AuditLogService {
     entityId: string,
     entityName: string,
     newValue: Record<string, unknown>,
-    context: AuditContext
+    context: AuditContext,
   ): Promise<void> {
     await this.log({
-      action: 'CREATE',
+      action: "CREATE",
       entityType,
       entityId,
       entityName,
@@ -107,12 +120,12 @@ export class AuditLogService {
     entityName: string,
     oldValue: Record<string, unknown>,
     newValue: Record<string, unknown>,
-    context: AuditContext
+    context: AuditContext,
   ): Promise<void> {
     const changes = this.computeChanges(oldValue, newValue);
 
     await this.log({
-      action: 'UPDATE',
+      action: "UPDATE",
       entityType,
       entityId,
       entityName,
@@ -132,10 +145,10 @@ export class AuditLogService {
     entityId: string,
     entityName: string,
     oldValue: Record<string, unknown>,
-    context: AuditContext
+    context: AuditContext,
   ): Promise<void> {
     await this.log({
-      action: 'DELETE',
+      action: "DELETE",
       entityType,
       entityId,
       entityName,
@@ -148,9 +161,13 @@ export class AuditLogService {
   /**
    * 記錄匯出操作
    */
-  async logExport(entityType: string, recordCount: number, context: AuditContext): Promise<void> {
+  async logExport(
+    entityType: string,
+    recordCount: number,
+    context: AuditContext,
+  ): Promise<void> {
     await this.log({
-      action: 'EXPORT',
+      action: "EXPORT",
       entityType,
       description: `匯出 ${recordCount} 筆 ${entityType} 資料`,
       ...context,
@@ -162,9 +179,9 @@ export class AuditLogService {
    */
   async logLogin(context: AuditContext): Promise<void> {
     await this.log({
-      action: 'LOGIN',
-      entityType: 'Session',
-      description: '使用者登入',
+      action: "LOGIN",
+      entityType: "Session",
+      description: "使用者登入",
       ...context,
     });
   }
@@ -174,9 +191,9 @@ export class AuditLogService {
    */
   async logLogout(context: AuditContext): Promise<void> {
     await this.log({
-      action: 'LOGOUT',
-      entityType: 'Session',
-      description: '使用者登出',
+      action: "LOGOUT",
+      entityType: "Session",
+      description: "使用者登出",
       ...context,
     });
   }
@@ -190,31 +207,39 @@ export class AuditLogService {
     page: number;
     limit: number;
   }> {
-    const { page = 1, limit = 20, entityType, userId, action, startDate, endDate } = params;
+    const {
+      page = 1,
+      limit = 20,
+      entityType,
+      userId,
+      action,
+      startDate,
+      endDate,
+    } = params;
 
-    const qb = this.auditLogRepo.createQueryBuilder('log');
+    const qb = this.auditLogRepo.createQueryBuilder("log");
 
     if (entityType) {
-      qb.andWhere('log.entityType = :entityType', { entityType });
+      qb.andWhere("log.entityType = :entityType", { entityType });
     }
 
     if (userId) {
-      qb.andWhere('log.userId = :userId', { userId });
+      qb.andWhere("log.userId = :userId", { userId });
     }
 
     if (action) {
-      qb.andWhere('log.action = :action', { action });
+      qb.andWhere("log.action = :action", { action });
     }
 
     if (startDate) {
-      qb.andWhere('log.createdAt >= :startDate', { startDate });
+      qb.andWhere("log.createdAt >= :startDate", { startDate });
     }
 
     if (endDate) {
-      qb.andWhere('log.createdAt <= :endDate', { endDate });
+      qb.andWhere("log.createdAt <= :endDate", { endDate });
     }
 
-    qb.orderBy('log.createdAt', 'DESC');
+    qb.orderBy("log.createdAt", "DESC");
     qb.skip((page - 1) * limit).take(limit);
 
     const [data, total] = await qb.getManyAndCount();
@@ -225,10 +250,13 @@ export class AuditLogService {
   /**
    * 取得實體變更歷程
    */
-  async getEntityHistory(entityType: string, entityId: string): Promise<AuditLog[]> {
+  async getEntityHistory(
+    entityType: string,
+    entityId: string,
+  ): Promise<AuditLog[]> {
     return this.auditLogRepo.find({
       where: { entityType, entityId },
-      order: { createdAt: 'DESC' },
+      order: { createdAt: "DESC" },
     });
   }
 
@@ -249,10 +277,14 @@ export class AuditLogService {
    */
   private computeChanges(
     oldValue: Record<string, unknown>,
-    newValue: Record<string, unknown>
+    newValue: Record<string, unknown>,
   ): { field: string; oldValue: unknown; newValue: unknown }[] {
-    const changes: { field: string; oldValue: unknown; newValue: unknown }[] = [];
-    const allKeys = new Set([...Object.keys(oldValue), ...Object.keys(newValue)]);
+    const changes: { field: string; oldValue: unknown; newValue: unknown }[] =
+      [];
+    const allKeys = new Set([
+      ...Object.keys(oldValue),
+      ...Object.keys(newValue),
+    ]);
 
     for (const key of allKeys) {
       if (JSON.stringify(oldValue[key]) !== JSON.stringify(newValue[key])) {

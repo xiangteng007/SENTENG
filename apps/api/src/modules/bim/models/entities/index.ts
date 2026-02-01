@@ -1,1 +1,1 @@
-export * from './bim-model.entity';
+export * from "./bim-model.entity";

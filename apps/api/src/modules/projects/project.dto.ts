@@ -6,12 +6,12 @@ import {
   IsArray,
   MaxLength,
   IsDateString,
-} from 'class-validator';
-import { Transform } from 'class-transformer';
-import { ProjectType, ProjectStatus } from './project.entity';
-import { PhaseStatus } from './project-phase.entity';
-import { TaskStatus, TaskPriority } from './project-task.entity';
-import { VendorRole } from './project-vendor.entity';
+} from "class-validator";
+import { Transform } from "class-transformer";
+import { ProjectType, ProjectStatus } from "./project.entity";
+import { PhaseStatus } from "./project-phase.entity";
+import { TaskStatus, TaskPriority } from "./project-task.entity";
+import { VendorRole } from "./project-vendor.entity";
 
 export class CreateProjectDto {
   @IsString()

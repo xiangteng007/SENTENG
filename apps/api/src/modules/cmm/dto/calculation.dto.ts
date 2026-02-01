@@ -6,40 +6,40 @@ import {
   ValidateNested,
   IsNumber,
   IsObject,
-} from 'class-validator';
-import { Type } from 'class-transformer';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+} from "class-validator";
+import { Type } from "class-transformer";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 // Enum for category level 1
 export enum CategoryLevel1 {
-  CONSTRUCTION = 'CONSTRUCTION',
-  INTERIOR = 'INTERIOR',
+  CONSTRUCTION = "CONSTRUCTION",
+  INTERIOR = "INTERIOR",
 }
 
 // Work item input for calculation
 export class WorkItemInputDto {
-  @ApiProperty({ description: '工項代碼' })
+  @ApiProperty({ description: "工項代碼" })
   @IsString()
   itemCode: string;
 
-  @ApiProperty({ description: 'Level 2 分類代碼' })
+  @ApiProperty({ description: "Level 2 分類代碼" })
   @IsString()
   categoryL2: string;
 
-  @ApiPropertyOptional({ description: 'Level 3 分類代碼' })
+  @ApiPropertyOptional({ description: "Level 3 分類代碼" })
   @IsOptional()
   @IsString()
   categoryL3?: string;
 
-  @ApiProperty({ description: '數量' })
+  @ApiProperty({ description: "數量" })
   @IsNumber()
   quantity: number;
 
-  @ApiProperty({ description: '單位' })
+  @ApiProperty({ description: "單位" })
   @IsString()
   unit: string;
 
-  @ApiPropertyOptional({ description: '額外參數（厚度、密度等）' })
+  @ApiPropertyOptional({ description: "額外參數（厚度、密度等）" })
   @IsOptional()
   @IsObject()
   params?: Record<string, number>;
@@ -47,22 +47,22 @@ export class WorkItemInputDto {
 
 // Main calculation request DTO (renamed to avoid conflict with legacy CalculateRequestDto)
 export class RunCalculationRequestDto {
-  @ApiPropertyOptional({ description: '專案 ID' })
+  @ApiPropertyOptional({ description: "專案 ID" })
   @IsOptional()
   @IsString()
   projectId?: string;
 
-  @ApiProperty({ enum: CategoryLevel1, description: '頂層分類（營建/裝潢）' })
+  @ApiProperty({ enum: CategoryLevel1, description: "頂層分類（營建/裝潢）" })
   @IsEnum(CategoryLevel1)
   categoryL1: CategoryLevel1;
 
-  @ApiProperty({ type: [WorkItemInputDto], description: '工項列表' })
+  @ApiProperty({ type: [WorkItemInputDto], description: "工項列表" })
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => WorkItemInputDto)
   workItems: WorkItemInputDto[];
 
-  @ApiPropertyOptional({ description: '規則集版本（預設使用當前版本）' })
+  @ApiPropertyOptional({ description: "規則集版本（預設使用當前版本）" })
   @IsOptional()
   @IsString()
   ruleSetVersion?: string;
@@ -111,7 +111,7 @@ export class CalculationResultDto {
   runId: string;
   ruleSetVersion: string;
   timestamp: string;
-  status: 'PENDING' | 'RUNNING' | 'SUCCESS' | 'PARTIAL' | 'FAILED';
+  status: "PENDING" | "RUNNING" | "SUCCESS" | "PARTIAL" | "FAILED";
   inputSnapshotHash: string;
   durationMs?: number;
   materialBreakdown: MaterialBreakdownLineDto[];

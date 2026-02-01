@@ -1,5 +1,5 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 
 /**
  * Sentry APM 整合服務
@@ -26,7 +26,7 @@ export interface ErrorContext {
   user?: { id: string; email?: string };
   tags?: Record<string, string>;
   extra?: Record<string, unknown>;
-  level?: 'fatal' | 'error' | 'warning' | 'info' | 'debug';
+  level?: "fatal" | "error" | "warning" | "info" | "debug";
 }
 
 @Injectable()
@@ -37,27 +37,27 @@ export class SentryService implements OnModuleInit {
 
   constructor(private readonly configService: ConfigService) {
     this.config = {
-      dsn: this.configService.get<string>('SENTRY_DSN') || '',
-      environment: this.configService.get<string>('NODE_ENV') || 'development',
-      release: this.configService.get<string>('APP_VERSION') || '1.0.0',
+      dsn: this.configService.get<string>("SENTRY_DSN") || "",
+      environment: this.configService.get<string>("NODE_ENV") || "development",
+      release: this.configService.get<string>("APP_VERSION") || "1.0.0",
       tracesSampleRate: parseFloat(
-        this.configService.get<string>('SENTRY_TRACES_SAMPLE_RATE') || '0.1'
+        this.configService.get<string>("SENTRY_TRACES_SAMPLE_RATE") || "0.1",
       ),
       profilesSampleRate: parseFloat(
-        this.configService.get<string>('SENTRY_PROFILES_SAMPLE_RATE') || '0.1'
+        this.configService.get<string>("SENTRY_PROFILES_SAMPLE_RATE") || "0.1",
       ),
     };
   }
 
   async onModuleInit(): Promise<void> {
     if (!this.config.dsn) {
-      this.logger.warn('SENTRY_DSN not configured. Error tracking disabled.');
+      this.logger.warn("SENTRY_DSN not configured. Error tracking disabled.");
       return;
     }
 
     try {
       // Dynamic import to avoid issues when Sentry is not installed
-      const Sentry = await import('@sentry/node');
+      const Sentry = await import("@sentry/node");
 
       Sentry.init({
         dsn: this.config.dsn,
@@ -69,25 +69,32 @@ export class SentryService implements OnModuleInit {
       });
 
       this.initialized = true;
-      this.logger.log(`Sentry initialized: ${this.config.environment} (${this.config.release})`);
+      this.logger.log(
+        `Sentry initialized: ${this.config.environment} (${this.config.release})`,
+      );
     } catch (error) {
-      this.logger.warn('Sentry SDK not installed. Run: npm install @sentry/node');
+      this.logger.warn(
+        "Sentry SDK not installed. Run: npm install @sentry/node",
+      );
     }
   }
 
   /**
    * 捕獲錯誤
    */
-  async captureException(error: Error, context?: ErrorContext): Promise<string | null> {
+  async captureException(
+    error: Error,
+    context?: ErrorContext,
+  ): Promise<string | null> {
     if (!this.initialized) {
       this.logger.error(`[Local] ${error.message}`, error.stack);
       return null;
     }
 
     try {
-      const Sentry = await import('@sentry/node');
+      const Sentry = await import("@sentry/node");
 
-      Sentry.withScope(scope => {
+      Sentry.withScope((scope) => {
         if (context?.user) {
           scope.setUser(context.user);
         }
@@ -118,7 +125,7 @@ export class SentryService implements OnModuleInit {
    */
   async captureMessage(
     message: string,
-    level: ErrorContext['level'] = 'info'
+    level: ErrorContext["level"] = "info",
   ): Promise<string | null> {
     if (!this.initialized) {
       this.logger.log(`[Local] ${message}`);
@@ -126,7 +133,7 @@ export class SentryService implements OnModuleInit {
     }
 
     try {
-      const Sentry = await import('@sentry/node');
+      const Sentry = await import("@sentry/node");
       return Sentry.captureMessage(message, level);
     } catch {
       return null;
@@ -142,13 +149,13 @@ export class SentryService implements OnModuleInit {
     }
 
     try {
-      const Sentry = await import('@sentry/node');
+      const Sentry = await import("@sentry/node");
       return Sentry.startSpan(
         {
           name: context.name,
           op: context.op,
         },
-        () => {}
+        () => {},
       );
     } catch {
       return { finish: () => {} };
@@ -158,11 +165,15 @@ export class SentryService implements OnModuleInit {
   /**
    * 設定使用者資訊
    */
-  async setUser(user: { id: string; email?: string; username?: string }): Promise<void> {
+  async setUser(user: {
+    id: string;
+    email?: string;
+    username?: string;
+  }): Promise<void> {
     if (!this.initialized) return;
 
     try {
-      const Sentry = await import('@sentry/node');
+      const Sentry = await import("@sentry/node");
       Sentry.setUser(user);
     } catch {
       // ignore
@@ -176,7 +187,7 @@ export class SentryService implements OnModuleInit {
     if (!this.initialized) return;
 
     try {
-      const Sentry = await import('@sentry/node');
+      const Sentry = await import("@sentry/node");
       Sentry.setUser(null);
     } catch {
       // ignore
@@ -189,13 +200,13 @@ export class SentryService implements OnModuleInit {
   async addBreadcrumb(breadcrumb: {
     category: string;
     message: string;
-    level?: 'debug' | 'info' | 'warning' | 'error';
+    level?: "debug" | "info" | "warning" | "error";
     data?: Record<string, unknown>;
   }): Promise<void> {
     if (!this.initialized) return;
 
     try {
-      const Sentry = await import('@sentry/node');
+      const Sentry = await import("@sentry/node");
       Sentry.addBreadcrumb({
         ...breadcrumb,
         timestamp: Date.now() / 1000,

@@ -1,10 +1,10 @@
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { Module } from "@nestjs/common";
+import { TypeOrmModule } from "@nestjs/typeorm";
 
 // Legacy entities
-import { CmmMaterialMaster } from './cmm-material-master.entity';
-import { CmmBuildingProfile } from './cmm-building-profile.entity';
-import { CmmUnitConversion } from './cmm-unit-conversion.entity';
+import { CmmMaterialMaster } from "./cmm-material-master.entity";
+import { CmmBuildingProfile } from "./cmm-building-profile.entity";
+import { CmmUnitConversion } from "./cmm-unit-conversion.entity";
 
 // New taxonomy & calculation entities
 import {
@@ -15,10 +15,10 @@ import {
   CmmConversionRule,
   CmmCalculationRun,
   CmmMaterialBreakdown,
-} from './entities';
+} from "./entities";
 
-import { CmmService } from './cmm.service';
-import { CmmController } from './cmm.controller';
+import { CmmService } from "./cmm.service";
+import { CmmController } from "./cmm.controller";
 
 @Module({
   imports: [

@@ -15,9 +15,9 @@ import {
   MaxLength,
   Min,
   Max,
-} from 'class-validator';
-import { Type, Transform } from 'class-transformer';
-import type { InsuranceType } from './insurance.entity';
+} from "class-validator";
+import { Type, Transform } from "class-transformer";
+import type { InsuranceType } from "./insurance.entity";
 
 export class CreateInsuranceDto {
   @IsUUID()
@@ -94,7 +94,7 @@ export class CreateInsuranceDto {
 
   @IsOptional()
   @IsBoolean()
-  @Transform(({ value }) => value === 'true' || value === true)
+  @Transform(({ value }) => value === "true" || value === true)
   reminderEnabled?: boolean;
 
   @IsOptional()
@@ -154,8 +154,8 @@ export class UpdateInsuranceDto {
   premiumAmount?: number;
 
   @IsOptional()
-  @IsEnum(['pending', 'active', 'expired', 'cancelled', 'claimed'])
-  status?: 'pending' | 'active' | 'expired' | 'cancelled' | 'claimed';
+  @IsEnum(["pending", "active", "expired", "cancelled", "claimed"])
+  status?: "pending" | "active" | "expired" | "cancelled" | "claimed";
 
   @IsOptional()
   @IsString()
@@ -196,7 +196,7 @@ export class UpdateInsuranceDto {
 
   @IsOptional()
   @IsBoolean()
-  @Transform(({ value }) => value === 'true' || value === true)
+  @Transform(({ value }) => value === "true" || value === true)
   reminderEnabled?: boolean;
 
   @IsOptional()
@@ -229,12 +229,12 @@ export class InsuranceQueryDto {
   type?: InsuranceType;
 
   @IsOptional()
-  @IsEnum(['pending', 'active', 'expired', 'cancelled', 'claimed'])
+  @IsEnum(["pending", "active", "expired", "cancelled", "claimed"])
   status?: string;
 
   @IsOptional()
   @IsBoolean()
-  @Transform(({ value }) => value === 'true' || value === true)
+  @Transform(({ value }) => value === "true" || value === true)
   expiringWithin30Days?: boolean;
 }
 

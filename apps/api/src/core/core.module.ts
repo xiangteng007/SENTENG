@@ -1,7 +1,7 @@
-import { Module, Global } from '@nestjs/common';
-import { IdGeneratorService } from './id-generator/id-generator.service';
-import { OwnershipGuard } from './ownership/ownership.guard';
-import { FeatureToggleService } from './services/feature-toggle.service';
+import { Module, Global } from "@nestjs/common";
+import { IdGeneratorService } from "./id-generator/id-generator.service";
+import { OwnershipGuard } from "./ownership/ownership.guard";
+import { FeatureToggleService } from "./services/feature-toggle.service";
 
 /**
  * CoreModule - 核心模組
@@ -17,4 +17,3 @@ import { FeatureToggleService } from './services/feature-toggle.service';
   exports: [IdGeneratorService, OwnershipGuard, FeatureToggleService],
 })
 export class CoreModule {}
-

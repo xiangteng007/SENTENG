@@ -1,6 +1,6 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
-import * as crypto from 'crypto';
+import { Injectable, NestMiddleware } from "@nestjs/common";
+import { Request, Response, NextFunction } from "express";
+import * as crypto from "crypto";
 
 /**
  * CSRF Protection Middleware using Double Submit Cookie Pattern
@@ -14,9 +14,9 @@ import * as crypto from 'crypto';
  */
 @Injectable()
 export class CsrfMiddleware implements NestMiddleware {
-  private readonly CSRF_COOKIE_NAME = 'XSRF-TOKEN';
-  private readonly CSRF_HEADER_NAME = 'x-csrf-token';
-  private readonly SAFE_METHODS = ['GET', 'HEAD', 'OPTIONS'];
+  private readonly CSRF_COOKIE_NAME = "XSRF-TOKEN";
+  private readonly CSRF_HEADER_NAME = "x-csrf-token";
+  private readonly SAFE_METHODS = ["GET", "HEAD", "OPTIONS"];
   private readonly TOKEN_LENGTH = 32;
 
   use(req: Request, res: Response, next: NextFunction): void {
@@ -27,9 +27,9 @@ export class CsrfMiddleware implements NestMiddleware {
       csrfToken = this.generateToken();
       res.cookie(this.CSRF_COOKIE_NAME, csrfToken, {
         httpOnly: false, // Must be readable by JavaScript
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/',
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
         maxAge: 24 * 60 * 60 * 1000, // 24 hours
       });
     }
@@ -45,8 +45,8 @@ export class CsrfMiddleware implements NestMiddleware {
     if (!headerToken || headerToken !== csrfToken) {
       res.status(403).json({
         statusCode: 403,
-        error: 'Forbidden',
-        message: 'Invalid CSRF token',
+        error: "Forbidden",
+        message: "Invalid CSRF token",
       });
       return;
     }
@@ -55,6 +55,6 @@ export class CsrfMiddleware implements NestMiddleware {
   }
 
   private generateToken(): string {
-    return crypto.randomBytes(this.TOKEN_LENGTH).toString('hex');
+    return crypto.randomBytes(this.TOKEN_LENGTH).toString("hex");
   }
 }

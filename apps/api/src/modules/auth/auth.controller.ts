@@ -9,22 +9,27 @@ import {
   HttpStatus,
   UseGuards,
   InternalServerErrorException,
-} from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
-import type { Response, Request } from 'express';
-import { AuthService } from './auth.service';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { PermissionsResponseDto, ROLE_LEVELS, ROLE_PAGES, ROLE_ACTIONS } from './permissions.dto';
+} from "@nestjs/common";
+import { InjectDataSource } from "@nestjs/typeorm";
+import { DataSource } from "typeorm";
+import type { Response, Request } from "express";
+import { AuthService } from "./auth.service";
+import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
+import {
+  PermissionsResponseDto,
+  ROLE_LEVELS,
+  ROLE_PAGES,
+  ROLE_ACTIONS,
+} from "./permissions.dto";
 
-@Controller('auth')
+@Controller("auth")
 export class AuthController {
   constructor(
     private authService: AuthService,
-    @InjectDataSource() private dataSource: DataSource
+    @InjectDataSource() private dataSource: DataSource,
   ) {}
 
-  @Post('login')
+  @Post("login")
   async login(
     @Body()
     body: {
@@ -34,78 +39,78 @@ export class AuthController {
       uid: string;
       role?: string;
     },
-    @Res({ passthrough: true }) response: Response
+    @Res({ passthrough: true }) response: Response,
   ) {
     const result = await this.authService.loginOrCreate(body);
 
     // Set JWT in HttpOnly cookie for enhanced security
-    response.cookie('access_token', result.access_token, {
+    response.cookie("access_token", result.access_token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
       maxAge: 3600000, // 1 hour
-      path: '/',
+      path: "/",
     });
 
     // Also return token in response body for backward compatibility
     return result;
   }
 
-  @Post('logout')
+  @Post("logout")
   @HttpCode(HttpStatus.OK)
   logout(@Res({ passthrough: true }) response: Response) {
     // Clear the access token cookie
-    response.cookie('access_token', '', {
+    response.cookie("access_token", "", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
       maxAge: 0,
-      path: '/',
+      path: "/",
     });
 
-    return { success: true, message: 'Logged out successfully' };
+    return { success: true, message: "Logged out successfully" };
   }
 
-  @Get('health')
+  @Get("health")
   health() {
-    return { status: 'ok', timestamp: new Date().toISOString() };
+    return { status: "ok", timestamp: new Date().toISOString() };
   }
 
   /**
    * Liveness probe - quick check, no DB
    * GET /api/v1/auth/healthz
    */
-  @Get('healthz')
+  @Get("healthz")
   healthz() {
-    return { status: 'ok', timestamp: new Date().toISOString() };
+    return { status: "ok", timestamp: new Date().toISOString() };
   }
 
   /**
    * Readiness probe - includes DB connectivity check
    * GET /api/v1/auth/readyz
    */
-  @Get('readyz')
+  @Get("readyz")
   async readyz() {
     try {
-      await this.dataSource.query('SELECT 1');
+      await this.dataSource.query("SELECT 1");
       return {
-        status: 'ok',
-        database: 'connected',
+        status: "ok",
+        database: "connected",
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
       throw new InternalServerErrorException({
-        status: 'error',
-        database: 'disconnected',
-        message: 'Database connection failed',
+        status: "error",
+        database: "disconnected",
+        message: "Database connection failed",
       });
     }
   }
 
-  @Get('me')
+  @Get("me")
   @UseGuards(JwtAuthGuard)
   async me(@Req() request: Request) {
-    const user = request['user'] as any;
+    const user = request["user"] as any;
     if (!user) return null;
 
     // Get database permissions for the user's role
@@ -116,11 +121,13 @@ export class AuthController {
       try {
         const result = await this.dataSource.query(
           `SELECT permission_id FROM role_permissions WHERE role_id = $1`,
-          [role]
+          [role],
         );
-        dbPermissions = result.map((r: { permission_id: string }) => r.permission_id);
+        dbPermissions = result.map(
+          (r: { permission_id: string }) => r.permission_id,
+        );
       } catch (error) {
-        console.error('[AuthController] Error fetching permissions:', error);
+        console.error("[AuthController] Error fetching permissions:", error);
       }
     }
 
@@ -137,14 +144,14 @@ export class AuthController {
    * 此端點為前端 RBAC gating 的唯一權威來源
    * 前端應在登入後呼叫此端點並快取結果
    */
-  @Get('permissions')
+  @Get("permissions")
   @UseGuards(JwtAuthGuard)
   async getPermissions(
-    @Req() request: Request
+    @Req() request: Request,
   ): Promise<PermissionsResponseDto & { dbPermissions: string[] }> {
-    const user = request['user'] as any;
-    const role = user?.role || 'user';
-    const roleLevel = ROLE_LEVELS[role] || ROLE_LEVELS['user'] || 1;
+    const user = request["user"] as any;
+    const role = user?.role || "user";
+    const roleLevel = ROLE_LEVELS[role] || ROLE_LEVELS["user"] || 1;
 
     // 取得該角色可存取的頁面
     // 累積較低層級的權限（較高層級繼承較低層級的頁面）
@@ -163,16 +170,18 @@ export class AuthController {
     try {
       const result = await this.dataSource.query(
         `SELECT permission_id FROM role_permissions WHERE role_id = $1`,
-        [role]
+        [role],
       );
-      dbPermissions = result.map((r: { permission_id: string }) => r.permission_id);
+      dbPermissions = result.map(
+        (r: { permission_id: string }) => r.permission_id,
+      );
     } catch (error) {
-      console.error('[AuthController] Error fetching permissions:', error);
+      console.error("[AuthController] Error fetching permissions:", error);
     }
 
     return {
       permissionsVersion: 1,
-      userId: user?.sub || user?.id || '',
+      userId: user?.sub || user?.id || "",
       roleLevel,
       role,
       pages,

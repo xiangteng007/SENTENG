@@ -1,5 +1,5 @@
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { INestApplication } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { INestApplication } from "@nestjs/common";
 
 /**
  * Swagger API 文件配置
@@ -8,7 +8,7 @@ import { INestApplication } from '@nestjs/common';
  */
 export function setupSwagger(app: INestApplication): void {
   const config = new DocumentBuilder()
-    .setTitle('SENTENG ERP API')
+    .setTitle("SENTENG ERP API")
     .setDescription(
       `
 ## 聖騰 ERP 系統 API 文件
@@ -54,55 +54,55 @@ Authorization: Bearer <your_jwt_token>
 - \`limit\`: 每頁筆數 (預設 20)
 - \`sortBy\`: 排序欄位
 - \`sortOrder\`: 排序方向 (ASC/DESC)
-    `.trim()
+    `.trim(),
     )
-    .setVersion('1.0.0')
-    .setContact('SENTENG', 'https://senteng.com.tw', 'support@senteng.com.tw')
-    .setLicense('Proprietary', '')
-    .addServer('http://localhost:3000', 'Development')
-    .addServer('https://api.senteng.com.tw', 'Production')
+    .setVersion("1.0.0")
+    .setContact("SENTENG", "https://senteng.com.tw", "support@senteng.com.tw")
+    .setLicense("Proprietary", "")
+    .addServer("http://localhost:3000", "Development")
+    .addServer("https://api.senteng.com.tw", "Production")
     .addBearerAuth(
       {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        description: 'Enter JWT token',
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+        description: "Enter JWT token",
       },
-      'JWT'
+      "JWT",
     )
-    .addTag('Auth', '身份驗證')
-    .addTag('Users', '使用者管理')
-    .addTag('Clients', '客戶管理')
-    .addTag('Projects', '專案管理')
-    .addTag('Quotations', '報價管理')
-    .addTag('Invoices', '發票管理')
-    .addTag('Vendors', '供應商管理')
-    .addTag('Inventory', '進銷存')
-    .addTag('SmartHome', '智慧家居')
-    .addTag('Regulations', '法規查詢')
-    .addTag('CMM', '營建材料計算')
-    .addTag('Finance', '財務管理')
-    .addTag('Schedule', '進度管理')
-    .addTag('Settings', '系統設定')
+    .addTag("Auth", "身份驗證")
+    .addTag("Users", "使用者管理")
+    .addTag("Clients", "客戶管理")
+    .addTag("Projects", "專案管理")
+    .addTag("Quotations", "報價管理")
+    .addTag("Invoices", "發票管理")
+    .addTag("Vendors", "供應商管理")
+    .addTag("Inventory", "進銷存")
+    .addTag("SmartHome", "智慧家居")
+    .addTag("Regulations", "法規查詢")
+    .addTag("CMM", "營建材料計算")
+    .addTag("Finance", "財務管理")
+    .addTag("Schedule", "進度管理")
+    .addTag("Settings", "系統設定")
     .build();
 
   const document = SwaggerModule.createDocument(app, config, {
     operationIdFactory: (controllerKey: string, methodKey: string) => methodKey,
   });
 
-  SwaggerModule.setup('api/docs', app, document, {
+  SwaggerModule.setup("api/docs", app, document, {
     swaggerOptions: {
       persistAuthorization: true,
-      docExpansion: 'none',
+      docExpansion: "none",
       filter: true,
       showRequestDuration: true,
       syntaxHighlight: {
         activate: true,
-        theme: 'nord',
+        theme: "nord",
       },
     },
-    customSiteTitle: 'SENTENG ERP API',
-    customfavIcon: '/favicon.ico',
+    customSiteTitle: "SENTENG ERP API",
+    customfavIcon: "/favicon.ico",
     customCss: `
       .swagger-ui .topbar { display: none }
       .swagger-ui .info { margin: 20px 0 }
@@ -117,43 +117,43 @@ Authorization: Bearer <your_jwt_token>
 export const ApiResponses = {
   success: {
     status: 200,
-    description: '操作成功',
+    description: "操作成功",
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
-        success: { type: 'boolean', example: true },
-        data: { type: 'object' },
-        message: { type: 'string', example: '操作成功' },
+        success: { type: "boolean", example: true },
+        data: { type: "object" },
+        message: { type: "string", example: "操作成功" },
       },
     },
   },
   created: {
     status: 201,
-    description: '建立成功',
+    description: "建立成功",
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
-        success: { type: 'boolean', example: true },
-        data: { type: 'object' },
-        message: { type: 'string', example: '建立成功' },
+        success: { type: "boolean", example: true },
+        data: { type: "object" },
+        message: { type: "string", example: "建立成功" },
       },
     },
   },
   badRequest: {
     status: 400,
-    description: '請求參數錯誤',
+    description: "請求參數錯誤",
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
-        success: { type: 'boolean', example: false },
-        message: { type: 'string', example: '參數驗證失敗' },
+        success: { type: "boolean", example: false },
+        message: { type: "string", example: "參數驗證失敗" },
         errors: {
-          type: 'array',
+          type: "array",
           items: {
-            type: 'object',
+            type: "object",
             properties: {
-              field: { type: 'string' },
-              message: { type: 'string' },
+              field: { type: "string" },
+              message: { type: "string" },
             },
           },
         },
@@ -162,34 +162,34 @@ export const ApiResponses = {
   },
   unauthorized: {
     status: 401,
-    description: '未認證',
+    description: "未認證",
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
-        success: { type: 'boolean', example: false },
-        message: { type: 'string', example: '請先登入' },
+        success: { type: "boolean", example: false },
+        message: { type: "string", example: "請先登入" },
       },
     },
   },
   forbidden: {
     status: 403,
-    description: '無權限',
+    description: "無權限",
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
-        success: { type: 'boolean', example: false },
-        message: { type: 'string', example: '您沒有權限執行此操作' },
+        success: { type: "boolean", example: false },
+        message: { type: "string", example: "您沒有權限執行此操作" },
       },
     },
   },
   notFound: {
     status: 404,
-    description: '資源不存在',
+    description: "資源不存在",
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
-        success: { type: 'boolean', example: false },
-        message: { type: 'string', example: '找不到指定的資源' },
+        success: { type: "boolean", example: false },
+        message: { type: "string", example: "找不到指定的資源" },
       },
     },
   },

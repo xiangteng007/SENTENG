@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from "typeorm";
 
 /**
  * M1: CMM Domain Tables
@@ -7,7 +7,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  * - cmm_unit_conversions: 單位換算
  */
 export class CreateCmmDomain1737849600000 implements MigrationInterface {
-  name = 'CreateCmmDomain1737849600000';
+  name = "CreateCmmDomain1737849600000";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     // 1. Create enum types

@@ -1,11 +1,11 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from "typeorm";
 
 /**
  * 建立 ConstructionOps 領域表
  * Note: FK constraints are added later by migration 1769447303639
  */
 export class CreateConstructionDomain1704672000005 implements MigrationInterface {
-  name = 'CreateConstructionDomain1704672000005';
+  name = "CreateConstructionDomain1704672000005";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     // WBS Items (Work Breakdown Structure) - Note: FK to projects added later
@@ -196,19 +196,21 @@ export class CreateConstructionDomain1704672000005 implements MigrationInterface
 
     // Indexes
     await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS "idx_wbs_items_project" ON "wbs_items"("project_id")`
+      `CREATE INDEX IF NOT EXISTS "idx_wbs_items_project" ON "wbs_items"("project_id")`,
     );
     await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS "idx_site_diaries_project_date" ON "site_diaries"("project_id", "diary_date")`
+      `CREATE INDEX IF NOT EXISTS "idx_site_diaries_project_date" ON "site_diaries"("project_id", "diary_date")`,
     );
     await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS "idx_sub_contracts_project" ON "sub_contracts"("project_id")`
+      `CREATE INDEX IF NOT EXISTS "idx_sub_contracts_project" ON "sub_contracts"("project_id")`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`DROP INDEX IF EXISTS "idx_sub_contracts_project"`);
-    await queryRunner.query(`DROP INDEX IF EXISTS "idx_site_diaries_project_date"`);
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "idx_site_diaries_project_date"`,
+    );
     await queryRunner.query(`DROP INDEX IF EXISTS "idx_wbs_items_project"`);
     await queryRunner.query(`DROP TABLE IF EXISTS "sub_payments"`);
     await queryRunner.query(`DROP TABLE IF EXISTS "sub_contracts"`);

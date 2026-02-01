@@ -1,7 +1,7 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from "typeorm";
 
 export class CreateCmmTaxonomyAndRuns1737936000000 implements MigrationInterface {
-  name = 'CreateCmmTaxonomyAndRuns1737936000000';
+  name = "CreateCmmTaxonomyAndRuns1737936000000";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     // ============================================
@@ -266,9 +266,15 @@ export class CreateCmmTaxonomyAndRuns1737936000000 implements MigrationInterface
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`DROP TABLE IF EXISTS cmm_waste_factors CASCADE;`);
-    await queryRunner.query(`DROP TABLE IF EXISTS cmm_material_breakdown CASCADE;`);
-    await queryRunner.query(`DROP TABLE IF EXISTS cmm_calculation_runs CASCADE;`);
-    await queryRunner.query(`DROP TABLE IF EXISTS cmm_conversion_rules CASCADE;`);
+    await queryRunner.query(
+      `DROP TABLE IF EXISTS cmm_material_breakdown CASCADE;`,
+    );
+    await queryRunner.query(
+      `DROP TABLE IF EXISTS cmm_calculation_runs CASCADE;`,
+    );
+    await queryRunner.query(
+      `DROP TABLE IF EXISTS cmm_conversion_rules CASCADE;`,
+    );
     await queryRunner.query(`DROP TABLE IF EXISTS cmm_rule_sets CASCADE;`);
     await queryRunner.query(`DROP TABLE IF EXISTS cmm_category_l3 CASCADE;`);
     await queryRunner.query(`DROP TABLE IF EXISTS cmm_category_l2 CASCADE;`);

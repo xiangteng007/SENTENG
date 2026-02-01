@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { AuditLog } from './entities';
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { AuditLog } from "./entities";
 
 export interface AuditContext {
   userId?: string;
@@ -15,7 +15,7 @@ export interface AuditContext {
 export class AuditService {
   constructor(
     @InjectRepository(AuditLog)
-    private readonly auditLogRepo: Repository<AuditLog>
+    private readonly auditLogRepo: Repository<AuditLog>,
   ) {}
 
   /**
@@ -25,9 +25,16 @@ export class AuditService {
     entityType: string,
     entityId: string,
     newValues: any,
-    context?: AuditContext
+    context?: AuditContext,
   ): Promise<AuditLog> {
-    return this.createLog('CREATE', entityType, entityId, null, newValues, context);
+    return this.createLog(
+      "CREATE",
+      entityType,
+      entityId,
+      null,
+      newValues,
+      context,
+    );
   }
 
   /**
@@ -38,17 +45,17 @@ export class AuditService {
     entityId: string,
     oldValues: any,
     newValues: any,
-    context?: AuditContext
+    context?: AuditContext,
   ): Promise<AuditLog> {
     const changedFields = this.detectChangedFields(oldValues, newValues);
     return this.createLog(
-      'UPDATE',
+      "UPDATE",
       entityType,
       entityId,
       oldValues,
       newValues,
       context,
-      changedFields
+      changedFields,
     );
   }
 
@@ -59,9 +66,16 @@ export class AuditService {
     entityType: string,
     entityId: string,
     oldValues: any,
-    context?: AuditContext
+    context?: AuditContext,
   ): Promise<AuditLog> {
-    return this.createLog('DELETE', entityType, entityId, oldValues, null, context);
+    return this.createLog(
+      "DELETE",
+      entityType,
+      entityId,
+      oldValues,
+      null,
+      context,
+    );
   }
 
   /**
@@ -72,26 +86,29 @@ export class AuditService {
     entityId: string,
     oldStatus: string,
     newStatus: string,
-    context?: AuditContext
+    context?: AuditContext,
   ): Promise<AuditLog> {
     return this.createLog(
-      'STATUS_CHANGE',
+      "STATUS_CHANGE",
       entityType,
       entityId,
       { status: oldStatus },
       { status: newStatus },
       context,
-      ['status']
+      ["status"],
     );
   }
 
   /**
    * 查詢實體的審計歷史
    */
-  async findByEntity(entityType: string, entityId: string): Promise<AuditLog[]> {
+  async findByEntity(
+    entityType: string,
+    entityId: string,
+  ): Promise<AuditLog[]> {
     return this.auditLogRepo.find({
       where: { entityType, entityId },
-      order: { createdAt: 'DESC' },
+      order: { createdAt: "DESC" },
     });
   }
 
@@ -101,7 +118,7 @@ export class AuditService {
   async findByUser(userId: string, limit: number = 100): Promise<AuditLog[]> {
     return this.auditLogRepo.find({
       where: { userId },
-      order: { createdAt: 'DESC' },
+      order: { createdAt: "DESC" },
       take: limit,
     });
   }
@@ -113,7 +130,7 @@ export class AuditService {
     oldValues: any,
     newValues: any,
     context?: AuditContext,
-    changedFields?: string[]
+    changedFields?: string[],
   ): Promise<AuditLog> {
     const log = this.auditLogRepo.create({
       action,
@@ -135,7 +152,10 @@ export class AuditService {
     if (!oldValues || !newValues) return [];
 
     const changed: string[] = [];
-    const allKeys = new Set([...Object.keys(oldValues || {}), ...Object.keys(newValues || {})]);
+    const allKeys = new Set([
+      ...Object.keys(oldValues || {}),
+      ...Object.keys(newValues || {}),
+    ]);
 
     for (const key of allKeys) {
       if (JSON.stringify(oldValues[key]) !== JSON.stringify(newValues[key])) {

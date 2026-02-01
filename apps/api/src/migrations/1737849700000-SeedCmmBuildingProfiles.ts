@@ -1,11 +1,11 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from "typeorm";
 
 /**
  * CMM Seed Data: Building Profiles
  * 預設的建築參數係數
  */
 export class SeedCmmBuildingProfiles1737849700000 implements MigrationInterface {
-  name = 'SeedCmmBuildingProfiles1737849700000';
+  name = "SeedCmmBuildingProfiles1737849700000";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     // RC 結構參數
@@ -106,8 +106,10 @@ export class SeedCmmBuildingProfiles1737849700000 implements MigrationInterface 
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `DELETE FROM "cmm_material_masters" WHERE code LIKE 'REBAR-%' OR code LIKE 'CONC-%' OR code LIKE 'FORM-%' OR code LIKE 'MORTAR-%'`
+      `DELETE FROM "cmm_material_masters" WHERE code LIKE 'REBAR-%' OR code LIKE 'CONC-%' OR code LIKE 'FORM-%' OR code LIKE 'MORTAR-%'`,
     );
-    await queryRunner.query(`DELETE FROM "cmm_building_profiles" WHERE is_system_default = true`);
+    await queryRunner.query(
+      `DELETE FROM "cmm_building_profiles" WHERE is_system_default = true`,
+    );
   }
 }

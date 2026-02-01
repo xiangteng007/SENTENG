@@ -1,7 +1,15 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, FindOptionsWhere, IsNull } from 'typeorm';
-import { ScheduleTask, ScheduleDependency, ScheduleMilestone } from './schedule-task.entity';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository, FindOptionsWhere, IsNull } from "typeorm";
+import {
+  ScheduleTask,
+  ScheduleDependency,
+  ScheduleMilestone,
+} from "./schedule-task.entity";
 import {
   CreateScheduleTaskDto,
   UpdateScheduleTaskDto,
@@ -11,7 +19,7 @@ import {
   UpdateMilestoneDto,
   GanttChartData,
   GanttTask,
-} from './schedule.dto';
+} from "./schedule.dto";
 
 @Injectable()
 export class ScheduleService {
@@ -21,19 +29,24 @@ export class ScheduleService {
     @InjectRepository(ScheduleDependency)
     private readonly dependencyRepository: Repository<ScheduleDependency>,
     @InjectRepository(ScheduleMilestone)
-    private readonly milestoneRepository: Repository<ScheduleMilestone>
+    private readonly milestoneRepository: Repository<ScheduleMilestone>,
   ) {}
 
   // === Schedule Tasks ===
 
   async findTasks(query: ScheduleTaskQueryDto): Promise<ScheduleTask[]> {
-    const where: FindOptionsWhere<ScheduleTask> = { projectId: query.projectId };
-    if (query.type) where.type = query.type as ScheduleTask['type'];
-    if (query.status) where.status = query.status as ScheduleTask['status'];
+    const where: FindOptionsWhere<ScheduleTask> = {
+      projectId: query.projectId,
+    };
+    if (query.type) where.type = query.type as ScheduleTask["type"];
+    if (query.status) where.status = query.status as ScheduleTask["status"];
     if (query.parentId) where.parentId = query.parentId;
     if (query.rootOnly) where.parentId = IsNull();
 
-    return this.taskRepository.find({ where, order: { sortOrder: 'ASC', startDate: 'ASC' } });
+    return this.taskRepository.find({
+      where,
+      order: { sortOrder: "ASC", startDate: "ASC" },
+    });
   }
 
   async findTaskById(id: string): Promise<ScheduleTask> {
@@ -47,12 +60,15 @@ export class ScheduleService {
       ...dto,
       startDate: new Date(dto.startDate),
       endDate: new Date(dto.endDate),
-      status: 'pending',
+      status: "pending",
     });
     return this.taskRepository.save(task);
   }
 
-  async updateTask(id: string, dto: UpdateScheduleTaskDto): Promise<ScheduleTask> {
+  async updateTask(
+    id: string,
+    dto: UpdateScheduleTaskDto,
+  ): Promise<ScheduleTask> {
     const task = await this.findTaskById(id);
     Object.assign(task, dto);
     if (dto.startDate) task.startDate = new Date(dto.startDate);
@@ -68,34 +84,42 @@ export class ScheduleService {
     await this.taskRepository.remove(task);
   }
 
-  async updateTaskProgress(id: string, progress: number): Promise<ScheduleTask> {
+  async updateTaskProgress(
+    id: string,
+    progress: number,
+  ): Promise<ScheduleTask> {
     const task = await this.findTaskById(id);
     task.progress = Math.min(100, Math.max(0, progress));
-    if (task.progress === 100) task.status = 'completed';
-    else if (task.progress > 0) task.status = 'in_progress';
+    if (task.progress === 100) task.status = "completed";
+    else if (task.progress > 0) task.status = "in_progress";
     return this.taskRepository.save(task);
   }
 
   // === Dependencies ===
 
   async getDependencies(projectId: string): Promise<ScheduleDependency[]> {
-    const tasks = await this.taskRepository.find({ where: { projectId }, select: ['id'] });
-    const taskIds = tasks.map(t => t.id);
+    const tasks = await this.taskRepository.find({
+      where: { projectId },
+      select: ["id"],
+    });
+    const taskIds = tasks.map((t) => t.id);
     if (taskIds.length === 0) return [];
     return this.dependencyRepository
-      .createQueryBuilder('dep')
-      .where('dep.taskId IN (:...taskIds)', { taskIds })
+      .createQueryBuilder("dep")
+      .where("dep.taskId IN (:...taskIds)", { taskIds })
       .getMany();
   }
 
-  async createDependency(dto: CreateDependencyDto): Promise<ScheduleDependency> {
+  async createDependency(
+    dto: CreateDependencyDto,
+  ): Promise<ScheduleDependency> {
     // Validate both tasks exist
     await this.findTaskById(dto.taskId);
     await this.findTaskById(dto.dependsOnTaskId);
 
     // Prevent circular dependency
     if (dto.taskId === dto.dependsOnTaskId) {
-      throw new BadRequestException('Task cannot depend on itself');
+      throw new BadRequestException("Task cannot depend on itself");
     }
 
     const dependency = this.dependencyRepository.create(dto);
@@ -113,7 +137,7 @@ export class ScheduleService {
   async getMilestones(projectId: string): Promise<ScheduleMilestone[]> {
     return this.milestoneRepository.find({
       where: { projectId },
-      order: { targetDate: 'ASC' },
+      order: { targetDate: "ASC" },
     });
   }
 
@@ -127,12 +151,15 @@ export class ScheduleService {
     const milestone = this.milestoneRepository.create({
       ...dto,
       targetDate: new Date(dto.targetDate),
-      status: 'pending',
+      status: "pending",
     });
     return this.milestoneRepository.save(milestone);
   }
 
-  async updateMilestone(id: string, dto: UpdateMilestoneDto): Promise<ScheduleMilestone> {
+  async updateMilestone(
+    id: string,
+    dto: UpdateMilestoneDto,
+  ): Promise<ScheduleMilestone> {
     const ms = await this.getMilestoneById(id);
     Object.assign(ms, dto);
     if (dto.targetDate) ms.targetDate = new Date(dto.targetDate);
@@ -147,7 +174,7 @@ export class ScheduleService {
 
   async completeMilestone(id: string): Promise<ScheduleMilestone> {
     const ms = await this.getMilestoneById(id);
-    ms.status = 'completed';
+    ms.status = "completed";
     ms.actualDate = new Date();
     return this.milestoneRepository.save(ms);
   }
@@ -158,9 +185,12 @@ export class ScheduleService {
     const [tasks, milestones, dependencies] = await Promise.all([
       this.taskRepository.find({
         where: { projectId },
-        order: { sortOrder: 'ASC', startDate: 'ASC' },
+        order: { sortOrder: "ASC", startDate: "ASC" },
       }),
-      this.milestoneRepository.find({ where: { projectId }, order: { targetDate: 'ASC' } }),
+      this.milestoneRepository.find({
+        where: { projectId },
+        order: { targetDate: "ASC" },
+      }),
       this.getDependencies(projectId),
     ]);
 
@@ -168,15 +198,18 @@ export class ScheduleService {
     const taskMap = new Map<string, GanttTask>();
     const rootTasks: GanttTask[] = [];
 
-    tasks.forEach(t => {
+    tasks.forEach((t) => {
       const ganttTask: GanttTask = {
         id: t.id,
         name: t.name,
         start:
           t.startDate instanceof Date
-            ? t.startDate.toISOString().split('T')[0]
+            ? t.startDate.toISOString().split("T")[0]
             : String(t.startDate),
-        end: t.endDate instanceof Date ? t.endDate.toISOString().split('T')[0] : String(t.endDate),
+        end:
+          t.endDate instanceof Date
+            ? t.endDate.toISOString().split("T")[0]
+            : String(t.endDate),
         progress: t.progress,
         type: t.type,
         status: t.status,
@@ -189,7 +222,7 @@ export class ScheduleService {
     });
 
     // Build parent-child relationships
-    taskMap.forEach(task => {
+    taskMap.forEach((task) => {
       if (task.parentId && taskMap.has(task.parentId)) {
         taskMap.get(task.parentId)!.children!.push(task);
       } else if (!task.parentId) {
@@ -198,28 +231,34 @@ export class ScheduleService {
     });
 
     // Calculate summary
-    const completedTasks = tasks.filter(t => t.status === 'completed').length;
+    const completedTasks = tasks.filter((t) => t.status === "completed").length;
     const overallProgress =
       tasks.length > 0
-        ? Math.round(tasks.reduce((sum, t) => sum + t.progress, 0) / tasks.length)
+        ? Math.round(
+            tasks.reduce((sum, t) => sum + t.progress, 0) / tasks.length,
+          )
         : 0;
 
-    const startDates = tasks.map(t => new Date(t.startDate).getTime()).filter(d => !isNaN(d));
-    const endDates = tasks.map(t => new Date(t.endDate).getTime()).filter(d => !isNaN(d));
+    const startDates = tasks
+      .map((t) => new Date(t.startDate).getTime())
+      .filter((d) => !isNaN(d));
+    const endDates = tasks
+      .map((t) => new Date(t.endDate).getTime())
+      .filter((d) => !isNaN(d));
 
     return {
       tasks: rootTasks,
-      milestones: milestones.map(m => ({
+      milestones: milestones.map((m) => ({
         id: m.id,
         name: m.name,
         date:
           m.targetDate instanceof Date
-            ? m.targetDate.toISOString().split('T')[0]
+            ? m.targetDate.toISOString().split("T")[0]
             : String(m.targetDate),
         status: m.status,
         isContractual: m.isContractual,
       })),
-      dependencies: dependencies.map(d => ({
+      dependencies: dependencies.map((d) => ({
         from: d.dependsOnTaskId,
         to: d.taskId,
         type: d.type,
@@ -231,10 +270,12 @@ export class ScheduleService {
         overallProgress,
         startDate:
           startDates.length > 0
-            ? new Date(Math.min(...startDates)).toISOString().split('T')[0]
-            : '',
+            ? new Date(Math.min(...startDates)).toISOString().split("T")[0]
+            : "",
         endDate:
-          endDates.length > 0 ? new Date(Math.max(...endDates)).toISOString().split('T')[0] : '',
+          endDates.length > 0
+            ? new Date(Math.max(...endDates)).toISOString().split("T")[0]
+            : "",
       },
     };
   }
@@ -245,8 +286,8 @@ export class ScheduleService {
     const ganttData = await this.getGanttData(projectId);
     // Simplified: return tasks with 0% slack or delayed status
     const criticalTaskIds = ganttData.tasks
-      .filter(t => t.status === 'delayed' || t.status === 'in_progress')
-      .flatMap(t => [t.id, ...(t.children?.map(c => c.id) || [])]);
+      .filter((t) => t.status === "delayed" || t.status === "in_progress")
+      .flatMap((t) => [t.id, ...(t.children?.map((c) => c.id) || [])]);
     return [...new Set(criticalTaskIds)];
   }
 }

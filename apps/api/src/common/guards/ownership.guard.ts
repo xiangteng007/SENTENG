@@ -4,12 +4,12 @@ import {
   ExecutionContext,
   ForbiddenException,
   Inject,
-} from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
+} from "@nestjs/common";
+import { Reflector } from "@nestjs/core";
 
 // Decorator to mark resource ownership requirements
-export const OWNERSHIP_KEY = 'ownership';
-export const RESOURCE_PARAM_KEY = 'resourceParam';
+export const OWNERSHIP_KEY = "ownership";
+export const RESOURCE_PARAM_KEY = "resourceParam";
 
 export interface OwnershipConfig {
   resourceType: string; // e.g., 'project', 'client', 'contract'
@@ -40,7 +40,10 @@ export class OwnershipGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const config = this.reflector.get<OwnershipConfig>(OWNERSHIP_KEY, context.getHandler());
+    const config = this.reflector.get<OwnershipConfig>(
+      OWNERSHIP_KEY,
+      context.getHandler(),
+    );
 
     // If no ownership config, skip check
     if (!config) {
@@ -52,7 +55,7 @@ export class OwnershipGuard implements CanActivate {
     const resourceId = request.params.id;
 
     // Check if user has a bypass role
-    const allowedRoles = config.allowedRoles || ['super_admin'];
+    const allowedRoles = config.allowedRoles || ["super_admin"];
     if (user?.role && allowedRoles.includes(user.role)) {
       return true;
     }
@@ -76,7 +79,7 @@ export class OwnershipGuard implements CanActivate {
 
     // For now, we allow but log a warning for resources that should be checked
     console.warn(
-      `[OwnershipGuard] Resource ${config.resourceType}:${resourceId} access by user ${user?.sub} - ownership not verified (needs service integration)`
+      `[OwnershipGuard] Resource ${config.resourceType}:${resourceId} access by user ${user?.sub} - ownership not verified (needs service integration)`,
     );
 
     return true;

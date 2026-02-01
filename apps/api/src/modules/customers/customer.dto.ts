@@ -6,9 +6,9 @@ import {
   IsNumber,
   MaxLength,
   IsEmail,
-} from 'class-validator';
-import { Transform } from 'class-transformer';
-import { PipelineStage, CustomerType } from './customer.entity';
+} from "class-validator";
+import { Transform } from "class-transformer";
+import { PipelineStage, CustomerType } from "./customer.entity";
 
 export class CreateCustomerDto {
   @IsString()

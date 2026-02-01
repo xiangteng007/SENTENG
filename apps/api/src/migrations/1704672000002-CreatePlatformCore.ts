@@ -1,10 +1,10 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from "typeorm";
 
 /**
  * 建立 Sites/Geo、DMS、Audit 表
  */
 export class CreatePlatformCore1704672000002 implements MigrationInterface {
-  name = 'CreatePlatformCore1704672000002';
+  name = "CreatePlatformCore1704672000002";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Job Sites - Note: FK to projects added later by migration 1769447303639
@@ -102,19 +102,23 @@ export class CreatePlatformCore1704672000002 implements MigrationInterface {
     `);
 
     // Indexes
-    await queryRunner.query(`CREATE INDEX "idx_job_sites_project" ON "job_sites"("project_id")`);
     await queryRunner.query(
-      `CREATE INDEX "idx_job_sites_location" ON "job_sites"("latitude", "longitude")`
-    );
-    await queryRunner.query(`CREATE INDEX "idx_documents_project" ON "documents"("project_id")`);
-    await queryRunner.query(
-      `CREATE INDEX "idx_media_assets_ref" ON "media_assets"("ref_type", "ref_id")`
+      `CREATE INDEX "idx_job_sites_project" ON "job_sites"("project_id")`,
     );
     await queryRunner.query(
-      `CREATE INDEX "idx_audit_logs_entity" ON "audit_logs"("entity_type", "entity_id")`
+      `CREATE INDEX "idx_job_sites_location" ON "job_sites"("latitude", "longitude")`,
     );
     await queryRunner.query(
-      `CREATE INDEX "idx_audit_logs_user" ON "audit_logs"("user_id", "created_at")`
+      `CREATE INDEX "idx_documents_project" ON "documents"("project_id")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "idx_media_assets_ref" ON "media_assets"("ref_type", "ref_id")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "idx_audit_logs_entity" ON "audit_logs"("entity_type", "entity_id")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "idx_audit_logs_user" ON "audit_logs"("user_id", "created_at")`,
     );
   }
 

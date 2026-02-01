@@ -1,4 +1,10 @@
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableIndex,
+  TableForeignKey,
+} from "typeorm";
 
 /**
  * Migration: Add vendor rating schema
@@ -7,7 +13,7 @@ import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } f
  * - Creates vendor_ratings table for individual evaluation records
  */
 export class AddVendorRatingSchema1737398500000 implements MigrationInterface {
-  name = 'AddVendorRatingSchema1737398500000';
+  name = "AddVendorRatingSchema1737398500000";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     // 1. Add new columns to vendors table
@@ -25,29 +31,88 @@ export class AddVendorRatingSchema1737398500000 implements MigrationInterface {
     // 2. Create vendor_ratings table
     await queryRunner.createTable(
       new Table({
-        name: 'vendor_ratings',
+        name: "vendor_ratings",
         columns: [
-          { name: 'id', type: 'varchar', length: '36', isPrimary: true },
-          { name: 'vendor_id', type: 'varchar', length: '20', isNullable: false },
-          { name: 'project_id', type: 'varchar', length: '20', isNullable: true },
-          { name: 'purchase_order_id', type: 'varchar', length: '30', isNullable: true },
-          { name: 'quality_score', type: 'decimal', precision: 3, scale: 2, isNullable: false },
-          { name: 'delivery_score', type: 'decimal', precision: 3, scale: 2, isNullable: false },
-          { name: 'price_score', type: 'decimal', precision: 3, scale: 2, isNullable: false },
-          { name: 'service_score', type: 'decimal', precision: 3, scale: 2, isNullable: false },
-          { name: 'overall_score', type: 'decimal', precision: 3, scale: 2, isNullable: false },
-          { name: 'comments', type: 'text', isNullable: true },
-          { name: 'positives', type: 'text', isArray: true, isNullable: true },
-          { name: 'negatives', type: 'text', isArray: true, isNullable: true },
-          { name: 'expected_delivery_date', type: 'date', isNullable: true },
-          { name: 'actual_delivery_date', type: 'date', isNullable: true },
-          { name: 'is_on_time', type: 'boolean', default: true },
-          { name: 'rated_by', type: 'varchar', length: '20', isNullable: false },
-          { name: 'rated_by_name', type: 'varchar', length: '50', isNullable: true },
-          { name: 'created_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' },
+          { name: "id", type: "varchar", length: "36", isPrimary: true },
+          {
+            name: "vendor_id",
+            type: "varchar",
+            length: "20",
+            isNullable: false,
+          },
+          {
+            name: "project_id",
+            type: "varchar",
+            length: "20",
+            isNullable: true,
+          },
+          {
+            name: "purchase_order_id",
+            type: "varchar",
+            length: "30",
+            isNullable: true,
+          },
+          {
+            name: "quality_score",
+            type: "decimal",
+            precision: 3,
+            scale: 2,
+            isNullable: false,
+          },
+          {
+            name: "delivery_score",
+            type: "decimal",
+            precision: 3,
+            scale: 2,
+            isNullable: false,
+          },
+          {
+            name: "price_score",
+            type: "decimal",
+            precision: 3,
+            scale: 2,
+            isNullable: false,
+          },
+          {
+            name: "service_score",
+            type: "decimal",
+            precision: 3,
+            scale: 2,
+            isNullable: false,
+          },
+          {
+            name: "overall_score",
+            type: "decimal",
+            precision: 3,
+            scale: 2,
+            isNullable: false,
+          },
+          { name: "comments", type: "text", isNullable: true },
+          { name: "positives", type: "text", isArray: true, isNullable: true },
+          { name: "negatives", type: "text", isArray: true, isNullable: true },
+          { name: "expected_delivery_date", type: "date", isNullable: true },
+          { name: "actual_delivery_date", type: "date", isNullable: true },
+          { name: "is_on_time", type: "boolean", default: true },
+          {
+            name: "rated_by",
+            type: "varchar",
+            length: "20",
+            isNullable: false,
+          },
+          {
+            name: "rated_by_name",
+            type: "varchar",
+            length: "50",
+            isNullable: true,
+          },
+          {
+            name: "created_at",
+            type: "timestamp",
+            default: "CURRENT_TIMESTAMP",
+          },
         ],
       }),
-      true
+      true,
     );
 
     // 3. Add indexes (with IF NOT EXISTS to prevent duplicate errors)
@@ -76,10 +141,13 @@ export class AddVendorRatingSchema1737398500000 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     // Drop foreign keys
-    await queryRunner.dropForeignKey('vendor_ratings', 'FK_vendor_ratings_vendor');
+    await queryRunner.dropForeignKey(
+      "vendor_ratings",
+      "FK_vendor_ratings_vendor",
+    );
 
     // Drop table
-    await queryRunner.dropTable('vendor_ratings');
+    await queryRunner.dropTable("vendor_ratings");
 
     // Remove columns from vendors
     await queryRunner.query(`

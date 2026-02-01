@@ -1,7 +1,7 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from "typeorm";
 
 export class UnifiedPlatformSchema1737398400000 implements MigrationInterface {
-  name = 'UnifiedPlatformSchema1737398400000';
+  name = "UnifiedPlatformSchema1737398400000";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     // 1. Create customers table (replaces clients)
@@ -258,40 +258,40 @@ export class UnifiedPlatformSchema1737398400000 implements MigrationInterface {
 
     // 11. Create indexes
     await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS idx_customers_pipeline ON "customers"("pipeline_stage")`
+      `CREATE INDEX IF NOT EXISTS idx_customers_pipeline ON "customers"("pipeline_stage")`,
     );
     await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS idx_customers_status ON "customers"("status")`
+      `CREATE INDEX IF NOT EXISTS idx_customers_status ON "customers"("status")`,
     );
     await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS idx_customer_contacts_customer ON "customer_contacts"("customer_id")`
+      `CREATE INDEX IF NOT EXISTS idx_customer_contacts_customer ON "customer_contacts"("customer_id")`,
     );
     await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS idx_vendor_contacts_vendor ON "vendor_contacts"("vendor_id")`
+      `CREATE INDEX IF NOT EXISTS idx_vendor_contacts_vendor ON "vendor_contacts"("vendor_id")`,
     );
     await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS idx_vendor_trades_vendor ON "vendor_trades"("vendor_id")`
+      `CREATE INDEX IF NOT EXISTS idx_vendor_trades_vendor ON "vendor_trades"("vendor_id")`,
     );
     await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS idx_vendor_trades_code ON "vendor_trades"("trade_code")`
+      `CREATE INDEX IF NOT EXISTS idx_vendor_trades_code ON "vendor_trades"("trade_code")`,
     );
     await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS idx_project_phases_project ON "project_phases"("project_id")`
+      `CREATE INDEX IF NOT EXISTS idx_project_phases_project ON "project_phases"("project_id")`,
     );
     await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS idx_project_vendors_project ON "project_vendors"("project_id")`
+      `CREATE INDEX IF NOT EXISTS idx_project_vendors_project ON "project_vendors"("project_id")`,
     );
     await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS idx_project_vendors_vendor ON "project_vendors"("vendor_id")`
+      `CREATE INDEX IF NOT EXISTS idx_project_vendors_vendor ON "project_vendors"("vendor_id")`,
     );
     await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS idx_project_tasks_project ON "project_tasks"("project_id")`
+      `CREATE INDEX IF NOT EXISTS idx_project_tasks_project ON "project_tasks"("project_id")`,
     );
     await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS idx_project_tasks_assignee ON "project_tasks"("assignee_id")`
+      `CREATE INDEX IF NOT EXISTS idx_project_tasks_assignee ON "project_tasks"("assignee_id")`,
     );
     await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS idx_project_tasks_due ON "project_tasks"("due_date")`
+      `CREATE INDEX IF NOT EXISTS idx_project_tasks_due ON "project_tasks"("due_date")`,
     );
   }
 

@@ -1,11 +1,11 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from "typeorm";
 
 /**
  * Phase 2.1.1: Weather Alert Table
  * 用於記錄已發送的天氣警報，避免重複推播
  */
 export class CreateWeatherAlertsTable1769782800000 implements MigrationInterface {
-  name = 'CreateWeatherAlertsTable1769782800000';
+  name = "CreateWeatherAlertsTable1769782800000";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     // 建立 weather_alert_type 列舉

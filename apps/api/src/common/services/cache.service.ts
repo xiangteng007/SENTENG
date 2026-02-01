@@ -23,7 +23,10 @@ import { ConfigService } from "@nestjs/config";
 @Injectable()
 export class CacheService {
   private readonly logger = new Logger(CacheService.name);
-  private readonly memoryCache = new Map<string, { value: unknown; expiresAt: number }>();
+  private readonly memoryCache = new Map<
+    string,
+    { value: unknown; expiresAt: number }
+  >();
   private readonly isProduction: boolean;
 
   constructor(private readonly configService: ConfigService) {
@@ -39,7 +42,7 @@ export class CacheService {
   async getOrSet<T>(
     key: string,
     factory: () => Promise<T>,
-    ttlSeconds: number = 300
+    ttlSeconds: number = 300,
   ): Promise<T> {
     const cached = await this.get<T>(key);
     if (cached !== null) {

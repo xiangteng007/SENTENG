@@ -6,81 +6,81 @@ import {
   IsEnum,
   IsBoolean,
   IsArray,
-} from 'class-validator';
-import { Transform } from 'class-transformer';
-import { PartialType } from '@nestjs/mapped-types';
+} from "class-validator";
+import { Transform } from "class-transformer";
+import { PartialType } from "@nestjs/mapped-types";
 
 /**
  * 文件類型枚舉
  */
 export enum DocType {
-  INVOICE_B2B = 'INVOICE_B2B', // 三聯式
-  INVOICE_B2C = 'INVOICE_B2C', // 二聯式
-  INVOICE_EGUI = 'INVOICE_EGUI', // 電子發票
-  RECEIPT = 'RECEIPT', // 收據
-  CLAIM = 'CLAIM', // 請款單
+  INVOICE_B2B = "INVOICE_B2B", // 三聯式
+  INVOICE_B2C = "INVOICE_B2C", // 二聯式
+  INVOICE_EGUI = "INVOICE_EGUI", // 電子發票
+  RECEIPT = "RECEIPT", // 收據
+  CLAIM = "CLAIM", // 請款單
 }
 
 /**
  * 來源類型
  */
 export enum SourceType {
-  PAPER_SCAN = 'PAPER_SCAN',
-  EGUI_QR = 'EGUI_QR',
-  EGUI_PDF = 'EGUI_PDF',
-  MANUAL = 'MANUAL',
+  PAPER_SCAN = "PAPER_SCAN",
+  EGUI_QR = "EGUI_QR",
+  EGUI_PDF = "EGUI_PDF",
+  MANUAL = "MANUAL",
 }
 
 /**
  * 發票狀態
  */
 export enum InvoiceState {
-  DRAFT = 'DRAFT',
-  UPLOADED = 'UPLOADED',
-  AI_EXTRACTED = 'AI_EXTRACTED',
-  NEEDS_REVIEW = 'NEEDS_REVIEW',
-  REVIEWED = 'REVIEWED',
-  ASSIGNED = 'ASSIGNED',
-  PENDING_APPROVAL = 'PENDING_APPROVAL',
-  APPROVED = 'APPROVED',
-  REJECTED = 'REJECTED',
-  PAYABLE_SCHEDULED = 'PAYABLE_SCHEDULED',
-  PAID = 'PAID',
-  VAT_CLAIMED = 'VAT_CLAIMED',
-  VOIDED = 'VOIDED',
+  DRAFT = "DRAFT",
+  UPLOADED = "UPLOADED",
+  AI_EXTRACTED = "AI_EXTRACTED",
+  NEEDS_REVIEW = "NEEDS_REVIEW",
+  REVIEWED = "REVIEWED",
+  ASSIGNED = "ASSIGNED",
+  PENDING_APPROVAL = "PENDING_APPROVAL",
+  APPROVED = "APPROVED",
+  REJECTED = "REJECTED",
+  PAYABLE_SCHEDULED = "PAYABLE_SCHEDULED",
+  PAID = "PAID",
+  VAT_CLAIMED = "VAT_CLAIMED",
+  VOIDED = "VOIDED",
 }
 
 /**
  * 進項扣抵狀態
  */
 export enum VatDeductibleStatus {
-  UNKNOWN = 'UNKNOWN',
-  ELIGIBLE = 'ELIGIBLE',
-  INELIGIBLE = 'INELIGIBLE',
-  CLAIMED = 'CLAIMED',
-  ADJUSTED = 'ADJUSTED',
+  UNKNOWN = "UNKNOWN",
+  ELIGIBLE = "ELIGIBLE",
+  INELIGIBLE = "INELIGIBLE",
+  CLAIMED = "CLAIMED",
+  ADJUSTED = "ADJUSTED",
 }
 
 /**
  * 付款狀態
  */
 export enum PaymentStatus {
-  UNPAID = 'UNPAID',
-  PARTIAL = 'PARTIAL',
-  PAID = 'PAID',
+  UNPAID = "UNPAID",
+  PARTIAL = "PARTIAL",
+  PAID = "PAID",
 }
 
 /**
  * 成本科目
  */
 export enum CostCategory {
-  MATERIAL = 'MATERIAL',
-  LABOR = 'LABOR',
-  SUBCONTRACT = 'SUBCONTRACT',
-  EQUIPMENT = 'EQUIPMENT',
-  TRANSPORT = 'TRANSPORT',
-  OVERHEAD = 'OVERHEAD',
-  MISC = 'MISC',
+  MATERIAL = "MATERIAL",
+  LABOR = "LABOR",
+  SUBCONTRACT = "SUBCONTRACT",
+  EQUIPMENT = "EQUIPMENT",
+  TRANSPORT = "TRANSPORT",
+  OVERHEAD = "OVERHEAD",
+  MISC = "MISC",
 }
 
 /**
@@ -340,7 +340,7 @@ export class QueryInvoiceDto {
   amountMax?: number;
 
   @IsOptional()
-  @Transform(({ value }) => value === 'true' || value === true)
+  @Transform(({ value }) => value === "true" || value === true)
   @IsBoolean()
   aiNeedsReview?: boolean;
 }

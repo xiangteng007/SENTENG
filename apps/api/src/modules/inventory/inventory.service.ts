@@ -1,8 +1,16 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Inventory, InventoryMovement } from './inventory.entity';
-import { CreateInventoryDto, UpdateInventoryDto, CreateMovementDto } from './inventory.dto';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { Inventory, InventoryMovement } from "./inventory.entity";
+import {
+  CreateInventoryDto,
+  UpdateInventoryDto,
+  CreateMovementDto,
+} from "./inventory.dto";
 
 @Injectable()
 export class InventoryService {
@@ -10,7 +18,7 @@ export class InventoryService {
     @InjectRepository(Inventory)
     private inventoryRepository: Repository<Inventory>,
     @InjectRepository(InventoryMovement)
-    private movementRepository: Repository<InventoryMovement>
+    private movementRepository: Repository<InventoryMovement>,
   ) {}
 
   // =============================================
@@ -19,7 +27,7 @@ export class InventoryService {
 
   async findAll(): Promise<Inventory[]> {
     return this.inventoryRepository.find({
-      order: { createdAt: 'DESC' },
+      order: { createdAt: "DESC" },
     });
   }
 
@@ -34,14 +42,23 @@ export class InventoryService {
   async create(createInventoryDto: CreateInventoryDto): Promise<Inventory> {
     const inventory = new Inventory();
     Object.assign(inventory, createInventoryDto);
-    inventory.status = this.calculateStatus(inventory.quantity ?? 0, inventory.safeStock ?? 10);
+    inventory.status = this.calculateStatus(
+      inventory.quantity ?? 0,
+      inventory.safeStock ?? 10,
+    );
     return this.inventoryRepository.save(inventory);
   }
 
-  async update(id: string, updateInventoryDto: UpdateInventoryDto): Promise<Inventory> {
+  async update(
+    id: string,
+    updateInventoryDto: UpdateInventoryDto,
+  ): Promise<Inventory> {
     const inventory = await this.findOne(id);
     Object.assign(inventory, updateInventoryDto);
-    inventory.status = this.calculateStatus(inventory.quantity, inventory.safeStock);
+    inventory.status = this.calculateStatus(
+      inventory.quantity,
+      inventory.safeStock,
+    );
     return this.inventoryRepository.save(inventory);
   }
 
@@ -59,12 +76,17 @@ export class InventoryService {
    * @param dto 異動資料
    * @param userId 建立者
    */
-  async addMovement(dto: CreateMovementDto, userId?: string): Promise<InventoryMovement> {
+  async addMovement(
+    dto: CreateMovementDto,
+    userId?: string,
+  ): Promise<InventoryMovement> {
     const inventory = await this.findOne(dto.inventoryId);
 
     // Validate quantity for OUT movements
-    if (dto.movementType === 'OUT' && dto.quantity > inventory.quantity) {
-      throw new BadRequestException(`庫存不足，目前庫存: ${inventory.quantity}`);
+    if (dto.movementType === "OUT" && dto.quantity > inventory.quantity) {
+      throw new BadRequestException(
+        `庫存不足，目前庫存: ${inventory.quantity}`,
+      );
     }
 
     // Calculate total cost
@@ -84,17 +106,20 @@ export class InventoryService {
     await this.movementRepository.save(movement);
 
     // Update inventory quantity
-    if (dto.movementType === 'IN') {
+    if (dto.movementType === "IN") {
       inventory.quantity += dto.quantity;
-    } else if (dto.movementType === 'OUT') {
+    } else if (dto.movementType === "OUT") {
       inventory.quantity -= dto.quantity;
-    } else if (dto.movementType === 'ADJUST') {
+    } else if (dto.movementType === "ADJUST") {
       // ADJUST uses absolute quantity, not delta
       inventory.quantity = dto.quantity;
     }
     // TRANSFER doesn't change this item's quantity (handled separately)
 
-    inventory.status = this.calculateStatus(inventory.quantity, inventory.safeStock);
+    inventory.status = this.calculateStatus(
+      inventory.quantity,
+      inventory.safeStock,
+    );
     await this.inventoryRepository.save(inventory);
 
     return movement;
@@ -106,8 +131,8 @@ export class InventoryService {
   async getMovements(inventoryId: string): Promise<InventoryMovement[]> {
     return this.movementRepository.find({
       where: { inventoryId },
-      relations: ['project'],
-      order: { createdAt: 'DESC' },
+      relations: ["project"],
+      order: { createdAt: "DESC" },
     });
   }
 
@@ -117,21 +142,23 @@ export class InventoryService {
   async getMovementsByProject(projectId: string): Promise<InventoryMovement[]> {
     return this.movementRepository.find({
       where: { projectId },
-      relations: ['inventory'],
-      order: { createdAt: 'DESC' },
+      relations: ["inventory"],
+      order: { createdAt: "DESC" },
     });
   }
 
   /**
    * 取得專案領料成本彙總
    */
-  async getProjectMaterialCost(projectId: string): Promise<{ totalCost: number; count: number }> {
+  async getProjectMaterialCost(
+    projectId: string,
+  ): Promise<{ totalCost: number; count: number }> {
     const result = await this.movementRepository
-      .createQueryBuilder('m')
-      .select('SUM(m.total_cost)', 'totalCost')
-      .addSelect('COUNT(*)', 'count')
-      .where('m.project_id = :projectId', { projectId })
-      .andWhere('m.movement_type = :type', { type: 'OUT' })
+      .createQueryBuilder("m")
+      .select("SUM(m.total_cost)", "totalCost")
+      .addSelect("COUNT(*)", "count")
+      .where("m.project_id = :projectId", { projectId })
+      .andWhere("m.movement_type = :type", { type: "OUT" })
       .getRawOne();
 
     return {
@@ -141,20 +168,27 @@ export class InventoryService {
   }
 
   // Legacy method for backward compatibility
-  async stockMovement(id: string, type: 'in' | 'out', quantity: number): Promise<Inventory> {
+  async stockMovement(
+    id: string,
+    type: "in" | "out",
+    quantity: number,
+  ): Promise<Inventory> {
     const inventory = await this.findOne(id);
-    if (type === 'in') {
+    if (type === "in") {
       inventory.quantity += quantity;
     } else {
       inventory.quantity = Math.max(0, inventory.quantity - quantity);
     }
-    inventory.status = this.calculateStatus(inventory.quantity, inventory.safeStock);
+    inventory.status = this.calculateStatus(
+      inventory.quantity,
+      inventory.safeStock,
+    );
     return this.inventoryRepository.save(inventory);
   }
 
   private calculateStatus(quantity: number, safeStock: number): string {
-    if (quantity <= 0) return '缺貨';
-    if (quantity < safeStock) return '庫存偏低';
-    return '充足';
+    if (quantity <= 0) return "缺貨";
+    if (quantity < safeStock) return "庫存偏低";
+    return "充足";
   }
 }

@@ -5,8 +5,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
-} from 'typeorm';
-import { BusinessUnit } from './business-unit.entity';
+} from "typeorm";
+import { BusinessUnit } from "./business-unit.entity";
 
 /**
  * LegalEntity (法人實體)
@@ -14,7 +14,7 @@ import { BusinessUnit } from './business-unit.entity';
  * 代表一個獨立的法人公司，可包含多個事業部門 (BusinessUnit)。
  * 用於多公司架構下的財務隔離與報表合併。
  */
-@Entity('legal_entities')
+@Entity("legal_entities")
 export class LegalEntity {
   @PrimaryColumn({ length: 20 })
   id: string;
@@ -22,13 +22,13 @@ export class LegalEntity {
   @Column({ length: 100 })
   name: string;
 
-  @Column({ name: 'short_name', length: 30, nullable: true })
+  @Column({ name: "short_name", length: 30, nullable: true })
   shortName: string;
 
-  @Column({ name: 'tax_id', length: 20, nullable: true })
+  @Column({ name: "tax_id", length: 20, nullable: true })
   taxId: string;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: "text", nullable: true })
   address: string;
 
   @Column({ length: 30, nullable: true })
@@ -37,16 +37,16 @@ export class LegalEntity {
   @Column({ length: 100, nullable: true })
   email: string;
 
-  @Column({ name: 'is_active', default: true })
+  @Column({ name: "is_active", default: true })
   isActive: boolean;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: "updated_at" })
   updatedAt: Date;
 
   // Relations
-  @OneToMany(() => BusinessUnit, bu => bu.legalEntity)
+  @OneToMany(() => BusinessUnit, (bu) => bu.legalEntity)
   businessUnits: BusinessUnit[];
 }

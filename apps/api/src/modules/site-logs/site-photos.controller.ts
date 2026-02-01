@@ -18,16 +18,21 @@ import {
   UseInterceptors,
   UploadedFile,
   Req,
-} from '@nestjs/common';
+} from "@nestjs/common";
 import type { AuthenticatedRequest } from "../../common/types";
-import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags, ApiOperation, ApiConsumes, ApiBearerAuth } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { SitePhotosService, UploadPhotoDto } from './site-photos.service';
+import { FileInterceptor } from "@nestjs/platform-express";
+import {
+  ApiTags,
+  ApiOperation,
+  ApiConsumes,
+  ApiBearerAuth,
+} from "@nestjs/swagger";
+import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
+import { SitePhotosService, UploadPhotoDto } from "./site-photos.service";
 
-@ApiTags('Site Photos')
+@ApiTags("Site Photos")
 @ApiBearerAuth()
-@Controller('site-photos')
+@Controller("site-photos")
 @UseGuards(JwtAuthGuard)
 export class SitePhotosController {
   constructor(private readonly sitePhotosService: SitePhotosService) {}
@@ -35,17 +40,17 @@ export class SitePhotosController {
   /**
    * 上傳工地照片到專案的 Google Drive 資料夾
    */
-  @Post('upload')
-  @ApiOperation({ summary: '上傳工地照片' })
-  @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FileInterceptor('file'))
+  @Post("upload")
+  @ApiOperation({ summary: "上傳工地照片" })
+  @ApiConsumes("multipart/form-data")
+  @UseInterceptors(FileInterceptor("file"))
   async uploadPhoto(
     @Req() req: AuthenticatedRequest,
     @UploadedFile() file: Express.Multer.File,
-    @Body('projectId') projectId: string,
-    @Body('description') description?: string,
-    @Body('category') category?: string,
-    @Body('tags') tags?: string
+    @Body("projectId") projectId: string,
+    @Body("description") description?: string,
+    @Body("category") category?: string,
+    @Body("tags") tags?: string,
   ) {
     const userId = req.user?.id || req.user?.sub;
 
@@ -53,7 +58,7 @@ export class SitePhotosController {
       projectId,
       description,
       category,
-      tags: tags ? tags.split(',').map(t => t.trim()) : [],
+      tags: tags ? tags.split(",").map((t) => t.trim()) : [],
     };
 
     return this.sitePhotosService.uploadPhoto(userId, file, dto);
@@ -62,45 +67,49 @@ export class SitePhotosController {
   /**
    * 取得專案的所有照片
    */
-  @Get('project/:projectId')
-  @ApiOperation({ summary: '取得專案照片列表' })
+  @Get("project/:projectId")
+  @ApiOperation({ summary: "取得專案照片列表" })
   async getPhotosByProject(
     @Req() req: AuthenticatedRequest,
-    @Param('projectId') projectId: string,
-    @Query('includeDeleted') includeDeleted?: string
+    @Param("projectId") projectId: string,
+    @Query("includeDeleted") includeDeleted?: string,
   ) {
     const userId = req.user?.id || req.user?.sub;
-    return this.sitePhotosService.getPhotosByProject(userId, projectId, includeDeleted === 'true');
+    return this.sitePhotosService.getPhotosByProject(
+      userId,
+      projectId,
+      includeDeleted === "true",
+    );
   }
 
   /**
    * 取得單張照片詳情
    */
-  @Get(':id')
-  @ApiOperation({ summary: '取得照片詳情' })
-  async getPhoto(@Param('id') id: string) {
+  @Get(":id")
+  @ApiOperation({ summary: "取得照片詳情" })
+  async getPhoto(@Param("id") id: string) {
     return this.sitePhotosService.getPhoto(id);
   }
 
   /**
    * 刪除照片
    */
-  @Delete(':id')
-  @ApiOperation({ summary: '刪除照片' })
-  async deletePhoto(@Req() req: AuthenticatedRequest, @Param('id') id: string) {
+  @Delete(":id")
+  @ApiOperation({ summary: "刪除照片" })
+  async deletePhoto(@Req() req: AuthenticatedRequest, @Param("id") id: string) {
     const userId = req.user?.id || req.user?.sub;
     await this.sitePhotosService.deletePhoto(userId, id);
-    return { success: true, message: '照片已刪除' };
+    return { success: true, message: "照片已刪除" };
   }
 
   /**
    * 更新照片資訊
    */
-  @Patch(':id')
-  @ApiOperation({ summary: '更新照片資訊' })
+  @Patch(":id")
+  @ApiOperation({ summary: "更新照片資訊" })
   async updatePhoto(
-    @Param('id') id: string,
-    @Body() body: { description?: string; category?: string; tags?: string[] }
+    @Param("id") id: string,
+    @Body() body: { description?: string; category?: string; tags?: string[] },
   ) {
     return this.sitePhotosService.updatePhoto(id, body);
   }
@@ -108,9 +117,9 @@ export class SitePhotosController {
   /**
    * 取得專案照片統計
    */
-  @Get('project/:projectId/stats')
-  @ApiOperation({ summary: '取得專案照片統計' })
-  async getPhotoStats(@Param('projectId') projectId: string) {
+  @Get("project/:projectId/stats")
+  @ApiOperation({ summary: "取得專案照片統計" })
+  async getPhotoStats(@Param("projectId") projectId: string) {
     return this.sitePhotosService.getPhotoStats(projectId);
   }
 }

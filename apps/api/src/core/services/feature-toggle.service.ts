@@ -1,5 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 
 export interface FeatureFlag {
   name: string;
@@ -23,44 +23,44 @@ export class FeatureToggleService {
   // Default feature flags
   private readonly defaultFlags: FeatureFlag[] = [
     {
-      name: 'ENHANCED_AUDIT_LOGGING',
+      name: "ENHANCED_AUDIT_LOGGING",
       enabled: true,
-      description: 'Enable enhanced security audit logging',
+      description: "Enable enhanced security audit logging",
     },
     {
-      name: 'AI_SUGGESTIONS',
+      name: "AI_SUGGESTIONS",
       enabled: false,
-      description: 'Enable AI-powered suggestions for quotes and costs',
+      description: "Enable AI-powered suggestions for quotes and costs",
     },
     {
-      name: 'REAL_TIME_SYNC',
+      name: "REAL_TIME_SYNC",
       enabled: true,
-      description: 'Enable WebSocket real-time data synchronization',
+      description: "Enable WebSocket real-time data synchronization",
     },
     {
-      name: 'ADVANCED_PROCUREMENT',
+      name: "ADVANCED_PROCUREMENT",
       enabled: true,
-      description: 'Enable advanced procurement with bid comparison',
+      description: "Enable advanced procurement with bid comparison",
     },
     {
-      name: 'VENDOR_RATING_V2',
+      name: "VENDOR_RATING_V2",
       enabled: true,
-      description: 'Enable new vendor rating system with detailed metrics',
+      description: "Enable new vendor rating system with detailed metrics",
     },
     {
-      name: 'INVOICE_BATCH_UPLOAD',
+      name: "INVOICE_BATCH_UPLOAD",
       enabled: false,
-      description: 'Enable batch upload for Taiwan e-invoices',
+      description: "Enable batch upload for Taiwan e-invoices",
     },
     {
-      name: 'MOBILE_PUSH_NOTIFICATIONS',
+      name: "MOBILE_PUSH_NOTIFICATIONS",
       enabled: false,
-      description: 'Enable push notifications for mobile app',
+      description: "Enable push notifications for mobile app",
     },
     {
-      name: 'DARK_MODE',
+      name: "DARK_MODE",
       enabled: true,
-      description: 'Enable dark mode theme support',
+      description: "Enable dark mode theme support",
     },
   ];
 
@@ -78,17 +78,22 @@ export class FeatureToggleService {
     this.features.forEach((flag, name) => {
       const envValue = this.configService.get<string>(`FEATURE_${name}`);
       if (envValue !== undefined) {
-        flag.enabled = envValue.toLowerCase() === 'true';
-        this.logger.log(`Feature ${name} set to ${flag.enabled} from environment`);
+        flag.enabled = envValue.toLowerCase() === "true";
+        this.logger.log(
+          `Feature ${name} set to ${flag.enabled} from environment`,
+        );
       }
     });
 
     this.logger.log(`Initialized ${this.features.size} feature flags`);
   }
 
-  isEnabled(featureName: string, context?: { userId?: string; role?: string }): boolean {
+  isEnabled(
+    featureName: string,
+    context?: { userId?: string; role?: string },
+  ): boolean {
     const feature = this.features.get(featureName);
-    
+
     if (!feature) {
       this.logger.warn(`Unknown feature flag: ${featureName}`);
       return false;
@@ -114,8 +119,11 @@ export class FeatureToggleService {
     }
 
     // Check rollout percentage
-    if (feature.rolloutPercentage !== undefined && feature.rolloutPercentage < 100) {
-      const hash = this.hashUserId(context?.userId || 'anonymous');
+    if (
+      feature.rolloutPercentage !== undefined &&
+      feature.rolloutPercentage < 100
+    ) {
+      const hash = this.hashUserId(context?.userId || "anonymous");
       if (hash > feature.rolloutPercentage) {
         return false;
       }

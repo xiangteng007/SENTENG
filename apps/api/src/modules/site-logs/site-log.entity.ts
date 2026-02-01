@@ -7,54 +7,54 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
-} from 'typeorm';
-import { Project } from '../projects/project.entity';
+} from "typeorm";
+import { Project } from "../projects/project.entity";
 
 export enum WeatherCondition {
-  SUNNY = 'SUNNY',
-  CLOUDY = 'CLOUDY',
-  RAINY = 'RAINY',
-  STORMY = 'STORMY',
-  WINDY = 'WINDY',
+  SUNNY = "SUNNY",
+  CLOUDY = "CLOUDY",
+  RAINY = "RAINY",
+  STORMY = "STORMY",
+  WINDY = "WINDY",
 }
 
-@Entity('site_logs')
-@Index(['projectId', 'logDate'])
-@Index(['logDate'])
+@Entity("site_logs")
+@Index(["projectId", "logDate"])
+@Index(["logDate"])
 export class SiteLog {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column({ name: 'project_id', length: 20 })
+  @Column({ name: "project_id", length: 20 })
   projectId: string;
 
   @ManyToOne(() => Project)
-  @JoinColumn({ name: 'project_id' })
+  @JoinColumn({ name: "project_id" })
   project: Project;
 
-  @Column({ name: 'log_date', type: 'date' })
+  @Column({ name: "log_date", type: "date" })
   logDate: Date;
 
-  @Column({ name: 'weather_am', length: 20, nullable: true })
+  @Column({ name: "weather_am", length: 20, nullable: true })
   weatherAm: string;
 
-  @Column({ name: 'weather_pm', length: 20, nullable: true })
+  @Column({ name: "weather_pm", length: 20, nullable: true })
   weatherPm: string;
 
-  @Column({ name: 'temp_high', type: 'int', nullable: true })
+  @Column({ name: "temp_high", type: "int", nullable: true })
   tempHigh: number;
 
-  @Column({ name: 'temp_low', type: 'int', nullable: true })
+  @Column({ name: "temp_low", type: "int", nullable: true })
   tempLow: number;
 
   // Workforce
-  @Column({ name: 'workers_own', type: 'int', default: 0 })
+  @Column({ name: "workers_own", type: "int", default: 0 })
   workersOwn: number;
 
-  @Column({ name: 'workers_subcon', type: 'int', default: 0 })
+  @Column({ name: "workers_subcon", type: "int", default: 0 })
   workersSubcon: number;
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: "jsonb", nullable: true })
   workforce: {
     trade: string;
     count: number;
@@ -62,7 +62,7 @@ export class SiteLog {
   }[];
 
   // Equipment
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: "jsonb", nullable: true })
   equipment: {
     name: string;
     quantity: number;
@@ -70,10 +70,10 @@ export class SiteLog {
   }[];
 
   // Work performed
-  @Column({ name: 'work_performed', type: 'text', nullable: true })
+  @Column({ name: "work_performed", type: "text", nullable: true })
   workPerformed: string;
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: "jsonb", nullable: true })
   activities: {
     location: string;
     description: string;
@@ -81,7 +81,7 @@ export class SiteLog {
   }[];
 
   // Materials
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: "jsonb", nullable: true })
   materials: {
     name: string;
     quantity: number;
@@ -90,14 +90,14 @@ export class SiteLog {
   }[];
 
   // Issues & Notes
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: "jsonb", nullable: true })
   issues: {
     type: string;
     description: string;
     resolved: boolean;
   }[];
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: "jsonb", nullable: true })
   visitors: {
     name: string;
     company: string;
@@ -106,18 +106,18 @@ export class SiteLog {
     timeOut?: string;
   }[];
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: "jsonb", nullable: true })
   safety: {
     incidents: number;
     nearMisses: number;
     notes?: string;
   };
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: "text", nullable: true })
   notes: string;
 
   // Photos
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: "jsonb", nullable: true })
   photos: {
     url: string;
     caption: string;
@@ -125,24 +125,24 @@ export class SiteLog {
   }[];
 
   // Approval
-  @Column({ name: 'submitted_by', type: 'varchar', length: 20, nullable: true })
+  @Column({ name: "submitted_by", type: "varchar", length: 20, nullable: true })
   submittedBy: string | null;
 
-  @Column({ name: 'submitted_at', type: 'timestamp', nullable: true })
+  @Column({ name: "submitted_at", type: "timestamp", nullable: true })
   submittedAt: Date;
 
-  @Column({ name: 'approved_by', type: 'varchar', length: 20, nullable: true })
+  @Column({ name: "approved_by", type: "varchar", length: 20, nullable: true })
   approvedBy: string | null;
 
-  @Column({ name: 'approved_at', type: 'timestamp', nullable: true })
+  @Column({ name: "approved_at", type: "timestamp", nullable: true })
   approvedAt: Date | null;
 
-  @Column({ name: 'is_approved', default: false })
+  @Column({ name: "is_approved", default: false })
   isApproved: boolean;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: "updated_at" })
   updatedAt: Date;
 }

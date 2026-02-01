@@ -1,5 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 
 /**
  * LINE Messaging API 服務
@@ -22,7 +22,7 @@ export interface LineConfig {
 }
 
 export interface LineMessage {
-  type: 'text' | 'flex' | 'template';
+  type: "text" | "flex" | "template";
   text?: string;
   altText?: string;
   contents?: Record<string, unknown>;
@@ -45,14 +45,16 @@ export interface LineNotifyResult {
 export class LineApiService {
   private readonly logger = new Logger(LineApiService.name);
   private readonly config: LineConfig;
-  private readonly messagingApiHost = 'https://api.line.me/v2/bot';
-  private readonly notifyApiHost = 'https://notify-api.line.me/api/notify';
+  private readonly messagingApiHost = "https://api.line.me/v2/bot";
+  private readonly notifyApiHost = "https://notify-api.line.me/api/notify";
 
   constructor(private readonly configService: ConfigService) {
     this.config = {
-      channelAccessToken: this.configService.get<string>('LINE_CHANNEL_ACCESS_TOKEN') || '',
-      channelSecret: this.configService.get<string>('LINE_CHANNEL_SECRET') || '',
-      notifyToken: this.configService.get<string>('LINE_NOTIFY_TOKEN'),
+      channelAccessToken:
+        this.configService.get<string>("LINE_CHANNEL_ACCESS_TOKEN") || "",
+      channelSecret:
+        this.configService.get<string>("LINE_CHANNEL_SECRET") || "",
+      notifyToken: this.configService.get<string>("LINE_NOTIFY_TOKEN"),
     };
   }
 
@@ -73,25 +75,28 @@ export class LineApiService {
   /**
    * 推播訊息給單一用戶
    */
-  async pushMessage(userId: string, messages: LineMessage[]): Promise<LinePushResult> {
+  async pushMessage(
+    userId: string,
+    messages: LineMessage[],
+  ): Promise<LinePushResult> {
     if (!this.isMessagingConfigured()) {
       return {
         success: false,
         sentMessages: 0,
-        errorMessage: 'LINE Messaging API not configured',
+        errorMessage: "LINE Messaging API not configured",
       };
     }
 
     try {
       const response = await fetch(`${this.messagingApiHost}/message/push`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: `Bearer ${this.config.channelAccessToken}`,
         },
         body: JSON.stringify({
           to: userId,
-          messages: messages.map(msg => this.formatMessage(msg)),
+          messages: messages.map((msg) => this.formatMessage(msg)),
         }),
       });
 
@@ -105,7 +110,7 @@ export class LineApiService {
       return {
         success: false,
         sentMessages: 0,
-        errorMessage: error.message || 'Push failed',
+        errorMessage: error.message || "Push failed",
       };
     } catch (error) {
       return {
@@ -119,38 +124,47 @@ export class LineApiService {
   /**
    * 群發訊息
    */
-  async multicast(userIds: string[], messages: LineMessage[]): Promise<LinePushResult> {
+  async multicast(
+    userIds: string[],
+    messages: LineMessage[],
+  ): Promise<LinePushResult> {
     if (!this.isMessagingConfigured()) {
       return {
         success: false,
         sentMessages: 0,
-        errorMessage: 'LINE Messaging API not configured',
+        errorMessage: "LINE Messaging API not configured",
       };
     }
 
     try {
-      const response = await fetch(`${this.messagingApiHost}/message/multicast`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.config.channelAccessToken}`,
+      const response = await fetch(
+        `${this.messagingApiHost}/message/multicast`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${this.config.channelAccessToken}`,
+          },
+          body: JSON.stringify({
+            to: userIds,
+            messages: messages.map((msg) => this.formatMessage(msg)),
+          }),
         },
-        body: JSON.stringify({
-          to: userIds,
-          messages: messages.map(msg => this.formatMessage(msg)),
-        }),
-      });
+      );
 
       if (response.ok) {
         this.logger.log(`Multicast sent to ${userIds.length} users`);
-        return { success: true, sentMessages: messages.length * userIds.length };
+        return {
+          success: true,
+          sentMessages: messages.length * userIds.length,
+        };
       }
 
       const error = await response.json();
       return {
         success: false,
         sentMessages: 0,
-        errorMessage: error.message || 'Multicast failed',
+        errorMessage: error.message || "Multicast failed",
       };
     } catch (error) {
       return {
@@ -169,21 +183,24 @@ export class LineApiService {
       return {
         success: false,
         status: 0,
-        message: 'LINE Notify not configured',
+        message: "LINE Notify not configured",
       };
     }
 
     try {
       const response = await fetch(this.notifyApiHost, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          "Content-Type": "application/x-www-form-urlencoded",
           Authorization: `Bearer ${this.config.notifyToken}`,
         },
         body: `message=${encodeURIComponent(message)}`,
       });
 
-      const data = (await response.json()) as { status: number; message: string };
+      const data = (await response.json()) as {
+        status: number;
+        message: string;
+      };
       this.logger.debug(`LINE Notify: ${data.status}`);
 
       return {
@@ -207,61 +224,61 @@ export class LineApiService {
     userId: string,
     quotationNumber: string,
     clientName: string,
-    amount: number
+    amount: number,
   ): Promise<LinePushResult> {
     const messages: LineMessage[] = [
       {
-        type: 'flex',
+        type: "flex",
         altText: `報價單 ${quotationNumber} 已建立`,
         contents: {
-          type: 'bubble',
+          type: "bubble",
           header: {
-            type: 'box',
-            layout: 'vertical',
+            type: "box",
+            layout: "vertical",
             contents: [
               {
-                type: 'text',
-                text: '📋 新報價單通知',
-                weight: 'bold',
-                size: 'lg',
-                color: '#1DB446',
+                type: "text",
+                text: "📋 新報價單通知",
+                weight: "bold",
+                size: "lg",
+                color: "#1DB446",
               },
             ],
           },
           body: {
-            type: 'box',
-            layout: 'vertical',
+            type: "box",
+            layout: "vertical",
             contents: [
               {
-                type: 'text',
+                type: "text",
                 text: `報價單號：${quotationNumber}`,
-                size: 'md',
+                size: "md",
               },
               {
-                type: 'text',
+                type: "text",
                 text: `客戶：${clientName}`,
-                size: 'sm',
-                color: '#666666',
+                size: "sm",
+                color: "#666666",
               },
               {
-                type: 'text',
+                type: "text",
                 text: `金額：NT$ ${amount.toLocaleString()}`,
-                size: 'lg',
-                weight: 'bold',
-                margin: 'md',
+                size: "lg",
+                weight: "bold",
+                margin: "md",
               },
             ],
           },
           footer: {
-            type: 'box',
-            layout: 'vertical',
+            type: "box",
+            layout: "vertical",
             contents: [
               {
-                type: 'text',
-                text: '請登入系統查看詳情',
-                size: 'xs',
-                color: '#AAAAAA',
-                align: 'center',
+                type: "text",
+                text: "請登入系統查看詳情",
+                size: "xs",
+                color: "#AAAAAA",
+                align: "center",
               },
             ],
           },
@@ -279,11 +296,11 @@ export class LineApiService {
     userId: string,
     documentType: string,
     documentNumber: string,
-    requester: string
+    requester: string,
   ): Promise<LinePushResult> {
     const messages: LineMessage[] = [
       {
-        type: 'text',
+        type: "text",
         text: `⚠️ 簽核待辦提醒\n\n文件類型：${documentType}\n編號：${documentNumber}\n申請人：${requester}\n\n請儘速登入系統處理。`,
       },
     ];
@@ -298,12 +315,12 @@ export class LineApiService {
     userId: string,
     projectName: string,
     milestone: string,
-    daysRemaining: number
+    daysRemaining: number,
   ): Promise<LinePushResult> {
-    const emoji = daysRemaining <= 3 ? '🔴' : daysRemaining <= 7 ? '🟡' : '🟢';
+    const emoji = daysRemaining <= 3 ? "🔴" : daysRemaining <= 7 ? "🟡" : "🟢";
     const messages: LineMessage[] = [
       {
-        type: 'text',
+        type: "text",
         text: `${emoji} 工期提醒\n\n專案：${projectName}\n里程碑：${milestone}\n剩餘天數：${daysRemaining} 天`,
       },
     ];
@@ -316,14 +333,18 @@ export class LineApiService {
    */
   private formatMessage(msg: LineMessage): Record<string, unknown> {
     switch (msg.type) {
-      case 'text':
-        return { type: 'text', text: msg.text };
-      case 'flex':
-        return { type: 'flex', altText: msg.altText, contents: msg.contents };
-      case 'template':
-        return { type: 'template', altText: msg.altText, template: msg.template };
+      case "text":
+        return { type: "text", text: msg.text };
+      case "flex":
+        return { type: "flex", altText: msg.altText, contents: msg.contents };
+      case "template":
+        return {
+          type: "template",
+          altText: msg.altText,
+          template: msg.template,
+        };
       default:
-        return { type: 'text', text: msg.text || '' };
+        return { type: "text", text: msg.text || "" };
     }
   }
 }

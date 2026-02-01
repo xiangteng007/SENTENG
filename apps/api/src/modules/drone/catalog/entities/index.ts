@@ -1,1 +1,1 @@
-export * from './service-catalog.entity';
+export * from "./service-catalog.entity";

@@ -1,10 +1,10 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from "typeorm";
 
 /**
  * 添加 Google Drive 整合欄位到 site_photos 表
  */
 export class AddDriveFieldsToSitePhotos1706960000000 implements MigrationInterface {
-  name = 'AddDriveFieldsToSitePhotos1706960000000';
+  name = "AddDriveFieldsToSitePhotos1706960000000";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     // 添加 Google Drive 相關欄位
@@ -33,8 +33,12 @@ export class AddDriveFieldsToSitePhotos1706960000000 implements MigrationInterfa
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     // 移除索引
-    await queryRunner.query(`DROP INDEX IF EXISTS "IDX_site_photos_deleted_at"`);
-    await queryRunner.query(`DROP INDEX IF EXISTS "IDX_site_photos_drive_file_id"`);
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "IDX_site_photos_deleted_at"`,
+    );
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "IDX_site_photos_drive_file_id"`,
+    );
 
     // 移除欄位
     await queryRunner.query(`

@@ -1,11 +1,11 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from "typeorm";
 
 /**
  * 建立 BIM 領域表
  * Note: FK constraints are added later by migration 1769447303639
  */
 export class CreateBimDomain1704672000003 implements MigrationInterface {
-  name = 'CreateBimDomain1704672000003';
+  name = "CreateBimDomain1704672000003";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     // BIM Models - Note: FK to projects added later
@@ -107,22 +107,24 @@ export class CreateBimDomain1704672000003 implements MigrationInterface {
 
     // Indexes
     await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS "idx_bim_models_project" ON "bim_models"("project_id")`
+      `CREATE INDEX IF NOT EXISTS "idx_bim_models_project" ON "bim_models"("project_id")`,
     );
     await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS "idx_bim_elements_guid" ON "bim_elements"("element_guid")`
+      `CREATE INDEX IF NOT EXISTS "idx_bim_elements_guid" ON "bim_elements"("element_guid")`,
     );
     await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS "idx_bcf_issues_project_status" ON "bcf_issues"("project_id", "status")`
+      `CREATE INDEX IF NOT EXISTS "idx_bcf_issues_project_status" ON "bcf_issues"("project_id", "status")`,
     );
     await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS "idx_bcf_issues_element" ON "bcf_issues"("element_guid")`
+      `CREATE INDEX IF NOT EXISTS "idx_bcf_issues_element" ON "bcf_issues"("element_guid")`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`DROP INDEX IF EXISTS "idx_bcf_issues_element"`);
-    await queryRunner.query(`DROP INDEX IF EXISTS "idx_bcf_issues_project_status"`);
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "idx_bcf_issues_project_status"`,
+    );
     await queryRunner.query(`DROP INDEX IF EXISTS "idx_bim_elements_guid"`);
     await queryRunner.query(`DROP INDEX IF EXISTS "idx_bim_models_project"`);
     await queryRunner.query(`DROP TABLE IF EXISTS "issue_comments"`);

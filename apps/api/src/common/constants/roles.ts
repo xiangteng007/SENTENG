@@ -17,14 +17,14 @@
  * Level 1: USER - 一般使用者
  */
 export const ROLES = {
-  SUPER_ADMIN: 'SUPER_ADMIN',
-  OWNER: 'OWNER',
-  ADMIN: 'ADMIN',
-  PM: 'PM',
-  DESIGNER: 'DESIGNER',
-  ENGINEER: 'ENGINEER',
-  FINANCE: 'FINANCE',
-  USER: 'USER',
+  SUPER_ADMIN: "SUPER_ADMIN",
+  OWNER: "OWNER",
+  ADMIN: "ADMIN",
+  PM: "PM",
+  DESIGNER: "DESIGNER",
+  ENGINEER: "ENGINEER",
+  FINANCE: "FINANCE",
+  USER: "USER",
 } as const;
 
 export type RoleId = (typeof ROLES)[keyof typeof ROLES];
@@ -62,14 +62,14 @@ export const ALL_ROLES: readonly RoleId[] = Object.values(ROLES) as RoleId[];
  * 中文角色名稱對照表（用於顯示）
  */
 export const ROLE_DISPLAY_NAMES: Record<RoleId, string> = {
-  [ROLES.SUPER_ADMIN]: '最高管理員',
-  [ROLES.OWNER]: '老闆',
-  [ROLES.ADMIN]: '行政管理員',
-  [ROLES.PM]: '專案經理',
-  [ROLES.DESIGNER]: '設計師',
-  [ROLES.ENGINEER]: '現場工程師',
-  [ROLES.FINANCE]: '財務人員',
-  [ROLES.USER]: '一般使用者',
+  [ROLES.SUPER_ADMIN]: "最高管理員",
+  [ROLES.OWNER]: "老闆",
+  [ROLES.ADMIN]: "行政管理員",
+  [ROLES.PM]: "專案經理",
+  [ROLES.DESIGNER]: "設計師",
+  [ROLES.ENGINEER]: "現場工程師",
+  [ROLES.FINANCE]: "財務人員",
+  [ROLES.USER]: "一般使用者",
 };
 
 /**

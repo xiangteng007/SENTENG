@@ -1,4 +1,4 @@
-import { WorkOrder } from '../entities';
+import { WorkOrder } from "../entities";
 
 /**
  * WorkOrder 完工事件
@@ -9,6 +9,6 @@ export class WorkOrderCompletedEvent {
     public readonly workOrderId: string,
     public readonly workOrder: WorkOrder,
     public readonly completedAt: Date,
-    public readonly completedBy?: string
+    public readonly completedBy?: string,
   ) {}
 }

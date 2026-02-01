@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from "typeorm";
 
 /**
  * 初始化多事業體架構表
@@ -7,7 +7,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  * - cost_centers: 成本中心
  */
 export class CreatePlatformTenants1704672000001 implements MigrationInterface {
-  name = 'CreatePlatformTenants1704672000001';
+  name = "CreatePlatformTenants1704672000001";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Legal Entities
@@ -86,20 +86,32 @@ export class CreatePlatformTenants1704672000001 implements MigrationInterface {
 
     // Create indexes
     await queryRunner.query(
-      `CREATE INDEX "idx_business_units_legal_entity" ON "business_units"("legal_entity_id")`
+      `CREATE INDEX "idx_business_units_legal_entity" ON "business_units"("legal_entity_id")`,
     );
     await queryRunner.query(
-      `CREATE INDEX "idx_cost_centers_business_unit" ON "cost_centers"("business_unit_id")`
+      `CREATE INDEX "idx_cost_centers_business_unit" ON "cost_centers"("business_unit_id")`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP INDEX IF EXISTS "idx_cost_centers_business_unit"`);
-    await queryRunner.query(`DROP INDEX IF EXISTS "idx_business_units_legal_entity"`);
-    await queryRunner.query(`ALTER TABLE "inventory" DROP COLUMN IF EXISTS "business_unit_id"`);
-    await queryRunner.query(`ALTER TABLE "invoices" DROP COLUMN IF EXISTS "business_unit_id"`);
-    await queryRunner.query(`ALTER TABLE "cost_entries" DROP COLUMN IF EXISTS "business_unit_id"`);
-    await queryRunner.query(`ALTER TABLE "projects" DROP COLUMN IF EXISTS "business_unit_id"`);
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "idx_cost_centers_business_unit"`,
+    );
+    await queryRunner.query(
+      `DROP INDEX IF EXISTS "idx_business_units_legal_entity"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "inventory" DROP COLUMN IF EXISTS "business_unit_id"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "invoices" DROP COLUMN IF EXISTS "business_unit_id"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "cost_entries" DROP COLUMN IF EXISTS "business_unit_id"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "projects" DROP COLUMN IF EXISTS "business_unit_id"`,
+    );
     await queryRunner.query(`DROP TABLE IF EXISTS "cost_centers"`);
     await queryRunner.query(`DROP TABLE IF EXISTS "business_units"`);
     await queryRunner.query(`DROP TABLE IF EXISTS "legal_entities"`);

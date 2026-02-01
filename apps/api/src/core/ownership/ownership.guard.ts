@@ -3,14 +3,14 @@ import {
   CanActivate,
   ExecutionContext,
   ForbiddenException,
-} from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { isAdminRole } from '../../common/constants/roles';
+} from "@nestjs/common";
+import { Reflector } from "@nestjs/core";
+import { isAdminRole } from "../../common/constants/roles";
 
 /**
  * OWNERSHIP_KEY - 用於裝飾器標記需要擁有權檢查的 handler
  */
-export const OWNERSHIP_KEY = 'ownership';
+export const OWNERSHIP_KEY = "ownership";
 
 /**
  * OwnershipGuard - 統一資源擁有權檢查
@@ -73,11 +73,13 @@ export function checkResourceOwnership<T extends { createdBy?: string }>(
   entity: T,
   userId?: string,
   userRole?: string,
-  entityName = 'resource',
+  entityName = "resource",
 ): void {
   if (!userId || !userRole) return;
   if (isAdminRole(userRole)) return;
   if (entity.createdBy !== userId) {
-    throw new ForbiddenException(`You do not have access to this ${entityName}`);
+    throw new ForbiddenException(
+      `You do not have access to this ${entityName}`,
+    );
   }
 }

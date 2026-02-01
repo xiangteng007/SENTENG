@@ -5,15 +5,15 @@
  * 支援文字訊息、Flex Message、圖片等多種格式
  */
 
-import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import axios, { AxiosInstance } from 'axios';
+import { Injectable, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import axios, { AxiosInstance } from "axios";
 
 export interface LineMessageDto {
   /** 接收者 LINE User ID 或 Group ID */
   to: string;
   /** 訊息類型 */
-  type: 'text' | 'flex' | 'image';
+  type: "text" | "flex" | "image";
   /** 文字內容 (type=text 時使用) */
   text?: string;
   /** Flex Message 內容 (type=flex 時使用) */
@@ -30,7 +30,11 @@ export interface ProjectNotificationDto {
   /** 專案編號 */
   projectNumber: string;
   /** 通知類型 */
-  notificationType: 'progress_update' | 'milestone' | 'delay_alert' | 'completed';
+  notificationType:
+    | "progress_update"
+    | "milestone"
+    | "delay_alert"
+    | "completed";
   /** 進度百分比 */
   progressPercent?: number;
   /** 訊息內容 */
@@ -56,54 +60,61 @@ export class LineNotifyService {
   private readonly enabled: boolean;
 
   constructor(private readonly configService: ConfigService) {
-    this.channelAccessToken = this.configService.get('LINE_CHANNEL_ACCESS_TOKEN', '');
+    this.channelAccessToken = this.configService.get(
+      "LINE_CHANNEL_ACCESS_TOKEN",
+      "",
+    );
     this.enabled = !!this.channelAccessToken;
 
     this.apiClient = axios.create({
-      baseURL: 'https://api.line.me/v2/bot',
+      baseURL: "https://api.line.me/v2/bot",
       timeout: 10000,
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Authorization: `Bearer ${this.channelAccessToken}`,
       },
     });
 
     if (this.enabled) {
-      this.logger.log('LINE Notify service initialized');
+      this.logger.log("LINE Notify service initialized");
     } else {
-      this.logger.warn('LINE Notify service disabled - missing channel access token');
+      this.logger.warn(
+        "LINE Notify service disabled - missing channel access token",
+      );
     }
   }
 
   /**
    * 發送專案進度通知
    */
-  async sendProjectNotification(dto: ProjectNotificationDto): Promise<LineNotificationResult> {
+  async sendProjectNotification(
+    dto: ProjectNotificationDto,
+  ): Promise<LineNotificationResult> {
     if (!this.enabled) {
       return {
         success: false,
         sentCount: 0,
         failedCount: 0,
-        errors: ['LINE service not configured'],
+        errors: ["LINE service not configured"],
       };
     }
 
     const flexMessage = this.buildProjectFlexMessage(dto);
     const results = await Promise.allSettled(
-      dto.recipients.map(recipient =>
+      dto.recipients.map((recipient) =>
         this.sendMessage({
           to: recipient,
-          type: 'flex',
+          type: "flex",
           flexContent: flexMessage,
-        })
-      )
+        }),
+      ),
     );
 
-    const sentCount = results.filter(r => r.status === 'fulfilled').length;
-    const failedCount = results.filter(r => r.status === 'rejected').length;
+    const sentCount = results.filter((r) => r.status === "fulfilled").length;
+    const failedCount = results.filter((r) => r.status === "rejected").length;
     const errors = results
-      .filter(r => r.status === 'rejected')
-      .map((r: any) => r.reason?.message || 'Unknown error');
+      .filter((r) => r.status === "rejected")
+      .map((r: any) => r.reason?.message || "Unknown error");
 
     return {
       success: failedCount === 0,
@@ -117,7 +128,7 @@ export class LineNotifyService {
    * 發送文字訊息
    */
   async sendTextMessage(to: string, text: string): Promise<boolean> {
-    return this.sendMessage({ to, type: 'text', text });
+    return this.sendMessage({ to, type: "text", text });
   }
 
   /**
@@ -125,14 +136,14 @@ export class LineNotifyService {
    */
   async sendMessage(dto: LineMessageDto): Promise<boolean> {
     if (!this.enabled) {
-      this.logger.warn('LINE service not configured, skipping message');
+      this.logger.warn("LINE service not configured, skipping message");
       return false;
     }
 
     try {
       const messages = this.buildMessages(dto);
 
-      await this.apiClient.post('/message/push', {
+      await this.apiClient.post("/message/push", {
         to: dto.to,
         messages,
       });
@@ -140,7 +151,10 @@ export class LineNotifyService {
       this.logger.log(`Message sent to ${dto.to}`);
       return true;
     } catch (error: any) {
-      this.logger.error(`Failed to send LINE message: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to send LINE message: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
   }
@@ -152,10 +166,10 @@ export class LineNotifyService {
     if (!this.enabled) return false;
 
     try {
-      await this.apiClient.post('/message/broadcast', {
-        messages: [{ type: 'text', text }],
+      await this.apiClient.post("/message/broadcast", {
+        messages: [{ type: "text", text }],
       });
-      this.logger.log('Broadcast message sent');
+      this.logger.log("Broadcast message sent");
       return true;
     } catch (error: any) {
       this.logger.error(`Broadcast failed: ${error.message}`);
@@ -180,150 +194,151 @@ export class LineNotifyService {
 
   private buildMessages(dto: LineMessageDto): any[] {
     switch (dto.type) {
-      case 'text':
-        return [{ type: 'text', text: dto.text }];
+      case "text":
+        return [{ type: "text", text: dto.text }];
 
-      case 'flex':
+      case "flex":
         return [
           {
-            type: 'flex',
-            altText: '專案通知',
+            type: "flex",
+            altText: "專案通知",
             contents: dto.flexContent,
           },
         ];
 
-      case 'image':
+      case "image":
         return [
           {
-            type: 'image',
+            type: "image",
             originalContentUrl: dto.imageUrl,
             previewImageUrl: dto.previewImageUrl || dto.imageUrl,
           },
         ];
 
       default:
-        return [{ type: 'text', text: dto.text || '' }];
+        return [{ type: "text", text: dto.text || "" }];
     }
   }
 
   private buildProjectFlexMessage(dto: ProjectNotificationDto): any {
     const statusColors: Record<string, string> = {
-      progress_update: '#17C950',
-      milestone: '#1DB446',
-      delay_alert: '#DD4444',
-      completed: '#0066FF',
+      progress_update: "#17C950",
+      milestone: "#1DB446",
+      delay_alert: "#DD4444",
+      completed: "#0066FF",
     };
 
     const statusLabels: Record<string, string> = {
-      progress_update: '進度更新',
-      milestone: '里程碑達成',
-      delay_alert: '⚠️ 延遲警告',
-      completed: '🎉 專案完工',
+      progress_update: "進度更新",
+      milestone: "里程碑達成",
+      delay_alert: "⚠️ 延遲警告",
+      completed: "🎉 專案完工",
     };
 
     return {
-      type: 'bubble',
+      type: "bubble",
       hero: {
-        type: 'box',
-        layout: 'vertical',
+        type: "box",
+        layout: "vertical",
         contents: [
           {
-            type: 'text',
-            text: statusLabels[dto.notificationType] || '專案通知',
-            weight: 'bold',
-            size: 'xl',
-            color: '#ffffff',
+            type: "text",
+            text: statusLabels[dto.notificationType] || "專案通知",
+            weight: "bold",
+            size: "xl",
+            color: "#ffffff",
           },
         ],
-        backgroundColor: statusColors[dto.notificationType] || '#17C950',
-        paddingAll: '20px',
+        backgroundColor: statusColors[dto.notificationType] || "#17C950",
+        paddingAll: "20px",
       },
       body: {
-        type: 'box',
-        layout: 'vertical',
+        type: "box",
+        layout: "vertical",
         contents: [
           {
-            type: 'text',
+            type: "text",
             text: dto.projectName,
-            weight: 'bold',
-            size: 'lg',
+            weight: "bold",
+            size: "lg",
             wrap: true,
           },
           {
-            type: 'text',
+            type: "text",
             text: `專案編號: ${dto.projectNumber}`,
-            size: 'sm',
-            color: '#aaaaaa',
-            margin: 'md',
+            size: "sm",
+            color: "#aaaaaa",
+            margin: "md",
           },
           {
-            type: 'separator',
-            margin: 'lg',
+            type: "separator",
+            margin: "lg",
           },
           {
-            type: 'text',
+            type: "text",
             text: dto.message,
             wrap: true,
-            margin: 'lg',
+            margin: "lg",
           },
           ...(dto.progressPercent !== undefined
             ? [
                 {
-                  type: 'box',
-                  layout: 'vertical',
+                  type: "box",
+                  layout: "vertical",
                   contents: [
                     {
-                      type: 'box',
-                      layout: 'vertical',
+                      type: "box",
+                      layout: "vertical",
                       contents: [
                         {
-                          type: 'filler',
+                          type: "filler",
                         },
                       ],
                       width: `${dto.progressPercent}%`,
-                      backgroundColor: statusColors[dto.notificationType] || '#17C950',
-                      height: '8px',
+                      backgroundColor:
+                        statusColors[dto.notificationType] || "#17C950",
+                      height: "8px",
                     },
                   ],
-                  backgroundColor: '#E0E0E0',
-                  height: '8px',
-                  margin: 'lg',
-                  cornerRadius: '4px',
+                  backgroundColor: "#E0E0E0",
+                  height: "8px",
+                  margin: "lg",
+                  cornerRadius: "4px",
                 },
                 {
-                  type: 'text',
+                  type: "text",
                   text: `完成度: ${dto.progressPercent}%`,
-                  size: 'sm',
-                  color: '#888888',
-                  align: 'end',
-                  margin: 'sm',
+                  size: "sm",
+                  color: "#888888",
+                  align: "end",
+                  margin: "sm",
                 },
               ]
             : []),
           ...(dto.details
             ? [
                 {
-                  type: 'text',
+                  type: "text",
                   text: dto.details,
-                  size: 'sm',
-                  color: '#666666',
+                  size: "sm",
+                  color: "#666666",
                   wrap: true,
-                  margin: 'lg',
+                  margin: "lg",
                 },
               ]
             : []),
         ],
       },
       footer: {
-        type: 'box',
-        layout: 'vertical',
+        type: "box",
+        layout: "vertical",
         contents: [
           {
-            type: 'text',
+            type: "text",
             text: `森騰科技 ERP`,
-            size: 'xs',
-            color: '#aaaaaa',
-            align: 'center',
+            size: "xs",
+            color: "#aaaaaa",
+            align: "center",
           },
         ],
       },

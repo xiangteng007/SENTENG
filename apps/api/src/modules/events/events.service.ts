@@ -1,14 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Between, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
-import { Event } from './event.entity';
-import { CreateEventDto, UpdateEventDto, QueryEventsDto } from './event.dto';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository, Between, LessThanOrEqual, MoreThanOrEqual } from "typeorm";
+import { Event } from "./event.entity";
+import { CreateEventDto, UpdateEventDto, QueryEventsDto } from "./event.dto";
 
 @Injectable()
 export class EventsService {
   constructor(
     @InjectRepository(Event)
-    private readonly eventRepository: Repository<Event>
+    private readonly eventRepository: Repository<Event>,
   ) {}
 
   /**
@@ -19,7 +19,10 @@ export class EventsService {
 
     // 時間範圍篩選
     if (query.startDate && query.endDate) {
-      whereConditions.startTime = Between(new Date(query.startDate), new Date(query.endDate));
+      whereConditions.startTime = Between(
+        new Date(query.startDate),
+        new Date(query.endDate),
+      );
     } else if (query.startDate) {
       whereConditions.startTime = MoreThanOrEqual(new Date(query.startDate));
     } else if (query.endDate) {
@@ -43,8 +46,8 @@ export class EventsService {
 
     return this.eventRepository.find({
       where: whereConditions,
-      relations: ['project'],
-      order: { startTime: 'ASC' },
+      relations: ["project"],
+      order: { startTime: "ASC" },
     });
   }
 
@@ -54,7 +57,7 @@ export class EventsService {
   async findOne(id: string): Promise<Event> {
     const event = await this.eventRepository.findOne({
       where: { id },
-      relations: ['project'],
+      relations: ["project"],
     });
 
     if (!event) {
@@ -74,12 +77,14 @@ export class EventsService {
       startTime: new Date(dto.startTime),
       endTime: dto.endTime ? new Date(dto.endTime) : undefined,
       allDay: dto.allDay ?? false,
-      category: dto.category ?? 'general',
-      color: dto.color ?? '#3b82f6',
+      category: dto.category ?? "general",
+      color: dto.color ?? "#3b82f6",
       location: dto.location,
       projectId: dto.projectId,
       recurrenceRule: dto.recurrenceRule,
-      recurrenceEnd: dto.recurrenceEnd ? new Date(dto.recurrenceEnd) : undefined,
+      recurrenceEnd: dto.recurrenceEnd
+        ? new Date(dto.recurrenceEnd)
+        : undefined,
       reminderMinutes: dto.reminderMinutes ?? 30,
       createdBy: userId,
     };
@@ -91,7 +96,11 @@ export class EventsService {
   /**
    * 更新事件
    */
-  async update(id: string, dto: UpdateEventDto, userId?: string): Promise<Event> {
+  async update(
+    id: string,
+    dto: UpdateEventDto,
+    userId?: string,
+  ): Promise<Event> {
     const event = await this.findOne(id);
 
     const updateData: any = { ...dto, updatedBy: userId };
@@ -123,14 +132,14 @@ export class EventsService {
    * 標記事件為完成
    */
   async complete(id: string, userId?: string): Promise<Event> {
-    return this.update(id, { status: 'completed' }, userId);
+    return this.update(id, { status: "completed" }, userId);
   }
 
   /**
    * 取消事件
    */
   async cancel(id: string, userId?: string): Promise<Event> {
-    return this.update(id, { status: 'cancelled' }, userId);
+    return this.update(id, { status: "cancelled" }, userId);
   }
 
   /**
@@ -139,7 +148,7 @@ export class EventsService {
   async findByProject(projectId: string): Promise<Event[]> {
     return this.eventRepository.find({
       where: { projectId },
-      order: { startTime: 'ASC' },
+      order: { startTime: "ASC" },
     });
   }
 
@@ -156,10 +165,10 @@ export class EventsService {
     return this.eventRepository.find({
       where: {
         startTime: Between(today, tomorrow),
-        status: 'scheduled',
+        status: "scheduled",
       },
-      relations: ['project'],
-      order: { startTime: 'ASC' },
+      relations: ["project"],
+      order: { startTime: "ASC" },
     });
   }
 
@@ -174,10 +183,10 @@ export class EventsService {
     return this.eventRepository.find({
       where: {
         startTime: Between(now, future),
-        status: 'scheduled',
+        status: "scheduled",
       },
-      relations: ['project'],
-      order: { startTime: 'ASC' },
+      relations: ["project"],
+      order: { startTime: "ASC" },
     });
   }
 }

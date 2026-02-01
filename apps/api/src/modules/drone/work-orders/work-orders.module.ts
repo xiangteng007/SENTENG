@@ -1,10 +1,10 @@
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { WorkOrder } from './entities';
-import { WorkOrdersService } from './work-orders.service';
-import { WorkOrdersController } from './work-orders.controller';
+import { Module } from "@nestjs/common";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { JwtModule } from "@nestjs/jwt";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { WorkOrder } from "./entities";
+import { WorkOrdersService } from "./work-orders.service";
+import { WorkOrdersController } from "./work-orders.controller";
 
 @Module({
   imports: [
@@ -12,7 +12,7 @@ import { WorkOrdersController } from './work-orders.controller';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'),
+        secret: configService.get<string>("JWT_SECRET"),
       }),
       inject: [ConfigService],
     }),

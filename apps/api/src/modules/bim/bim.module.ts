@@ -1,6 +1,6 @@
-import { Module } from '@nestjs/common';
-import { BimModelsModule } from './models/bim-models.module';
-import { BimIssuesModule } from './issues/bim-issues.module';
+import { Module } from "@nestjs/common";
+import { BimModelsModule } from "./models/bim-models.module";
+import { BimIssuesModule } from "./issues/bim-issues.module";
 
 /**
  * BimModule

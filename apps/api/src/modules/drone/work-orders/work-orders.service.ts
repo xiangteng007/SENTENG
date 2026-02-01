@@ -1,8 +1,13 @@
-import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
-import { WorkOrder } from './entities';
-import { CreateWorkOrderDto, CompleteWorkOrderDto } from './dto/work-order.dto';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  Logger,
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository, DataSource } from "typeorm";
+import { WorkOrder } from "./entities";
+import { CreateWorkOrderDto, CompleteWorkOrderDto } from "./dto/work-order.dto";
 
 @Injectable()
 export class WorkOrdersService {
@@ -11,7 +16,7 @@ export class WorkOrdersService {
   constructor(
     @InjectRepository(WorkOrder)
     private readonly workOrderRepo: Repository<WorkOrder>,
-    private readonly dataSource: DataSource
+    private readonly dataSource: DataSource,
   ) {}
 
   async findAll(filters?: {
@@ -30,15 +35,15 @@ export class WorkOrdersService {
 
     return this.workOrderRepo.find({
       where,
-      relations: ['project', 'client', 'service', 'jobSite'],
-      order: { scheduledDate: 'DESC', createdAt: 'DESC' },
+      relations: ["project", "client", "service", "jobSite"],
+      order: { scheduledDate: "DESC", createdAt: "DESC" },
     });
   }
 
   async findById(id: string): Promise<WorkOrder> {
     const wo = await this.workOrderRepo.findOne({
       where: { id },
-      relations: ['project', 'client', 'service', 'jobSite', 'businessUnit'],
+      relations: ["project", "client", "service", "jobSite", "businessUnit"],
     });
     if (!wo) {
       throw new NotFoundException(`WorkOrder ${id} not found`);
@@ -49,8 +54,10 @@ export class WorkOrdersService {
   async create(dto: CreateWorkOrderDto, userId?: string): Promise<WorkOrder> {
     const wo = this.workOrderRepo.create({
       ...dto,
-      scheduledDate: dto.scheduledDate ? new Date(dto.scheduledDate) : undefined,
-      status: 'WO_DRAFT',
+      scheduledDate: dto.scheduledDate
+        ? new Date(dto.scheduledDate)
+        : undefined,
+      status: "WO_DRAFT",
       createdBy: userId,
     });
     return this.workOrderRepo.save(wo);
@@ -60,34 +67,40 @@ export class WorkOrdersService {
     id: string,
     scheduledDate: Date,
     timeStart?: string,
-    timeEnd?: string
+    timeEnd?: string,
   ): Promise<WorkOrder> {
     const wo = await this.findById(id);
-    if (!['WO_DRAFT'].includes(wo.status)) {
-      throw new BadRequestException(`Cannot schedule WorkOrder in status ${wo.status}`);
+    if (!["WO_DRAFT"].includes(wo.status)) {
+      throw new BadRequestException(
+        `Cannot schedule WorkOrder in status ${wo.status}`,
+      );
     }
     wo.scheduledDate = scheduledDate;
     if (timeStart !== undefined) wo.scheduledTimeStart = timeStart;
     if (timeEnd !== undefined) wo.scheduledTimeEnd = timeEnd;
-    wo.status = 'WO_SCHEDULED';
+    wo.status = "WO_SCHEDULED";
     return this.workOrderRepo.save(wo);
   }
 
   async dispatch(id: string): Promise<WorkOrder> {
     const wo = await this.findById(id);
-    if (!['WO_SCHEDULED'].includes(wo.status)) {
-      throw new BadRequestException(`Cannot dispatch WorkOrder in status ${wo.status}`);
+    if (!["WO_SCHEDULED"].includes(wo.status)) {
+      throw new BadRequestException(
+        `Cannot dispatch WorkOrder in status ${wo.status}`,
+      );
     }
-    wo.status = 'WO_DISPATCHED';
+    wo.status = "WO_DISPATCHED";
     return this.workOrderRepo.save(wo);
   }
 
   async startWork(id: string): Promise<WorkOrder> {
     const wo = await this.findById(id);
-    if (!['WO_DISPATCHED'].includes(wo.status)) {
-      throw new BadRequestException(`Cannot start WorkOrder in status ${wo.status}`);
+    if (!["WO_DISPATCHED"].includes(wo.status)) {
+      throw new BadRequestException(
+        `Cannot start WorkOrder in status ${wo.status}`,
+      );
     }
-    wo.status = 'WO_IN_PROGRESS';
+    wo.status = "WO_IN_PROGRESS";
     return this.workOrderRepo.save(wo);
   }
 
@@ -97,17 +110,23 @@ export class WorkOrdersService {
    * Note: Event-driven CostEntry/Invoice generation temporarily disabled
    *       to fix Cloud Run deployment. Will re-enable in future iteration.
    */
-  async complete(id: string, dto?: CompleteWorkOrderDto, userId?: string): Promise<WorkOrder> {
+  async complete(
+    id: string,
+    dto?: CompleteWorkOrderDto,
+    userId?: string,
+  ): Promise<WorkOrder> {
     const wo = await this.findById(id);
-    if (!['WO_IN_PROGRESS'].includes(wo.status)) {
-      throw new BadRequestException(`Cannot complete WorkOrder in status ${wo.status}`);
+    if (!["WO_IN_PROGRESS"].includes(wo.status)) {
+      throw new BadRequestException(
+        `Cannot complete WorkOrder in status ${wo.status}`,
+      );
     }
 
     const completedAt = new Date();
 
     // Use transaction to ensure data consistency
-    const result = await this.dataSource.transaction(async manager => {
-      wo.status = 'WO_COMPLETED';
+    const result = await this.dataSource.transaction(async (manager) => {
+      wo.status = "WO_COMPLETED";
       wo.completedAt = completedAt;
       if (dto?.notes) {
         wo.notes = wo.notes ? `${wo.notes}\n${dto.notes}` : dto.notes;
@@ -123,12 +142,14 @@ export class WorkOrdersService {
 
   async cancel(id: string, reason?: string): Promise<WorkOrder> {
     const wo = await this.findById(id);
-    if (wo.status === 'WO_COMPLETED') {
-      throw new BadRequestException('Cannot cancel completed WorkOrder');
+    if (wo.status === "WO_COMPLETED") {
+      throw new BadRequestException("Cannot cancel completed WorkOrder");
     }
-    wo.status = 'WO_CANCELLED';
+    wo.status = "WO_CANCELLED";
     if (reason) {
-      wo.notes = wo.notes ? `${wo.notes}\n[CANCELLED] ${reason}` : `[CANCELLED] ${reason}`;
+      wo.notes = wo.notes
+        ? `${wo.notes}\n[CANCELLED] ${reason}`
+        : `[CANCELLED] ${reason}`;
     }
     return this.workOrderRepo.save(wo);
   }
@@ -139,20 +160,20 @@ export class WorkOrdersService {
    */
   async generateWoNumber(): Promise<string> {
     const now = new Date();
-    const prefix = `WO-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}`;
+    const prefix = `WO-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}`;
 
     const lastWo = await this.workOrderRepo
-      .createQueryBuilder('wo')
-      .where('wo.woNumber LIKE :prefix', { prefix: `${prefix}%` })
-      .orderBy('wo.woNumber', 'DESC')
+      .createQueryBuilder("wo")
+      .where("wo.woNumber LIKE :prefix", { prefix: `${prefix}%` })
+      .orderBy("wo.woNumber", "DESC")
       .getOne();
 
     let nextSeq = 1;
     if (lastWo) {
-      const lastSeq = parseInt(lastWo.woNumber.split('-')[2], 10);
+      const lastSeq = parseInt(lastWo.woNumber.split("-")[2], 10);
       nextSeq = lastSeq + 1;
     }
 
-    return `${prefix}-${String(nextSeq).padStart(4, '0')}`;
+    return `${prefix}-${String(nextSeq).padStart(4, "0")}`;
   }
 }

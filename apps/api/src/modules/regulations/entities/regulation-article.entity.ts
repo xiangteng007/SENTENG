@@ -7,22 +7,22 @@ import {
   ManyToOne,
   JoinColumn,
   Index,
-} from 'typeorm';
-import { RegulationSource } from './regulation-source.entity';
+} from "typeorm";
+import { RegulationSource } from "./regulation-source.entity";
 
-@Entity('regulation_articles')
-@Index(['sourceId', 'articleNo'], { unique: true })
+@Entity("regulation_articles")
+@Index(["sourceId", "articleNo"], { unique: true })
 export class RegulationArticle {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column({ name: 'source_id' })
+  @Column({ name: "source_id" })
   sourceId: string;
 
-  @ManyToOne(() => RegulationSource, source => source.articles, {
-    onDelete: 'CASCADE',
+  @ManyToOne(() => RegulationSource, (source) => source.articles, {
+    onDelete: "CASCADE",
   })
-  @JoinColumn({ name: 'source_id' })
+  @JoinColumn({ name: "source_id" })
   source: RegulationSource;
 
   @Column({ length: 20 })
@@ -34,10 +34,10 @@ export class RegulationArticle {
   @Column({ length: 255, nullable: true })
   title: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: "text" })
   content: string;
 
-  @Column({ type: 'text', array: true, nullable: true })
+  @Column({ type: "text", array: true, nullable: true })
   keywords: string[];
 
   @Column({ length: 500, nullable: true })

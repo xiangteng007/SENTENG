@@ -61,36 +61,39 @@ export class ApiErrorResponse {
  */
 export const ERROR_CODES: Record<string, { en: string; zh: string }> = {
   // 通用錯誤
-  BAD_REQUEST: { en: 'Bad Request', zh: '請求格式錯誤' },
-  UNAUTHORIZED: { en: 'Unauthorized', zh: '未授權' },
-  FORBIDDEN: { en: 'Forbidden', zh: '權限不足' },
-  NOT_FOUND: { en: 'Not Found', zh: '資源不存在' },
-  CONFLICT: { en: 'Conflict', zh: '資源衝突' },
-  INTERNAL_ERROR: { en: 'Internal Server Error', zh: '系統錯誤' },
+  BAD_REQUEST: { en: "Bad Request", zh: "請求格式錯誤" },
+  UNAUTHORIZED: { en: "Unauthorized", zh: "未授權" },
+  FORBIDDEN: { en: "Forbidden", zh: "權限不足" },
+  NOT_FOUND: { en: "Not Found", zh: "資源不存在" },
+  CONFLICT: { en: "Conflict", zh: "資源衝突" },
+  INTERNAL_ERROR: { en: "Internal Server Error", zh: "系統錯誤" },
 
   // 驗證錯誤
-  VALIDATION_FAILED: { en: 'Validation Failed', zh: '驗證失敗' },
-  INVALID_FORMAT: { en: 'Invalid Format', zh: '格式不正確' },
-  REQUIRED_FIELD: { en: 'Required Field', zh: '必填欄位' },
+  VALIDATION_FAILED: { en: "Validation Failed", zh: "驗證失敗" },
+  INVALID_FORMAT: { en: "Invalid Format", zh: "格式不正確" },
+  REQUIRED_FIELD: { en: "Required Field", zh: "必填欄位" },
 
   // 認證錯誤
-  TOKEN_EXPIRED: { en: 'Token Expired', zh: '登入已過期' },
-  TOKEN_INVALID: { en: 'Token Invalid', zh: '無效的登入憑證' },
-  SESSION_EXPIRED: { en: 'Session Expired', zh: '會話已過期' },
+  TOKEN_EXPIRED: { en: "Token Expired", zh: "登入已過期" },
+  TOKEN_INVALID: { en: "Token Invalid", zh: "無效的登入憑證" },
+  SESSION_EXPIRED: { en: "Session Expired", zh: "會話已過期" },
 
   // 業務錯誤
-  ALREADY_EXISTS: { en: 'Already Exists', zh: '資料已存在' },
-  STATUS_INVALID: { en: 'Invalid Status', zh: '狀態不正確' },
-  OPERATION_FAILED: { en: 'Operation Failed', zh: '操作失敗' },
+  ALREADY_EXISTS: { en: "Already Exists", zh: "資料已存在" },
+  STATUS_INVALID: { en: "Invalid Status", zh: "狀態不正確" },
+  OPERATION_FAILED: { en: "Operation Failed", zh: "操作失敗" },
 };
 
 /**
  * 取得錯誤訊息（優先中文）
  */
-export function getErrorMessage(code: string, locale: 'zh' | 'en' = 'zh'): string {
+export function getErrorMessage(
+  code: string,
+  locale: "zh" | "en" = "zh",
+): string {
   const error = ERROR_CODES[code];
   if (!error) {
     return code;
   }
-  return locale === 'zh' ? error.zh : error.en;
+  return locale === "zh" ? error.zh : error.en;
 }

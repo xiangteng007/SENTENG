@@ -9,7 +9,7 @@ import {
   Max,
   IsArray,
   ValidateIf,
-} from 'class-validator';
+} from "class-validator";
 
 export class CreateClientDto {
   @IsString()
@@ -17,8 +17,8 @@ export class CreateClientDto {
   name: string;
 
   @IsOptional()
-  @IsIn(['INDIVIDUAL', 'COMPANY'])
-  type?: string = 'COMPANY';
+  @IsIn(["INDIVIDUAL", "COMPANY"])
+  type?: string = "COMPANY";
 
   @IsOptional()
   @IsString()
@@ -36,7 +36,7 @@ export class CreateClientDto {
   phone?: string;
 
   @IsOptional()
-  @ValidateIf(o => o.email !== '' && o.email !== null)
+  @ValidateIf((o) => o.email !== "" && o.email !== null)
   @IsEmail()
   email?: string;
 
@@ -45,8 +45,8 @@ export class CreateClientDto {
   address?: string;
 
   @IsOptional()
-  @IsIn(['TWD', 'CNY', 'USD'])
-  defaultCurrency?: string = 'TWD';
+  @IsIn(["TWD", "CNY", "USD"])
+  defaultCurrency?: string = "TWD";
 
   @IsOptional()
   @IsInt()
@@ -92,15 +92,15 @@ export class CreateClientDto {
 
   @IsOptional()
   @IsIn([
-    '洽談中',
-    '提案/報價',
-    '預售屋',
-    '工程中',
-    '已簽約',
-    '已完工',
-    '暫緩',
-    'ACTIVE',
-    'INACTIVE',
+    "洽談中",
+    "提案/報價",
+    "預售屋",
+    "工程中",
+    "已簽約",
+    "已完工",
+    "暫緩",
+    "ACTIVE",
+    "INACTIVE",
   ])
   status?: string;
 }
@@ -112,7 +112,7 @@ export class UpdateClientDto {
   name?: string;
 
   @IsOptional()
-  @IsIn(['INDIVIDUAL', 'COMPANY'])
+  @IsIn(["INDIVIDUAL", "COMPANY"])
   type?: string;
 
   @IsOptional()
@@ -131,7 +131,7 @@ export class UpdateClientDto {
   phone?: string;
 
   @IsOptional()
-  @ValidateIf(o => o.email !== '' && o.email !== null)
+  @ValidateIf((o) => o.email !== "" && o.email !== null)
   @IsEmail()
   email?: string;
 
@@ -140,7 +140,7 @@ export class UpdateClientDto {
   address?: string;
 
   @IsOptional()
-  @IsIn(['TWD', 'CNY', 'USD'])
+  @IsIn(["TWD", "CNY", "USD"])
   defaultCurrency?: string;
 
   @IsOptional()
@@ -185,15 +185,15 @@ export class UpdateClientDto {
 
   @IsOptional()
   @IsIn([
-    '洽談中',
-    '提案/報價',
-    '預售屋',
-    '工程中',
-    '已簽約',
-    '已完工',
-    '暫緩',
-    'ACTIVE',
-    'INACTIVE',
+    "洽談中",
+    "提案/報價",
+    "預售屋",
+    "工程中",
+    "已簽約",
+    "已完工",
+    "暫緩",
+    "ACTIVE",
+    "INACTIVE",
   ])
   status?: string;
 }

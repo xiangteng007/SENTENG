@@ -1,5 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 
 /**
  * 天氣 API 服務
@@ -32,7 +32,7 @@ export interface WeatherForecast {
 export interface ConstructionWeatherAdvice {
   date: string;
   canWork: boolean;
-  riskLevel: 'low' | 'medium' | 'high';
+  riskLevel: "low" | "medium" | "high";
   reason: string;
   recommendations: string[];
   affectedTasks: string[];
@@ -53,10 +53,11 @@ export interface WeatherImpactAssessment {
 export class WeatherService {
   private readonly logger = new Logger(WeatherService.name);
   private readonly apiKey: string;
-  private readonly apiHost = 'https://opendata.cwa.gov.tw/api/v1/rest/datastore';
+  private readonly apiHost =
+    "https://opendata.cwa.gov.tw/api/v1/rest/datastore";
 
   constructor(private readonly configService: ConfigService) {
-    this.apiKey = this.configService.get<string>('CWA_API_KEY') || '';
+    this.apiKey = this.configService.get<string>("CWA_API_KEY") || "";
   }
 
   /**
@@ -71,7 +72,7 @@ export class WeatherService {
    */
   async getForecast36Hours(locationName: string): Promise<WeatherForecast[]> {
     if (!this.isConfigured()) {
-      this.logger.warn('CWA API key not configured, returning mock data');
+      this.logger.warn("CWA API key not configured, returning mock data");
       return this.getMockForecast(locationName);
     }
 
@@ -81,7 +82,7 @@ export class WeatherService {
       const response = await fetch(url);
       const data = await response.json();
 
-      if (data.success !== 'true') {
+      if (data.success !== "true") {
         this.logger.error(`CWA API error: ${data.message}`);
         return this.getMockForecast(locationName);
       }
@@ -96,73 +97,87 @@ export class WeatherService {
   /**
    * 解析天氣預報資料
    */
-  private parseForecasts(data: Record<string, unknown>, locationName: string): WeatherForecast[] {
+  private parseForecasts(
+    data: Record<string, unknown>,
+    locationName: string,
+  ): WeatherForecast[] {
     const forecasts: WeatherForecast[] = [];
 
     try {
-      const records = data['records'] as Record<string, unknown> | undefined;
-      const locations = (records?.['location'] as unknown[]) || [];
+      const records = data["records"] as Record<string, unknown> | undefined;
+      const locations = (records?.["location"] as unknown[]) || [];
       const location = locations.find(
-        (loc: unknown) => (loc as Record<string, string>).locationName === locationName
+        (loc: unknown) =>
+          (loc as Record<string, string>).locationName === locationName,
       ) as Record<string, unknown> | undefined;
 
       if (!location) {
         return this.getMockForecast(locationName);
       }
 
-      const weatherElements = (location['weatherElement'] as unknown[]) || [];
+      const weatherElements = (location["weatherElement"] as unknown[]) || [];
 
       // 取得各氣象要素
       const wxElement = weatherElements.find(
-        (el: unknown) => (el as Record<string, string>).elementName === 'Wx'
+        (el: unknown) => (el as Record<string, string>).elementName === "Wx",
       ) as Record<string, unknown> | undefined;
       const popElement = weatherElements.find(
-        (el: unknown) => (el as Record<string, string>).elementName === 'PoP'
+        (el: unknown) => (el as Record<string, string>).elementName === "PoP",
       ) as Record<string, unknown> | undefined;
       const minTElement = weatherElements.find(
-        (el: unknown) => (el as Record<string, string>).elementName === 'MinT'
+        (el: unknown) => (el as Record<string, string>).elementName === "MinT",
       ) as Record<string, unknown> | undefined;
       const maxTElement = weatherElements.find(
-        (el: unknown) => (el as Record<string, string>).elementName === 'MaxT'
+        (el: unknown) => (el as Record<string, string>).elementName === "MaxT",
       ) as Record<string, unknown> | undefined;
       const ciElement = weatherElements.find(
-        (el: unknown) => (el as Record<string, string>).elementName === 'CI'
+        (el: unknown) => (el as Record<string, string>).elementName === "CI",
       ) as Record<string, unknown> | undefined;
 
-      const wxTimes = (wxElement?.['time'] as unknown[]) || [];
+      const wxTimes = (wxElement?.["time"] as unknown[]) || [];
 
       for (let i = 0; i < wxTimes.length; i++) {
         const time = wxTimes[i] as Record<string, unknown>;
-        const wxParam = (time['parameter'] as Record<string, string>) || {};
+        const wxParam = (time["parameter"] as Record<string, string>) || {};
 
-        const popTimes = (popElement?.['time'] as unknown[]) || [];
+        const popTimes = (popElement?.["time"] as unknown[]) || [];
         const popParam =
-          ((popTimes[i] as Record<string, unknown>)?.['parameter'] as Record<string, string>) || {};
+          ((popTimes[i] as Record<string, unknown>)?.["parameter"] as Record<
+            string,
+            string
+          >) || {};
 
-        const minTTimes = (minTElement?.['time'] as unknown[]) || [];
+        const minTTimes = (minTElement?.["time"] as unknown[]) || [];
         const minTParam =
-          ((minTTimes[i] as Record<string, unknown>)?.['parameter'] as Record<string, string>) ||
-          {};
+          ((minTTimes[i] as Record<string, unknown>)?.["parameter"] as Record<
+            string,
+            string
+          >) || {};
 
-        const maxTTimes = (maxTElement?.['time'] as unknown[]) || [];
+        const maxTTimes = (maxTElement?.["time"] as unknown[]) || [];
         const maxTParam =
-          ((maxTTimes[i] as Record<string, unknown>)?.['parameter'] as Record<string, string>) ||
-          {};
+          ((maxTTimes[i] as Record<string, unknown>)?.["parameter"] as Record<
+            string,
+            string
+          >) || {};
 
-        const ciTimes = (ciElement?.['time'] as unknown[]) || [];
+        const ciTimes = (ciElement?.["time"] as unknown[]) || [];
         const ciParam =
-          ((ciTimes[i] as Record<string, unknown>)?.['parameter'] as Record<string, string>) || {};
+          ((ciTimes[i] as Record<string, unknown>)?.["parameter"] as Record<
+            string,
+            string
+          >) || {};
 
         forecasts.push({
           locationName,
-          startTime: (time['startTime'] as string) || '',
-          endTime: (time['endTime'] as string) || '',
-          weather: wxParam['parameterName'] || '',
-          weatherCode: wxParam['parameterValue'] || '',
-          rainProbability: parseInt(popParam['parameterName'] || '0', 10),
-          minTemperature: parseInt(minTParam['parameterName'] || '0', 10),
-          maxTemperature: parseInt(maxTParam['parameterName'] || '0', 10),
-          comfort: ciParam['parameterName'] || '',
+          startTime: (time["startTime"] as string) || "",
+          endTime: (time["endTime"] as string) || "",
+          weather: wxParam["parameterName"] || "",
+          weatherCode: wxParam["parameterValue"] || "",
+          rainProbability: parseInt(popParam["parameterName"] || "0", 10),
+          minTemperature: parseInt(minTParam["parameterName"] || "0", 10),
+          maxTemperature: parseInt(maxTParam["parameterName"] || "0", 10),
+          comfort: ciParam["parameterName"] || "",
         });
       }
     } catch (e) {
@@ -175,64 +190,66 @@ export class WeatherService {
   /**
    * 產生施工建議
    */
-  analyzeConstructionImpact(forecasts: WeatherForecast[]): ConstructionWeatherAdvice[] {
-    return forecasts.map(f => {
+  analyzeConstructionImpact(
+    forecasts: WeatherForecast[],
+  ): ConstructionWeatherAdvice[] {
+    return forecasts.map((f) => {
       const rainRisk = f.rainProbability >= 70;
       const heatRisk = f.maxTemperature >= 35;
       const coldRisk = f.minTemperature <= 5;
-      const stormRisk = f.weather.includes('雷') || f.weather.includes('大雨');
+      const stormRisk = f.weather.includes("雷") || f.weather.includes("大雨");
 
       let canWork = true;
-      let riskLevel: 'low' | 'medium' | 'high' = 'low';
+      let riskLevel: "low" | "medium" | "high" = "low";
       const reasons: string[] = [];
       const recommendations: string[] = [];
       const affectedTasks: string[] = [];
 
       if (stormRisk) {
         canWork = false;
-        riskLevel = 'high';
+        riskLevel = "high";
         reasons.push(`雷雨天氣 (${f.weather})`);
-        recommendations.push('所有戶外作業應暫停');
-        recommendations.push('確保工地物料覆蓋防水');
-        affectedTasks.push('所有戶外工程', '吊掛作業', '鷹架工程');
+        recommendations.push("所有戶外作業應暫停");
+        recommendations.push("確保工地物料覆蓋防水");
+        affectedTasks.push("所有戶外工程", "吊掛作業", "鷹架工程");
       } else if (rainRisk) {
-        riskLevel = 'high';
+        riskLevel = "high";
         reasons.push(`高降雨機率 (${f.rainProbability}%)`);
-        recommendations.push('避免混凝土澆置');
-        recommendations.push('停止油漆粉刷作業');
-        affectedTasks.push('混凝土工程', '油漆工程', '防水工程');
+        recommendations.push("避免混凝土澆置");
+        recommendations.push("停止油漆粉刷作業");
+        affectedTasks.push("混凝土工程", "油漆工程", "防水工程");
       } else if (f.rainProbability >= 50) {
-        riskLevel = 'medium';
+        riskLevel = "medium";
         reasons.push(`中度降雨機率 (${f.rainProbability}%)`);
-        recommendations.push('備妥防雨措施');
+        recommendations.push("備妥防雨措施");
       }
 
       if (heatRisk) {
-        riskLevel = riskLevel === 'low' ? 'medium' : riskLevel;
+        riskLevel = riskLevel === "low" ? "medium" : riskLevel;
         reasons.push(`高溫 (${f.maxTemperature}°C)`);
-        recommendations.push('增加休息時間，避免中午作業');
-        recommendations.push('準備充足飲用水與遮陽設施');
-        affectedTasks.push('戶外工程');
+        recommendations.push("增加休息時間，避免中午作業");
+        recommendations.push("準備充足飲用水與遮陽設施");
+        affectedTasks.push("戶外工程");
       }
 
       if (coldRisk) {
-        riskLevel = riskLevel === 'low' ? 'medium' : riskLevel;
+        riskLevel = riskLevel === "low" ? "medium" : riskLevel;
         reasons.push(`低溫 (${f.minTemperature}°C)`);
-        recommendations.push('混凝土養護需加強保溫');
-        recommendations.push('油漆施作需注意固化時間');
-        affectedTasks.push('混凝土工程', '油漆工程');
+        recommendations.push("混凝土養護需加強保溫");
+        recommendations.push("油漆施作需注意固化時間");
+        affectedTasks.push("混凝土工程", "油漆工程");
       }
 
       if (reasons.length === 0) {
-        reasons.push('天氣適合施工');
-        recommendations.push('正常作業');
+        reasons.push("天氣適合施工");
+        recommendations.push("正常作業");
       }
 
       return {
-        date: f.startTime.split('T')[0],
+        date: f.startTime.split("T")[0],
         canWork,
         riskLevel,
-        reason: reasons.join('; '),
+        reason: reasons.join("; "),
         recommendations: [...new Set(recommendations)],
         affectedTasks: [...new Set(affectedTasks)],
       };
@@ -242,17 +259,23 @@ export class WeatherService {
   /**
    * 完整工期影響評估
    */
-  async assessWeatherImpact(locationName: string): Promise<WeatherImpactAssessment> {
+  async assessWeatherImpact(
+    locationName: string,
+  ): Promise<WeatherImpactAssessment> {
     const forecasts = await this.getForecast36Hours(locationName);
     const advice = this.analyzeConstructionImpact(forecasts);
 
-    const workableDays = advice.filter(a => a.canWork && a.riskLevel === 'low').length;
-    const riskyDays = advice.filter(a => a.riskLevel === 'medium').length;
-    const nonWorkableDays = advice.filter(a => !a.canWork).length;
+    const workableDays = advice.filter(
+      (a) => a.canWork && a.riskLevel === "low",
+    ).length;
+    const riskyDays = advice.filter((a) => a.riskLevel === "medium").length;
+    const nonWorkableDays = advice.filter((a) => !a.canWork).length;
 
     const recommendations: string[] = [];
     if (nonWorkableDays > 0) {
-      recommendations.push(`未來有 ${nonWorkableDays} 天不宜施工，建議調整工期`);
+      recommendations.push(
+        `未來有 ${nonWorkableDays} 天不宜施工，建議調整工期`,
+      );
     }
     if (riskyDays > 0) {
       recommendations.push(`${riskyDays} 天需注意氣候風險`);
@@ -263,7 +286,7 @@ export class WeatherService {
       period:
         forecasts.length > 0
           ? `${forecasts[0].startTime} ~ ${forecasts[forecasts.length - 1].endTime}`
-          : '',
+          : "",
       workableDays,
       riskyDays,
       nonWorkableDays,
@@ -283,34 +306,34 @@ export class WeatherService {
         locationName,
         startTime: now.toISOString(),
         endTime: new Date(now.getTime() + 12 * 3600000).toISOString(),
-        weather: '多雲',
-        weatherCode: '04',
+        weather: "多雲",
+        weatherCode: "04",
         rainProbability: 20,
         minTemperature: 18,
         maxTemperature: 26,
-        comfort: '舒適',
+        comfort: "舒適",
       },
       {
         locationName,
         startTime: new Date(now.getTime() + 12 * 3600000).toISOString(),
         endTime: new Date(now.getTime() + 24 * 3600000).toISOString(),
-        weather: '陰時多雲',
-        weatherCode: '05',
+        weather: "陰時多雲",
+        weatherCode: "05",
         rainProbability: 40,
         minTemperature: 17,
         maxTemperature: 23,
-        comfort: '舒適',
+        comfort: "舒適",
       },
       {
         locationName,
         startTime: new Date(now.getTime() + 24 * 3600000).toISOString(),
         endTime: new Date(now.getTime() + 36 * 3600000).toISOString(),
-        weather: '短暫陣雨',
-        weatherCode: '08',
+        weather: "短暫陣雨",
+        weatherCode: "08",
         rainProbability: 70,
         minTemperature: 16,
         maxTemperature: 21,
-        comfort: '舒適至悶熱',
+        comfort: "舒適至悶熱",
       },
     ];
   }

@@ -1,9 +1,13 @@
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { WbsItem, Schedule } from './wbs/entities';
-import { SiteDiary } from './diary/entities';
-import { QaqcIssue, SafetyInspection, SafetyIncident } from './safety/entities';
-import { Subcontractor, SubContract, SubPayment } from './subcontractors/entities';
+import { Module } from "@nestjs/common";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { WbsItem, Schedule } from "./wbs/entities";
+import { SiteDiary } from "./diary/entities";
+import { QaqcIssue, SafetyInspection, SafetyIncident } from "./safety/entities";
+import {
+  Subcontractor,
+  SubContract,
+  SubPayment,
+} from "./subcontractors/entities";
 
 /**
  * ConstructionModule

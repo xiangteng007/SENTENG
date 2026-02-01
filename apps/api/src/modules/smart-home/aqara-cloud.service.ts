@@ -1,5 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 
 /**
  * Aqara Cloud API 服務
@@ -67,12 +67,12 @@ export class AqaraCloudService {
 
   constructor(private readonly configService: ConfigService) {
     this.config = {
-      appId: this.configService.get<string>('AQARA_APP_ID') || '',
-      appKey: this.configService.get<string>('AQARA_APP_KEY') || '',
-      keyId: this.configService.get<string>('AQARA_KEY_ID') || '',
+      appId: this.configService.get<string>("AQARA_APP_ID") || "",
+      appKey: this.configService.get<string>("AQARA_APP_KEY") || "",
+      keyId: this.configService.get<string>("AQARA_KEY_ID") || "",
       apiHost:
-        this.configService.get<string>('AQARA_API_HOST') ||
-        'https://open-cn.aqara.com/v3.0/open/api',
+        this.configService.get<string>("AQARA_API_HOST") ||
+        "https://open-cn.aqara.com/v3.0/open/api",
     };
   }
 
@@ -86,16 +86,20 @@ export class AqaraCloudService {
   /**
    * 產生請求簽名 (HMAC-SHA256)
    */
-  private generateSign(nonce: string, timestamp: string, accessToken?: string): string {
-    const crypto = require('crypto');
+  private generateSign(
+    nonce: string,
+    timestamp: string,
+    accessToken?: string,
+  ): string {
+    const crypto = require("crypto");
     const signStr = accessToken
       ? `Accesstoken=${accessToken}&Appid=${this.config.appId}&Keyid=${this.config.keyId}&Nonce=${nonce}&Time=${timestamp}`
       : `Appid=${this.config.appId}&Keyid=${this.config.keyId}&Nonce=${nonce}&Time=${timestamp}`;
 
     return crypto
-      .createHmac('sha256', this.config.appKey.toLowerCase())
+      .createHmac("sha256", this.config.appKey.toLowerCase())
       .update(signStr.toLowerCase())
-      .digest('hex')
+      .digest("hex")
       .toLowerCase();
   }
 
@@ -105,21 +109,21 @@ export class AqaraCloudService {
   private async request<T>(
     intent: string,
     data: Record<string, unknown> = {},
-    requiresToken = true
+    requiresToken = true,
   ): Promise<AqaraApiResponse<T>> {
     if (!this.isConfigured()) {
       return {
         code: -1,
-        message: 'Aqara Cloud API not configured',
-        requestId: 'local',
+        message: "Aqara Cloud API not configured",
+        requestId: "local",
       };
     }
 
     if (requiresToken && !this.accessToken) {
       return {
         code: -2,
-        message: 'Access token required. Call authorize() first.',
-        requestId: 'local',
+        message: "Access token required. Call authorize() first.",
+        requestId: "local",
       };
     }
 
@@ -128,11 +132,11 @@ export class AqaraCloudService {
     const sign = this.generateSign(
       nonce,
       timestamp,
-      requiresToken ? this.accessToken || undefined : undefined
+      requiresToken ? this.accessToken || undefined : undefined,
     );
 
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       Appid: this.config.appId,
       Keyid: this.config.keyId,
       Nonce: nonce,
@@ -146,7 +150,7 @@ export class AqaraCloudService {
 
     try {
       const response = await fetch(this.config.apiHost, {
-        method: 'POST',
+        method: "POST",
         headers,
         body: JSON.stringify({ intent, data }),
       });
@@ -159,7 +163,7 @@ export class AqaraCloudService {
       return {
         code: -100,
         message: String(error),
-        requestId: 'error',
+        requestId: "error",
       };
     }
   }
@@ -167,20 +171,22 @@ export class AqaraCloudService {
   /**
    * 使用授權碼取得 Access Token
    */
-  async authorize(
-    authCode: string
-  ): Promise<{ accessToken: string; refreshToken: string; expiresIn: number } | null> {
+  async authorize(authCode: string): Promise<{
+    accessToken: string;
+    refreshToken: string;
+    expiresIn: number;
+  } | null> {
     const response = await this.request<{
       accessToken: string;
       refreshToken: string;
       expiresIn: number;
     }>(
-      'config.auth.getToken',
+      "config.auth.getToken",
       {
         authCode,
         accountType: 0,
       },
-      false
+      false,
     );
 
     if (response.code === 0 && response.result) {
@@ -210,7 +216,10 @@ export class AqaraCloudService {
       data.positionId = positionId;
     }
 
-    const response = await this.request<{ data: AqaraDevice[] }>('query.device.info', data);
+    const response = await this.request<{ data: AqaraDevice[] }>(
+      "query.device.info",
+      data,
+    );
 
     if (response.code === 0 && response.result) {
       return response.result.data || [];
@@ -224,9 +233,12 @@ export class AqaraCloudService {
    * 取得設備狀態
    */
   async getDeviceStatus(deviceId: string): Promise<AqaraDeviceStatus[]> {
-    const response = await this.request<{ data: AqaraDeviceStatus[] }>('query.resource.value', {
-      resources: [{ did: deviceId }],
-    });
+    const response = await this.request<{ data: AqaraDeviceStatus[] }>(
+      "query.resource.value",
+      {
+        resources: [{ did: deviceId }],
+      },
+    );
 
     if (response.code === 0 && response.result) {
       return response.result.data || [];
@@ -239,8 +251,12 @@ export class AqaraCloudService {
   /**
    * 控制設備
    */
-  async controlDevice(deviceId: string, resourceId: string, value: string): Promise<boolean> {
-    const response = await this.request<unknown>('write.resource.device', {
+  async controlDevice(
+    deviceId: string,
+    resourceId: string,
+    value: string,
+  ): Promise<boolean> {
+    const response = await this.request<unknown>("write.resource.device", {
       data: [
         {
           did: deviceId,
@@ -267,7 +283,10 @@ export class AqaraCloudService {
       data.positionId = positionId;
     }
 
-    const response = await this.request<{ data: AqaraScene[] }>('query.scene.info', data);
+    const response = await this.request<{ data: AqaraScene[] }>(
+      "query.scene.info",
+      data,
+    );
 
     if (response.code === 0 && response.result) {
       return response.result.data || [];
@@ -280,7 +299,7 @@ export class AqaraCloudService {
    * 執行場景
    */
   async runScene(sceneId: string): Promise<boolean> {
-    const response = await this.request<unknown>('config.scene.run', {
+    const response = await this.request<unknown>("config.scene.run", {
       sceneId,
     });
 
@@ -317,8 +336,9 @@ export class AqaraCloudService {
         summary.offlineDevices++;
       }
 
-      const modelType = device.model.split('.')[0] || 'unknown';
-      summary.devicesByType[modelType] = (summary.devicesByType[modelType] || 0) + 1;
+      const modelType = device.model.split(".")[0] || "unknown";
+      summary.devicesByType[modelType] =
+        (summary.devicesByType[modelType] || 0) + 1;
     }
 
     return summary;

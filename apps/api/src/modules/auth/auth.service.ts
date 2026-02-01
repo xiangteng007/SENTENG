@@ -1,12 +1,12 @@
-import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { UsersService } from '../users/users.service';
+import { Injectable } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+import { UsersService } from "../users/users.service";
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
-    private jwtService: JwtService
+    private jwtService: JwtService,
   ) {}
 
   async validateUser(email: string): Promise<any> {
@@ -14,7 +14,7 @@ export class AuthService {
     return user;
   }
 
-  async login(user: any, role: string = 'user') {
+  async login(user: any, role: string = "user") {
     // Include role in JWT payload for RBAC
     const payload = {
       sub: user.id,
@@ -55,7 +55,7 @@ export class AuthService {
     }
 
     // SECURITY: Use role from database, NOT from client request
-    const role = user.role || 'user';
+    const role = user.role || "user";
     return this.login(user, role);
   }
 }

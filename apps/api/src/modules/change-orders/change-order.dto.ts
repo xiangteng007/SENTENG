@@ -5,8 +5,8 @@ import {
   IsArray,
   ValidateNested,
   MaxLength,
-} from 'class-validator';
-import { Type } from 'class-transformer';
+} from "class-validator";
+import { Type } from "class-transformer";
 
 export class ChangeOrderItemDto {
   @IsOptional()
@@ -27,7 +27,7 @@ export class ChangeOrderItemDto {
 
   @IsOptional()
   @IsString()
-  unit?: string = '式';
+  unit?: string = "式";
 
   @IsNumber()
   quantity: number;

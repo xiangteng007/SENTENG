@@ -6,15 +6,15 @@
  * 支援建立、更新同步（避免重複建立）
  */
 
-import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { google, people_v1 } from 'googleapis';
-import { ClientContact } from './entities/client-contact.entity';
-import { VendorContact } from '../supply-chain/vendors/vendor-contact.entity';
-import { GoogleOAuthService } from './google-oauth.service';
-import { SyncResultDto, BulkSyncResultDto } from './dto';
-import { AuditService, AuditContext } from '../platform/audit/audit.service';
+import { Injectable, Logger } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { google, people_v1 } from "googleapis";
+import { ClientContact } from "../entities/client-contact.entity";
+import { VendorContact } from "../../supply-chain/vendors/vendor-contact.entity";
+import { GoogleOAuthService } from "./google-oauth.service";
+import { SyncResultDto, BulkSyncResultDto } from "../dto";
+import { AuditService, AuditContext } from "../../platform/audit/audit.service";
 
 @Injectable()
 export class ContactsSyncService {
@@ -26,7 +26,7 @@ export class ContactsSyncService {
     @InjectRepository(VendorContact)
     private readonly vendorContactRepo: Repository<VendorContact>,
     private readonly oauthService: GoogleOAuthService,
-    private readonly auditService: AuditService
+    private readonly auditService: AuditService,
   ) {}
 
   /**
@@ -35,21 +35,21 @@ export class ContactsSyncService {
   async syncClientContact(
     contactId: string,
     userId: string,
-    context?: AuditContext
+    context?: AuditContext,
   ): Promise<SyncResultDto> {
     const contact = await this.clientContactRepo.findOne({
       where: { id: contactId },
-      relations: ['client'],
+      relations: ["client"],
     });
     if (!contact) {
       return {
         success: false,
         syncedAt: new Date().toISOString(),
-        error: '聯絡人不存在',
+        error: "聯絡人不存在",
       };
     }
 
-    return this.syncContact(contact, 'client', userId, context);
+    return this.syncContact(contact, "client", userId, context);
   }
 
   /**
@@ -58,21 +58,21 @@ export class ContactsSyncService {
   async syncVendorContact(
     contactId: string,
     userId: string,
-    context?: AuditContext
+    context?: AuditContext,
   ): Promise<SyncResultDto> {
     const contact = await this.vendorContactRepo.findOne({
       where: { id: contactId },
-      relations: ['vendor'],
+      relations: ["vendor"],
     });
     if (!contact) {
       return {
         success: false,
         syncedAt: new Date().toISOString(),
-        error: '聯絡人不存在',
+        error: "聯絡人不存在",
       };
     }
 
-    return this.syncContact(contact, 'vendor', userId, context);
+    return this.syncContact(contact, "vendor", userId, context);
   }
 
   /**
@@ -81,14 +81,14 @@ export class ContactsSyncService {
   async syncAllClientContacts(
     clientId: string,
     userId: string,
-    context?: AuditContext
+    context?: AuditContext,
   ): Promise<BulkSyncResultDto> {
     const contacts = await this.clientContactRepo.find({
       where: { clientId, isActive: true },
-      relations: ['client'],
+      relations: ["client"],
     });
 
-    return this.syncMultiple(contacts, 'client', userId, context);
+    return this.syncMultiple(contacts, "client", userId, context);
   }
 
   /**
@@ -97,14 +97,14 @@ export class ContactsSyncService {
   async syncAllVendorContacts(
     vendorId: string,
     userId: string,
-    context?: AuditContext
+    context?: AuditContext,
   ): Promise<BulkSyncResultDto> {
     const contacts = await this.vendorContactRepo.find({
       where: { vendorId, isActive: true },
-      relations: ['vendor'],
+      relations: ["vendor"],
     });
 
-    return this.syncMultiple(contacts, 'vendor', userId, context);
+    return this.syncMultiple(contacts, "vendor", userId, context);
   }
 
   /**
@@ -113,16 +113,16 @@ export class ContactsSyncService {
    */
   private async syncContact(
     contact: ClientContact | VendorContact,
-    type: 'client' | 'vendor',
+    type: "client" | "vendor",
     userId: string,
-    context?: AuditContext
+    context?: AuditContext,
   ): Promise<SyncResultDto> {
     // 檢查是否可同步
-    if (contact.syncStatus === 'DISABLED') {
+    if (contact.syncStatus === "DISABLED") {
       return {
         success: false,
         syncedAt: new Date().toISOString(),
-        error: '此聯絡人已停用同步',
+        error: "此聯絡人已停用同步",
       };
     }
 
@@ -134,41 +134,45 @@ export class ContactsSyncService {
         return {
           success: false,
           syncedAt: new Date().toISOString(),
-          error: 'Google 帳號未連結',
+          error: "Google 帳號未連結",
         };
       }
 
       // 取得 OAuth2 Client 並建立 People API
       const auth = await this.oauthService.getOAuth2Client(userId);
-      const people = google.people({ version: 'v1', auth });
+      const people = google.people({ version: "v1", auth });
 
       // 決定組織名稱和群組標籤
       const orgName =
-        type === 'client'
-          ? (contact as ClientContact).client?.name || 'Unknown Client'
-          : (contact as VendorContact).vendor?.name || 'Unknown Vendor';
-      const groupLabel = account.contactsLabel || 'Senteng ERP';
+        type === "client"
+          ? (contact as ClientContact).client?.name || "Unknown Client"
+          : (contact as VendorContact).vendor?.name || "Unknown Vendor";
+      const groupLabel = account.contactsLabel || "Senteng ERP";
 
       // 建立 Google Contacts 資料
       const personData: people_v1.Schema$Person = {
         names: [{ givenName: contact.fullName }],
-        emailAddresses: contact.email ? [{ value: contact.email, type: 'work' }] : [],
+        emailAddresses: contact.email
+          ? [{ value: contact.email, type: "work" }]
+          : [],
         phoneNumbers: this.buildPhoneNumbers(contact),
         organizations: [
           {
             name: orgName,
-            title: contact.title || '',
-            department: contact.department || '',
+            title: contact.title || "",
+            department: contact.department || "",
           },
         ],
-        biographies: contact.note ? [{ value: contact.note, contentType: 'TEXT_PLAIN' }] : [],
+        biographies: contact.note
+          ? [{ value: contact.note, contentType: "TEXT_PLAIN" }]
+          : [],
         userDefined: [
-          { key: 'Source', value: 'Senteng ERP' },
+          { key: "Source", value: "Senteng ERP" },
           {
-            key: 'Type',
-            value: type === 'client' ? 'Client Contact' : 'Vendor Contact',
+            key: "Type",
+            value: type === "client" ? "Client Contact" : "Vendor Contact",
           },
-          { key: 'ERP ID', value: contact.id },
+          { key: "ERP ID", value: contact.id },
         ],
       };
 
@@ -176,12 +180,14 @@ export class ContactsSyncService {
 
       if (contact.googleResourceName) {
         // 更新現有聯絡人
-        this.logger.log(`Updating existing Google Contact: ${contact.googleResourceName}`);
+        this.logger.log(
+          `Updating existing Google Contact: ${contact.googleResourceName}`,
+        );
 
         // 先取得現有聯絡人的 etag
         const existingContact = await people.people.get({
           resourceName: contact.googleResourceName,
-          personFields: 'names,emailAddresses,phoneNumbers,organizations',
+          personFields: "names,emailAddresses,phoneNumbers,organizations",
         });
 
         personData.etag = existingContact.data.etag;
@@ -189,26 +195,27 @@ export class ContactsSyncService {
         const response = await people.people.updateContact({
           resourceName: contact.googleResourceName,
           updatePersonFields:
-            'names,emailAddresses,phoneNumbers,organizations,biographies,userDefined',
+            "names,emailAddresses,phoneNumbers,organizations,biographies,userDefined",
           requestBody: personData,
         });
-        googleResourceName = response.data.resourceName || contact.googleResourceName;
+        googleResourceName =
+          response.data.resourceName || contact.googleResourceName;
       } else {
         // 建立新聯絡人
         this.logger.log(`Creating new Google Contact for: ${contact.fullName}`);
         const response = await people.people.createContact({
           requestBody: personData,
         });
-        googleResourceName = response.data.resourceName || '';
+        googleResourceName = response.data.resourceName || "";
       }
 
       // 更新 ERP 聯絡人狀態
       contact.googleResourceName = googleResourceName;
-      contact.syncStatus = 'SYNCED';
+      contact.syncStatus = "SYNCED";
       contact.lastSyncedAt = new Date();
-      contact.lastSyncError = '';
+      contact.lastSyncError = "";
 
-      if (type === 'client') {
+      if (type === "client") {
         await this.clientContactRepo.save(contact as ClientContact);
       } else {
         await this.vendorContactRepo.save(contact as VendorContact);
@@ -216,14 +223,16 @@ export class ContactsSyncService {
 
       // Audit log
       await this.auditService.logUpdate(
-        type === 'client' ? 'ClientContact' : 'VendorContact',
+        type === "client" ? "ClientContact" : "VendorContact",
         contact.id,
         { syncStatus: previousStatus },
-        { syncStatus: 'SYNCED', googleResourceName },
-        context
+        { syncStatus: "SYNCED", googleResourceName },
+        context,
       );
 
-      this.logger.log(`Contact ${contact.id} synced to Google Contacts: ${googleResourceName}`);
+      this.logger.log(
+        `Contact ${contact.id} synced to Google Contacts: ${googleResourceName}`,
+      );
 
       return {
         success: true,
@@ -231,13 +240,13 @@ export class ContactsSyncService {
         googleId: googleResourceName,
       };
     } catch (error: any) {
-      const errorMessage = error.message || 'Unknown error';
+      const errorMessage = error.message || "Unknown error";
 
       // 更新失敗狀態
-      contact.syncStatus = 'FAILED';
+      contact.syncStatus = "FAILED";
       contact.lastSyncError = errorMessage;
 
-      if (type === 'client') {
+      if (type === "client") {
         await this.clientContactRepo.save(contact as ClientContact);
       } else {
         await this.vendorContactRepo.save(contact as VendorContact);
@@ -245,14 +254,16 @@ export class ContactsSyncService {
 
       // Audit log 失敗
       await this.auditService.logUpdate(
-        type === 'client' ? 'ClientContact' : 'VendorContact',
+        type === "client" ? "ClientContact" : "VendorContact",
         contact.id,
         { syncStatus: previousStatus },
-        { syncStatus: 'FAILED', lastSyncError: errorMessage },
-        context
+        { syncStatus: "FAILED", lastSyncError: errorMessage },
+        context,
       );
 
-      this.logger.error(`Contact sync failed for ${contact.id}: ${errorMessage}`);
+      this.logger.error(
+        `Contact sync failed for ${contact.id}: ${errorMessage}`,
+      );
 
       return {
         success: false,
@@ -267,9 +278,9 @@ export class ContactsSyncService {
    */
   private async syncMultiple(
     contacts: Array<ClientContact | VendorContact>,
-    type: 'client' | 'vendor',
+    type: "client" | "vendor",
     userId: string,
-    context?: AuditContext
+    context?: AuditContext,
   ): Promise<BulkSyncResultDto> {
     const result: BulkSyncResultDto = {
       total: contacts.length,
@@ -286,14 +297,16 @@ export class ContactsSyncService {
         result.failed++;
         result.errors.push({
           id: contact.id,
-          error: syncResult.error || 'Unknown error',
+          error: syncResult.error || "Unknown error",
         });
       }
     }
 
     await this.oauthService.updateLastSync(
       userId,
-      result.failed > 0 ? `${result.failed} contacts failed to sync` : undefined
+      result.failed > 0
+        ? `${result.failed} contacts failed to sync`
+        : undefined,
     );
 
     return result;
@@ -303,15 +316,15 @@ export class ContactsSyncService {
    * 建立電話號碼陣列
    */
   private buildPhoneNumbers(
-    contact: ClientContact | VendorContact
+    contact: ClientContact | VendorContact,
   ): people_v1.Schema$PhoneNumber[] {
     const phones: people_v1.Schema$PhoneNumber[] = [];
 
     if (contact.phone) {
-      phones.push({ value: contact.phone, type: 'work' });
+      phones.push({ value: contact.phone, type: "work" });
     }
     if (contact.mobile) {
-      phones.push({ value: contact.mobile, type: 'mobile' });
+      phones.push({ value: contact.mobile, type: "mobile" });
     }
 
     return phones;
@@ -323,26 +336,27 @@ export class ContactsSyncService {
   async deleteContactFromGoogle(
     contactId: string,
     userId: string,
-    context?: AuditContext
+    context?: AuditContext,
   ): Promise<SyncResultDto> {
     // Try to find in client contacts first
-    let contact: ClientContact | VendorContact | null = await this.clientContactRepo.findOne({
-      where: { id: contactId },
-    });
-    let type: 'client' | 'vendor' = 'client';
+    let contact: ClientContact | VendorContact | null =
+      await this.clientContactRepo.findOne({
+        where: { id: contactId },
+      });
+    let type: "client" | "vendor" = "client";
 
     if (!contact) {
       contact = await this.vendorContactRepo.findOne({
         where: { id: contactId },
       });
-      type = 'vendor';
+      type = "vendor";
     }
 
     if (!contact) {
       return {
         success: false,
         syncedAt: new Date().toISOString(),
-        error: '聯絡人不存在',
+        error: "聯絡人不存在",
       };
     }
 
@@ -356,7 +370,7 @@ export class ContactsSyncService {
 
     try {
       const auth = await this.oauthService.getOAuth2Client(userId);
-      const people = google.people({ version: 'v1', auth });
+      const people = google.people({ version: "v1", auth });
 
       this.logger.log(`Deleting Google Contact: ${contact.googleResourceName}`);
 
@@ -365,10 +379,10 @@ export class ContactsSyncService {
       });
 
       // Clear the googleResourceName from ERP contact
-      contact.googleResourceName = '';
-      contact.syncStatus = 'PENDING';
+      contact.googleResourceName = "";
+      contact.syncStatus = "PENDING";
 
-      if (type === 'client') {
+      if (type === "client") {
         await this.clientContactRepo.save(contact as ClientContact);
       } else {
         await this.vendorContactRepo.save(contact as VendorContact);
@@ -376,11 +390,11 @@ export class ContactsSyncService {
 
       // Audit log
       await this.auditService.logUpdate(
-        type === 'client' ? 'ClientContact' : 'VendorContact',
+        type === "client" ? "ClientContact" : "VendorContact",
         contact.id,
         { googleResourceName: contact.googleResourceName },
-        { googleResourceName: '', syncStatus: 'PENDING' },
-        context
+        { googleResourceName: "", syncStatus: "PENDING" },
+        context,
       );
 
       this.logger.log(`Contact ${contact.id} deleted from Google Contacts`);
@@ -390,8 +404,10 @@ export class ContactsSyncService {
         syncedAt: new Date().toISOString(),
       };
     } catch (error: any) {
-      const errorMessage = error.message || 'Unknown error';
-      this.logger.error(`Delete from Google failed for ${contact.id}: ${errorMessage}`);
+      const errorMessage = error.message || "Unknown error";
+      this.logger.error(
+        `Delete from Google failed for ${contact.id}: ${errorMessage}`,
+      );
 
       return {
         success: false,
@@ -407,7 +423,7 @@ export class ContactsSyncService {
   async deleteAllClientContactsFromGoogle(
     clientId: string,
     userId: string,
-    context?: AuditContext
+    context?: AuditContext,
   ): Promise<BulkSyncResultDto> {
     const contacts = await this.clientContactRepo.find({
       where: { clientId },
@@ -422,14 +438,18 @@ export class ContactsSyncService {
 
     for (const contact of contacts) {
       if (contact.googleResourceName) {
-        const deleteResult = await this.deleteContactFromGoogle(contact.id, userId, context);
+        const deleteResult = await this.deleteContactFromGoogle(
+          contact.id,
+          userId,
+          context,
+        );
         if (deleteResult.success) {
           result.synced++;
         } else {
           result.failed++;
           result.errors.push({
             id: contact.id,
-            error: deleteResult.error || 'Unknown error',
+            error: deleteResult.error || "Unknown error",
           });
         }
       }
@@ -444,7 +464,7 @@ export class ContactsSyncService {
   async deleteAllVendorContactsFromGoogle(
     vendorId: string,
     userId: string,
-    context?: AuditContext
+    context?: AuditContext,
   ): Promise<BulkSyncResultDto> {
     const contacts = await this.vendorContactRepo.find({
       where: { vendorId },
@@ -459,14 +479,18 @@ export class ContactsSyncService {
 
     for (const contact of contacts) {
       if (contact.googleResourceName) {
-        const deleteResult = await this.deleteContactFromGoogle(contact.id, userId, context);
+        const deleteResult = await this.deleteContactFromGoogle(
+          contact.id,
+          userId,
+          context,
+        );
         if (deleteResult.success) {
           result.synced++;
         } else {
           result.failed++;
           result.errors.push({
             id: contact.id,
-            error: deleteResult.error || 'Unknown error',
+            error: deleteResult.error || "Unknown error",
           });
         }
       }

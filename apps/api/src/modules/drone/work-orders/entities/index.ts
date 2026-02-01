@@ -1,1 +1,1 @@
-export * from './work-order.entity';
+export * from "./work-order.entity";

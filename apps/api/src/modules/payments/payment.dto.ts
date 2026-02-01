@@ -1,4 +1,11 @@
-import { IsString, IsNumber, IsOptional, IsDateString, IsIn, MaxLength } from 'class-validator';
+import {
+  IsString,
+  IsNumber,
+  IsOptional,
+  IsDateString,
+  IsIn,
+  MaxLength,
+} from "class-validator";
 
 export class CreatePaymentDto {
   @IsString()
@@ -43,8 +50,8 @@ export class CreateReceiptDto {
   amount: number;
 
   @IsOptional()
-  @IsIn(['BANK_TRANSFER', 'CHECK', 'CASH', 'OTHER'])
-  paymentMethod?: string = 'BANK_TRANSFER';
+  @IsIn(["BANK_TRANSFER", "CHECK", "CASH", "OTHER"])
+  paymentMethod?: string = "BANK_TRANSFER";
 
   @IsOptional()
   @IsString()

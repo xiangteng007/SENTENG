@@ -3,13 +3,13 @@
  * 匯出請求資料傳輸物件
  */
 
-import { IsOptional, IsString, IsEnum, IsNumber } from 'class-validator';
-import { Transform } from 'class-transformer';
-import { QueryInvoiceDto } from './invoice.dto';
+import { IsOptional, IsString, IsEnum, IsNumber } from "class-validator";
+import { Transform } from "class-transformer";
+import { QueryInvoiceDto } from "./invoice.dto";
 
 export enum ExportFormat {
-  XLSX = 'xlsx',
-  CSV = 'csv',
+  XLSX = "xlsx",
+  CSV = "csv",
 }
 
 /**

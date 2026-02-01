@@ -1,4 +1,4 @@
-import { SetMetadata } from '@nestjs/common';
+import { SetMetadata } from "@nestjs/common";
 
 /**
  * 快取裝飾器
@@ -13,8 +13,8 @@ import { SetMetadata } from '@nestjs/common';
  * }
  * ```
  */
-export const CACHE_KEY = 'cache:key';
-export const CACHE_TTL = 'cache:ttl';
+export const CACHE_KEY = "cache:key";
+export const CACHE_TTL = "cache:ttl";
 
 export interface CacheOptions {
   key?: string;
@@ -28,9 +28,13 @@ export interface CacheOptions {
 export const Cacheable = (
   prefix: string,
   ttlSeconds = 300,
-  keyGenerator?: (...args: unknown[]) => string
+  keyGenerator?: (...args: unknown[]) => string,
 ) => {
-  return (target: object, propertyKey: string, descriptor: PropertyDescriptor) => {
+  return (
+    target: object,
+    propertyKey: string,
+    descriptor: PropertyDescriptor,
+  ) => {
     SetMetadata(CACHE_KEY, prefix)(target, propertyKey, descriptor);
     SetMetadata(CACHE_TTL, ttlSeconds)(target, propertyKey, descriptor);
 
@@ -45,10 +49,13 @@ export const Cacheable = (
       // 嘗試從快取服務取得 (需要 inject CacheService)
       const cacheService = (this as Record<string, unknown>).cacheService;
 
-      if (cacheService && typeof (cacheService as Record<string, unknown>).get === 'function') {
-        const cached = await (cacheService as { get: (k: string) => Promise<unknown> }).get(
-          cacheKey
-        );
+      if (
+        cacheService &&
+        typeof (cacheService as Record<string, unknown>).get === "function"
+      ) {
+        const cached = await (
+          cacheService as { get: (k: string) => Promise<unknown> }
+        ).get(cacheKey);
         if (cached !== null) {
           return cached;
         }
@@ -58,12 +65,15 @@ export const Cacheable = (
       const result = await originalMethod.apply(this, args);
 
       // 存入快取
-      if (cacheService && typeof (cacheService as Record<string, unknown>).set === 'function') {
-        await (cacheService as { set: (k: string, v: unknown, t: number) => Promise<void> }).set(
-          cacheKey,
-          result,
-          ttlSeconds
-        );
+      if (
+        cacheService &&
+        typeof (cacheService as Record<string, unknown>).set === "function"
+      ) {
+        await (
+          cacheService as {
+            set: (k: string, v: unknown, t: number) => Promise<void>;
+          }
+        ).set(cacheKey, result, ttlSeconds);
       }
 
       return result;
@@ -77,7 +87,11 @@ export const Cacheable = (
  * 標記方法會使快取失效
  */
 export const CacheEvict = (pattern: string) => {
-  return (target: object, propertyKey: string, descriptor: PropertyDescriptor) => {
+  return (
+    target: object,
+    propertyKey: string,
+    descriptor: PropertyDescriptor,
+  ) => {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args: unknown[]) {
@@ -87,11 +101,12 @@ export const CacheEvict = (pattern: string) => {
       const cacheService = (this as Record<string, unknown>).cacheService;
       if (
         cacheService &&
-        typeof (cacheService as Record<string, unknown>).delByPattern === 'function'
+        typeof (cacheService as Record<string, unknown>).delByPattern ===
+          "function"
       ) {
-        await (cacheService as { delByPattern: (p: string) => Promise<number> }).delByPattern(
-          pattern
-        );
+        await (
+          cacheService as { delByPattern: (p: string) => Promise<number> }
+        ).delByPattern(pattern);
       }
 
       return result;

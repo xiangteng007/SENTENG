@@ -1,7 +1,15 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Procurement, ProcurementBid, ProcurementStatus } from './procurement.entity';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import {
+  Procurement,
+  ProcurementBid,
+  ProcurementStatus,
+} from "./procurement.entity";
 import {
   CreateProcurementDto,
   UpdateProcurementDto,
@@ -9,7 +17,7 @@ import {
   AwardBidDto,
   EvaluateBidDto,
   ProcurementQueryDto,
-} from './procurement.dto';
+} from "./procurement.dto";
 
 @Injectable()
 export class ProcurementsService {
@@ -17,27 +25,29 @@ export class ProcurementsService {
     @InjectRepository(Procurement)
     private procurementRepo: Repository<Procurement>,
     @InjectRepository(ProcurementBid)
-    private bidRepo: Repository<ProcurementBid>
+    private bidRepo: Repository<ProcurementBid>,
   ) {}
 
-  async findAll(query: ProcurementQueryDto): Promise<{ items: Procurement[]; total: number }> {
+  async findAll(
+    query: ProcurementQueryDto,
+  ): Promise<{ items: Procurement[]; total: number }> {
     const { page = 1, limit = 20, projectId, status, type, search } = query;
     const qb = this.procurementRepo
-      .createQueryBuilder('p')
-      .leftJoinAndSelect('p.bids', 'bids')
-      .leftJoinAndSelect('p.awardedVendor', 'awardedVendor');
+      .createQueryBuilder("p")
+      .leftJoinAndSelect("p.bids", "bids")
+      .leftJoinAndSelect("p.awardedVendor", "awardedVendor");
 
-    if (projectId) qb.andWhere('p.projectId = :projectId', { projectId });
-    if (status) qb.andWhere('p.status = :status', { status });
-    if (type) qb.andWhere('p.type = :type', { type });
+    if (projectId) qb.andWhere("p.projectId = :projectId", { projectId });
+    if (status) qb.andWhere("p.status = :status", { status });
+    if (type) qb.andWhere("p.type = :type", { type });
     if (search) {
-      qb.andWhere('(p.title ILIKE :search OR p.description ILIKE :search)', {
+      qb.andWhere("(p.title ILIKE :search OR p.description ILIKE :search)", {
         search: `%${search}%`,
       });
     }
 
     const [items, total] = await qb
-      .orderBy('p.createdAt', 'DESC')
+      .orderBy("p.createdAt", "DESC")
       .skip((page - 1) * limit)
       .take(limit)
       .getManyAndCount();
@@ -48,13 +58,17 @@ export class ProcurementsService {
   async findOne(id: string): Promise<Procurement> {
     const procurement = await this.procurementRepo.findOne({
       where: { id },
-      relations: ['project', 'bids', 'bids.vendor', 'awardedVendor'],
+      relations: ["project", "bids", "bids.vendor", "awardedVendor"],
     });
-    if (!procurement) throw new NotFoundException(`Procurement ${id} not found`);
+    if (!procurement)
+      throw new NotFoundException(`Procurement ${id} not found`);
     return procurement;
   }
 
-  async create(dto: CreateProcurementDto, userId?: string): Promise<Procurement> {
+  async create(
+    dto: CreateProcurementDto,
+    userId?: string,
+  ): Promise<Procurement> {
     const procurement = this.procurementRepo.create({
       ...dto,
       createdBy: userId,
@@ -71,21 +85,24 @@ export class ProcurementsService {
   async sendRfq(id: string, vendorIds: string[]): Promise<Procurement> {
     const procurement = await this.findOne(id);
     if (procurement.status !== ProcurementStatus.DRAFT) {
-      throw new BadRequestException('Can only send RFQ for draft procurements');
+      throw new BadRequestException("Can only send RFQ for draft procurements");
     }
     procurement.status = ProcurementStatus.RFQ_SENT;
     // In real implementation, send notifications to vendors
     return this.procurementRepo.save(procurement);
   }
 
-  async submitBid(procurementId: string, dto: SubmitBidDto): Promise<ProcurementBid> {
+  async submitBid(
+    procurementId: string,
+    dto: SubmitBidDto,
+  ): Promise<ProcurementBid> {
     const procurement = await this.findOne(procurementId);
     if (
       ![ProcurementStatus.RFQ_SENT, ProcurementStatus.BIDDING].includes(
-        procurement.status as ProcurementStatus
+        procurement.status as ProcurementStatus,
       )
     ) {
-      throw new BadRequestException('Procurement is not accepting bids');
+      throw new BadRequestException("Procurement is not accepting bids");
     }
 
     // Check if vendor already submitted
@@ -93,7 +110,7 @@ export class ProcurementsService {
       where: { procurementId, vendorId: dto.vendorId },
     });
     if (existing) {
-      throw new BadRequestException('Vendor has already submitted a bid');
+      throw new BadRequestException("Vendor has already submitted a bid");
     }
 
     const bid = this.bidRepo.create({
@@ -110,7 +127,10 @@ export class ProcurementsService {
     return this.bidRepo.save(bid);
   }
 
-  async evaluateBid(bidId: string, dto: EvaluateBidDto): Promise<ProcurementBid> {
+  async evaluateBid(
+    bidId: string,
+    dto: EvaluateBidDto,
+  ): Promise<ProcurementBid> {
     const bid = await this.bidRepo.findOne({ where: { id: bidId } });
     if (!bid) throw new NotFoundException(`Bid ${bidId} not found`);
 
@@ -119,16 +139,19 @@ export class ProcurementsService {
     return this.bidRepo.save(bid);
   }
 
-  async awardBid(procurementId: string, dto: AwardBidDto): Promise<Procurement> {
+  async awardBid(
+    procurementId: string,
+    dto: AwardBidDto,
+  ): Promise<Procurement> {
     const procurement = await this.findOne(procurementId);
     const bid = await this.bidRepo.findOne({
       where: { id: dto.bidId },
-      relations: ['vendor'],
+      relations: ["vendor"],
     });
 
     if (!bid) throw new NotFoundException(`Bid ${dto.bidId} not found`);
     if (bid.procurementId !== procurementId) {
-      throw new BadRequestException('Bid does not belong to this procurement');
+      throw new BadRequestException("Bid does not belong to this procurement");
     }
 
     // Mark bid as selected
@@ -148,8 +171,8 @@ export class ProcurementsService {
     const procurement = await this.findOne(procurementId);
     const bids = await this.bidRepo.find({
       where: { procurementId },
-      relations: ['vendor'],
-      order: { bidAmount: 'ASC' },
+      relations: ["vendor"],
+      order: { bidAmount: "ASC" },
     });
 
     return {
@@ -158,7 +181,7 @@ export class ProcurementsService {
         title: procurement.title,
         budgetAmount: procurement.budgetAmount,
       },
-      bids: bids.map(b => ({
+      bids: bids.map((b) => ({
         id: b.id,
         vendor: b.vendor?.name,
         vendorId: b.vendorId,
@@ -167,7 +190,11 @@ export class ProcurementsService {
         evaluationScore: b.evaluationScore,
         isSelected: b.isSelected,
         savingsPercent: procurement.budgetAmount
-          ? (((procurement.budgetAmount - b.bidAmount) / procurement.budgetAmount) * 100).toFixed(2)
+          ? (
+              ((procurement.budgetAmount - b.bidAmount) /
+                procurement.budgetAmount) *
+              100
+            ).toFixed(2)
           : null,
       })),
       lowestBid: bids[0] || null,

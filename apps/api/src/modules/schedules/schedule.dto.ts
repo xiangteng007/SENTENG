@@ -16,8 +16,8 @@ import {
   MaxLength,
   Min,
   Max,
-} from 'class-validator';
-import { Type, Transform } from 'class-transformer';
+} from "class-validator";
+import { Type, Transform } from "class-transformer";
 
 // ScheduleTask DTOs
 export class CreateScheduleTaskDto {
@@ -46,8 +46,8 @@ export class CreateScheduleTaskDto {
   progress?: number;
 
   @IsOptional()
-  @IsEnum(['task', 'milestone', 'project', 'phase'])
-  type?: 'task' | 'milestone' | 'project' | 'phase';
+  @IsEnum(["task", "milestone", "project", "phase"])
+  type?: "task" | "milestone" | "project" | "phase";
 
   @IsOptional()
   @IsUUID()
@@ -55,7 +55,7 @@ export class CreateScheduleTaskDto {
 
   @IsOptional()
   @IsArray()
-  @IsUUID('4', { each: true })
+  @IsUUID("4", { each: true })
   dependencies?: string[];
 
   @IsOptional()
@@ -110,8 +110,8 @@ export class UpdateScheduleTaskDto {
   progress?: number;
 
   @IsOptional()
-  @IsEnum(['pending', 'in_progress', 'completed', 'delayed', 'cancelled'])
-  status?: 'pending' | 'in_progress' | 'completed' | 'delayed' | 'cancelled';
+  @IsEnum(["pending", "in_progress", "completed", "delayed", "cancelled"])
+  status?: "pending" | "in_progress" | "completed" | "delayed" | "cancelled";
 
   @IsOptional()
   @IsUUID()
@@ -119,7 +119,7 @@ export class UpdateScheduleTaskDto {
 
   @IsOptional()
   @IsArray()
-  @IsUUID('4', { each: true })
+  @IsUUID("4", { each: true })
   dependencies?: string[];
 
   @IsOptional()
@@ -159,11 +159,11 @@ export class ScheduleTaskQueryDto {
   projectId: string;
 
   @IsOptional()
-  @IsEnum(['task', 'milestone', 'project', 'phase'])
+  @IsEnum(["task", "milestone", "project", "phase"])
   type?: string;
 
   @IsOptional()
-  @IsEnum(['pending', 'in_progress', 'completed', 'delayed', 'cancelled'])
+  @IsEnum(["pending", "in_progress", "completed", "delayed", "cancelled"])
   status?: string;
 
   @IsOptional()
@@ -172,7 +172,7 @@ export class ScheduleTaskQueryDto {
 
   @IsOptional()
   @IsBoolean()
-  @Transform(({ value }) => value === 'true' || value === true)
+  @Transform(({ value }) => value === "true" || value === true)
   rootOnly?: boolean;
 }
 
@@ -185,8 +185,17 @@ export class CreateDependencyDto {
   dependsOnTaskId: string;
 
   @IsOptional()
-  @IsEnum(['finish_to_start', 'start_to_start', 'finish_to_finish', 'start_to_finish'])
-  type?: 'finish_to_start' | 'start_to_start' | 'finish_to_finish' | 'start_to_finish';
+  @IsEnum([
+    "finish_to_start",
+    "start_to_start",
+    "finish_to_finish",
+    "start_to_finish",
+  ])
+  type?:
+    | "finish_to_start"
+    | "start_to_start"
+    | "finish_to_finish"
+    | "start_to_finish";
 
   @IsOptional()
   @IsNumber()
@@ -212,7 +221,7 @@ export class CreateMilestoneDto {
 
   @IsOptional()
   @IsBoolean()
-  @Transform(({ value }) => value === 'true' || value === true)
+  @Transform(({ value }) => value === "true" || value === true)
   isContractual?: boolean;
 
   @IsOptional()
@@ -241,12 +250,12 @@ export class UpdateMilestoneDto {
   actualDate?: string;
 
   @IsOptional()
-  @IsEnum(['pending', 'completed', 'missed'])
-  status?: 'pending' | 'completed' | 'missed';
+  @IsEnum(["pending", "completed", "missed"])
+  status?: "pending" | "completed" | "missed";
 
   @IsOptional()
   @IsBoolean()
-  @Transform(({ value }) => value === 'true' || value === true)
+  @Transform(({ value }) => value === "true" || value === true)
   isContractual?: boolean;
 
   @IsOptional()

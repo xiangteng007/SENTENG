@@ -6,10 +6,10 @@ import {
   IsNumber,
   MaxLength,
   IsEmail,
-} from 'class-validator';
-import { Transform } from 'class-transformer';
-import { VendorType, VendorStatus, PaymentTerms } from './vendor.entity';
-import { TradeCode, CapabilityLevel } from './vendor-trade.entity';
+} from "class-validator";
+import { Transform } from "class-transformer";
+import { VendorType, VendorStatus, PaymentTerms } from "./vendor.entity";
+import { TradeCode, CapabilityLevel } from "./vendor-trade.entity";
 
 export class CreateVendorDto {
   @IsString()

@@ -1,11 +1,13 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from "typeorm";
 
 export class CreateSmartHomeProducts1706700000000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Check if table already exists to avoid errors
-    const tableExists = await queryRunner.hasTable('smart_home_products');
+    const tableExists = await queryRunner.hasTable("smart_home_products");
     if (tableExists) {
-      console.log('smart_home_products table already exists, skipping creation');
+      console.log(
+        "smart_home_products table already exists, skipping creation",
+      );
       return;
     }
 
@@ -50,7 +52,7 @@ export class CreateSmartHomeProducts1706700000000 implements MigrationInterface 
             ON "smart_home_products" ("isActive")
         `);
 
-    console.log('smart_home_products table created successfully');
+    console.log("smart_home_products table created successfully");
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

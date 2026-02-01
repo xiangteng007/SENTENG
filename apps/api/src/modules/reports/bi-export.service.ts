@@ -5,10 +5,10 @@
  * 輸出 JSON/CSV 格式供 BI 工具消費
  */
 
-import { Injectable, Logger } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
-import { Response } from 'express';
+import { Injectable, Logger } from "@nestjs/common";
+import { InjectDataSource } from "@nestjs/typeorm";
+import { DataSource } from "typeorm";
+import { Response } from "express";
 
 export interface DateRangeDto {
   startDate: string;
@@ -66,7 +66,7 @@ export class BiExportService {
       FROM transactions
       WHERE transaction_type = 'INCOME'
     `,
-      [thisMonthStart, lastMonthStart, lastMonthEnd]
+      [thisMonthStart, lastMonthStart, lastMonthEnd],
     );
 
     // Project metrics
@@ -98,13 +98,15 @@ export class BiExportService {
         COUNT(CASE WHEN created_at >= $1 THEN 1 END) as new_this_month
       FROM clients
     `,
-      [thisMonthStart]
+      [thisMonthStart],
     );
 
     const thisMonthRevenue = parseFloat(revenueData?.this_month || 0);
     const lastMonthRevenue = parseFloat(revenueData?.last_month || 0);
     const growthRate =
-      lastMonthRevenue > 0 ? ((thisMonthRevenue - lastMonthRevenue) / lastMonthRevenue) * 100 : 0;
+      lastMonthRevenue > 0
+        ? ((thisMonthRevenue - lastMonthRevenue) / lastMonthRevenue) * 100
+        : 0;
 
     return {
       revenue: {
@@ -188,7 +190,7 @@ export class BiExportService {
       WHERE t.transaction_date BETWEEN $1 AND $2
       ORDER BY t.transaction_date DESC
     `,
-      [dateRange.startDate, dateRange.endDate]
+      [dateRange.startDate, dateRange.endDate],
     );
   }
 
@@ -247,35 +249,35 @@ export class BiExportService {
    */
   exportToCsv(data: any[], res: Response, filename: string): void {
     if (!data || data.length === 0) {
-      res.status(200).send('');
+      res.status(200).send("");
       return;
     }
 
     const headers = Object.keys(data[0]);
     const csvRows = [
-      headers.join(','),
-      ...data.map(row =>
+      headers.join(","),
+      ...data.map((row) =>
         headers
-          .map(header => {
+          .map((header) => {
             const value = row[header];
-            if (value === null || value === undefined) return '';
+            if (value === null || value === undefined) return "";
             const stringValue = String(value);
             // Escape quotes and wrap in quotes if contains comma
             if (
-              stringValue.includes(',') ||
+              stringValue.includes(",") ||
               stringValue.includes('"') ||
-              stringValue.includes('\n')
+              stringValue.includes("\n")
             ) {
               return `"${stringValue.replace(/"/g, '""')}"`;
             }
             return stringValue;
           })
-          .join(',')
+          .join(","),
       ),
     ];
 
-    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-    res.send('\ufeff' + csvRows.join('\n')); // BOM for Excel UTF-8 support
+    res.setHeader("Content-Type", "text/csv; charset=utf-8");
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+    res.send("\ufeff" + csvRows.join("\n")); // BOM for Excel UTF-8 support
   }
 }

@@ -11,13 +11,13 @@
  *
  * @see CustomersModule for the replacement implementation
  */
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Client } from './client.entity';
-import { ClientContact } from '../../integrations/entities/client-contact.entity';
-import { ClientsService } from './clients.service';
-import { ClientsController } from './clients.controller';
-import { ClientContactsController } from './client-contacts.controller';
+import { Module } from "@nestjs/common";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { Client } from "./client.entity";
+import { ClientContact } from "../../integrations/entities/client-contact.entity";
+import { ClientsService } from "./clients.service";
+import { ClientsController } from "./clients.controller";
+import { ClientContactsController } from "./client-contacts.controller";
 
 @Module({
   imports: [TypeOrmModule.forFeature([Client, ClientContact])],

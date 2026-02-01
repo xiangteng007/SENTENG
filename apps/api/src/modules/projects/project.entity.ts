@@ -9,81 +9,81 @@ import {
   OneToMany,
   JoinColumn,
   Index,
-} from 'typeorm';
-import { Client } from '../crm/clients/client.entity';
-import { ProjectPhase } from './project-phase.entity';
-import { ProjectVendor } from './project-vendor.entity';
-import { ProjectTask } from './project-task.entity';
+} from "typeorm";
+import { Client } from "../crm/clients/client.entity";
+import { ProjectPhase } from "./project-phase.entity";
+import { ProjectVendor } from "./project-vendor.entity";
+import { ProjectTask } from "./project-task.entity";
 
 export enum ProjectType {
-  INTERIOR = 'INTERIOR', // 室內設計
-  ARCHITECTURE = 'ARCHITECTURE', // 建築
-  CONSTRUCTION = 'CONSTRUCTION', // 營造
-  RENOVATION = 'RENOVATION', // 翻修
+  INTERIOR = "INTERIOR", // 室內設計
+  ARCHITECTURE = "ARCHITECTURE", // 建築
+  CONSTRUCTION = "CONSTRUCTION", // 營造
+  RENOVATION = "RENOVATION", // 翻修
 }
 
 export enum ProjectStatus {
-  PLANNING = 'PLANNING', // 規劃中
-  DESIGN = 'DESIGN', // 設計中
-  CONSTRUCTION = 'CONSTRUCTION', // 施工中
-  COMPLETED = 'COMPLETED', // 已完工
-  WARRANTY = 'WARRANTY', // 保固期
-  CLOSED = 'CLOSED', // 已結案
+  PLANNING = "PLANNING", // 規劃中
+  DESIGN = "DESIGN", // 設計中
+  CONSTRUCTION = "CONSTRUCTION", // 施工中
+  COMPLETED = "COMPLETED", // 已完工
+  WARRANTY = "WARRANTY", // 保固期
+  CLOSED = "CLOSED", // 已結案
 }
 
-@Entity('projects')
-@Index(['customerId'])
-@Index(['status'])
-@Index(['createdAt'])
+@Entity("projects")
+@Index(["customerId"])
+@Index(["status"])
+@Index(["createdAt"])
 export class Project {
   @PrimaryColumn({ length: 20 })
   id: string; // PRJ-YYYYMM-XXXX
 
-  @Column({ name: 'customer_id', length: 20 })
+  @Column({ name: "customer_id", length: 20 })
   customerId: string;
 
   @ManyToOne(() => Client)
-  @JoinColumn({ name: 'customer_id' })
+  @JoinColumn({ name: "customer_id" })
   client: Client;
 
   @Column({ length: 200 })
   name: string;
 
-  @Column({ name: 'project_type', length: 30, default: ProjectType.INTERIOR })
+  @Column({ name: "project_type", length: 30, default: ProjectType.INTERIOR })
   projectType: ProjectType;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: "text", nullable: true })
   address: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 7, nullable: true })
+  @Column({ type: "decimal", precision: 10, scale: 7, nullable: true })
   latitude: number;
 
-  @Column({ type: 'decimal', precision: 10, scale: 7, nullable: true })
+  @Column({ type: "decimal", precision: 10, scale: 7, nullable: true })
   longitude: number;
 
   @Column({ length: 30, default: ProjectStatus.PLANNING })
   status: ProjectStatus;
 
   // Dates
-  @Column({ name: 'start_date', type: 'date', nullable: true })
+  @Column({ name: "start_date", type: "date", nullable: true })
   startDate: Date;
 
-  @Column({ name: 'end_date', type: 'date', nullable: true })
+  @Column({ name: "end_date", type: "date", nullable: true })
   endDate: Date;
 
-  @Column({ name: 'actual_start', type: 'date', nullable: true })
+  @Column({ name: "actual_start", type: "date", nullable: true })
   actualStart: Date;
 
-  @Column({ name: 'actual_end', type: 'date', nullable: true })
+  @Column({ name: "actual_end", type: "date", nullable: true })
   actualEnd: Date;
 
   // Financials
-  @Column({ length: 3, default: 'TWD' })
+  @Column({ length: 3, default: "TWD" })
   currency: string;
 
   @Column({
-    name: 'contract_amount',
-    type: 'decimal',
+    name: "contract_amount",
+    type: "decimal",
     precision: 15,
     scale: 2,
     default: 0,
@@ -91,8 +91,8 @@ export class Project {
   contractAmount: number;
 
   @Column({
-    name: 'change_amount',
-    type: 'decimal',
+    name: "change_amount",
+    type: "decimal",
     precision: 15,
     scale: 2,
     default: 0,
@@ -100,8 +100,8 @@ export class Project {
   changeAmount: number;
 
   @Column({
-    name: 'current_amount',
-    type: 'decimal',
+    name: "current_amount",
+    type: "decimal",
     precision: 15,
     scale: 2,
     default: 0,
@@ -109,8 +109,8 @@ export class Project {
   currentAmount: number;
 
   @Column({
-    name: 'cost_budget',
-    type: 'decimal',
+    name: "cost_budget",
+    type: "decimal",
     precision: 15,
     scale: 2,
     default: 0,
@@ -118,8 +118,8 @@ export class Project {
   costBudget: number;
 
   @Column({
-    name: 'cost_actual',
-    type: 'decimal',
+    name: "cost_actual",
+    type: "decimal",
     precision: 15,
     scale: 2,
     default: 0,
@@ -127,39 +127,39 @@ export class Project {
   costActual: number;
 
   // Team
-  @Column({ name: 'pm_user_id', length: 20, nullable: true })
+  @Column({ name: "pm_user_id", length: 20, nullable: true })
   pmUserId: string;
 
   // Documents
-  @Column({ name: 'drive_folder', length: 500, nullable: true })
+  @Column({ name: "drive_folder", length: 500, nullable: true })
   driveFolder: string;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: "text", nullable: true })
   notes: string;
 
   // Relations
-  @OneToMany(() => ProjectPhase, phase => phase.project, { cascade: true })
+  @OneToMany(() => ProjectPhase, (phase) => phase.project, { cascade: true })
   phases: ProjectPhase[];
 
-  @OneToMany(() => ProjectVendor, pv => pv.project, { cascade: true })
+  @OneToMany(() => ProjectVendor, (pv) => pv.project, { cascade: true })
   projectVendors: ProjectVendor[];
 
-  @OneToMany(() => ProjectTask, task => task.project, { cascade: true })
+  @OneToMany(() => ProjectTask, (task) => task.project, { cascade: true })
   tasks: ProjectTask[];
 
   // Audit
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
-  @Column({ name: 'created_by', length: 20, nullable: true })
+  @Column({ name: "created_by", length: 20, nullable: true })
   createdBy: string;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: "updated_at" })
   updatedAt: Date;
 
-  @Column({ name: 'updated_by', type: 'varchar', length: 20, nullable: true })
+  @Column({ name: "updated_by", type: "varchar", length: 20, nullable: true })
   updatedBy: string | null;
 
-  @DeleteDateColumn({ name: 'deleted_at' })
+  @DeleteDateColumn({ name: "deleted_at" })
   deletedAt: Date;
 }

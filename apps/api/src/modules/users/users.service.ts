@@ -1,14 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like } from 'typeorm';
-import { User } from './user.entity';
-import { CreateUserDto, UpdateUserDto, ListUsersQueryDto } from './user.dto';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository, Like } from "typeorm";
+import { User } from "./user.entity";
+import { CreateUserDto, UpdateUserDto, ListUsersQueryDto } from "./user.dto";
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private usersRepository: Repository<User>
+    private usersRepository: Repository<User>,
   ) {}
 
   async findAll(query?: ListUsersQueryDto): Promise<User[]> {
@@ -19,7 +19,7 @@ export class UsersService {
 
     return this.usersRepository.find({
       where: Object.keys(where).length > 0 ? where : { isActive: true },
-      order: { name: 'ASC' },
+      order: { name: "ASC" },
     });
   }
 
@@ -63,6 +63,6 @@ export class UsersService {
 
   private async generateId(): Promise<string> {
     const count = await this.usersRepository.count();
-    return `USR-${String(count + 1).padStart(4, '0')}`;
+    return `USR-${String(count + 1).padStart(4, "0")}`;
   }
 }

@@ -1,10 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like } from 'typeorm';
-import { Client } from './client.entity';
-import { CreateClientDto, UpdateClientDto } from './client.dto';
-import { isAdminRole } from '../../../common/constants/roles';
-import { IdGeneratorService, checkResourceOwnership } from '../../../core';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository, Like, FindOptionsWhere } from "typeorm";
+import { Client } from "./client.entity";
+import { CreateClientDto, UpdateClientDto } from "./client.dto";
+import { isAdminRole } from "../../../common/constants/roles";
+import { IdGeneratorService, checkResourceOwnership } from "../../../core";
 
 @Injectable()
 export class ClientsService {
@@ -22,11 +22,11 @@ export class ClientsService {
       search?: string;
     },
     userId?: string,
-    userRole?: string
+    userRole?: string,
   ): Promise<{ items: Client[]; total: number }> {
     const { page = 1, limit = 20, status, search } = options;
 
-    const where: any = {};
+    const where: FindOptionsWhere<Client> = {};
     if (status) where.status = status;
     if (search) {
       where.name = Like(`%${search}%`);
@@ -41,23 +41,27 @@ export class ClientsService {
       where,
       skip: (page - 1) * limit,
       take: limit,
-      order: { createdAt: 'DESC' },
+      order: { createdAt: "DESC" },
     });
 
     return { items, total };
   }
 
-  async findOne(id: string, userId?: string, userRole?: string): Promise<Client> {
+  async findOne(
+    id: string,
+    userId?: string,
+    userRole?: string,
+  ): Promise<Client> {
     const client = await this.clientsRepository.findOne({ where: { id } });
     if (!client) {
       throw new NotFoundException(`Client ${id} not found`);
     }
-    checkResourceOwnership(client, userId, userRole, 'client');
+    checkResourceOwnership(client, userId, userRole, "client");
     return client;
   }
 
   async create(dto: CreateClientDto, userId?: string): Promise<Client> {
-    const id = await this.idGenerator.generateForTable('clients', 'CLT');
+    const id = await this.idGenerator.generateForTable("clients", "CLT");
     const client = this.clientsRepository.create({
       ...dto,
       id,
@@ -70,7 +74,7 @@ export class ClientsService {
     id: string,
     dto: UpdateClientDto,
     userId?: string,
-    userRole?: string
+    userRole?: string,
   ): Promise<Client> {
     const client = await this.findOne(id, userId, userRole);
     Object.assign(client, dto, { updatedBy: userId });
@@ -88,15 +92,15 @@ export class ClientsService {
    * Export clients to Excel/CSV
    */
   async exportToExcel(
-    options: { status?: string; search?: string; format?: 'xlsx' | 'csv' },
+    options: { status?: string; search?: string; format?: "xlsx" | "csv" },
     userId?: string,
-    userRole?: string
+    userRole?: string,
   ): Promise<Buffer> {
-    const ExcelJS = await import('exceljs');
-    const { status, search, format = 'xlsx' } = options;
+    const ExcelJS = await import("exceljs");
+    const { status, search, format = "xlsx" } = options;
 
     // Get all clients matching filters (no pagination for export)
-    const where: any = {};
+    const where: FindOptionsWhere<Client> = {};
     if (status) where.status = status;
     if (search) where.name = Like(`%${search}%`);
     if (userId && userRole && !isAdminRole(userRole)) {
@@ -105,22 +109,22 @@ export class ClientsService {
 
     const clients = await this.clientsRepository.find({
       where,
-      order: { createdAt: 'DESC' },
+      order: { createdAt: "DESC" },
     });
 
     const workbook = new ExcelJS.Workbook();
-    const sheet = workbook.addWorksheet('Clients');
+    const sheet = workbook.addWorksheet("Clients");
 
     // Define columns
     sheet.columns = [
-      { header: '客戶編號', key: 'id', width: 20 },
-      { header: '客戶名稱', key: 'name', width: 30 },
-      { header: '聯絡人', key: 'contactPerson', width: 20 },
-      { header: '電話', key: 'phone', width: 15 },
-      { header: '電子郵件', key: 'email', width: 30 },
-      { header: '地址', key: 'address', width: 40 },
-      { header: '狀態', key: 'status', width: 10 },
-      { header: '建立日期', key: 'createdAt', width: 15 },
+      { header: "客戶編號", key: "id", width: 20 },
+      { header: "客戶名稱", key: "name", width: 30 },
+      { header: "聯絡人", key: "contactPerson", width: 20 },
+      { header: "電話", key: "phone", width: 15 },
+      { header: "電子郵件", key: "email", width: 30 },
+      { header: "地址", key: "address", width: 40 },
+      { header: "狀態", key: "status", width: 10 },
+      { header: "建立日期", key: "createdAt", width: 15 },
     ];
 
     // Add data rows
@@ -128,24 +132,26 @@ export class ClientsService {
       sheet.addRow({
         id: client.id,
         name: client.name,
-        contactPerson: client.contactName || '',
-        phone: client.phone || '',
-        email: client.email || '',
-        address: client.address || '',
+        contactPerson: client.contactName || "",
+        phone: client.phone || "",
+        email: client.email || "",
+        address: client.address || "",
         status: client.status,
-        createdAt: client.createdAt ? new Date(client.createdAt).toLocaleDateString('zh-TW') : '',
+        createdAt: client.createdAt
+          ? new Date(client.createdAt).toLocaleDateString("zh-TW")
+          : "",
       });
     }
 
     // Style header row
     sheet.getRow(1).font = { bold: true };
     sheet.getRow(1).fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: 'FFE0E0E0' },
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "FFE0E0E0" },
     };
 
-    if (format === 'csv') {
+    if (format === "csv") {
       return Buffer.from(await workbook.csv.writeBuffer());
     }
     return Buffer.from(await workbook.xlsx.writeBuffer());

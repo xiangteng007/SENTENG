@@ -1,11 +1,16 @@
 /**
  * Integrations Module Index
+ *
+ * Re-exports from subdirectories:
+ * - google/: Google Workspace services
+ * - taiwan/: Taiwan government/industry integrations
+ * - banking/: Banking and accounting services
  */
 
-export * from './integrations.module';
-export * from './integrations.controller';
-export * from './google-oauth.service';
-export * from './calendar-sync.service';
-export * from './contacts-sync.service';
-export * from './entities';
-export * from './dto';
+export * from "./integrations.module";
+export * from "./integrations.controller";
+export * from "./google";
+export * from "./taiwan";
+export * from "./banking";
+export * from "./entities";
+export * from "./dto";

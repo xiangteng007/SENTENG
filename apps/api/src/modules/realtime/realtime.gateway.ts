@@ -13,18 +13,18 @@ import {
   SubscribeMessage,
   MessageBody,
   ConnectedSocket,
-} from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
-import { Logger, UseGuards } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+} from "@nestjs/websockets";
+import { Server, Socket } from "socket.io";
+import { Logger, UseGuards } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
 
 // Event types for real-time updates
 export enum RealtimeEvent {
-  SYNC_STATUS = 'sync:status',
-  SYNC_COMPLETE = 'sync:complete',
-  SYNC_ERROR = 'sync:error',
-  DATA_UPDATE = 'data:update',
-  NOTIFICATION = 'notification',
+  SYNC_STATUS = "sync:status",
+  SYNC_COMPLETE = "sync:complete",
+  SYNC_ERROR = "sync:error",
+  DATA_UPDATE = "data:update",
+  NOTIFICATION = "notification",
 }
 
 export interface RealtimePayload {
@@ -38,17 +38,20 @@ export interface RealtimePayload {
 
 @WebSocketGateway({
   cors: {
-    origin: '*',
+    origin: "*",
     credentials: true,
   },
-  namespace: '/realtime',
+  namespace: "/realtime",
 })
-export class RealtimeGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class RealtimeGateway
+  implements OnGatewayConnection, OnGatewayDisconnect
+{
   @WebSocketServer()
   server: Server;
 
   private readonly logger = new Logger(RealtimeGateway.name);
-  private connectedClients: Map<string, { userId: string; socket: Socket }> = new Map();
+  private connectedClients: Map<string, { userId: string; socket: Socket }> =
+    new Map();
 
   constructor(private readonly jwtService: JwtService) {}
 
@@ -58,7 +61,8 @@ export class RealtimeGateway implements OnGatewayConnection, OnGatewayDisconnect
   async handleConnection(client: Socket) {
     try {
       // Extract token from handshake auth or query
-      const token = client.handshake.auth?.token || client.handshake.query?.token;
+      const token =
+        client.handshake.auth?.token || client.handshake.query?.token;
 
       if (token) {
         const payload = this.jwtService.verify(token as string);
@@ -84,7 +88,9 @@ export class RealtimeGateway implements OnGatewayConnection, OnGatewayDisconnect
   handleDisconnect(client: Socket) {
     const clientInfo = this.connectedClients.get(client.id);
     if (clientInfo) {
-      this.logger.log(`Client disconnected: ${client.id} (User: ${clientInfo.userId})`);
+      this.logger.log(
+        `Client disconnected: ${client.id} (User: ${clientInfo.userId})`,
+      );
       this.connectedClients.delete(client.id);
     }
   }
@@ -92,12 +98,14 @@ export class RealtimeGateway implements OnGatewayConnection, OnGatewayDisconnect
   /**
    * Subscribe to entity updates
    */
-  @SubscribeMessage('subscribe')
+  @SubscribeMessage("subscribe")
   handleSubscribe(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { entityType: string; entityId?: string }
+    @MessageBody() data: { entityType: string; entityId?: string },
   ) {
-    const room = data.entityId ? `${data.entityType}:${data.entityId}` : `${data.entityType}:all`;
+    const room = data.entityId
+      ? `${data.entityType}:${data.entityId}`
+      : `${data.entityType}:all`;
     client.join(room);
     this.logger.debug(`Client ${client.id} subscribed to ${room}`);
     return { success: true, room };
@@ -106,12 +114,14 @@ export class RealtimeGateway implements OnGatewayConnection, OnGatewayDisconnect
   /**
    * Unsubscribe from entity updates
    */
-  @SubscribeMessage('unsubscribe')
+  @SubscribeMessage("unsubscribe")
   handleUnsubscribe(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { entityType: string; entityId?: string }
+    @MessageBody() data: { entityType: string; entityId?: string },
   ) {
-    const room = data.entityId ? `${data.entityType}:${data.entityId}` : `${data.entityType}:all`;
+    const room = data.entityId
+      ? `${data.entityType}:${data.entityId}`
+      : `${data.entityType}:all`;
     client.leave(room);
     this.logger.debug(`Client ${client.id} unsubscribed from ${room}`);
     return { success: true };
@@ -123,11 +133,14 @@ export class RealtimeGateway implements OnGatewayConnection, OnGatewayDisconnect
   broadcastSyncStatus(
     entityType: string,
     entityId: string,
-    status: 'SYNCING' | 'SYNCED' | 'FAILED',
-    error?: string
+    status: "SYNCING" | "SYNCED" | "FAILED",
+    error?: string,
   ) {
     const payload: RealtimePayload = {
-      event: status === 'FAILED' ? RealtimeEvent.SYNC_ERROR : RealtimeEvent.SYNC_STATUS,
+      event:
+        status === "FAILED"
+          ? RealtimeEvent.SYNC_ERROR
+          : RealtimeEvent.SYNC_STATUS,
       entityType,
       entityId,
       data: { status, error },
@@ -139,7 +152,9 @@ export class RealtimeGateway implements OnGatewayConnection, OnGatewayDisconnect
     // Also broadcast to "all" room for list views
     this.server.to(`${entityType}:all`).emit(payload.event, payload);
 
-    this.logger.debug(`Broadcast ${payload.event} for ${entityType}:${entityId}`);
+    this.logger.debug(
+      `Broadcast ${payload.event} for ${entityType}:${entityId}`,
+    );
   }
 
   /**
@@ -148,8 +163,8 @@ export class RealtimeGateway implements OnGatewayConnection, OnGatewayDisconnect
   broadcastDataUpdate(
     entityType: string,
     entityId: string,
-    action: 'created' | 'updated' | 'deleted',
-    data: any
+    action: "created" | "updated" | "deleted",
+    data: any,
   ) {
     const payload: RealtimePayload = {
       event: RealtimeEvent.DATA_UPDATE,
@@ -160,17 +175,24 @@ export class RealtimeGateway implements OnGatewayConnection, OnGatewayDisconnect
     };
 
     this.server.to(`${entityType}:all`).emit(payload.event, payload);
-    this.logger.debug(`Broadcast data:update for ${entityType}:${entityId} (${action})`);
+    this.logger.debug(
+      `Broadcast data:update for ${entityType}:${entityId} (${action})`,
+    );
   }
 
   /**
    * Send notification to specific user
    */
-  sendNotification(userId: string, title: string, message: string, metadata?: any) {
+  sendNotification(
+    userId: string,
+    title: string,
+    message: string,
+    metadata?: any,
+  ) {
     const payload: RealtimePayload = {
       event: RealtimeEvent.NOTIFICATION,
-      entityType: 'notification',
-      entityId: '',
+      entityType: "notification",
+      entityId: "",
       data: { title, message, ...metadata },
       userId,
       timestamp: new Date().toISOString(),

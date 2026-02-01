@@ -4,19 +4,19 @@ import {
   ExecutionContext,
   UnauthorizedException,
   Inject,
-} from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import type { Request } from 'express';
-import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
+} from "@nestjs/common";
+import { Reflector } from "@nestjs/core";
+import { JwtService } from "@nestjs/jwt";
+import { ConfigService } from "@nestjs/config";
+import type { Request } from "express";
+import { IS_PUBLIC_KEY } from "../decorators/public.decorator";
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
   constructor(
     @Inject(JwtService) private jwtService: JwtService,
     @Inject(ConfigService) private configService: ConfigService,
-    private reflector: Reflector
+    private reflector: Reflector,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -33,21 +33,21 @@ export class JwtAuthGuard implements CanActivate {
     const token = this.extractToken(request);
 
     if (!token) {
-      throw new UnauthorizedException('Missing authentication token');
+      throw new UnauthorizedException("Missing authentication token");
     }
 
     try {
       const payload = await this.jwtService.verifyAsync(token, {
-        secret: this.configService.get<string>('JWT_SECRET'),
+        secret: this.configService.get<string>("JWT_SECRET"),
       });
       // DEBUG: Log payload to verify role is present
       console.log(
-        `[JwtAuthGuard] Token payload: ${JSON.stringify({ sub: payload.sub, email: payload.email, role: payload.role })}`
+        `[JwtAuthGuard] Token payload: ${JSON.stringify({ sub: payload.sub, email: payload.email, role: payload.role })}`,
       );
       // Attach user info to request
-      request['user'] = payload;
+      request["user"] = payload;
     } catch (error) {
-      throw new UnauthorizedException('Invalid or expired token');
+      throw new UnauthorizedException("Invalid or expired token");
     }
 
     return true;
@@ -65,7 +65,7 @@ export class JwtAuthGuard implements CanActivate {
     }
 
     // Fallback to Authorization header for API clients
-    const [type, token] = request.headers.authorization?.split(' ') ?? [];
-    return type === 'Bearer' ? token : undefined;
+    const [type, token] = request.headers.authorization?.split(" ") ?? [];
+    return type === "Bearer" ? token : undefined;
   }
 }

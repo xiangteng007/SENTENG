@@ -1,1 +1,1 @@
-export * from './drone-asset.entity';
+export * from "./drone-asset.entity";

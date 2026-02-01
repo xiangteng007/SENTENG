@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
-import { GoogleOAuthService } from './google-oauth.service';
+import { GoogleOAuthService } from './google/google-oauth.service';
 import { GoogleOAuthAccount } from './entities/google-oauth-account.entity';
 import { UnauthorizedException } from '@nestjs/common';
 

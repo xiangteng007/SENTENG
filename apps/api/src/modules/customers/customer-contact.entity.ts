@@ -7,37 +7,37 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
-} from 'typeorm';
-import { Customer } from './customer.entity';
+} from "typeorm";
+import { Customer } from "./customer.entity";
 
 export enum ContactRole {
-  OWNER = 'OWNER', // 屋主
-  DESIGNER = 'DESIGNER', // 設計師
-  SUPERVISOR = 'SUPERVISOR', // 監造
-  PROCUREMENT = 'PROCUREMENT', // 採購
-  ACCOUNTANT = 'ACCOUNTANT', // 會計
-  OTHER = 'OTHER',
+  OWNER = "OWNER", // 屋主
+  DESIGNER = "DESIGNER", // 設計師
+  SUPERVISOR = "SUPERVISOR", // 監造
+  PROCUREMENT = "PROCUREMENT", // 採購
+  ACCOUNTANT = "ACCOUNTANT", // 會計
+  OTHER = "OTHER",
 }
 
-@Entity('customer_contacts')
-@Index(['customerId'])
+@Entity("customer_contacts")
+@Index(["customerId"])
 export class CustomerContact {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column({ name: 'customer_id', length: 20 })
+  @Column({ name: "customer_id", length: 20 })
   customerId: string;
 
-  @ManyToOne(() => Customer, customer => customer.contacts, {
-    onDelete: 'CASCADE',
+  @ManyToOne(() => Customer, (customer) => customer.contacts, {
+    onDelete: "CASCADE",
   })
-  @JoinColumn({ name: 'customer_id' })
+  @JoinColumn({ name: "customer_id" })
   customer: Customer;
 
   @Column({ length: 50 })
   name: string;
 
-  @Column({ length: 30, default: 'OTHER' })
+  @Column({ length: 30, default: "OTHER" })
   role: string;
 
   @Column({ length: 50, nullable: true })
@@ -49,25 +49,25 @@ export class CustomerContact {
   @Column({ length: 100, nullable: true })
   email: string;
 
-  @Column({ name: 'line_id', length: 50, nullable: true })
+  @Column({ name: "line_id", length: 50, nullable: true })
   lineId: string;
 
-  @Column({ name: 'is_primary', default: false })
+  @Column({ name: "is_primary", default: false })
   isPrimary: boolean;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: "text", nullable: true })
   notes: string;
 
   // Google Contacts sync
-  @Column({ name: 'google_contact_id', length: 100, nullable: true })
+  @Column({ name: "google_contact_id", length: 100, nullable: true })
   googleContactId: string;
 
-  @Column({ name: 'sync_status', length: 20, default: 'PENDING' })
+  @Column({ name: "sync_status", length: 20, default: "PENDING" })
   syncStatus: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: "updated_at" })
   updatedAt: Date;
 }

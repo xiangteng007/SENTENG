@@ -1,1 +1,1 @@
-export * from './site-diary.entity';
+export * from "./site-diary.entity";
