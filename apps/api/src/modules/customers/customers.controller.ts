@@ -32,6 +32,7 @@ export class CustomersController {
   constructor(private readonly customersService: CustomersService) {}
 
   @Get()
+  @ApiOperation({ summary: "List customers" })
   @RequirePermissions("customers:read")
   async findAll(
     @Query() query: CustomerQueryDto,
@@ -43,6 +44,7 @@ export class CustomersController {
   }
 
   @Get(":id")
+  @ApiOperation({ summary: "Get customer" })
   @RequirePermissions("customers:read")
   async findOne(@Param("id") id: string, @Request() req: AuthenticatedRequest) {
     const userId = req.user?.sub || req.user?.id;
@@ -51,12 +53,14 @@ export class CustomersController {
   }
 
   @Get(":id/projects")
+  @ApiOperation({ summary: "List customer projects" })
   @RequirePermissions("customers:read")
   async findProjects(@Param("id") id: string) {
     return this.customersService.findProjects(id);
   }
 
   @Post()
+  @ApiOperation({ summary: "Create customer" })
   @RequirePermissions("customers:create")
   async create(
     @Body() dto: CreateCustomerDto,
@@ -67,6 +71,7 @@ export class CustomersController {
   }
 
   @Patch(":id")
+  @ApiOperation({ summary: "Update customer" })
   @RequirePermissions("customers:update")
   async update(
     @Param("id") id: string,
@@ -96,6 +101,7 @@ export class CustomersController {
   }
 
   @Delete(":id")
+  @ApiOperation({ summary: "Delete customer" })
   @RequirePermissions("customers:delete")
   async remove(@Param("id") id: string, @Request() req: AuthenticatedRequest) {
     const userId = req.user?.sub || req.user?.id;

@@ -41,6 +41,10 @@ export class InvoicesController {
    * GET /api/v1/invoices?page=1&limit=20&search=xxx&docType=INVOICE_B2B
    */
   @Get()
+  @ApiOperation({
+    summary: "List invoices",
+    description: "Query invoices with pagination and filters",
+  })
   async findAll(
     @Query() query: QueryInvoiceDto,
     @Request() req: AuthenticatedRequest,
@@ -55,6 +59,7 @@ export class InvoicesController {
    * GET /api/v1/invoices/stats
    */
   @Get("stats")
+  @ApiOperation({ summary: "Get invoice statistics" })
   async getStats(@Request() req: AuthenticatedRequest) {
     const userId = req.user?.userId;
     const userRole = req.user?.role;

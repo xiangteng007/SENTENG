@@ -35,6 +35,7 @@ export class WorkOrdersController {
   constructor(private readonly workOrdersService: WorkOrdersService) {}
 
   @Get()
+  @ApiOperation({ summary: "List work orders" })
   @RequirePermissions("work-orders:read")
   findAll(
     @Query("projectId") projectId?: string,
@@ -51,6 +52,7 @@ export class WorkOrdersController {
   }
 
   @Get("generate-number")
+  @ApiOperation({ summary: "Generate work order number" })
   @RequirePermissions("work-orders:create")
   generateNumber() {
     return this.workOrdersService.generateWoNumber();
