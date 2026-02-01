@@ -28,16 +28,23 @@ async function runMigrations() {
   const logger = new Logger('Migrations');
   if (process.env.RUN_MIGRATIONS === 'true') {
     logger.log('Running database migrations...');
+    const dbHost = process.env.DB_HOST || 'localhost';
+    const isUnixSocket = dbHost.startsWith('/cloudsql/');
+    logger.log(`DB_HOST: ${dbHost}, isUnixSocket: ${isUnixSocket}`);
+    
     try {
       const dataSource = new DataSource({
         type: 'postgres',
-        host: process.env.DB_HOST || 'localhost',
-        port: parseInt(process.env.DB_PORT || '5432', 10),
+        host: dbHost,
+        // Port must be undefined for Unix socket connections
+        port: isUnixSocket ? undefined : parseInt(process.env.DB_PORT || '5432', 10),
         username: process.env.DB_USERNAME || 'postgres',
         password: process.env.DB_PASSWORD || 'postgres',
         database: process.env.DB_DATABASE || 'erp',
         migrations: [__dirname + '/migrations/*.js'],
         logging: true,
+        // Unix socket doesn't need SSL
+        ssl: isUnixSocket ? false : undefined,
       });
       await dataSource.initialize();
       const pendingMigrations = await dataSource.showMigrations();
