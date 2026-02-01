@@ -33,6 +33,10 @@ jobs:
       - name: Install root dependencies
         run: npm install --legacy-peer-deps
 
+      - name: Install web dependencies
+        working-directory: apps/web
+        run: npm install --legacy-peer-deps
+
       - name: Build
         working-directory: apps/web
         run: npm run build
