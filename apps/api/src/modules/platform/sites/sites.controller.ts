@@ -9,7 +9,7 @@
   UseGuards,
   Request,
 } from "@nestjs/common";
-import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
+import { ApiTags, ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import type { AuthenticatedRequest } from "../../../common/types";
 import { SitesService } from "./sites.service";
 import { CreateJobSiteDto, UpdateJobSiteDto } from "./dto/sites.dto";
@@ -25,12 +25,14 @@ export class SitesController {
   constructor(private readonly sitesService: SitesService) {}
 
   @Get()
+  @ApiOperation({ summary: "List job sites" })
   @RequirePermissions("sites:read")
   findAll(@Query("projectId") projectId?: string) {
     return this.sitesService.findAll(projectId);
   }
 
   @Get("nearby")
+  @ApiOperation({ summary: "Find nearby sites" })
   @RequirePermissions("sites:read")
   findNearby(
     @Query("lat") lat: number,
@@ -45,6 +47,7 @@ export class SitesController {
   }
 
   @Get(":id")
+  @ApiOperation({ summary: "Get job site" })
   @RequirePermissions("sites:read")
   findById(@Param("id") id: string) {
     return this.sitesService.findById(id);

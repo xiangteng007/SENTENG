@@ -10,7 +10,7 @@
   UseGuards,
   Request,
 } from "@nestjs/common";
-import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
+import { ApiTags, ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import type { AuthenticatedRequest } from "../../../common/types";
 import { ProcurementsService } from "./procurements.service";
 import {
@@ -33,18 +33,21 @@ export class ProcurementsController {
   constructor(private readonly procurementsService: ProcurementsService) {}
 
   @Get()
+  @ApiOperation({ summary: "List procurements" })
   @RequirePermissions("procurements:read")
   findAll(@Query() query: ProcurementQueryDto) {
     return this.procurementsService.findAll(query);
   }
 
   @Get(":id")
+  @ApiOperation({ summary: "Get procurement" })
   @RequirePermissions("procurements:read")
   findOne(@Param("id") id: string) {
     return this.procurementsService.findOne(id);
   }
 
   @Get(":id/comparison")
+  @ApiOperation({ summary: "Get bid comparison" })
   @RequirePermissions("procurements:compare")
   getComparison(@Param("id") id: string) {
     return this.procurementsService.getComparison(id);

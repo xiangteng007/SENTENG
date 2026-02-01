@@ -9,7 +9,7 @@
   Request,
   UseGuards,
 } from "@nestjs/common";
-import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
+import { ApiTags, ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import type { AuthenticatedRequest } from "../../common/types";
 import { ChangeOrdersService } from "./change-orders.service";
 import { CreateChangeOrderDto, UpdateChangeOrderDto } from "./change-order.dto";
@@ -25,6 +25,7 @@ export class ChangeOrdersController {
   constructor(private readonly changeOrdersService: ChangeOrdersService) {}
 
   @Get()
+  @ApiOperation({ summary: "List change orders" })
   @RequirePermissions("change-orders:read")
   async findAll(
     @Query("contractId") contractId?: string,
@@ -35,12 +36,14 @@ export class ChangeOrdersController {
   }
 
   @Get(":id")
+  @ApiOperation({ summary: "Get change order" })
   @RequirePermissions("change-orders:read")
   async findOne(@Param("id") id: string) {
     return this.changeOrdersService.findOne(id);
   }
 
   @Post()
+  @ApiOperation({ summary: "Create change order" })
   @RequirePermissions("change-orders:create")
   async create(
     @Body() dto: CreateChangeOrderDto,

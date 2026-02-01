@@ -9,7 +9,7 @@ import {
   Query,
   UseGuards,
 } from "@nestjs/common";
-import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
+import { ApiTags, ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import { ContactsService } from "./contacts.service";
 import {
   CreateContactDto,
@@ -29,12 +29,14 @@ export class ContactsController {
   constructor(private readonly contactsService: ContactsService) {}
 
   @Get()
+  @ApiOperation({ summary: "List contacts" })
   @RequirePermissions("contacts:read")
   async findAll(@Query() query: ContactQueryDto) {
     return this.contactsService.findAll(query);
   }
 
   @Get("owner/:ownerType/:ownerId")
+  @ApiOperation({ summary: "Get contacts by owner" })
   @RequirePermissions("contacts:read")
   async findByOwner(
     @Param("ownerType") ownerType: ContactOwnerType,
@@ -44,6 +46,7 @@ export class ContactsController {
   }
 
   @Get(":id")
+  @ApiOperation({ summary: "Get contact" })
   @RequirePermissions("contacts:read")
   async findOne(@Param("id") id: string) {
     return this.contactsService.findOne(id);

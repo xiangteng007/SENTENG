@@ -12,7 +12,7 @@
   Request,
   Res,
 } from "@nestjs/common";
-import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
+import { ApiTags, ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import type { AuthenticatedRequest } from "../../../common/types";
 import type { Response } from "express";
 import { ClientsService } from "./clients.service";
@@ -42,6 +42,7 @@ export class ClientsController {
   constructor(private readonly clientsService: ClientsService) {}
 
   @Get()
+  @ApiOperation({ summary: "List clients (deprecated)" })
   @RequirePermissions("clients:read")
   async findAll(
     @Query("page") page?: number,
