@@ -28,6 +28,7 @@ const ALL_MENU_ITEMS = {
     // 總覽
     'dashboard': { id: 'dashboard', icon: LayoutDashboard, label: '儀表板' },
     'schedule': { id: 'schedule', icon: CalendarIcon, label: '行程管理' },
+    'events': { id: 'events', icon: CalendarIcon, label: '活動管理' },
     
     // 專案管理
     'projects': { id: 'projects', icon: Briefcase, label: '專案管理' },
@@ -41,7 +42,8 @@ const ALL_MENU_ITEMS = {
     'invoice': { id: 'invoice', icon: FileText, label: '發票小幫手' },
     
     // 關係人
-    'clients': { id: 'clients', icon: Users, label: '客戶管理' },
+    'clients': { id: 'clients', icon: Users, label: '業主管理' },
+    'customers': { id: 'customers', icon: Users, label: '客戶管理' },
     'vendors': { id: 'vendors', icon: HardHat, label: '廠商管理' },
     'contacts': { id: 'contacts', icon: PhoneCall, label: '聯絡人' },
     
@@ -88,7 +90,7 @@ const MENU_GROUPS = [
         id: 'overview',
         label: '總覽',
         icon: LayoutDashboard,
-        items: ['dashboard', 'schedule'],
+        items: ['dashboard', 'schedule', 'events'],
         defaultExpanded: true,
     },
     {
@@ -109,7 +111,7 @@ const MENU_GROUPS = [
         id: 'parties',
         label: '關係人',
         icon: Users,
-        items: ['clients', 'vendors', 'contacts'],
+        items: ['clients', 'customers', 'vendors', 'contacts'],
         defaultExpanded: false,
     },
     {

@@ -58,13 +58,13 @@ export const AuthProvider = ({ children }) => {
                     // This allows users to access all basic features when permission API fails
                     firebaseUser.allowedPages = [
                         // 總覽
-                        'dashboard', 'schedule',
+                        'dashboard', 'schedule', 'events',
                         // 專案管理
                         'projects', 'contracts', 'change-orders',
                         // 財務中心
                         'finance', 'quotations', 'payments', 'invoice',
                         // 關係人
-                        'clients', 'vendors', 'contacts',
+                        'clients', 'customers', 'vendors', 'contacts',
                         // 供應鏈
                         'procurements', 'inventory',
                         // 工地管理
