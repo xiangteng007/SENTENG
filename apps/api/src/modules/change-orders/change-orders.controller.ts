@@ -9,6 +9,7 @@
   Request,
   UseGuards,
 } from "@nestjs/common";
+import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
 import type { AuthenticatedRequest } from "../../common/types";
 import { ChangeOrdersService } from "./change-orders.service";
 import { CreateChangeOrderDto, UpdateChangeOrderDto } from "./change-order.dto";
@@ -16,6 +17,8 @@ import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
 import { PermissionGuard } from "../../common/guards/permission.guard";
 import { RequirePermissions } from "../../common/decorators/permissions.decorator";
 
+@ApiTags("Change Orders")
+@ApiBearerAuth()
 @Controller("change-orders")
 @UseGuards(JwtAuthGuard, PermissionGuard)
 export class ChangeOrdersController {

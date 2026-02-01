@@ -17,6 +17,7 @@ import {
   UseInterceptors,
   Request,
 } from "@nestjs/common";
+import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { JwtAuthGuard } from "../../../common/guards/jwt-auth.guard";
@@ -48,6 +49,8 @@ class UpdateContactDto {
   note?: string;
 }
 
+@ApiTags("CRM - Client Contacts (Deprecated)")
+@ApiBearerAuth()
 @Controller("clients/:clientId/contacts")
 @UseGuards(JwtAuthGuard, PermissionGuard)
 @UseInterceptors(DeprecationInterceptor)

@@ -8,6 +8,7 @@ import {
   Query,
   UseGuards,
 } from "@nestjs/common";
+import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
 import { TenantsService } from "./tenants.service";
 import {
   CreateLegalEntityDto,
@@ -19,6 +20,8 @@ import { JwtAuthGuard } from "../../../common/guards/jwt-auth.guard";
 import { PermissionGuard } from "../../../common/guards/permission.guard";
 import { RequirePermissions } from "../../../common/decorators/permissions.decorator";
 
+@ApiTags("Platform - Tenants")
+@ApiBearerAuth()
 @Controller("platform/tenants")
 @UseGuards(JwtAuthGuard, PermissionGuard)
 export class TenantsController {

@@ -9,6 +9,7 @@ import {
   Query,
   UseGuards,
 } from "@nestjs/common";
+import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
 import { InsuranceService } from "./insurance.service";
 import {
   CreateInsuranceDto,
@@ -20,6 +21,8 @@ import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
 import { PermissionGuard } from "../../common/guards/permission.guard";
 import { RequirePermissions } from "../../common/decorators/permissions.decorator";
 
+@ApiTags("Insurance")
+@ApiBearerAuth()
 @Controller("insurance")
 @UseGuards(JwtAuthGuard, PermissionGuard)
 export class InsuranceController {

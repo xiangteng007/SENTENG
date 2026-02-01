@@ -10,6 +10,7 @@ import {
   UseGuards,
   Req,
 } from "@nestjs/common";
+import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
 import { WasteService } from "./waste.service";
 import {
   CreateWasteRecordDto,
@@ -26,6 +27,8 @@ interface AuthRequest {
   user?: { id: string };
 }
 
+@ApiTags("Waste Management")
+@ApiBearerAuth()
 @Controller("waste")
 @UseGuards(JwtAuthGuard, PermissionGuard)
 export class WasteController {

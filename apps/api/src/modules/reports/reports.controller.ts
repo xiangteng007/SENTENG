@@ -1,10 +1,13 @@
 import { Controller, Get, Query, Res, UseGuards } from "@nestjs/common";
+import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
 import type { Response } from "express";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
 import { PermissionGuard } from "../../common/guards/permission.guard";
 import { RequirePermissions } from "../../common/decorators/permissions.decorator";
 import { BiExportService, DateRangeDto } from "./bi-export.service";
 
+@ApiTags("Reports")
+@ApiBearerAuth()
 @Controller("reports")
 @UseGuards(JwtAuthGuard, PermissionGuard)
 export class ReportsController {

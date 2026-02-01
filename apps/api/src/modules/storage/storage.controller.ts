@@ -11,6 +11,7 @@ import {
   UploadedFile,
   BadRequestException,
 } from "@nestjs/common";
+import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
 import { PermissionGuard } from "../../common/guards/permission.guard";
@@ -24,6 +25,8 @@ import { StorageService } from "./storage.service";
  *
  * @route /api/v1/storage
  */
+@ApiTags("Storage")
+@ApiBearerAuth()
 @Controller("storage")
 @UseGuards(JwtAuthGuard, PermissionGuard)
 export class StorageController {

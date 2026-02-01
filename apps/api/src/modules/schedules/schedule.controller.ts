@@ -9,6 +9,7 @@ import {
   Query,
   UseGuards,
 } from "@nestjs/common";
+import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
 import { ScheduleService } from "./schedule.service";
 import {
   CreateScheduleTaskDto,
@@ -22,6 +23,8 @@ import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
 import { PermissionGuard } from "../../common/guards/permission.guard";
 import { RequirePermissions } from "../../common/decorators/permissions.decorator";
 
+@ApiTags("Schedules")
+@ApiBearerAuth()
 @Controller("schedules")
 @UseGuards(JwtAuthGuard, PermissionGuard)
 export class ScheduleController {
