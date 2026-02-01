@@ -11,7 +11,7 @@ export default new DataSource({
   password: process.env.DB_PASSWORD || "postgres",
   database: process.env.DB_DATABASE || "erp",
   entities: ["dist/**/*.entity.js"],
-  migrations: ["dist/src/migrations/*.js"],
+  migrations: ["dist/migrations/*.js"],
   synchronize: false,
   logging: true,
 });
