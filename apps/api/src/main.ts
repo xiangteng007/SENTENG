@@ -1,6 +1,16 @@
 // Sentry must be imported first before any other modules
 import './instrument';
 
+// Early environment logging - MUST be before any other imports that might use env vars
+console.log('[EARLY BOOT] Environment at startup:', {
+  DB_HOST: process.env.DB_HOST,
+  DB_PORT: process.env.DB_PORT,
+  DB_DATABASE: process.env.DB_DATABASE,
+  NODE_ENV: process.env.NODE_ENV,
+  PORT: process.env.PORT,
+  timestamp: new Date().toISOString(),
+});
+
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
