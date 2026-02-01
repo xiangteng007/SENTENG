@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, ILike, Not } from "typeorm";
+import { Repository, ILike, Not, FindOptionsWhere } from "typeorm";
 import { Cron } from "@nestjs/schedule";
 import { SmartHomeProduct } from "./entities/smart-home-product.entity";
 import { AqaraCrawlerService } from "./aqara-crawler.service";
@@ -128,7 +128,7 @@ export class SmartHomeService {
   }
 
   async findAll(query: SmartHomeQueryDto): Promise<SmartHomeProduct[]> {
-    const where: any = {};
+    const where: FindOptionsWhere<SmartHomeProduct> = {};
 
     if (query.category) {
       where.category = query.category;

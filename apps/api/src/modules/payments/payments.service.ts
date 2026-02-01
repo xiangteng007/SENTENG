@@ -5,7 +5,7 @@ import {
   BadRequestException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Repository, FindOptionsWhere } from "typeorm";
 import { PaymentApplication, PaymentReceipt } from "./payment.entity";
 import {
   CreatePaymentDto,
@@ -32,7 +32,7 @@ export class PaymentsService {
     userId?: string,
     userRole?: string,
   ): Promise<PaymentApplication[]> {
-    const where: any = {};
+    const where: FindOptionsWhere<PaymentApplication> = {};
     if (options.contractId) where.contractId = options.contractId;
     if (options.projectId) where.projectId = options.projectId;
     if (options.status) where.status = options.status;

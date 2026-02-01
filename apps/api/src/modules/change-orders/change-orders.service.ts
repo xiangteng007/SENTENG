@@ -4,7 +4,7 @@ import {
   BadRequestException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Repository, FindOptionsWhere } from "typeorm";
 import { ChangeOrder, ChangeOrderItem } from "./change-order.entity";
 import { CreateChangeOrderDto, UpdateChangeOrderDto } from "./change-order.dto";
 import { ContractsService } from "../contracts/contracts.service";
@@ -24,7 +24,7 @@ export class ChangeOrdersService {
     projectId?: string;
     status?: string;
   }): Promise<ChangeOrder[]> {
-    const where: any = {};
+    const where: FindOptionsWhere<ChangeOrder> = {};
     if (options.contractId) where.contractId = options.contractId;
     if (options.projectId) where.projectId = options.projectId;
     if (options.status) where.status = options.status;

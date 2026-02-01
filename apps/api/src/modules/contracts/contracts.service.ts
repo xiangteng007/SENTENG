@@ -5,7 +5,7 @@ import {
   BadRequestException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Repository, FindOptionsWhere } from "typeorm";
 import { Contract } from "./contract.entity";
 import {
   CreateContractDto,
@@ -30,7 +30,7 @@ export class ContractsService {
     userId?: string,
     userRole?: string,
   ): Promise<Contract[]> {
-    const where: any = {};
+    const where: FindOptionsWhere<Contract> = {};
     if (options.projectId) where.projectId = options.projectId;
     if (options.status) where.status = options.status;
 
@@ -258,7 +258,7 @@ export class ContractsService {
     const ExcelJS = await import("exceljs");
     const { projectId, status, format = "xlsx" } = options;
 
-    const where: any = {};
+    const where: FindOptionsWhere<Contract> = {};
     if (projectId) where.projectId = projectId;
     if (status) where.status = status;
     if (userId && userRole && !isAdminRole(userRole)) {

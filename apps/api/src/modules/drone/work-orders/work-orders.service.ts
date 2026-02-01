@@ -5,7 +5,7 @@ import {
   Logger,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, DataSource } from "typeorm";
+import { Repository, DataSource, FindOptionsWhere } from "typeorm";
 import { WorkOrder } from "./entities";
 import { CreateWorkOrderDto, CompleteWorkOrderDto } from "./dto/work-order.dto";
 
@@ -26,7 +26,7 @@ export class WorkOrdersService {
     status?: string;
     scheduledDate?: Date;
   }): Promise<WorkOrder[]> {
-    const where: any = {};
+    const where: FindOptionsWhere<WorkOrder> = {};
     if (filters?.projectId) where.projectId = filters.projectId;
     if (filters?.clientId) where.clientId = filters.clientId;
     if (filters?.businessUnitId) where.businessUnitId = filters.businessUnitId;

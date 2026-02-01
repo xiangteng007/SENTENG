@@ -5,7 +5,7 @@ import {
   BadRequestException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Repository, FindOptionsWhere } from "typeorm";
 import { Quotation, QuotationItem } from "./quotation.entity";
 import {
   CreateQuotationDto,
@@ -26,7 +26,7 @@ export class QuotationsService {
     projectId?: string;
     status?: string;
   }): Promise<Quotation[]> {
-    const where: any = { isCurrent: true };
+    const where: FindOptionsWhere<Quotation> = { isCurrent: true };
     if (options.projectId) where.projectId = options.projectId;
     if (options.status) where.status = options.status;
 
@@ -278,7 +278,7 @@ export class QuotationsService {
     const ExcelJS = await import("exceljs");
     const { projectId, status, format = "xlsx" } = options;
 
-    const where: any = { isCurrent: true };
+    const where: FindOptionsWhere<Quotation> = { isCurrent: true };
     if (projectId) where.projectId = projectId;
     if (status) where.status = status;
 

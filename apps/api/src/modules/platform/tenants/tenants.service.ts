@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Repository, FindOptionsWhere } from "typeorm";
 import { LegalEntity, BusinessUnit, CostCenter } from "./entities";
 import {
   CreateLegalEntityDto,
@@ -57,7 +57,7 @@ export class TenantsService {
   // ========== Business Unit ==========
 
   async findAllBusinessUnits(legalEntityId?: string): Promise<BusinessUnit[]> {
-    const where: any = { isActive: true };
+    const where: FindOptionsWhere<BusinessUnit> = { isActive: true };
     if (legalEntityId) {
       where.legalEntityId = legalEntityId;
     }

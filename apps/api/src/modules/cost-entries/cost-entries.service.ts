@@ -4,7 +4,7 @@ import {
   ForbiddenException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, Between } from "typeorm";
+import { Repository, Between, FindOptionsWhere } from "typeorm";
 import { CostEntry } from "./cost-entry.entity";
 import {
   CreateCostEntryDto,
@@ -34,7 +34,7 @@ export class CostEntriesService {
     userId?: string,
     userRole?: string,
   ): Promise<CostEntry[]> {
-    const where: any = {};
+    const where: FindOptionsWhere<CostEntry> = {};
     if (options.projectId) where.projectId = options.projectId;
     if (options.contractId) where.contractId = options.contractId;
     if (options.category) where.category = options.category;

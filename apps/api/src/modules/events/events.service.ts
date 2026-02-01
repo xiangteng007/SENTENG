@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, Between, LessThanOrEqual, MoreThanOrEqual } from "typeorm";
+import { Repository, Between, LessThanOrEqual, MoreThanOrEqual, FindOptionsWhere } from "typeorm";
 import { Event } from "./event.entity";
 import { CreateEventDto, UpdateEventDto, QueryEventsDto } from "./event.dto";
 
@@ -15,7 +15,7 @@ export class EventsService {
    * 取得所有事件 (支援時間範圍篩選)
    */
   async findAll(query: QueryEventsDto): Promise<Event[]> {
-    const whereConditions: any = {};
+    const whereConditions: FindOptionsWhere<Event> = {};
 
     // 時間範圍篩選
     if (query.startDate && query.endDate) {
@@ -103,7 +103,7 @@ export class EventsService {
   ): Promise<Event> {
     const event = await this.findOne(id);
 
-    const updateData: any = { ...dto, updatedBy: userId };
+    const updateData: Record<string, unknown> = { ...dto, updatedBy: userId };
 
     if (dto.startTime) {
       updateData.startTime = new Date(dto.startTime);

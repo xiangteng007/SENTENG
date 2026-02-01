@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, ILike } from "typeorm";
+import { Repository, ILike, FindOptionsWhere } from "typeorm";
 import * as cheerio from "cheerio";
 import {
   RegulationSource,
@@ -435,7 +435,7 @@ export class RegulationsService {
     category?: string,
     search?: string,
   ): Promise<CnsStandard[]> {
-    const where: any = { isActive: true };
+    const where: FindOptionsWhere<CnsStandard> = { isActive: true };
 
     if (category) {
       where.category = category as CnsCategory;
