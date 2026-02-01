@@ -13,7 +13,8 @@ COPY nest-cli.json ./
 
 # Install ALL dependencies (including devDependencies for build)
 # Using npm install instead of npm ci because package-lock.json is not committed to the repo
-RUN npm install
+# Using --legacy-peer-deps to resolve peer dependency conflicts
+RUN npm install --legacy-peer-deps
 
 # Copy source code
 COPY src ./src
