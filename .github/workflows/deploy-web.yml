@@ -1,16 +1,20 @@
 name: Deploy Web to Vercel
+# NOTE: This workflow is disabled (manual trigger only) because Vercel auto-deploys on push.
+# The workflow was failing due to PostCSS module resolution issues in GitHub Actions.
+# If you need to debug, run manually via workflow_dispatch.
 concurrency:
   group: deploy-web-${{ github.ref }}
   cancel-in-progress: true
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - "apps/web/**"
-      - "libs/shared/**"
-      - ".github/workflows/deploy-web.yml"
+  # Disabled automatic triggers - Vercel handles auto-deploy on push
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - "apps/web/**"
+  #     - "libs/shared/**"
+  #     - ".github/workflows/deploy-web.yml"
   workflow_dispatch:
 
 jobs:
