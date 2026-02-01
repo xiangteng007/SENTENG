@@ -64,41 +64,43 @@ import { CrmModule } from './modules/crm/crm.module';
     ]),
     CommonModule,
     CoreModule,
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      // Use process.env directly to ensure env vars are read correctly
-      host: (() => {
+    TypeOrmModule.forRootAsync({
+      useFactory: () => {
         const dbHost = process.env.DB_HOST || 'localhost';
-        console.log('[TypeORM] DB_HOST:', dbHost);
-        console.log('[TypeORM] All DB env vars:', {
+        const isUnixSocket = dbHost.startsWith('/cloudsql/');
+        
+        console.log('[TypeORM] Bootstrap - DB_HOST:', dbHost);
+        console.log('[TypeORM] Bootstrap - isUnixSocket:', isUnixSocket);
+        console.log('[TypeORM] Bootstrap - All DB env vars:', {
           DB_HOST: process.env.DB_HOST,
           DB_PORT: process.env.DB_PORT,
           DB_USERNAME: process.env.DB_USERNAME,
           DB_DATABASE: process.env.DB_DATABASE,
+          NODE_ENV: process.env.NODE_ENV,
         });
-        return dbHost;
-      })(),
-      // Port is ignored for Unix socket connections
-      port: process.env.DB_HOST?.startsWith('/cloudsql/') 
-        ? undefined 
-        : parseInt(process.env.DB_PORT || '5432', 10),
-      username: process.env.DB_USERNAME || 'postgres',
-      password: process.env.DB_PASSWORD || 'postgres',
-      database: process.env.DB_DATABASE || 'erp',
-      autoLoadEntities: true,
-      synchronize: false, // Important: use migrations in production
-      // Unix socket doesn't need SSL; TCP connections use SSL in production
-      ssl: process.env.DB_HOST?.startsWith('/cloudsql/') 
-        ? false 
-        : (process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false),
-      // Connection timeout settings for Cloud Run
-      extra: process.env.NODE_ENV === 'production'
-        ? {
-            connectionTimeoutMillis: 15000,
-            idleTimeoutMillis: 30000,
-            max: 10,
-          }
-        : {},
+
+        return {
+          type: 'postgres' as const,
+          host: dbHost,
+          // Port is ignored for Unix socket connections
+          port: isUnixSocket ? undefined : parseInt(process.env.DB_PORT || '5432', 10),
+          username: process.env.DB_USERNAME || 'postgres',
+          password: process.env.DB_PASSWORD || 'postgres',
+          database: process.env.DB_DATABASE || 'erp',
+          autoLoadEntities: true,
+          synchronize: false, // Important: use migrations in production
+          // Unix socket doesn't need SSL; TCP connections use SSL in production
+          ssl: isUnixSocket ? false : (process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false),
+          // Connection timeout settings for Cloud Run
+          extra: process.env.NODE_ENV === 'production'
+            ? {
+                connectionTimeoutMillis: 15000,
+                idleTimeoutMillis: 30000,
+                max: 10,
+              }
+            : {},
+        };
+      },
     }),
     AuthModule,
     UsersModule,
