@@ -38,18 +38,21 @@ export class FinanceController {
 
   // ==================== Account Endpoints ====================
   @Get("accounts")
+  @ApiOperation({ summary: "List accounts" })
   @RequirePermissions("finance:read")
   async findAllAccounts() {
     return this.financeService.findAllAccounts();
   }
 
   @Get("accounts/:id")
+  @ApiOperation({ summary: "Get account" })
   @RequirePermissions("finance:read")
   async findAccountById(@Param("id") id: string) {
     return this.financeService.findAccountById(id);
   }
 
   @Post("accounts")
+  @ApiOperation({ summary: "Create account" })
   @RequirePermissions("finance:create")
   @HttpCode(HttpStatus.CREATED)
   async createAccount(@Body() dto: CreateAccountDto) {
@@ -57,12 +60,14 @@ export class FinanceController {
   }
 
   @Put("accounts/:id")
+  @ApiOperation({ summary: "Update account" })
   @RequirePermissions("finance:update")
   async updateAccount(@Param("id") id: string, @Body() dto: UpdateAccountDto) {
     return this.financeService.updateAccount(id, dto);
   }
 
   @Delete("accounts/:id")
+  @ApiOperation({ summary: "Delete account" })
   @RequirePermissions("finance:delete")
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteAccount(@Param("id") id: string) {
@@ -71,6 +76,7 @@ export class FinanceController {
 
   // ==================== Transaction Endpoints ====================
   @Get("transactions")
+  @ApiOperation({ summary: "List transactions" })
   @RequirePermissions("finance:read")
   async findAllTransactions() {
     return this.financeService.findAllTransactions();
@@ -107,6 +113,7 @@ export class FinanceController {
 
   // ==================== Loan Endpoints ====================
   @Get("loans")
+  @ApiOperation({ summary: "List loans" })
   @RequirePermissions("finance:read")
   async findAllLoans() {
     return this.financeService.findAllLoans();

@@ -10,7 +10,7 @@
   UseGuards,
   Request,
 } from "@nestjs/common";
-import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
+import { ApiTags, ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import type { AuthenticatedRequest } from "../../common/types";
 import { CustomersService } from "./customers.service";
 import {
