@@ -10,7 +10,7 @@
   UseGuards,
   Request,
 } from "@nestjs/common";
-import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
+import { ApiTags, ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import type { AuthenticatedRequest } from "../../../common/types";
 import { VendorsService } from "./vendors.service";
 import {
@@ -31,6 +31,7 @@ export class VendorsController {
   constructor(private readonly vendorsService: VendorsService) {}
 
   @Get()
+  @ApiOperation({ summary: "List vendors" })
   @RequirePermissions("vendors:read")
   async findAll(
     @Query() query: VendorQueryDto,
@@ -42,6 +43,7 @@ export class VendorsController {
   }
 
   @Get(":id")
+  @ApiOperation({ summary: "Get vendor" })
   @RequirePermissions("vendors:read")
   async findOne(@Param("id") id: string, @Request() req: AuthenticatedRequest) {
     const userId = req.user?.sub || req.user?.id;
@@ -50,6 +52,7 @@ export class VendorsController {
   }
 
   @Get(":id/projects")
+  @ApiOperation({ summary: "List vendor projects" })
   @RequirePermissions("vendors:read")
   async findProjects(@Param("id") id: string) {
     return this.vendorsService.findProjects(id);

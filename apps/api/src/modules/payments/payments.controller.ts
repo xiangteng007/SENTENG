@@ -9,7 +9,7 @@
   Request,
   UseGuards,
 } from "@nestjs/common";
-import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
+import { ApiTags, ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import type { AuthenticatedRequest } from "../../common/types";
 import { PaymentsService } from "./payments.service";
 import {
@@ -29,6 +29,7 @@ export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
   @Get()
+  @ApiOperation({ summary: "List payments" })
   @RequirePermissions("payments:read")
   async findAll(
     @Query("contractId") contractId?: string,
@@ -39,18 +40,21 @@ export class PaymentsController {
   }
 
   @Get(":id")
+  @ApiOperation({ summary: "Get payment" })
   @RequirePermissions("payments:read")
   async findOne(@Param("id") id: string) {
     return this.paymentsService.findOne(id);
   }
 
   @Get(":id/receipts")
+  @ApiOperation({ summary: "Get payment receipts" })
   @RequirePermissions("payments:read")
   async getReceipts(@Param("id") id: string) {
     return this.paymentsService.getReceipts(id);
   }
 
   @Post()
+  @ApiOperation({ summary: "Create payment" })
   @RequirePermissions("payments:create")
   async create(
     @Body() dto: CreatePaymentDto,
