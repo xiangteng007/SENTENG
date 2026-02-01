@@ -1,0 +1,2111 @@
+﻿
+> senteng-erp-api@1.0.0 build
+> nest build
+
+node.exe : [96msrc/common/config/swagger.conf
+ig.ts[0m:[93m60[0m:[93m6[0m - [91merror
+[0m[90m TS2339: [0mProperty 'setContact' doe
+s not exist on type 'DocumentBuilder'.
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Pro
+gram Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ( 
+   [96msrc/common...cumentBuilder'.:String)  
+   [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandEr 
+   ror
+ 
+
+[7m60[0m     .setContact("SENTENG", "https:/
+/senteng.com.tw", "support@senteng.com.tw")
+[7m  [0m [91m     ~~~~~~~~~~[0m
+[96msrc/common/config/swagger.config.ts[0m:
+[93m90[0m:[93m5[0m - [91merror[0m[90m TS
+2353: [0mObject literal may only specify know
+n properties, and 'operationIdFactory' does no
+t exist in type 'SwaggerDocumentOptions'.
+
+[7m90[0m     operationIdFactory: (controller
+Key: string, methodKey: string) => methodKey,
+[7m  [0m [91m    ~~~~~~~~~~~~~~~~~~[0m
+[96msrc/main.ts[0m:[93m166[0m:[93m6[0m -
+ [91merror[0m[90m TS2339: [0mProperty 'set
+Contact' does not exist on type 'DocumentBuild
+er'.
+
+[7m166[0m     .setContact("SENTENG Tech", "h
+ttps://senteng.co", "dev@senteng.co")
+[7m   [0m [91m     ~~~~~~~~~~[0m
+[96msrc/modules/auth/auth.controller.ts[0m:
+[93m14[0m:[93m3[0m - [91merror[0m[90m TS
+2305: [0mModule '"@nestjs/swagger"' has no ex
+ported member 'ApiTags'.
+
+[7m14[0m   ApiTags,
+[7m  [0m [91m  ~~~~~~~[0m
+[96msrc/modules/auth/auth.controller.ts[0m:
+[93m41[0m:[93m5[0m - [91merror[0m[90m TS
+2353: [0mObject literal may only specify know
+n properties, and 'summary' does not exist in 
+type '{ title: string; description?: string | 
+undefined; operationId?: string | undefined; d
+eprecated?: boolean | undefined; }'.
+
+[7m41[0m     summary: "User login",
+[7m  [0m [91m    ~~~~~~~[0m
+[96msrc/modules/auth/auth.controller.ts[0m:
+[93m77[0m:[93m5[0m - [91merror[0m[90m TS
+2353: [0mObject literal may only specify know
+n properties, and 'summary' does not exist in 
+type '{ title: string; description?: string | 
+undefined; operationId?: string | undefined; d
+eprecated?: boolean | undefined; }'.
+
+[7m77[0m     summary: "User logout",
+[7m  [0m [91m    ~~~~~~~[0m
+[96msrc/modules/auth/auth.controller.ts[0m:
+[93m135[0m:[93m5[0m - [91merror[0m[90m T
+S2353: [0mObject literal may only specify kno
+wn properties, and 'summary' does not exist in
+ type '{ title: string; description?: string |
+ undefined; operationId?: string | undefined; 
+deprecated?: boolean | undefined; }'.
+
+[7m135[0m     summary: "Get current user",
+[7m   [0m [91m    ~~~~~~~[0m
+[96msrc/modules/auth/auth.controller.ts[0m:
+[93m182[0m:[93m5[0m - [91merror[0m[90m T
+S2353: [0mObject literal may only specify kno
+wn properties, and 'summary' does not exist in
+ type '{ title: string; description?: string |
+ undefined; operationId?: string | undefined; 
+deprecated?: boolean | undefined; }'.
+
+[7m182[0m     summary: "Get user permissions
+",
+[7m   [0m [91m    ~~~~~~~[0m
+[96msrc/modules/change-orders/change-orders.c
+ontroller.ts[0m:[93m12[0m:[93m10[0m - [9
+1merror[0m[90m TS2305: [0mModule '"@nestjs/
+swagger"' has no exported member 'ApiTags'.
+
+[7m12[0m import { ApiTags, ApiBearerAuth, Ap
+iOperation } from "@nestjs/swagger";
+[7m  [0m [91m         ~~~~~~~[0m
+[96msrc/modules/change-orders/change-orders.c
+ontroller.ts[0m:[93m28[0m:[93m19[0m - [9
+1merror[0m[90m TS2353: [0mObject literal ma
+y only specify known properties, and 'summary'
+ does not exist in type '{ title: string; desc
+ription?: string | undefined; operationId?: st
+ring | undefined; deprecated?: boolean | undef
+ined; }'.
+
+[7m28[0m   @ApiOperation({ summary: "List ch
+ange orders" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/change-orders/change-orders.c
+ontroller.ts[0m:[93m39[0m:[93m19[0m - [9
+1merror[0m[90m TS2353: [0mObject literal ma
+y only specify known properties, and 'summary'
+ does not exist in type '{ title: string; desc
+ription?: string | undefined; operationId?: st
+ring | undefined; deprecated?: boolean | undef
+ined; }'.
+
+[7m39[0m   @ApiOperation({ summary: "Get cha
+nge order" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/change-orders/change-orders.c
+ontroller.ts[0m:[93m46[0m:[93m19[0m - [9
+1merror[0m[90m TS2353: [0mObject literal ma
+y only specify known properties, and 'summary'
+ does not exist in type '{ title: string; desc
+ription?: string | undefined; operationId?: st
+ring | undefined; deprecated?: boolean | undef
+ined; }'.
+
+[7m46[0m   @ApiOperation({ summary: "Create 
+change order" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/cmm/cmm.controller.ts[0m:[9
+3m16[0m:[93m3[0m - [91merror[0m[90m TS23
+05: [0mModule '"@nestjs/swagger"' has no expo
+rted member 'ApiTags'.
+
+[7m16[0m   ApiTags,
+[7m  [0m [91m  ~~~~~~~[0m
+[96msrc/modules/cmm/cmm.controller.ts[0m:[9
+3m19[0m:[93m3[0m - [91merror[0m[90m TS23
+05: [0mModule '"@nestjs/swagger"' has no expo
+rted member 'ApiParam'.
+
+[7m19[0m   ApiParam,
+[7m  [0m [91m  ~~~~~~~~[0m
+[96msrc/modules/cmm/cmm.controller.ts[0m:[9
+3m20[0m:[93m3[0m - [91merror[0m[90m TS23
+05: [0mModule '"@nestjs/swagger"' has no expo
+rted member 'ApiQuery'.
+
+[7m20[0m   ApiQuery,
+[7m  [0m [91m  ~~~~~~~~[0m
+[96msrc/modules/cmm/cmm.controller.ts[0m:[9
+3m49[0m:[93m19[0m - [91merror[0m[90m TS2
+353: [0mObject literal may only specify known
+ properties, and 'summary' does not exist in t
+ype '{ title: string; description?: string | u
+ndefined; operationId?: string | undefined; de
+precated?: boolean | undefined; }'.
+
+[7m49[0m   @ApiOperation({ summary: "鍙栧緱鍒嗛楂
+旂郴" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/cmm/cmm.controller.ts[0m:[9
+3m56[0m:[93m19[0m - [91merror[0m[90m TS2
+353: [0mObject literal may only specify known
+ properties, and 'summary' does not exist in t
+ype '{ title: string; description?: string | u
+ndefined; operationId?: string | undefined; de
+precated?: boolean | undefined; }'.
+
+[7m56[0m   @ApiOperation({ summary: "鍙栧緱鎸囧畾闋
+傚堡鍒嗛鐨勫瓙鍒嗛" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/cmm/cmm.controller.ts[0m:[9
+3m68[0m:[93m19[0m - [91merror[0m[90m TS2
+353: [0mObject literal may only specify known
+ properties, and 'summary' does not exist in t
+ype '{ title: string; description?: string | u
+ndefined; operationId?: string | undefined; de
+precated?: boolean | undefined; }'.
+
+[7m68[0m   @ApiOperation({ summary: "鍩疯瑷堢畻涓
+﹀劜瀛樿閷? })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/cmm/cmm.controller.ts[0m:[9
+3m81[0m:[93m19[0m - [91merror[0m[90m TS2
+353: [0mObject literal may only specify known
+ properties, and 'summary' does not exist in t
+ype '{ title: string; description?: string | u
+ndefined; operationId?: string | undefined; de
+precated?: boolean | undefined; }'.
+
+[7m81[0m   @ApiOperation({ summary: "鏌ヨ瑷堢畻姝
+峰彶" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/cmm/cmm.controller.ts[0m:[9
+3m88[0m:[93m19[0m - [91merror[0m[90m TS2
+353: [0mObject literal may only specify known
+ properties, and 'summary' does not exist in t
+ype '{ title: string; description?: string | u
+ndefined; operationId?: string | undefined; de
+precated?: boolean | undefined; }'.
+
+[7m88[0m   @ApiOperation({ summary: "鍙栧緱瑷堢畻绲
+愭灉" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/cmm/cmm.controller.ts[0m:[9
+3m104[0m:[93m19[0m - [91merror[0m[90m TS
+2353: [0mObject literal may only specify know
+n properties, and 'summary' does not exist in 
+type '{ title: string; description?: string | 
+undefined; operationId?: string | undefined; d
+eprecated?: boolean | undefined; }'.
+
+[7m104[0m   @ApiOperation({ summary: "鍙栧緱瑕忓墖
+闆嗗垪琛? })
+[7m   [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/cmm/cmm.controller.ts[0m:[9
+3m110[0m:[93m19[0m - [91merror[0m[90m TS
+2353: [0mObject literal may only specify know
+n properties, and 'summary' does not exist in 
+type '{ title: string; description?: string | 
+undefined; operationId?: string | undefined; d
+eprecated?: boolean | undefined; }'.
+
+[7m110[0m   @ApiOperation({ summary: "鍙栧緱鐣跺墠
+瑕忓墖闆? })
+[7m   [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/cmm/cmm.controller.ts[0m:[9
+3m118[0m:[93m19[0m - [91merror[0m[90m TS
+2353: [0mObject literal may only specify know
+n properties, and 'summary' does not exist in 
+type '{ title: string; description?: string | 
+undefined; operationId?: string | undefined; d
+eprecated?: boolean | undefined; }'.
+
+[7m118[0m   @ApiOperation({ summary: "鍙栧緱鐗╂枡
+娓呭柈" })
+[7m   [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/cmm/cmm.controller.ts[0m:[9
+3m125[0m:[93m19[0m - [91merror[0m[90m TS
+2353: [0mObject literal may only specify know
+n properties, and 'summary' does not exist in 
+type '{ title: string; description?: string | 
+undefined; operationId?: string | undefined; d
+eprecated?: boolean | undefined; }'.
+
+[7m125[0m   @ApiOperation({ summary: "鍙栧緱鐗╂枡
+瑭虫儏" })
+[7m   [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/cmm/cmm.controller.ts[0m:[9
+3m134[0m:[93m19[0m - [91merror[0m[90m TS
+2353: [0mObject literal may only specify know
+n properties, and 'summary' does not exist in 
+type '{ title: string; description?: string | 
+undefined; operationId?: string | undefined; d
+eprecated?: boolean | undefined; }'.
+
+[7m134[0m   @ApiOperation({ summary: "鏂板鐗╂枡
+" })
+[7m   [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/cmm/cmm.controller.ts[0m:[9
+3m142[0m:[93m19[0m - [91merror[0m[90m TS
+2353: [0mObject literal may only specify know
+n properties, and 'summary' does not exist in 
+type '{ title: string; description?: string | 
+undefined; operationId?: string | undefined; d
+eprecated?: boolean | undefined; }'.
+
+[7m142[0m   @ApiOperation({ summary: "鏇存柊鐗╂枡
+" })
+[7m   [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/cmm/cmm.controller.ts[0m:[9
+3m155[0m:[93m19[0m - [91merror[0m[90m TS
+2353: [0mObject literal may only specify know
+n properties, and 'summary' does not exist in 
+type '{ title: string; description?: string | 
+undefined; operationId?: string | undefined; d
+eprecated?: boolean | undefined; }'.
+
+[7m155[0m   @ApiOperation({ summary: "鍒櫎鐗╂枡
+" })
+[7m   [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/cmm/cmm.controller.ts[0m:[9
+3m166[0m:[93m19[0m - [91merror[0m[90m TS
+2353: [0mObject literal may only specify know
+n properties, and 'summary' does not exist in 
+type '{ title: string; description?: string | 
+undefined; operationId?: string | undefined; d
+eprecated?: boolean | undefined; }'.
+
+[7m166[0m   @ApiOperation({ summary: "鍙栧緱寤虹瘔
+鍙冩暩娓呭柈" })
+[7m   [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/cmm/cmm.controller.ts[0m:[9
+3m173[0m:[93m19[0m - [91merror[0m[90m TS
+2353: [0mObject literal may only specify know
+n properties, and 'summary' does not exist in 
+type '{ title: string; description?: string | 
+undefined; operationId?: string | undefined; d
+eprecated?: boolean | undefined; }'.
+
+[7m173[0m   @ApiOperation({ summary: "鍙栧緱寤虹瘔
+鍙冩暩瑭虫儏" })
+[7m   [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/cmm/cmm.controller.ts[0m:[9
+3m184[0m:[93m19[0m - [91merror[0m[90m TS
+2353: [0mObject literal may only specify know
+n properties, and 'summary' does not exist in 
+type '{ title: string; description?: string | 
+undefined; operationId?: string | undefined; d
+eprecated?: boolean | undefined; }'.
+
+[7m184[0m   @ApiOperation({ summary: "鍩疯鐗╂枡
+瑷堢畻锛堜笉鍎插瓨锛岃垔鐗堢浉瀹癸級" })
+[7m   [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/cmm/cmm.controller.ts[0m:[9
+3m197[0m:[93m19[0m - [91merror[0m[90m TS
+2353: [0mObject literal may only specify know
+n properties, and 'summary' does not exist in 
+type '{ title: string; description?: string | 
+undefined; operationId?: string | undefined; d
+eprecated?: boolean | undefined; }'.
+
+[7m197[0m   @ApiOperation({ summary: "鍩疯鐗╂枡
+瑷堢畻涓﹀劜瀛橈紙鑸婄増鐩稿锛? })
+[7m   [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/cmm/cmm.controller.ts[0m:[9
+3m212[0m:[93m19[0m - [91merror[0m[90m TS
+2353: [0mObject literal may only specify know
+n properties, and 'summary' does not exist in 
+type '{ title: string; description?: string | 
+undefined; operationId?: string | undefined; d
+eprecated?: boolean | undefined; }'.
+
+[7m212[0m   @ApiOperation({ summary: "鐗╂枡鍠綅
+鎻涚畻" })
+[7m   [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/cmm/cmm.controller.ts[0m:[9
+3m233[0m:[93m19[0m - [91merror[0m[90m TS
+2353: [0mObject literal may only specify know
+n properties, and 'summary' does not exist in 
+type '{ title: string; description?: string | 
+undefined; operationId?: string | undefined; d
+eprecated?: boolean | undefined; }'.
+
+[7m233[0m   @ApiOperation({ summary: "鍒濆鍖?C
+MM 闋愯ō璩囨枡" })
+[7m   [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/cmm/dto/calculate.dto.ts[0m:
+[93m10[0m:[93m10[0m - [91merror[0m[90m 
+TS2305: [0mModule '"@nestjs/swagger"' has no 
+exported member 'ApiProperty'.
+
+[7m10[0m import { ApiProperty, ApiPropertyOp
+tional } from "@nestjs/swagger";
+[7m  [0m [91m         ~~~~~~~~~~~[0m
+[96msrc/modules/cmm/dto/calculate.dto.ts[0m:
+[93m10[0m:[93m23[0m - [91merror[0m[90m 
+TS2724: [0m'"@nestjs/swagger"' has no exporte
+d member named 'ApiPropertyOptional'. Did you 
+mean 'ApiModelPropertyOptional'?
+
+[7m10[0m import { ApiProperty, ApiPropertyOp
+tional } from "@nestjs/swagger";
+[7m  [0m [91m                      ~~~~~~~~
+~~~~~~~~~~~[0m
+
+  [96mnode_modules/@nestjs/swagger/dist/decor
+ators/api-model-property.decorator.d.ts[0m:[
+93m29[0m:[93m22[0m
+    [7m29[0m export declare const ApiModelPr
+opertyOptional: (metadata?: {
+    [7m  [0m [96m                     ~~~~~
+~~~~~~~~~~~~~~~~~~~[0m
+    'ApiModelPropertyOptional' is declared her
+e.
+[96msrc/modules/cmm/dto/calculation.dto.ts[0
+m:[93m11[0m:[93m10[0m - [91merror[0m[90
+m TS2305: [0mModule '"@nestjs/swagger"' has n
+o exported member 'ApiProperty'.
+
+[7m11[0m import { ApiProperty, ApiPropertyOp
+tional } from "@nestjs/swagger";
+[7m  [0m [91m         ~~~~~~~~~~~[0m
+[96msrc/modules/cmm/dto/calculation.dto.ts[0
+m:[93m11[0m:[93m23[0m - [91merror[0m[90
+m TS2724: [0m'"@nestjs/swagger"' has no expor
+ted member named 'ApiPropertyOptional'. Did yo
+u mean 'ApiModelPropertyOptional'?
+
+[7m11[0m import { ApiProperty, ApiPropertyOp
+tional } from "@nestjs/swagger";
+[7m  [0m [91m                      ~~~~~~~~
+~~~~~~~~~~~[0m
+
+  [96mnode_modules/@nestjs/swagger/dist/decor
+ators/api-model-property.decorator.d.ts[0m:[
+93m29[0m:[93m22[0m
+    [7m29[0m export declare const ApiModelPr
+opertyOptional: (metadata?: {
+    [7m  [0m [96m                     ~~~~~
+~~~~~~~~~~~~~~~~~~~[0m
+    'ApiModelPropertyOptional' is declared her
+e.
+[96msrc/modules/cmm/dto/material.dto.ts[0m:
+[93m10[0m:[93m10[0m - [91merror[0m[90m T
+S2305: [0mModule '"@nestjs/swagger"' has no e
+xported member 'ApiProperty'.
+
+[7m10[0m import { ApiProperty, ApiPropertyOp
+tional } from "@nestjs/swagger";
+[7m  [0m [91m         ~~~~~~~~~~~[0m
+[96msrc/modules/cmm/dto/material.dto.ts[0m:
+[93m10[0m:[93m23[0m - [91merror[0m[90m T
+S2724: [0m'"@nestjs/swagger"' has no exported
+ member named 'ApiPropertyOptional'. Did you m
+ean 'ApiModelPropertyOptional'?
+
+[7m10[0m import { ApiProperty, ApiPropertyOp
+tional } from "@nestjs/swagger";
+[7m  [0m [91m                      ~~~~~~~~
+~~~~~~~~~~~[0m
+
+  [96mnode_modules/@nestjs/swagger/dist/decor
+ators/api-model-property.decorator.d.ts[0m:[
+93m29[0m:[93m22[0m
+    [7m29[0m export declare const ApiModelPr
+opertyOptional: (metadata?: {
+    [7m  [0m [96m                     ~~~~~
+~~~~~~~~~~~~~~~~~~~[0m
+    'ApiModelPropertyOptional' is declared her
+e.
+[96msrc/modules/contacts/contacts.controller.
+ts[0m:[93m12[0m:[93m10[0m - [91merror[0
+m[90m TS2305: [0mModule '"@nestjs/swagger"' 
+has no exported member 'ApiTags'.
+
+[7m12[0m import { ApiTags, ApiBearerAuth, Ap
+iOperation } from "@nestjs/swagger";
+[7m  [0m [91m         ~~~~~~~[0m
+[96msrc/modules/contacts/contacts.controller.
+ts[0m:[93m32[0m:[93m19[0m - [91merror[0
+m[90m TS2353: [0mObject literal may only spe
+cify known properties, and 'summary' does not 
+exist in type '{ title: string; description?: 
+string | undefined; operationId?: string | und
+efined; deprecated?: boolean | undefined; }'.
+
+[7m32[0m   @ApiOperation({ summary: "List co
+ntacts" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/contacts/contacts.controller.
+ts[0m:[93m39[0m:[93m19[0m - [91merror[0
+m[90m TS2353: [0mObject literal may only spe
+cify known properties, and 'summary' does not 
+exist in type '{ title: string; description?: 
+string | undefined; operationId?: string | und
+efined; deprecated?: boolean | undefined; }'.
+
+[7m39[0m   @ApiOperation({ summary: "Get con
+tacts by owner" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/contacts/contacts.controller.
+ts[0m:[93m49[0m:[93m19[0m - [91merror[0
+m[90m TS2353: [0mObject literal may only spe
+cify known properties, and 'summary' does not 
+exist in type '{ title: string; description?: 
+string | undefined; operationId?: string | und
+efined; deprecated?: boolean | undefined; }'.
+
+[7m49[0m   @ApiOperation({ summary: "Get con
+tact" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/contracts/contracts.controlle
+r.ts[0m:[93m13[0m:[93m10[0m - [91merror
+[0m[90m TS2305: [0mModule '"@nestjs/swagger"
+' has no exported member 'ApiTags'.
+
+[7m13[0m import { ApiTags, ApiBearerAuth, Ap
+iOperation } from "@nestjs/swagger";
+[7m  [0m [91m         ~~~~~~~[0m
+[96msrc/modules/contracts/contracts.controlle
+r.ts[0m:[93m35[0m:[93m19[0m - [91merror
+[0m[90m TS2353: [0mObject literal may only s
+pecify known properties, and 'summary' does no
+t exist in type '{ title: string; description?
+: string | undefined; operationId?: string | u
+ndefined; deprecated?: boolean | undefined; }'
+.
+
+[7m35[0m   @ApiOperation({ summary: "List co
+ntracts" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/cost-entries/cost-entries.con
+troller.ts[0m:[93m13[0m:[93m10[0m - [91m
+error[0m[90m TS2305: [0mModule '"@nestjs/sw
+agger"' has no exported member 'ApiTags'.
+
+[7m13[0m import { ApiTags, ApiBearerAuth, Ap
+iOperation } from "@nestjs/swagger";
+[7m  [0m [91m         ~~~~~~~[0m
+[96msrc/modules/cost-entries/cost-entries.con
+troller.ts[0m:[93m33[0m:[93m19[0m - [91m
+error[0m[90m TS2353: [0mObject literal may 
+only specify known properties, and 'summary' d
+oes not exist in type '{ title: string; descri
+ption?: string | undefined; operationId?: stri
+ng | undefined; deprecated?: boolean | undefin
+ed; }'.
+
+[7m33[0m   @ApiOperation({ summary: "List co
+st entries" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/cost-entries/cost-entries.con
+troller.ts[0m:[93m50[0m:[93m19[0m - [91m
+error[0m[90m TS2353: [0mObject literal may 
+only specify known properties, and 'summary' d
+oes not exist in type '{ title: string; descri
+ption?: string | undefined; operationId?: stri
+ng | undefined; deprecated?: boolean | undefin
+ed; }'.
+
+[7m50[0m   @ApiOperation({ summary: "Get cos
+t summary" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/crm/clients/client-contacts.c
+ontroller.ts[0m:[93m20[0m:[93m10[0m - [9
+1merror[0m[90m TS2305: [0mModule '"@nestjs/
+swagger"' has no exported member 'ApiTags'.
+
+[7m20[0m import { ApiTags, ApiBearerAuth, Ap
+iOperation } from "@nestjs/swagger";
+[7m  [0m [91m         ~~~~~~~[0m
+[96msrc/modules/crm/clients/clients.controlle
+r.ts[0m:[93m15[0m:[93m10[0m - [91merror
+[0m[90m TS2305: [0mModule '"@nestjs/swagger"
+' has no exported member 'ApiTags'.
+
+[7m15[0m import { ApiTags, ApiBearerAuth, Ap
+iOperation } from "@nestjs/swagger";
+[7m  [0m [91m         ~~~~~~~[0m
+[96msrc/modules/crm/clients/clients.controlle
+r.ts[0m:[93m45[0m:[93m19[0m - [91merror
+[0m[90m TS2353: [0mObject literal may only s
+pecify known properties, and 'summary' does no
+t exist in type '{ title: string; description?
+: string | undefined; operationId?: string | u
+ndefined; deprecated?: boolean | undefined; }'
+.
+
+[7m45[0m   @ApiOperation({ summary: "List cl
+ients (deprecated)" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/crm/contacts/contacts.control
+ler.ts[0m:[93m12[0m:[93m10[0m - [91merro
+r[0m[90m TS2305: [0mModule '"@nestjs/swagge
+r"' has no exported member 'ApiTags'.
+
+[7m12[0m import { ApiTags, ApiBearerAuth, Ap
+iOperation } from "@nestjs/swagger";
+[7m  [0m [91m         ~~~~~~~[0m
+[96msrc/modules/crm/contacts/contacts.control
+ler.ts[0m:[93m32[0m:[93m19[0m - [91merro
+r[0m[90m TS2353: [0mObject literal may only
+ specify known properties, and 'summary' does 
+not exist in type '{ title: string; descriptio
+n?: string | undefined; operationId?: string |
+ undefined; deprecated?: boolean | undefined; 
+}'.
+
+[7m32[0m   @ApiOperation({ summary: "List CR
+M contacts" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/crm/contacts/contacts.control
+ler.ts[0m:[93m39[0m:[93m19[0m - [91merro
+r[0m[90m TS2353: [0mObject literal may only
+ specify known properties, and 'summary' does 
+not exist in type '{ title: string; descriptio
+n?: string | undefined; operationId?: string |
+ undefined; deprecated?: boolean | undefined; 
+}'.
+
+[7m39[0m   @ApiOperation({ summary: "Get con
+tacts by owner" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/crm/contacts/contacts.control
+ler.ts[0m:[93m49[0m:[93m19[0m - [91merro
+r[0m[90m TS2353: [0mObject literal may only
+ specify known properties, and 'summary' does 
+not exist in type '{ title: string; descriptio
+n?: string | undefined; operationId?: string |
+ undefined; deprecated?: boolean | undefined; 
+}'.
+
+[7m49[0m   @ApiOperation({ summary: "Get CRM
+ contact" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/customers/customers.controlle
+r.ts[0m:[93m13[0m:[93m10[0m - [91merror
+[0m[90m TS2305: [0mModule '"@nestjs/swagger"
+' has no exported member 'ApiTags'.
+
+[7m13[0m import { ApiTags, ApiBearerAuth, Ap
+iOperation } from "@nestjs/swagger";
+[7m  [0m [91m         ~~~~~~~[0m
+[96msrc/modules/customers/customers.controlle
+r.ts[0m:[93m35[0m:[93m19[0m - [91merror
+[0m[90m TS2353: [0mObject literal may only s
+pecify known properties, and 'summary' does no
+t exist in type '{ title: string; description?
+: string | undefined; operationId?: string | u
+ndefined; deprecated?: boolean | undefined; }'
+.
+
+[7m35[0m   @ApiOperation({ summary: "List cu
+stomers" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/customers/customers.controlle
+r.ts[0m:[93m47[0m:[93m19[0m - [91merror
+[0m[90m TS2353: [0mObject literal may only s
+pecify known properties, and 'summary' does no
+t exist in type '{ title: string; description?
+: string | undefined; operationId?: string | u
+ndefined; deprecated?: boolean | undefined; }'
+.
+
+[7m47[0m   @ApiOperation({ summary: "Get cus
+tomer" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/customers/customers.controlle
+r.ts[0m:[93m56[0m:[93m19[0m - [91merror
+[0m[90m TS2353: [0mObject literal may only s
+pecify known properties, and 'summary' does no
+t exist in type '{ title: string; description?
+: string | undefined; operationId?: string | u
+ndefined; deprecated?: boolean | undefined; }'
+.
+
+[7m56[0m   @ApiOperation({ summary: "List cu
+stomer projects" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/customers/customers.controlle
+r.ts[0m:[93m63[0m:[93m19[0m - [91merror
+[0m[90m TS2353: [0mObject literal may only s
+pecify known properties, and 'summary' does no
+t exist in type '{ title: string; description?
+: string | undefined; operationId?: string | u
+ndefined; deprecated?: boolean | undefined; }'
+.
+
+[7m63[0m   @ApiOperation({ summary: "Create 
+customer" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/customers/customers.controlle
+r.ts[0m:[93m74[0m:[93m19[0m - [91merror
+[0m[90m TS2353: [0mObject literal may only s
+pecify known properties, and 'summary' does no
+t exist in type '{ title: string; description?
+: string | undefined; operationId?: string | u
+ndefined; deprecated?: boolean | undefined; }'
+.
+
+[7m74[0m   @ApiOperation({ summary: "Update 
+customer" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/customers/customers.controlle
+r.ts[0m:[93m104[0m:[93m19[0m - [91merror
+[0m[90m TS2353: [0mObject literal may only 
+specify known properties, and 'summary' does n
+ot exist in type '{ title: string; description
+?: string | undefined; operationId?: string | 
+undefined; deprecated?: boolean | undefined; }
+'.
+
+[7m104[0m   @ApiOperation({ summary: "Delete
+ customer" })
+[7m   [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/drone/work-orders/work-orders
+.controller.ts[0m:[93m13[0m:[93m3[0m - [
+91merror[0m[90m TS2305: [0mModule '"@nestjs
+/swagger"' has no exported member 'ApiTags'.
+
+[7m13[0m   ApiTags,
+[7m  [0m [91m  ~~~~~~~[0m
+[96msrc/modules/drone/work-orders/work-orders
+.controller.ts[0m:[93m16[0m:[93m3[0m - [
+91merror[0m[90m TS2305: [0mModule '"@nestjs
+/swagger"' has no exported member 'ApiQuery'.
+
+[7m16[0m   ApiQuery,
+[7m  [0m [91m  ~~~~~~~~[0m
+[96msrc/modules/drone/work-orders/work-orders
+.controller.ts[0m:[93m38[0m:[93m19[0m - 
+[91merror[0m[90m TS2353: [0mObject literal 
+may only specify known properties, and 'summar
+y' does not exist in type '{ title: string; de
+scription?: string | undefined; operationId?: 
+string | undefined; deprecated?: boolean | und
+efined; }'.
+
+[7m38[0m   @ApiOperation({ summary: "List wo
+rk orders" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/drone/work-orders/work-orders
+.controller.ts[0m:[93m55[0m:[93m19[0m - 
+[91merror[0m[90m TS2353: [0mObject literal 
+may only specify known properties, and 'summar
+y' does not exist in type '{ title: string; de
+scription?: string | undefined; operationId?: 
+string | undefined; deprecated?: boolean | und
+efined; }'.
+
+[7m55[0m   @ApiOperation({ summary: "Generat
+e work order number" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/events/events.controller.ts[
+0m:[93m13[0m:[93m10[0m - [91merror[0m[9
+0m TS2305: [0mModule '"@nestjs/swagger"' has 
+no exported member 'ApiTags'.
+
+[7m13[0m import { ApiTags, ApiBearerAuth, Ap
+iOperation } from "@nestjs/swagger";
+[7m  [0m [91m         ~~~~~~~[0m
+[96msrc/modules/events/events.controller.ts[
+0m:[93m30[0m:[93m19[0m - [91merror[0m[9
+0m TS2353: [0mObject literal may only specify
+ known properties, and 'summary' does not exis
+t in type '{ title: string; description?: stri
+ng | undefined; operationId?: string | undefin
+ed; deprecated?: boolean | undefined; }'.
+
+[7m30[0m   @ApiOperation({ summary: "List ev
+ents" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/events/events.controller.ts[
+0m:[93m36[0m:[93m19[0m - [91merror[0m[9
+0m TS2353: [0mObject literal may only specify
+ known properties, and 'summary' does not exis
+t in type '{ title: string; description?: stri
+ng | undefined; operationId?: string | undefin
+ed; deprecated?: boolean | undefined; }'.
+
+[7m36[0m   @ApiOperation({ summary: "Get tod
+ay events" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/events/events.controller.ts[
+0m:[93m42[0m:[93m19[0m - [91merror[0m[9
+0m TS2353: [0mObject literal may only specify
+ known properties, and 'summary' does not exis
+t in type '{ title: string; description?: stri
+ng | undefined; operationId?: string | undefin
+ed; deprecated?: boolean | undefined; }'.
+
+[7m42[0m   @ApiOperation({ summary: "Get upc
+oming events" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/events/events.controller.ts[
+0m:[93m49[0m:[93m19[0m - [91merror[0m[9
+0m TS2353: [0mObject literal may only specify
+ known properties, and 'summary' does not exis
+t in type '{ title: string; description?: stri
+ng | undefined; operationId?: string | undefin
+ed; deprecated?: boolean | undefined; }'.
+
+[7m49[0m   @ApiOperation({ summary: "Get pro
+ject events" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/finance/finance.controller.ts
+[0m:[93m14[0m:[93m3[0m - [91merror[0m[
+90m TS2305: [0mModule '"@nestjs/swagger"' has
+ no exported member 'ApiTags'.
+
+[7m14[0m   ApiTags,
+[7m  [0m [91m  ~~~~~~~[0m
+[96msrc/modules/finance/finance.controller.ts
+[0m:[93m41[0m:[93m19[0m - [91merror[0m
+[90m TS2353: [0mObject literal may only speci
+fy known properties, and 'summary' does not ex
+ist in type '{ title: string; description?: st
+ring | undefined; operationId?: string | undef
+ined; deprecated?: boolean | undefined; }'.
+
+[7m41[0m   @ApiOperation({ summary: "List ac
+counts" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/finance/finance.controller.ts
+[0m:[93m48[0m:[93m19[0m - [91merror[0m
+[90m TS2353: [0mObject literal may only speci
+fy known properties, and 'summary' does not ex
+ist in type '{ title: string; description?: st
+ring | undefined; operationId?: string | undef
+ined; deprecated?: boolean | undefined; }'.
+
+[7m48[0m   @ApiOperation({ summary: "Get acc
+ount" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/finance/finance.controller.ts
+[0m:[93m55[0m:[93m19[0m - [91merror[0m
+[90m TS2353: [0mObject literal may only speci
+fy known properties, and 'summary' does not ex
+ist in type '{ title: string; description?: st
+ring | undefined; operationId?: string | undef
+ined; deprecated?: boolean | undefined; }'.
+
+[7m55[0m   @ApiOperation({ summary: "Create 
+account" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/finance/finance.controller.ts
+[0m:[93m63[0m:[93m19[0m - [91merror[0m
+[90m TS2353: [0mObject literal may only speci
+fy known properties, and 'summary' does not ex
+ist in type '{ title: string; description?: st
+ring | undefined; operationId?: string | undef
+ined; deprecated?: boolean | undefined; }'.
+
+[7m63[0m   @ApiOperation({ summary: "Update 
+account" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/finance/finance.controller.ts
+[0m:[93m70[0m:[93m19[0m - [91merror[0m
+[90m TS2353: [0mObject literal may only speci
+fy known properties, and 'summary' does not ex
+ist in type '{ title: string; description?: st
+ring | undefined; operationId?: string | undef
+ined; deprecated?: boolean | undefined; }'.
+
+[7m70[0m   @ApiOperation({ summary: "Delete 
+account" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/finance/finance.controller.ts
+[0m:[93m79[0m:[93m19[0m - [91merror[0m
+[90m TS2353: [0mObject literal may only speci
+fy known properties, and 'summary' does not ex
+ist in type '{ title: string; description?: st
+ring | undefined; operationId?: string | undef
+ined; deprecated?: boolean | undefined; }'.
+
+[7m79[0m   @ApiOperation({ summary: "List tr
+ansactions" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/finance/finance.controller.ts
+[0m:[93m116[0m:[93m19[0m - [91merror[0m
+[90m TS2353: [0mObject literal may only spec
+ify known properties, and 'summary' does not e
+xist in type '{ title: string; description?: s
+tring | undefined; operationId?: string | unde
+fined; deprecated?: boolean | undefined; }'.
+
+[7m116[0m   @ApiOperation({ summary: "List l
+oans" })
+[7m   [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/insurance/insurance.controlle
+r.ts[0m:[93m12[0m:[93m10[0m - [91merror
+[0m[90m TS2305: [0mModule '"@nestjs/swagger"
+' has no exported member 'ApiTags'.
+
+[7m12[0m import { ApiTags, ApiBearerAuth, Ap
+iOperation } from "@nestjs/swagger";
+[7m  [0m [91m         ~~~~~~~[0m
+[96msrc/modules/insurance/insurance.controlle
+r.ts[0m:[93m32[0m:[93m19[0m - [91merror
+[0m[90m TS2353: [0mObject literal may only s
+pecify known properties, and 'summary' does no
+t exist in type '{ title: string; description?
+: string | undefined; operationId?: string | u
+ndefined; deprecated?: boolean | undefined; }'
+.
+
+[7m32[0m   @ApiOperation({ summary: "List in
+surance policies" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/insurance/insurance.controlle
+r.ts[0m:[93m39[0m:[93m19[0m - [91merror
+[0m[90m TS2353: [0mObject literal may only s
+pecify known properties, and 'summary' does no
+t exist in type '{ title: string; description?
+: string | undefined; operationId?: string | u
+ndefined; deprecated?: boolean | undefined; }'
+.
+
+[7m39[0m   @ApiOperation({ summary: "Get exp
+iring policies" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/insurance/insurance.controlle
+r.ts[0m:[93m47[0m:[93m19[0m - [91merror
+[0m[90m TS2353: [0mObject literal may only s
+pecify known properties, and 'summary' does no
+t exist in type '{ title: string; description?
+: string | undefined; operationId?: string | u
+ndefined; deprecated?: boolean | undefined; }'
+.
+
+[7m47[0m   @ApiOperation({ summary: "Get ins
+urance rates" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/integrations/exports.controll
+er.ts[0m:[93m18[0m:[93m3[0m - [91merror
+[0m[90m TS2305: [0mModule '"@nestjs/swagger"
+' has no exported member 'ApiTags'.
+
+[7m18[0m   ApiTags,
+[7m  [0m [91m  ~~~~~~~[0m
+[96msrc/modules/integrations/exports.controll
+er.ts[0m:[93m64[0m:[93m19[0m - [91merror
+[0m[90m TS2353: [0mObject literal may only 
+specify known properties, and 'summary' does n
+ot exist in type '{ title: string; description
+?: string | undefined; operationId?: string | 
+undefined; deprecated?: boolean | undefined; }
+'.
+
+[7m64[0m   @ApiOperation({ summary: "鍖嚭浼板児鍠
+埌 Google Sheets" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/integrations/integrations.con
+troller.ts[0m:[93m20[0m:[93m3[0m - [91me
+rror[0m[90m TS2305: [0mModule '"@nestjs/swa
+gger"' has no exported member 'ApiTags'.
+
+[7m20[0m   ApiTags,
+[7m  [0m [91m  ~~~~~~~[0m
+[96msrc/modules/inventory/inventory.controlle
+r.ts[0m:[93m14[0m:[93m10[0m - [91merror
+[0m[90m TS2305: [0mModule '"@nestjs/swagger"
+' has no exported member 'ApiTags'.
+
+[7m14[0m import { ApiTags, ApiBearerAuth, Ap
+iOperation } from "@nestjs/swagger";
+[7m  [0m [91m         ~~~~~~~[0m
+[96msrc/modules/inventory/inventory.controlle
+r.ts[0m:[93m35[0m:[93m19[0m - [91merror
+[0m[90m TS2353: [0mObject literal may only s
+pecify known properties, and 'summary' does no
+t exist in type '{ title: string; description?
+: string | undefined; operationId?: string | u
+ndefined; deprecated?: boolean | undefined; }'
+.
+
+[7m35[0m   @ApiOperation({ summary: "List in
+ventory items" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/inventory/inventory.controlle
+r.ts[0m:[93m42[0m:[93m19[0m - [91merror
+[0m[90m TS2353: [0mObject literal may only s
+pecify known properties, and 'summary' does no
+t exist in type '{ title: string; description?
+: string | undefined; operationId?: string | u
+ndefined; deprecated?: boolean | undefined; }'
+.
+
+[7m42[0m   @ApiOperation({ summary: "Get inv
+entory item" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/invoices/invoices.controller.
+ts[0m:[93m14[0m:[93m10[0m - [91merror[0
+m[90m TS2305: [0mModule '"@nestjs/swagger"' 
+has no exported member 'ApiTags'.
+
+[7m14[0m import { ApiTags, ApiBearerAuth, Ap
+iOperation } from "@nestjs/swagger";
+[7m  [0m [91m         ~~~~~~~[0m
+[96msrc/modules/invoices/invoices.controller.
+ts[0m:[93m45[0m:[93m5[0m - [91merror[0m
+[90m TS2353: [0mObject literal may only spec
+ify known properties, and 'summary' does not e
+xist in type '{ title: string; description?: s
+tring | undefined; operationId?: string | unde
+fined; deprecated?: boolean | undefined; }'.
+
+[7m45[0m     summary: "List invoices",
+[7m  [0m [91m    ~~~~~~~[0m
+[96msrc/modules/invoices/invoices.controller.
+ts[0m:[93m62[0m:[93m19[0m - [91merror[0
+m[90m TS2353: [0mObject literal may only spe
+cify known properties, and 'summary' does not 
+exist in type '{ title: string; description?: 
+string | undefined; operationId?: string | und
+efined; deprecated?: boolean | undefined; }'.
+
+[7m62[0m   @ApiOperation({ summary: "Get inv
+oice statistics" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/payments/payments.controller.
+ts[0m:[93m12[0m:[93m10[0m - [91merror[0
+m[90m TS2305: [0mModule '"@nestjs/swagger"' 
+has no exported member 'ApiTags'.
+
+[7m12[0m import { ApiTags, ApiBearerAuth, Ap
+iOperation } from "@nestjs/swagger";
+[7m  [0m [91m         ~~~~~~~[0m
+[96msrc/modules/payments/payments.controller.
+ts[0m:[93m32[0m:[93m19[0m - [91merror[0
+m[90m TS2353: [0mObject literal may only spe
+cify known properties, and 'summary' does not 
+exist in type '{ title: string; description?: 
+string | undefined; operationId?: string | und
+efined; deprecated?: boolean | undefined; }'.
+
+[7m32[0m   @ApiOperation({ summary: "List pa
+yments" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/payments/payments.controller.
+ts[0m:[93m43[0m:[93m19[0m - [91merror[0
+m[90m TS2353: [0mObject literal may only spe
+cify known properties, and 'summary' does not 
+exist in type '{ title: string; description?: 
+string | undefined; operationId?: string | und
+efined; deprecated?: boolean | undefined; }'.
+
+[7m43[0m   @ApiOperation({ summary: "Get pay
+ment" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/payments/payments.controller.
+ts[0m:[93m50[0m:[93m19[0m - [91merror[0
+m[90m TS2353: [0mObject literal may only spe
+cify known properties, and 'summary' does not 
+exist in type '{ title: string; description?: 
+string | undefined; operationId?: string | und
+efined; deprecated?: boolean | undefined; }'.
+
+[7m50[0m   @ApiOperation({ summary: "Get pay
+ment receipts" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/payments/payments.controller.
+ts[0m:[93m57[0m:[93m19[0m - [91merror[0
+m[90m TS2353: [0mObject literal may only spe
+cify known properties, and 'summary' does not 
+exist in type '{ title: string; description?: 
+string | undefined; operationId?: string | und
+efined; deprecated?: boolean | undefined; }'.
+
+[7m57[0m   @ApiOperation({ summary: "Create 
+payment" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/platform/sites/sites.controll
+er.ts[0m:[93m12[0m:[93m10[0m - [91merror
+[0m[90m TS2305: [0mModule '"@nestjs/swagger
+"' has no exported member 'ApiTags'.
+
+[7m12[0m import { ApiTags, ApiBearerAuth, Ap
+iOperation } from "@nestjs/swagger";
+[7m  [0m [91m         ~~~~~~~[0m
+[96msrc/modules/platform/sites/sites.controll
+er.ts[0m:[93m28[0m:[93m19[0m - [91merror
+[0m[90m TS2353: [0mObject literal may only 
+specify known properties, and 'summary' does n
+ot exist in type '{ title: string; description
+?: string | undefined; operationId?: string | 
+undefined; deprecated?: boolean | undefined; }
+'.
+
+[7m28[0m   @ApiOperation({ summary: "List jo
+b sites" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/platform/sites/sites.controll
+er.ts[0m:[93m35[0m:[93m19[0m - [91merror
+[0m[90m TS2353: [0mObject literal may only 
+specify known properties, and 'summary' does n
+ot exist in type '{ title: string; description
+?: string | undefined; operationId?: string | 
+undefined; deprecated?: boolean | undefined; }
+'.
+
+[7m35[0m   @ApiOperation({ summary: "Find ne
+arby sites" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/platform/sites/sites.controll
+er.ts[0m:[93m50[0m:[93m19[0m - [91merror
+[0m[90m TS2353: [0mObject literal may only 
+specify known properties, and 'summary' does n
+ot exist in type '{ title: string; description
+?: string | undefined; operationId?: string | 
+undefined; deprecated?: boolean | undefined; }
+'.
+
+[7m50[0m   @ApiOperation({ summary: "Get job
+ site" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/platform/tenants/tenants.cont
+roller.ts[0m:[93m11[0m:[93m10[0m - [91me
+rror[0m[90m TS2305: [0mModule '"@nestjs/swa
+gger"' has no exported member 'ApiTags'.
+
+[7m11[0m import { ApiTags, ApiBearerAuth, Ap
+iOperation } from "@nestjs/swagger";
+[7m  [0m [91m         ~~~~~~~[0m
+[96msrc/modules/platform/tenants/tenants.cont
+roller.ts[0m:[93m33[0m:[93m19[0m - [91me
+rror[0m[90m TS2353: [0mObject literal may o
+nly specify known properties, and 'summary' do
+es not exist in type '{ title: string; descrip
+tion?: string | undefined; operationId?: strin
+g | undefined; deprecated?: boolean | undefine
+d; }'.
+
+[7m33[0m   @ApiOperation({ summary: "List le
+gal entities" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/platform/tenants/tenants.cont
+roller.ts[0m:[93m40[0m:[93m19[0m - [91me
+rror[0m[90m TS2353: [0mObject literal may o
+nly specify known properties, and 'summary' do
+es not exist in type '{ title: string; descrip
+tion?: string | undefined; operationId?: strin
+g | undefined; deprecated?: boolean | undefine
+d; }'.
+
+[7m40[0m   @ApiOperation({ summary: "Get leg
+al entity" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/platform/tenants/tenants.cont
+roller.ts[0m:[93m47[0m:[93m19[0m - [91me
+rror[0m[90m TS2353: [0mObject literal may o
+nly specify known properties, and 'summary' do
+es not exist in type '{ title: string; descrip
+tion?: string | undefined; operationId?: strin
+g | undefined; deprecated?: boolean | undefine
+d; }'.
+
+[7m47[0m   @ApiOperation({ summary: "Create 
+legal entity" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/profit-analysis/profit-analys
+is.controller.ts[0m:[93m2[0m:[93m10[0m - 
+[91merror[0m[90m TS2305: [0mModule '"@nest
+js/swagger"' has no exported member 'ApiTags'.
+
+[7m2[0m import { ApiTags, ApiBearerAuth, Api
+Operation } from "@nestjs/swagger";
+[7m [0m [91m         ~~~~~~~[0m
+[96msrc/modules/profit-analysis/profit-analys
+is.controller.ts[0m:[93m16[0m:[93m19[0m -
+ [91merror[0m[90m TS2353: [0mObject litera
+l may only specify known properties, and 'summ
+ary' does not exist in type '{ title: string; 
+description?: string | undefined; operationId?
+: string | undefined; deprecated?: boolean | u
+ndefined; }'.
+
+[7m16[0m   @ApiOperation({ summary: "Get pro
+fit dashboard" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/profit-analysis/profit-analys
+is.controller.ts[0m:[93m23[0m:[93m19[0m -
+ [91merror[0m[90m TS2353: [0mObject litera
+l may only specify known properties, and 'summ
+ary' does not exist in type '{ title: string; 
+description?: string | undefined; operationId?
+: string | undefined; deprecated?: boolean | u
+ndefined; }'.
+
+[7m23[0m   @ApiOperation({ summary: "Get pro
+ject profit analysis" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/projects/projects.controller.
+ts[0m:[93m13[0m:[93m10[0m - [91merror[0
+m[90m TS2305: [0mModule '"@nestjs/swagger"' 
+has no exported member 'ApiTags'.
+
+[7m13[0m import { ApiTags, ApiBearerAuth, Ap
+iOperation } from "@nestjs/swagger";
+[7m  [0m [91m         ~~~~~~~[0m
+[96msrc/modules/projects/projects.controller.
+ts[0m:[93m38[0m:[93m5[0m - [91merror[0m
+[90m TS2353: [0mObject literal may only spec
+ify known properties, and 'summary' does not e
+xist in type '{ title: string; description?: s
+tring | undefined; operationId?: string | unde
+fined; deprecated?: boolean | undefined; }'.
+
+[7m38[0m     summary: "List projects",
+[7m  [0m [91m    ~~~~~~~[0m
+[96msrc/modules/projects/projects.controller.
+ts[0m:[93m55[0m:[93m5[0m - [91merror[0m
+[90m TS2353: [0mObject literal may only spec
+ify known properties, and 'summary' does not e
+xist in type '{ title: string; description?: s
+tring | undefined; operationId?: string | unde
+fined; deprecated?: boolean | undefined; }'.
+
+[7m55[0m     summary: "Get project",
+[7m  [0m [91m    ~~~~~~~[0m
+[96msrc/modules/projects/projects.controller.
+ts[0m:[93m68[0m:[93m19[0m - [91merror[0
+m[90m TS2353: [0mObject literal may only spe
+cify known properties, and 'summary' does not 
+exist in type '{ title: string; description?: 
+string | undefined; operationId?: string | und
+efined; deprecated?: boolean | undefined; }'.
+
+[7m68[0m   @ApiOperation({ summary: "List pr
+oject vendors" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/projects/projects.controller.
+ts[0m:[93m75[0m:[93m19[0m - [91merror[0
+m[90m TS2353: [0mObject literal may only spe
+cify known properties, and 'summary' does not 
+exist in type '{ title: string; description?: 
+string | undefined; operationId?: string | und
+efined; deprecated?: boolean | undefined; }'.
+
+[7m75[0m   @ApiOperation({ summary: "List pr
+oject phases" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/projects/projects.controller.
+ts[0m:[93m82[0m:[93m19[0m - [91merror[0
+m[90m TS2353: [0mObject literal may only spe
+cify known properties, and 'summary' does not 
+exist in type '{ title: string; description?: 
+string | undefined; operationId?: string | und
+efined; deprecated?: boolean | undefined; }'.
+
+[7m82[0m   @ApiOperation({ summary: "List pr
+oject tasks" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/projects/projects.controller.
+ts[0m:[93m90[0m:[93m5[0m - [91merror[0m
+[90m TS2353: [0mObject literal may only spec
+ify known properties, and 'summary' does not e
+xist in type '{ title: string; description?: s
+tring | undefined; operationId?: string | unde
+fined; deprecated?: boolean | undefined; }'.
+
+[7m90[0m     summary: "Get cost summary",
+[7m  [0m [91m    ~~~~~~~[0m
+[96msrc/modules/projects/projects.controller.
+ts[0m:[93m99[0m:[93m19[0m - [91merror[0
+m[90m TS2353: [0mObject literal may only spe
+cify known properties, and 'summary' does not 
+exist in type '{ title: string; description?: 
+string | undefined; operationId?: string | und
+efined; deprecated?: boolean | undefined; }'.
+
+[7m99[0m   @ApiOperation({ summary: "Create 
+project" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/projects/projects.controller.
+ts[0m:[93m106[0m:[93m19[0m - [91merror[
+0m[90m TS2353: [0mObject literal may only sp
+ecify known properties, and 'summary' does not
+ exist in type '{ title: string; description?:
+ string | undefined; operationId?: string | un
+defined; deprecated?: boolean | undefined; }'.
+
+[7m106[0m   @ApiOperation({ summary: "Update
+ project" })
+[7m   [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/projects/projects.controller.
+ts[0m:[93m117[0m:[93m19[0m - [91merror[
+0m[90m TS2353: [0mObject literal may only sp
+ecify known properties, and 'summary' does not
+ exist in type '{ title: string; description?:
+ string | undefined; operationId?: string | un
+defined; deprecated?: boolean | undefined; }'.
+
+[7m117[0m   @ApiOperation({ summary: "Delete
+ project" })
+[7m   [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/projects/projects.controller.
+ts[0m:[93m126[0m:[93m5[0m - [91merror[0
+m[90m TS2353: [0mObject literal may only spe
+cify known properties, and 'summary' does not 
+exist in type '{ title: string; description?: 
+string | undefined; operationId?: string | und
+efined; deprecated?: boolean | undefined; }'.
+
+[7m126[0m     summary: "Add phase",
+[7m   [0m [91m    ~~~~~~~[0m
+[96msrc/modules/projects/projects.controller.
+ts[0m:[93m135[0m:[93m19[0m - [91merror[
+0m[90m TS2353: [0mObject literal may only sp
+ecify known properties, and 'summary' does not
+ exist in type '{ title: string; description?:
+ string | undefined; operationId?: string | un
+defined; deprecated?: boolean | undefined; }'.
+
+[7m135[0m   @ApiOperation({ summary: "Remove
+ phase" })
+[7m   [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/projects/projects.controller.
+ts[0m:[93m144[0m:[93m5[0m - [91merror[0
+m[90m TS2353: [0mObject literal may only spe
+cify known properties, and 'summary' does not 
+exist in type '{ title: string; description?: 
+string | undefined; operationId?: string | und
+efined; deprecated?: boolean | undefined; }'.
+
+[7m144[0m     summary: "Add vendor",
+[7m   [0m [91m    ~~~~~~~[0m
+[96msrc/modules/projects/projects.controller.
+ts[0m:[93m153[0m:[93m19[0m - [91merror[
+0m[90m TS2353: [0mObject literal may only sp
+ecify known properties, and 'summary' does not
+ exist in type '{ title: string; description?:
+ string | undefined; operationId?: string | un
+defined; deprecated?: boolean | undefined; }'.
+
+[7m153[0m   @ApiOperation({ summary: "Remove
+ vendor" })
+[7m   [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/projects/projects.controller.
+ts[0m:[93m162[0m:[93m5[0m - [91merror[0
+m[90m TS2353: [0mObject literal may only spe
+cify known properties, and 'summary' does not 
+exist in type '{ title: string; description?: 
+string | undefined; operationId?: string | und
+efined; deprecated?: boolean | undefined; }'.
+
+[7m162[0m     summary: "Add task",
+[7m   [0m [91m    ~~~~~~~[0m
+[96msrc/modules/projects/projects.controller.
+ts[0m:[93m171[0m:[93m19[0m - [91merror[
+0m[90m TS2353: [0mObject literal may only sp
+ecify known properties, and 'summary' does not
+ exist in type '{ title: string; description?:
+ string | undefined; operationId?: string | un
+defined; deprecated?: boolean | undefined; }'.
+
+[7m171[0m   @ApiOperation({ summary: "Update
+ task status" })
+[7m   [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/projects/projects.controller.
+ts[0m:[93m181[0m:[93m19[0m - [91merror[
+0m[90m TS2353: [0mObject literal may only sp
+ecify known properties, and 'summary' does not
+ exist in type '{ title: string; description?:
+ string | undefined; operationId?: string | un
+defined; deprecated?: boolean | undefined; }'.
+
+[7m181[0m   @ApiOperation({ summary: "Remove
+ task" })
+[7m   [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/quotations/quotations.control
+ler.ts[0m:[93m13[0m:[93m10[0m - [91merro
+r[0m[90m TS2305: [0mModule '"@nestjs/swagge
+r"' has no exported member 'ApiTags'.
+
+[7m13[0m import { ApiTags, ApiBearerAuth, Ap
+iOperation } from "@nestjs/swagger";
+[7m  [0m [91m         ~~~~~~~[0m
+[96msrc/modules/quotations/quotations.control
+ler.ts[0m:[93m30[0m:[93m19[0m - [91merro
+r[0m[90m TS2353: [0mObject literal may only
+ specify known properties, and 'summary' does 
+not exist in type '{ title: string; descriptio
+n?: string | undefined; operationId?: string |
+ undefined; deprecated?: boolean | undefined; 
+}'.
+
+[7m30[0m   @ApiOperation({ summary: "List qu
+otations" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/regulations/dto/regulations.d
+to.ts[0m:[93m2[0m:[93m10[0m - [91merror
+[0m[90m TS2305: [0mModule '"@nestjs/swagger"
+' has no exported member 'ApiProperty'.
+
+[7m2[0m import { ApiProperty, ApiPropertyOpt
+ional } from "@nestjs/swagger";
+[7m [0m [91m         ~~~~~~~~~~~[0m
+[96msrc/modules/regulations/dto/regulations.d
+to.ts[0m:[93m2[0m:[93m23[0m - [91merror
+[0m[90m TS2724: [0m'"@nestjs/swagger"' has n
+o exported member named 'ApiPropertyOptional'.
+ Did you mean 'ApiModelPropertyOptional'?
+
+[7m2[0m import { ApiProperty, ApiPropertyOpt
+ional } from "@nestjs/swagger";
+[7m [0m [91m                      ~~~~~~~~~
+~~~~~~~~~~[0m
+
+  [96mnode_modules/@nestjs/swagger/dist/decor
+ators/api-model-property.decorator.d.ts[0m:[
+93m29[0m:[93m22[0m
+    [7m29[0m export declare const ApiModelPr
+opertyOptional: (metadata?: {
+    [7m  [0m [96m                     ~~~~~
+~~~~~~~~~~~~~~~~~~~[0m
+    'ApiModelPropertyOptional' is declared her
+e.
+[96msrc/modules/regulations/regulations.contr
+oller.ts[0m:[93m2[0m:[93m10[0m - [91merr
+or[0m[90m TS2305: [0mModule '"@nestjs/swagg
+er"' has no exported member 'ApiTags'.
+
+[7m2[0m import { ApiTags, ApiOperation, ApiR
+esponse, ApiQuery } from "@nestjs/swagger";
+[7m [0m [91m         ~~~~~~~[0m
+[96msrc/modules/regulations/regulations.contr
+oller.ts[0m:[93m2[0m:[93m46[0m - [91merr
+or[0m[90m TS2305: [0mModule '"@nestjs/swagg
+er"' has no exported member 'ApiQuery'.
+
+[7m2[0m import { ApiTags, ApiOperation, ApiR
+esponse, ApiQuery } from "@nestjs/swagger";
+[7m [0m [91m                               
+              ~~~~~~~~[0m
+[96msrc/modules/regulations/regulations.contr
+oller.ts[0m:[93m24[0m:[93m19[0m - [91mer
+ror[0m[90m TS2353: [0mObject literal may on
+ly specify known properties, and 'summary' doe
+s not exist in type '{ title: string; descript
+ion?: string | undefined; operationId?: string
+ | undefined; deprecated?: boolean | undefined
+; }'.
+
+[7m24[0m   @ApiOperation({ summary: "鎵嬪嫊瑙哥櫦娉
+曡鍚屾" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/regulations/regulations.contr
+oller.ts[0m:[93m31[0m:[93m19[0m - [91mer
+ror[0m[90m TS2353: [0mObject literal may on
+ly specify known properties, and 'summary' doe
+s not exist in type '{ title: string; descript
+ion?: string | undefined; operationId?: string
+ | undefined; deprecated?: boolean | undefined
+; }'.
+
+[7m31[0m   @ApiOperation({ summary: "鍙栧緱鍚屾鐙
+€鎱? })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/regulations/regulations.contr
+oller.ts[0m:[93m42[0m:[93m19[0m - [91mer
+ror[0m[90m TS2353: [0mObject literal may on
+ly specify known properties, and 'summary' doe
+s not exist in type '{ title: string; descript
+ion?: string | undefined; operationId?: string
+ | undefined; deprecated?: boolean | undefined
+; }'.
+
+[7m42[0m   @ApiOperation({ summary: "鍒楀嚭鎵€鏈夋
+硶瑕忎締婧? })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/regulations/regulations.contr
+oller.ts[0m:[93m49[0m:[93m19[0m - [91mer
+ror[0m[90m TS2353: [0mObject literal may on
+ly specify known properties, and 'summary' doe
+s not exist in type '{ title: string; descript
+ion?: string | undefined; operationId?: string
+ | undefined; deprecated?: boolean | undefined
+; }'.
+
+[7m49[0m   @ApiOperation({ summary: "鏌ヨ娉曡姊
+濇枃" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/regulations/regulations.contr
+oller.ts[0m:[93m61[0m:[93m19[0m - [91mer
+ror[0m[90m TS2353: [0mObject literal may on
+ly specify known properties, and 'summary' doe
+s not exist in type '{ title: string; descript
+ion?: string | undefined; operationId?: string
+ | undefined; deprecated?: boolean | undefined
+; }'.
+
+[7m61[0m   @ApiOperation({ summary: "鍏ㄦ枃鎼滃皨娉
+曡" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/regulations/regulations.contr
+oller.ts[0m:[93m72[0m:[93m19[0m - [91mer
+ror[0m[90m TS2353: [0mObject literal may on
+ly specify known properties, and 'summary' doe
+s not exist in type '{ title: string; descript
+ion?: string | undefined; operationId?: string
+ | undefined; deprecated?: boolean | undefined
+; }'.
+
+[7m72[0m   @ApiOperation({ summary: "渚濇潗鏂欓鍒
+ュ彇寰楃浉闂滄硶瑕? })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/regulations/regulations.contr
+oller.ts[0m:[93m83[0m:[93m19[0m - [91mer
+ror[0m[90m TS2353: [0mObject literal may on
+ly specify known properties, and 'summary' doe
+s not exist in type '{ title: string; descript
+ion?: string | undefined; operationId?: string
+ | undefined; deprecated?: boolean | undefined
+; }'.
+
+[7m83[0m   @ApiOperation({ summary: "鏌ヨ CNS
+ 妯欐簴" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/regulations/regulations.contr
+oller.ts[0m:[93m99[0m:[93m19[0m - [91mer
+ror[0m[90m TS2353: [0mObject literal may on
+ly specify known properties, and 'summary' doe
+s not exist in type '{ title: string; descript
+ion?: string | undefined; operationId?: string
+ | undefined; deprecated?: boolean | undefined
+; }'.
+
+[7m99[0m   @ApiOperation({ summary: "鍙栧緱 CNS
+ 鍒嗛鍒楄〃" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/regulations/regulations.contr
+oller.ts[0m:[93m106[0m:[93m19[0m - [91me
+rror[0m[90m TS2353: [0mObject literal may o
+nly specify known properties, and 'summary' do
+es not exist in type '{ title: string; descrip
+tion?: string | undefined; operationId?: strin
+g | undefined; deprecated?: boolean | undefine
+d; }'.
+
+[7m106[0m   @ApiOperation({ summary: "渚濈法铏熷彇
+寰?CNS 妯欐簴" })
+[7m   [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/regulations/regulations.contr
+oller.ts[0m:[93m117[0m:[93m19[0m - [91me
+rror[0m[90m TS2353: [0mObject literal may o
+nly specify known properties, and 'summary' do
+es not exist in type '{ title: string; descrip
+tion?: string | undefined; operationId?: strin
+g | undefined; deprecated?: boolean | undefine
+d; }'.
+
+[7m117[0m   @ApiOperation({ summary: "鍙栧緱 AI
+ 鏈嶅嫏鐙€鎱? })
+[7m   [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/regulations/regulations.contr
+oller.ts[0m:[93m127[0m:[93m19[0m - [91me
+rror[0m[90m TS2353: [0mObject literal may o
+nly specify known properties, and 'summary' do
+es not exist in type '{ title: string; descrip
+tion?: string | undefined; operationId?: strin
+g | undefined; deprecated?: boolean | undefine
+d; }'.
+
+[7m127[0m   @ApiOperation({ summary: "鐢㈢敓娉曡
+姊濇枃 AI 鎽樿" })
+[7m   [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/regulations/regulations.contr
+oller.ts[0m:[93m141[0m:[93m19[0m - [91me
+rror[0m[90m TS2353: [0mObject literal may o
+nly specify known properties, and 'summary' do
+es not exist in type '{ title: string; descrip
+tion?: string | undefined; operationId?: strin
+g | undefined; deprecated?: boolean | undefine
+d; }'.
+
+[7m141[0m   @ApiOperation({ summary: "鐢㈢敓 CN
+S 妯欐簴 AI 鎽樿" })
+[7m   [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/regulations/regulations.contr
+oller.ts[0m:[93m157[0m:[93m19[0m - [91me
+rror[0m[90m TS2353: [0mObject literal may o
+nly specify known properties, and 'summary' do
+es not exist in type '{ title: string; descrip
+tion?: string | undefined; operationId?: strin
+g | undefined; deprecated?: boolean | undefine
+d; }'.
+
+[7m157[0m   @ApiOperation({ summary: "AI 寤鸿
+鐩搁棞娉曡" })
+[7m   [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/reports/reports.controller.ts
+[0m:[93m2[0m:[93m10[0m - [91merror[0m[
+90m TS2305: [0mModule '"@nestjs/swagger"' has
+ no exported member 'ApiTags'.
+
+[7m2[0m import { ApiTags, ApiBearerAuth, Api
+Operation } from "@nestjs/swagger";
+[7m [0m [91m         ~~~~~~~[0m
+[96msrc/modules/reports/reports.controller.ts
+[0m:[93m17[0m:[93m19[0m - [91merror[0m
+[90m TS2353: [0mObject literal may only speci
+fy known properties, and 'summary' does not ex
+ist in type '{ title: string; description?: st
+ring | undefined; operationId?: string | undef
+ined; deprecated?: boolean | undefined; }'.
+
+[7m17[0m   @ApiOperation({ summary: "Get das
+hboard metrics" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/reports/reports.controller.ts
+[0m:[93m24[0m:[93m19[0m - [91merror[0m
+[90m TS2353: [0mObject literal may only speci
+fy known properties, and 'summary' does not ex
+ist in type '{ title: string; description?: st
+ring | undefined; operationId?: string | undef
+ined; deprecated?: boolean | undefined; }'.
+
+[7m24[0m   @ApiOperation({ summary: "Get rev
+enue by month" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/reports/reports.controller.ts
+[0m:[93m31[0m:[93m19[0m - [91merror[0m
+[90m TS2353: [0mObject literal may only speci
+fy known properties, and 'summary' does not ex
+ist in type '{ title: string; description?: st
+ring | undefined; operationId?: string | undef
+ined; deprecated?: boolean | undefined; }'.
+
+[7m31[0m   @ApiOperation({ summary: "Get pro
+ject status distribution" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/reports/reports.controller.ts
+[0m:[93m38[0m:[93m19[0m - [91merror[0m
+[90m TS2353: [0mObject literal may only speci
+fy known properties, and 'summary' does not ex
+ist in type '{ title: string; description?: st
+ring | undefined; operationId?: string | undef
+ined; deprecated?: boolean | undefined; }'.
+
+[7m38[0m   @ApiOperation({ summary: "Get top
+ clients by revenue" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/schedules/schedule.controller
+.ts[0m:[93m12[0m:[93m10[0m - [91merror[
+0m[90m TS2305: [0mModule '"@nestjs/swagger"'
+ has no exported member 'ApiTags'.
+
+[7m12[0m import { ApiTags, ApiBearerAuth, Ap
+iOperation } from "@nestjs/swagger";
+[7m  [0m [91m         ~~~~~~~[0m
+[96msrc/modules/schedules/schedule.controller
+.ts[0m:[93m36[0m:[93m19[0m - [91merror[
+0m[90m TS2353: [0mObject literal may only sp
+ecify known properties, and 'summary' does not
+ exist in type '{ title: string; description?:
+ string | undefined; operationId?: string | un
+defined; deprecated?: boolean | undefined; }'.
+
+[7m36[0m   @ApiOperation({ summary: "Get Gan
+tt chart data" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/schedules/schedule.controller
+.ts[0m:[93m43[0m:[93m19[0m - [91merror[
+0m[90m TS2353: [0mObject literal may only sp
+ecify known properties, and 'summary' does not
+ exist in type '{ title: string; description?:
+ string | undefined; operationId?: string | un
+defined; deprecated?: boolean | undefined; }'.
+
+[7m43[0m   @ApiOperation({ summary: "Get cri
+tical path" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/site-logs/site-logs.controlle
+r.ts[0m:[93m13[0m:[93m10[0m - [91merror
+[0m[90m TS2305: [0mModule '"@nestjs/swagger"
+' has no exported member 'ApiTags'.
+
+[7m13[0m import { ApiTags, ApiBearerAuth, Ap
+iOperation } from "@nestjs/swagger";
+[7m  [0m [91m         ~~~~~~~[0m
+[96msrc/modules/site-logs/site-logs.controlle
+r.ts[0m:[93m33[0m:[93m19[0m - [91merror
+[0m[90m TS2353: [0mObject literal may only s
+pecify known properties, and 'summary' does no
+t exist in type '{ title: string; description?
+: string | undefined; operationId?: string | u
+ndefined; deprecated?: boolean | undefined; }'
+.
+
+[7m33[0m   @ApiOperation({ summary: "List si
+te logs" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/site-logs/site-logs.controlle
+r.ts[0m:[93m40[0m:[93m19[0m - [91merror
+[0m[90m TS2353: [0mObject literal may only s
+pecify known properties, and 'summary' does no
+t exist in type '{ title: string; description?
+: string | undefined; operationId?: string | u
+ndefined; deprecated?: boolean | undefined; }'
+.
+
+[7m40[0m   @ApiOperation({ summary: "Get pro
+ject summary" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/site-logs/site-photos.control
+ler.ts[0m:[93m25[0m:[93m3[0m - [91merror
+[0m[90m TS2305: [0mModule '"@nestjs/swagger
+"' has no exported member 'ApiTags'.
+
+[7m25[0m   ApiTags,
+[7m  [0m [91m  ~~~~~~~[0m
+[96msrc/modules/site-logs/site-photos.control
+ler.ts[0m:[93m44[0m:[93m19[0m - [91merro
+r[0m[90m TS2353: [0mObject literal may only
+ specify known properties, and 'summary' does 
+not exist in type '{ title: string; descriptio
+n?: string | undefined; operationId?: string |
+ undefined; deprecated?: boolean | undefined; 
+}'.
+
+[7m44[0m   @ApiOperation({ summary: "涓婂偝宸ュ湴鐓
+х墖" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/site-logs/site-photos.control
+ler.ts[0m:[93m71[0m:[93m19[0m - [91merro
+r[0m[90m TS2353: [0mObject literal may only
+ specify known properties, and 'summary' does 
+not exist in type '{ title: string; descriptio
+n?: string | undefined; operationId?: string |
+ undefined; deprecated?: boolean | undefined; 
+}'.
+
+[7m71[0m   @ApiOperation({ summary: "鍙栧緱灏堟鐓
+х墖鍒楄〃" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/site-logs/site-photos.control
+ler.ts[0m:[93m89[0m:[93m19[0m - [91merro
+r[0m[90m TS2353: [0mObject literal may only
+ specify known properties, and 'summary' does 
+not exist in type '{ title: string; descriptio
+n?: string | undefined; operationId?: string |
+ undefined; deprecated?: boolean | undefined; 
+}'.
+
+[7m89[0m   @ApiOperation({ summary: "鍙栧緱鐓х墖瑭
+虫儏" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/site-logs/site-photos.control
+ler.ts[0m:[93m98[0m:[93m19[0m - [91merro
+r[0m[90m TS2353: [0mObject literal may only
+ specify known properties, and 'summary' does 
+not exist in type '{ title: string; descriptio
+n?: string | undefined; operationId?: string |
+ undefined; deprecated?: boolean | undefined; 
+}'.
+
+[7m98[0m   @ApiOperation({ summary: "鍒櫎鐓х墖"
+ })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/site-logs/site-photos.control
+ler.ts[0m:[93m109[0m:[93m19[0m - [91merr
+or[0m[90m TS2353: [0mObject literal may onl
+y specify known properties, and 'summary' does
+ not exist in type '{ title: string; descripti
+on?: string | undefined; operationId?: string 
+| undefined; deprecated?: boolean | undefined;
+ }'.
+
+[7m109[0m   @ApiOperation({ summary: "鏇存柊鐓х墖
+璩囪▕" })
+[7m   [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/site-logs/site-photos.control
+ler.ts[0m:[93m121[0m:[93m19[0m - [91merr
+or[0m[90m TS2353: [0mObject literal may onl
+y specify known properties, and 'summary' does
+ not exist in type '{ title: string; descripti
+on?: string | undefined; operationId?: string 
+| undefined; deprecated?: boolean | undefined;
+ }'.
+
+[7m121[0m   @ApiOperation({ summary: "鍙栧緱灏堟
+鐓х墖绲辫▓" })
+[7m   [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/smart-home/dto/export-smart-h
+ome.dto.ts[0m:[93m9[0m:[93m10[0m - [91me
+rror[0m[90m TS2305: [0mModule '"@nestjs/swa
+gger"' has no exported member 'ApiProperty'.
+
+[7m9[0m import { ApiProperty, ApiPropertyOpt
+ional } from "@nestjs/swagger";
+[7m [0m [91m         ~~~~~~~~~~~[0m
+[96msrc/modules/smart-home/dto/export-smart-h
+ome.dto.ts[0m:[93m9[0m:[93m23[0m - [91me
+rror[0m[90m TS2724: [0m'"@nestjs/swagger"' 
+has no exported member named 'ApiPropertyOptio
+nal'. Did you mean 'ApiModelPropertyOptional'?
+
+[7m9[0m import { ApiProperty, ApiPropertyOpt
+ional } from "@nestjs/swagger";
+[7m [0m [91m                      ~~~~~~~~~
+~~~~~~~~~~[0m
+
+  [96mnode_modules/@nestjs/swagger/dist/decor
+ators/api-model-property.decorator.d.ts[0m:[
+93m29[0m:[93m22[0m
+    [7m29[0m export declare const ApiModelPr
+opertyOptional: (metadata?: {
+    [7m  [0m [96m                     ~~~~~
+~~~~~~~~~~~~~~~~~~~[0m
+    'ApiModelPropertyOptional' is declared her
+e.
+[96msrc/modules/smart-home/dto/smart-home.dto
+.ts[0m:[93m8[0m:[93m10[0m - [91merror[0
+m[90m TS2305: [0mModule '"@nestjs/swagger"' 
+has no exported member 'ApiProperty'.
+
+[7m8[0m import { ApiProperty, ApiPropertyOpt
+ional } from "@nestjs/swagger";
+[7m [0m [91m         ~~~~~~~~~~~[0m
+[96msrc/modules/smart-home/dto/smart-home.dto
+.ts[0m:[93m8[0m:[93m23[0m - [91merror[0
+m[90m TS2724: [0m'"@nestjs/swagger"' has no 
+exported member named 'ApiPropertyOptional'. D
+id you mean 'ApiModelPropertyOptional'?
+
+[7m8[0m import { ApiProperty, ApiPropertyOpt
+ional } from "@nestjs/swagger";
+[7m [0m [91m                      ~~~~~~~~~
+~~~~~~~~~~[0m
+
+  [96mnode_modules/@nestjs/swagger/dist/decor
+ators/api-model-property.decorator.d.ts[0m:[
+93m29[0m:[93m22[0m
+    [7m29[0m export declare const ApiModelPr
+opertyOptional: (metadata?: {
+    [7m  [0m [96m                     ~~~~~
+~~~~~~~~~~~~~~~~~~~[0m
+    'ApiModelPropertyOptional' is declared her
+e.
+[96msrc/modules/smart-home/smart-home.control
+ler.ts[0m:[93m13[0m:[93m3[0m - [91merror
+[0m[90m TS2305: [0mModule '"@nestjs/swagger
+"' has no exported member 'ApiTags'.
+
+[7m13[0m   ApiTags,
+[7m  [0m [91m  ~~~~~~~[0m
+[96msrc/modules/smart-home/smart-home.control
+ler.ts[0m:[93m33[0m:[93m19[0m - [91merro
+r[0m[90m TS2353: [0mObject literal may only
+ specify known properties, and 'summary' does 
+not exist in type '{ title: string; descriptio
+n?: string | undefined; operationId?: string |
+ undefined; deprecated?: boolean | undefined; 
+}'.
+
+[7m33[0m   @ApiOperation({ summary: "Get all
+ smart home products" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/smart-home/smart-home.control
+ler.ts[0m:[93m42[0m:[93m19[0m - [91merro
+r[0m[90m TS2353: [0mObject literal may only
+ specify known properties, and 'summary' does 
+not exist in type '{ title: string; descriptio
+n?: string | undefined; operationId?: string |
+ undefined; deprecated?: boolean | undefined; 
+}'.
+
+[7m42[0m   @ApiOperation({ summary: "Get a s
+mart home product by ID" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/smart-home/smart-home.control
+ler.ts[0m:[93m49[0m:[93m19[0m - [91merro
+r[0m[90m TS2353: [0mObject literal may only
+ specify known properties, and 'summary' does 
+not exist in type '{ title: string; descriptio
+n?: string | undefined; operationId?: string |
+ undefined; deprecated?: boolean | undefined; 
+}'.
+
+[7m49[0m   @ApiOperation({ summary: "Get all
+ product categories with counts" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/smart-home/smart-home.control
+ler.ts[0m:[93m56[0m:[93m19[0m - [91merro
+r[0m[90m TS2353: [0mObject literal may only
+ specify known properties, and 'summary' does 
+not exist in type '{ title: string; descriptio
+n?: string | undefined; operationId?: string |
+ undefined; deprecated?: boolean | undefined; 
+}'.
+
+[7m56[0m   @ApiOperation({ summary: "Get sub
+categories for a category" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/smart-home/smart-home.control
+ler.ts[0m:[93m65[0m:[93m19[0m - [91merro
+r[0m[90m TS2353: [0mObject literal may only
+ specify known properties, and 'summary' does 
+not exist in type '{ title: string; descriptio
+n?: string | undefined; operationId?: string |
+ undefined; deprecated?: boolean | undefined; 
+}'.
+
+[7m65[0m   @ApiOperation({ summary: "Get cur
+rent sync status" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/smart-home/smart-home.control
+ler.ts[0m:[93m77[0m:[93m19[0m - [91merro
+r[0m[90m TS2353: [0mObject literal may only
+ specify known properties, and 'summary' does 
+not exist in type '{ title: string; descriptio
+n?: string | undefined; operationId?: string |
+ undefined; deprecated?: boolean | undefined; 
+}'.
+
+[7m77[0m   @ApiOperation({ summary: "Manuall
+y trigger product sync from Aqara" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/smart-home/smart-home.control
+ler.ts[0m:[93m86[0m:[93m19[0m - [91merro
+r[0m[90m TS2353: [0mObject literal may only
+ specify known properties, and 'summary' does 
+not exist in type '{ title: string; descriptio
+n?: string | undefined; operationId?: string |
+ undefined; deprecated?: boolean | undefined; 
+}'.
+
+[7m86[0m   @ApiOperation({ summary: "Export 
+quotation list to Google Sheets" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/storage/storage.controller.ts
+[0m:[93m14[0m:[93m10[0m - [91merror[0m
+[90m TS2305: [0mModule '"@nestjs/swagger"' ha
+s no exported member 'ApiTags'.
+
+[7m14[0m import { ApiTags, ApiBearerAuth, Ap
+iOperation } from "@nestjs/swagger";
+[7m  [0m [91m         ~~~~~~~[0m
+[96msrc/modules/storage/storage.controller.ts
+[0m:[93m40[0m:[93m19[0m - [91merror[0m
+[90m TS2353: [0mObject literal may only speci
+fy known properties, and 'summary' does not ex
+ist in type '{ title: string; description?: st
+ring | undefined; operationId?: string | undef
+ined; deprecated?: boolean | undefined; }'.
+
+[7m40[0m   @ApiOperation({ summary: "Check s
+torage status" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/supply-chain/procurements/pro
+curements.controller.ts[0m:[93m13[0m:[93m1
+0[0m - [91merror[0m[90m TS2305: [0mModule
+ '"@nestjs/swagger"' has no exported member 'A
+piTags'.
+
+[7m13[0m import { ApiTags, ApiBearerAuth, Ap
+iOperation } from "@nestjs/swagger";
+[7m  [0m [91m         ~~~~~~~[0m
+[96msrc/modules/supply-chain/procurements/pro
+curements.controller.ts[0m:[93m36[0m:[93m1
+9[0m - [91merror[0m[90m TS2353: [0mObject
+ literal may only specify known properties, an
+d 'summary' does not exist in type '{ title: s
+tring; description?: string | undefined; opera
+tionId?: string | undefined; deprecated?: bool
+ean | undefined; }'.
+
+[7m36[0m   @ApiOperation({ summary: "List pr
+ocurements" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/supply-chain/procurements/pro
+curements.controller.ts[0m:[93m43[0m:[93m1
+9[0m - [91merror[0m[90m TS2353: [0mObject
+ literal may only specify known properties, an
+d 'summary' does not exist in type '{ title: s
+tring; description?: string | undefined; opera
+tionId?: string | undefined; deprecated?: bool
+ean | undefined; }'.
+
+[7m43[0m   @ApiOperation({ summary: "Get pro
+curement" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/supply-chain/procurements/pro
+curements.controller.ts[0m:[93m50[0m:[93m1
+9[0m - [91merror[0m[90m TS2353: [0mObject
+ literal may only specify known properties, an
+d 'summary' does not exist in type '{ title: s
+tring; description?: string | undefined; opera
+tionId?: string | undefined; deprecated?: bool
+ean | undefined; }'.
+
+[7m50[0m   @ApiOperation({ summary: "Get bid
+ comparison" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/supply-chain/vendors/vendors.
+controller.ts[0m:[93m13[0m:[93m10[0m - [
+91merror[0m[90m TS2305: [0mModule '"@nestjs
+/swagger"' has no exported member 'ApiTags'.
+
+[7m13[0m import { ApiTags, ApiBearerAuth, Ap
+iOperation } from "@nestjs/swagger";
+[7m  [0m [91m         ~~~~~~~[0m
+[96msrc/modules/supply-chain/vendors/vendors.
+controller.ts[0m:[93m34[0m:[93m19[0m - [
+91merror[0m[90m TS2353: [0mObject literal m
+ay only specify known properties, and 'summary
+' does not exist in type '{ title: string; des
+cription?: string | undefined; operationId?: s
+tring | undefined; deprecated?: boolean | unde
+fined; }'.
+
+[7m34[0m   @ApiOperation({ summary: "List ve
+ndors" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/supply-chain/vendors/vendors.
+controller.ts[0m:[93m46[0m:[93m19[0m - [
+91merror[0m[90m TS2353: [0mObject literal m
+ay only specify known properties, and 'summary
+' does not exist in type '{ title: string; des
+cription?: string | undefined; operationId?: s
+tring | undefined; deprecated?: boolean | unde
+fined; }'.
+
+[7m46[0m   @ApiOperation({ summary: "Get ven
+dor" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/supply-chain/vendors/vendors.
+controller.ts[0m:[93m55[0m:[93m19[0m - [
+91merror[0m[90m TS2353: [0mObject literal m
+ay only specify known properties, and 'summary
+' does not exist in type '{ title: string; des
+cription?: string | undefined; operationId?: s
+tring | undefined; deprecated?: boolean | unde
+fined; }'.
+
+[7m55[0m   @ApiOperation({ summary: "List ve
+ndor projects" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/users/users.controller.ts[0m
+:[93m12[0m:[93m10[0m - [91merror[0m[90m
+ TS2305: [0mModule '"@nestjs/swagger"' has no
+ exported member 'ApiTags'.
+
+Found 193 error(s).
+
+[7m12[0m import { ApiTags, ApiBearerAuth, Ap
+iOperation } from "@nestjs/swagger";
+[7m  [0m [91m         ~~~~~~~[0m
+[96msrc/modules/users/users.controller.ts[0m
+:[93m27[0m:[93m19[0m - [91merror[0m[90m
+ TS2353: [0mObject literal may only specify k
+nown properties, and 'summary' does not exist 
+in type '{ title: string; description?: string
+ | undefined; operationId?: string | undefined
+; deprecated?: boolean | undefined; }'.
+
+[7m27[0m   @ApiOperation({ summary: "List us
+ers" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/users/users.controller.ts[0m
+:[93m34[0m:[93m19[0m - [91merror[0m[90m
+ TS2353: [0mObject literal may only specify k
+nown properties, and 'summary' does not exist 
+in type '{ title: string; description?: string
+ | undefined; operationId?: string | undefined
+; deprecated?: boolean | undefined; }'.
+
+[7m34[0m   @ApiOperation({ summary: "Get use
+r" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/users/users.controller.ts[0m
+:[93m41[0m:[93m19[0m - [91merror[0m[90m
+ TS2353: [0mObject literal may only specify k
+nown properties, and 'summary' does not exist 
+in type '{ title: string; description?: string
+ | undefined; operationId?: string | undefined
+; deprecated?: boolean | undefined; }'.
+
+[7m41[0m   @ApiOperation({ summary: "Create 
+user" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/users/users.controller.ts[0m
+:[93m48[0m:[93m19[0m - [91merror[0m[90m
+ TS2353: [0mObject literal may only specify k
+nown properties, and 'summary' does not exist 
+in type '{ title: string; description?: string
+ | undefined; operationId?: string | undefined
+; deprecated?: boolean | undefined; }'.
+
+[7m48[0m   @ApiOperation({ summary: "Update 
+user" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/users/users.controller.ts[0m
+:[93m55[0m:[93m19[0m - [91merror[0m[90m
+ TS2353: [0mObject literal may only specify k
+nown properties, and 'summary' does not exist 
+in type '{ title: string; description?: string
+ | undefined; operationId?: string | undefined
+; deprecated?: boolean | undefined; }'.
+
+[7m55[0m   @ApiOperation({ summary: "Deactiv
+ate user" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/waste/waste.controller.ts[0m
+:[93m13[0m:[93m10[0m - [91merror[0m[90m
+ TS2305: [0mModule '"@nestjs/swagger"' has no
+ exported member 'ApiTags'.
+
+[7m13[0m import { ApiTags, ApiBearerAuth, Ap
+iOperation } from "@nestjs/swagger";
+[7m  [0m [91m         ~~~~~~~[0m
+[96msrc/modules/waste/waste.controller.ts[0m
+:[93m40[0m:[93m19[0m - [91merror[0m[90m
+ TS2353: [0mObject literal may only specify k
+nown properties, and 'summary' does not exist 
+in type '{ title: string; description?: string
+ | undefined; operationId?: string | undefined
+; deprecated?: boolean | undefined; }'.
+
+[7m40[0m   @ApiOperation({ summary: "List wa
+ste records" })
+[7m  [0m [91m                  ~~~~~~~[0m
+[96msrc/modules/waste/waste.controller.ts[0m
+:[93m47[0m:[93m19[0m - [91merror[0m[90m
+ TS2353: [0mObject literal may only specify k
+nown properties, and 'summary' does not exist 
+in type '{ title: string; description?: string
+ | undefined; operationId?: string | undefined
+; deprecated?: boolean | undefined; }'.
+
+[7m47[0m   @ApiOperation({ summary: "Get was
+te record" })
+[7m  [0m [91m                  ~~~~~~~[0m
+
+npm error Lifecycle script `build` failed with
+ error:
+npm error code 1
+npm error path C:\Users\xiang\SENTENG-MAIN\app
+s\api
+npm error workspace senteng-erp-api@1.0.0
+npm error location C:\Users\xiang\SENTENG-MAIN
+\apps\api
+npm error command failed
+npm error command C:\WINDOWS\system32\cmd.exe 
+/d /s /c nest build

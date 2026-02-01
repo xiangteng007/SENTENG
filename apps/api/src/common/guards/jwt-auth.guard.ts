@@ -4,6 +4,7 @@ import {
   ExecutionContext,
   UnauthorizedException,
   Inject,
+  Logger,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { JwtService } from "@nestjs/jwt";
@@ -13,6 +14,8 @@ import { IS_PUBLIC_KEY } from "../decorators/public.decorator";
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
+  private readonly logger = new Logger(JwtAuthGuard.name);
+
   constructor(
     @Inject(JwtService) private jwtService: JwtService,
     @Inject(ConfigService) private configService: ConfigService,
@@ -40,9 +43,8 @@ export class JwtAuthGuard implements CanActivate {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: this.configService.get<string>("JWT_SECRET"),
       });
-      // DEBUG: Log payload to verify role is present
-      console.log(
-        `[JwtAuthGuard] Token payload: ${JSON.stringify({ sub: payload.sub, email: payload.email, role: payload.role })}`,
+      this.logger.debug(
+        `Token verified for user: ${payload.email}, role: ${payload.role}`,
       );
       // Attach user info to request
       request["user"] = payload;

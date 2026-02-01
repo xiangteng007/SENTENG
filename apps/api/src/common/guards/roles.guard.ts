@@ -3,6 +3,7 @@ import {
   CanActivate,
   ExecutionContext,
   ForbiddenException,
+  Logger,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { ROLES_KEY } from "../decorators/roles.decorator";
@@ -20,6 +21,8 @@ const ROLE_MAPPING: Record<string, string> = {
 
 @Injectable()
 export class RolesGuard implements CanActivate {
+  private readonly logger = new Logger(RolesGuard.name);
+
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
@@ -36,14 +39,9 @@ export class RolesGuard implements CanActivate {
     const { user } = context.switchToHttp().getRequest();
 
     if (!user?.role) {
-      console.log(`[RolesGuard] User object:`, JSON.stringify(user, null, 2));
+      this.logger.warn(`Role check failed: user object missing role property`);
       throw new ForbiddenException("User role not found");
     }
-
-    // DEBUG: Log the user payload
-    console.log(
-      `[RolesGuard] User payload: email=${user.email}, role="${user.role}", requiredRoles=${requiredRoles.join(", ")}`,
-    );
 
     const originalRole = user.role;
     // Normalize role: map Chinese to English
@@ -68,8 +66,8 @@ export class RolesGuard implements CanActivate {
     });
 
     if (!hasRole) {
-      console.log(
-        `[RolesGuard] Access denied - User role: ${originalRole} (normalized: ${normalizedRole}), Required: ${requiredRoles.join(", ")}`,
+      this.logger.warn(
+        `Access denied - Role: ${originalRole}, Required: ${requiredRoles.join(", ")}`,
       );
       throw new ForbiddenException(
         `Requires one of roles: ${requiredRoles.join(", ")}`,

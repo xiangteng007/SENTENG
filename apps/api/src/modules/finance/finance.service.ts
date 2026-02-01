@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Account, Transaction, Loan } from "./entities";
@@ -13,6 +13,8 @@ import {
 
 @Injectable()
 export class FinanceService {
+  private readonly logger = new Logger(FinanceService.name);
+
   constructor(
     @InjectRepository(Account)
     private accountRepository: Repository<Account>,
@@ -62,15 +64,17 @@ export class FinanceService {
         relations: ["account"],
       });
     } catch (error) {
-      console.error("Error in findAllTransactions:", error);
+      this.logger.warn(
+        "Transaction query with relations failed, retrying without",
+        error,
+      );
       // If relation fails, try without it
       try {
-        console.log("Retrying without relations...");
         return await this.transactionRepository.find({
           order: { date: "DESC", createdAt: "DESC" },
         });
       } catch (innerError) {
-        console.error("Still failed without relations:", innerError);
+        this.logger.error("Transaction query still failed", innerError);
         throw innerError;
       }
     }

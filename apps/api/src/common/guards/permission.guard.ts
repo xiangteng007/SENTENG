@@ -3,6 +3,7 @@ import {
   CanActivate,
   ExecutionContext,
   ForbiddenException,
+  Logger,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { InjectDataSource } from "@nestjs/typeorm";
@@ -17,6 +18,8 @@ import { PERMISSIONS_KEY } from "../decorators/permissions.decorator";
  */
 @Injectable()
 export class PermissionGuard implements CanActivate {
+  private readonly logger = new Logger(PermissionGuard.name);
+
   constructor(
     private readonly reflector: Reflector,
     @InjectDataSource() private readonly dataSource: DataSource,
@@ -68,8 +71,8 @@ export class PermissionGuard implements CanActivate {
     });
 
     if (!hasPermission) {
-      console.log(
-        `[PermissionGuard] Access denied - User: ${userId}, Role: ${userRole}, Required: ${requiredPermissions.join(", ")}, Has: ${userPermissions.slice(0, 5).join(", ")}...`,
+      this.logger.warn(
+        `Access denied - User: ${userId}, Role: ${userRole}, Required: ${requiredPermissions.join(", ")}`,
       );
       throw new ForbiddenException(
         `Missing required permission: ${requiredPermissions.join(" or ")}`,
@@ -87,7 +90,7 @@ export class PermissionGuard implements CanActivate {
       );
       return result.map((r: { permission_id: string }) => r.permission_id);
     } catch (error) {
-      console.error("[PermissionGuard] Error fetching permissions:", error);
+      this.logger.error(`Error fetching permissions for role ${roleId}`, error);
       return [];
     }
   }
