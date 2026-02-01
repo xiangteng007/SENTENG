@@ -10,7 +10,7 @@
   UseGuards,
   Res,
 } from "@nestjs/common";
-import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
+import { ApiTags, ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import type { AuthenticatedRequest } from "../../common/types";
 import type { Response } from "express";
 import { QuotationsService } from "./quotations.service";
@@ -27,6 +27,7 @@ export class QuotationsController {
   constructor(private readonly quotationsService: QuotationsService) {}
 
   @Get()
+  @ApiOperation({ summary: "List quotations" })
   @RequirePermissions("quotations:read")
   async findAll(
     @Query("projectId") projectId?: string,

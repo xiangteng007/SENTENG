@@ -10,7 +10,7 @@
   UseGuards,
   Request,
 } from "@nestjs/common";
-import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
+import { ApiTags, ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import type { AuthenticatedRequest } from "../../common/types";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
 import { PermissionGuard } from "../../common/guards/permission.guard";
@@ -27,22 +27,26 @@ export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
   @Get()
+  @ApiOperation({ summary: "List events" })
   async findAll(@Query() query: QueryEventsDto) {
     return this.eventsService.findAll(query);
   }
 
   @Get("today")
+  @ApiOperation({ summary: "Get today events" })
   async findToday() {
     return this.eventsService.findToday();
   }
 
   @Get("upcoming")
+  @ApiOperation({ summary: "Get upcoming events" })
   async findUpcoming(@Query("days") days?: string) {
     const daysNum = days ? parseInt(days, 10) : 7;
     return this.eventsService.findUpcoming(daysNum);
   }
 
   @Get("project/:projectId")
+  @ApiOperation({ summary: "Get project events" })
   async findByProject(@Param("projectId") projectId: string) {
     return this.eventsService.findByProject(projectId);
   }

@@ -10,7 +10,7 @@ import {
   UseGuards,
   Req,
 } from "@nestjs/common";
-import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
+import { ApiTags, ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import { WasteService } from "./waste.service";
 import {
   CreateWasteRecordDto,
@@ -37,12 +37,14 @@ export class WasteController {
   // === Records ===
 
   @Get("records")
+  @ApiOperation({ summary: "List waste records" })
   @RequirePermissions("waste:read")
   async findRecords(@Query() query: WasteRecordQueryDto) {
     return this.wasteService.findRecords(query);
   }
 
   @Get("records/:id")
+  @ApiOperation({ summary: "Get waste record" })
   @RequirePermissions("waste:read")
   async findRecordById(@Param("id") id: string) {
     return this.wasteService.findRecordById(id);

@@ -11,7 +11,7 @@
   UseGuards,
   Request,
 } from "@nestjs/common";
-import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
+import { ApiTags, ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import type { AuthenticatedRequest } from "../../common/types";
 import { InventoryService } from "./inventory.service";
 import {
@@ -32,12 +32,14 @@ export class InventoryController {
   constructor(private readonly inventoryService: InventoryService) {}
 
   @Get()
+  @ApiOperation({ summary: "List inventory items" })
   @RequirePermissions("inventory:read")
   async findAll() {
     return this.inventoryService.findAll();
   }
 
   @Get(":id")
+  @ApiOperation({ summary: "Get inventory item" })
   @RequirePermissions("inventory:read")
   async findOne(@Param("id") id: string) {
     return this.inventoryService.findOne(id);

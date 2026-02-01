@@ -9,7 +9,7 @@ import {
   Query,
   UseGuards,
 } from "@nestjs/common";
-import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
+import { ApiTags, ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import { ScheduleService } from "./schedule.service";
 import {
   CreateScheduleTaskDto,
@@ -33,12 +33,14 @@ export class ScheduleController {
   // === Gantt Chart ===
 
   @Get("gantt/:projectId")
+  @ApiOperation({ summary: "Get Gantt chart data" })
   @RequirePermissions("schedules:read")
   async getGanttData(@Param("projectId") projectId: string) {
     return this.scheduleService.getGanttData(projectId);
   }
 
   @Get("critical-path/:projectId")
+  @ApiOperation({ summary: "Get critical path" })
   @RequirePermissions("schedules:read")
   async getCriticalPath(@Param("projectId") projectId: string) {
     return this.scheduleService.getCriticalPath(projectId);
