@@ -174,9 +174,10 @@ export class GoogleSheetsService {
         sheetUrl: spreadsheetUrl,
         createdAt: new Date().toISOString(),
       };
-    } catch (error: any) {
-      this.logger.error(`Failed to export estimate: ${error.message}`);
-      throw new Error(`匯出失敗: ${error.message}`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.error(`Failed to export estimate: ${message}`);
+      throw new Error(`匯出失敗: ${message}`);
     }
   }
 
@@ -265,9 +266,10 @@ export class GoogleSheetsService {
           ],
         },
       });
-    } catch (error: any) {
+    } catch (error) {
       // 格式化失敗不影響主流程
-      this.logger.warn(`Failed to format spreadsheet: ${error.message}`);
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.warn(`Failed to format spreadsheet: ${message}`);
     }
   }
 

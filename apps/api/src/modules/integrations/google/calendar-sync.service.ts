@@ -151,8 +151,8 @@ export class CalendarSyncService {
         syncedAt: new Date().toISOString(),
         googleId: googleEventId,
       };
-    } catch (error: any) {
-      const errorMessage = error.message || "Unknown error";
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
 
       // 更新失敗狀態
       event.syncStatus = "FAILED";

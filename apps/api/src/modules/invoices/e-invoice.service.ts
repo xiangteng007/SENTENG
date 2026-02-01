@@ -116,11 +116,13 @@ export class EInvoiceService {
       } else {
         return await this.issueEzPayInvoice(dto);
       }
-    } catch (error: any) {
-      this.logger.error(`Invoice issue failed: ${error.message}`, error.stack);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      const stack = error instanceof Error ? error.stack : undefined;
+      this.logger.error(`Invoice issue failed: ${message}`, stack);
       return {
         success: false,
-        errorMessage: error.message || "發票開立失敗",
+        errorMessage: message || "發票開立失敗",
       };
     }
   }
@@ -135,11 +137,13 @@ export class EInvoiceService {
       } else {
         return await this.voidEzPayInvoice(dto);
       }
-    } catch (error: any) {
-      this.logger.error(`Invoice void failed: ${error.message}`, error.stack);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      const stack = error instanceof Error ? error.stack : undefined;
+      this.logger.error(`Invoice void failed: ${message}`, stack);
       return {
         success: false,
-        errorMessage: error.message || "發票作廢失敗",
+        errorMessage: message || "發票作廢失敗",
       };
     }
   }

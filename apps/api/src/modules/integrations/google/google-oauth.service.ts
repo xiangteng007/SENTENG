@@ -131,18 +131,19 @@ export class GoogleOAuthService {
         `Successfully connected Google account: ${googleEmail} for user ${userId}`,
       );
       return this.oauthRepo.save(account);
-    } catch (error: any) {
+    } catch (error) {
       // Enhanced error logging for debugging
-      this.logger.error(`Failed to exchange token: ${error.message}`);
-      if (error.response?.data) {
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.error(`Failed to exchange token: ${message}`);
+      if ((error as any).response?.data) {
         this.logger.error(
-          `Google API error details: ${JSON.stringify(error.response.data)}`,
+          `Google API error details: ${JSON.stringify((error as any).response.data)}`,
         );
       }
-      if (error.code) {
-        this.logger.error(`Error code: ${error.code}`);
+      if ((error as any).code) {
+        this.logger.error(`Error code: ${(error as any).code}`);
       }
-      throw new UnauthorizedException(`Google 授權失敗: ${error.message}`);
+      throw new UnauthorizedException(`Google 授權失敗: ${message}`);
     }
   }
 
@@ -163,8 +164,9 @@ export class GoogleOAuthService {
         throw new Error(`Failed to fetch user info: ${response.status}`);
       }
       return response.json();
-    } catch (error: any) {
-      this.logger.warn(`Failed to get user info: ${error.message}`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.warn(`Failed to get user info: ${message}`);
       return {};
     }
   }
@@ -225,11 +227,12 @@ export class GoogleOAuthService {
 
       this.logger.log(`Token refreshed for user ${account.userId}`);
       return account.accessToken;
-    } catch (error: any) {
-      this.logger.error(`Token refresh failed: ${error.message}`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.error(`Token refresh failed: ${message}`);
       // 標記帳號為非活躍
       account.isActive = false;
-      account.lastSyncError = `Token refresh failed: ${error.message}`;
+      account.lastSyncError = `Token refresh failed: ${message}`;
       await this.oauthRepo.save(account);
       throw new UnauthorizedException("Token 更新失敗，請重新授權");
     }
@@ -307,9 +310,10 @@ export class GoogleOAuthService {
         await this.oauth2Client.revokeToken(account.accessToken);
         this.logger.log(`Token revoked for user ${userId}`);
       }
-    } catch (error: any) {
+    } catch (error) {
       // 即使撤銷失敗也繼續標記為非活躍
-      this.logger.warn(`Token revocation failed: ${error.message}`);
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.warn(`Token revocation failed: ${message}`);
     }
 
     // 標記為非活躍

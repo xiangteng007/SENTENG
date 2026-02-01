@@ -150,10 +150,12 @@ export class LineNotifyService {
 
       this.logger.log(`Message sent to ${dto.to}`);
       return true;
-    } catch (error: any) {
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      const stack = error instanceof Error ? error.stack : undefined;
       this.logger.error(
-        `Failed to send LINE message: ${error.message}`,
-        error.stack,
+        `Failed to send LINE message: ${message}`,
+        stack,
       );
       throw error;
     }
@@ -171,8 +173,9 @@ export class LineNotifyService {
       });
       this.logger.log("Broadcast message sent");
       return true;
-    } catch (error: any) {
-      this.logger.error(`Broadcast failed: ${error.message}`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.error(`Broadcast failed: ${message}`);
       return false;
     }
   }
@@ -186,8 +189,9 @@ export class LineNotifyService {
     try {
       const response = await this.apiClient.get(`/profile/${userId}`);
       return response.data;
-    } catch (error: any) {
-      this.logger.error(`Failed to get user profile: ${error.message}`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.error(`Failed to get user profile: ${message}`);
       return null;
     }
   }

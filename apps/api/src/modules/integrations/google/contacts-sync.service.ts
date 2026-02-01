@@ -239,8 +239,8 @@ export class ContactsSyncService {
         syncedAt: new Date().toISOString(),
         googleId: googleResourceName,
       };
-    } catch (error: any) {
-      const errorMessage = error.message || "Unknown error";
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
 
       // 更新失敗狀態
       contact.syncStatus = "FAILED";
@@ -403,8 +403,8 @@ export class ContactsSyncService {
         success: true,
         syncedAt: new Date().toISOString(),
       };
-    } catch (error: any) {
-      const errorMessage = error.message || "Unknown error";
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
       this.logger.error(
         `Delete from Google failed for ${contact.id}: ${errorMessage}`,
       );

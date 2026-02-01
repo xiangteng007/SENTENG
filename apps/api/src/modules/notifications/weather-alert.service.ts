@@ -256,9 +256,10 @@ export class WeatherAlertService {
           sentChannels.push("LINE");
           this.logger.log(`Sent LINE notification for alert: ${alert.alertId}`);
         }
-      } catch (error: any) {
+      } catch (error) {
         this.logger.error("Failed to send LINE notification", error);
-        sendError = `LINE: ${error?.message || error}`;
+        const message = error instanceof Error ? error.message : String(error);
+        sendError = `LINE: ${message}`;
       }
     }
 
@@ -274,11 +275,12 @@ export class WeatherAlertService {
         }
         sentChannels.push("EMAIL");
         this.logger.log(`Sent Email notification for alert: ${alert.alertId}`);
-      } catch (error: any) {
+      } catch (error) {
         this.logger.error("Failed to send Email notification", error);
+        const message = error instanceof Error ? error.message : String(error);
         sendError = sendError
-          ? `${sendError}; EMAIL: ${error?.message || error}`
-          : `EMAIL: ${error?.message || error}`;
+          ? `${sendError}; EMAIL: ${message}`
+          : `EMAIL: ${message}`;
       }
     }
 
@@ -381,12 +383,13 @@ export class WeatherAlertService {
         alertCount: relevantAlerts.length,
         alerts: relevantAlerts,
       };
-    } catch (error: any) {
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
       return {
         success: false,
         alertCount: 0,
         alerts: [],
-        error: error?.message || String(error),
+        error: message,
       };
     }
   }
