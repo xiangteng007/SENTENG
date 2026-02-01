@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Repository, FindOptionsWhere } from "typeorm";
 import { JobSite } from "./entities";
 import { CreateJobSiteDto, UpdateJobSiteDto } from "./dto/sites.dto";
 
@@ -12,7 +12,7 @@ export class SitesService {
   ) {}
 
   async findAll(projectId?: string): Promise<JobSite[]> {
-    const where: any = { isActive: true };
+    const where: FindOptionsWhere<JobSite> = { isActive: true };
     if (projectId) {
       where.projectId = projectId;
     }
