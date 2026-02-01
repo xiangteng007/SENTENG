@@ -11,7 +11,7 @@ import {
   UploadedFile,
   BadRequestException,
 } from "@nestjs/common";
-import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
+import { ApiTags, ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
 import { PermissionGuard } from "../../common/guards/permission.guard";
@@ -37,6 +37,7 @@ export class StorageController {
    * GET /storage/status
    */
   @Get("status")
+  @ApiOperation({ summary: "Check storage status" })
   @RequirePermissions("storage:read")
   getStatus() {
     return {

@@ -10,7 +10,7 @@
   UseGuards,
   Request,
 } from "@nestjs/common";
-import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
+import { ApiTags, ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import type { AuthenticatedRequest } from "../../common/types";
 import { SiteLogsService } from "./site-logs.service";
 import {
@@ -30,12 +30,14 @@ export class SiteLogsController {
   constructor(private readonly siteLogsService: SiteLogsService) {}
 
   @Get()
+  @ApiOperation({ summary: "List site logs" })
   @RequirePermissions("site-logs:read")
   findAll(@Query() query: SiteLogQueryDto) {
     return this.siteLogsService.findAll(query);
   }
 
   @Get("project/:projectId/summary")
+  @ApiOperation({ summary: "Get project summary" })
   @RequirePermissions("site-logs:read")
   getProjectSummary(
     @Param("projectId") projectId: string,

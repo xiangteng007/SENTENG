@@ -9,7 +9,7 @@ import {
   Query,
   UseGuards,
 } from "@nestjs/common";
-import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
+import { ApiTags, ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import { InsuranceService } from "./insurance.service";
 import {
   CreateInsuranceDto,
@@ -29,12 +29,14 @@ export class InsuranceController {
   constructor(private readonly insuranceService: InsuranceService) {}
 
   @Get()
+  @ApiOperation({ summary: "List insurance policies" })
   @RequirePermissions("insurance:read")
   async findAll(@Query() query: InsuranceQueryDto) {
     return this.insuranceService.findAll(query);
   }
 
   @Get("expiring")
+  @ApiOperation({ summary: "Get expiring policies" })
   @RequirePermissions("insurance:read")
   async getExpiring(@Query("days") days?: string) {
     const daysAhead = days ? parseInt(days, 10) : 30;
@@ -42,6 +44,7 @@ export class InsuranceController {
   }
 
   @Get("rates")
+  @ApiOperation({ summary: "Get insurance rates" })
   @RequirePermissions("insurance:read")
   async getRates(
     @Query("type") type?: string,

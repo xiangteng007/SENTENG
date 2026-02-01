@@ -10,7 +10,7 @@
   Request,
   UseGuards,
 } from "@nestjs/common";
-import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
+import { ApiTags, ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import type { AuthenticatedRequest } from "../../common/types";
 import { CostEntriesService } from "./cost-entries.service";
 import {
@@ -30,6 +30,7 @@ export class CostEntriesController {
   constructor(private readonly costEntriesService: CostEntriesService) {}
 
   @Get()
+  @ApiOperation({ summary: "List cost entries" })
   @RequirePermissions("cost-entries:read")
   async findAll(
     @Query("projectId") projectId?: string,
@@ -46,6 +47,7 @@ export class CostEntriesController {
   }
 
   @Get("summary/:projectId")
+  @ApiOperation({ summary: "Get cost summary" })
   @RequirePermissions("cost-entries:read")
   async getSummary(@Param("projectId") projectId: string) {
     return this.costEntriesService.getSummary(projectId);

@@ -8,7 +8,7 @@ import {
   Query,
   UseGuards,
 } from "@nestjs/common";
-import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
+import { ApiTags, ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import { TenantsService } from "./tenants.service";
 import {
   CreateLegalEntityDto,
@@ -30,18 +30,21 @@ export class TenantsController {
   // ========== Legal Entities ==========
 
   @Get("legal-entities")
+  @ApiOperation({ summary: "List legal entities" })
   @RequirePermissions("tenants:read")
   findAllLegalEntities() {
     return this.tenantsService.findAllLegalEntities();
   }
 
   @Get("legal-entities/:id")
+  @ApiOperation({ summary: "Get legal entity" })
   @RequirePermissions("tenants:read")
   findLegalEntityById(@Param("id") id: string) {
     return this.tenantsService.findLegalEntityById(id);
   }
 
   @Post("legal-entities")
+  @ApiOperation({ summary: "Create legal entity" })
   @RequirePermissions("tenants:admin")
   createLegalEntity(@Body() dto: CreateLegalEntityDto) {
     return this.tenantsService.createLegalEntity(dto);
