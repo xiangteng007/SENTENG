@@ -86,8 +86,9 @@ export class BankingIntegrationService {
       `Generating virtual account for project: ${request.projectId}`,
     );
 
-    // TODO: Implement actual bank API integration
-    // Common providers: 玉山銀行 eSun, 中國信託 CTBC, 永豐銀行 SinoPac
+    // @future(BANK-001): Implement actual bank API integration
+    // Providers: 玉山銀行 eSun, 中國信託 CTBC, 永豐銀行 SinoPac
+    // Status: Pending bank API credentials
 
     const virtualAccountNo = `${this.merchantId}${Date.now().toString().slice(-10)}`;
 
@@ -117,7 +118,7 @@ export class BankingIntegrationService {
   }> {
     this.logger.log(`Checking payment status for: ${virtualAccountNo}`);
 
-    // TODO: Implement actual bank API query
+    // @future(BANK-002): Implement actual bank API query for payment status
     return {
       paid: false,
     };
@@ -133,8 +134,8 @@ export class BankingIntegrationService {
       `Submitting batch transfer: ${request.batchId} with ${request.entries.length} entries`,
     );
 
-    // TODO: Implement actual bank API integration
-    // Common formats: 財金公司 ACH, 各銀行專屬 API
+    // @future(BANK-003): Implement actual bank API integration for batch transfers
+    // Formats: 財金公司 ACH, 各銀行專屬 API
 
     const totalAmount = request.entries.reduce((sum, e) => sum + e.amount, 0);
 
@@ -155,7 +156,7 @@ export class BankingIntegrationService {
   async getBatchTransferStatus(batchId: string): Promise<BatchTransferResult> {
     this.logger.log(`Getting batch transfer status: ${batchId}`);
 
-    // TODO: Implement actual bank API query
+    // @future(BANK-004): Implement actual bank API query for batch status
     return {
       batchId,
       status: "pending",
@@ -173,7 +174,7 @@ export class BankingIntegrationService {
   async getAccountBalance(accountNo: string): Promise<BankBalance> {
     this.logger.log(`Getting account balance for: ${accountNo}`);
 
-    // TODO: Implement actual bank API query
+    // @future(BANK-005): Implement actual bank API query for balance
     return {
       accountNo,
       bankName: "玉山銀行",
@@ -199,8 +200,8 @@ export class BankingIntegrationService {
   }> {
     this.logger.log(`Generating payment barcode for amount: ${amount}`);
 
-    // TODO: Implement actual convenience store payment integration
-    // Common providers: 7-11 ibon, 全家 FamiPort, 萊爾富 Life-ET
+    // @future(CVS-001): Implement convenience store payment integration
+    // Providers: 7-11 ibon, 全家 FamiPort, 萊爾富 Life-ET
 
     return {
       barcode1: `9${this.merchantId.padStart(4, "0")}`,

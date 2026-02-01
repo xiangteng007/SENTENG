@@ -135,7 +135,7 @@ export class WorkOrdersService {
     });
 
     this.logger.log(`WorkOrder ${id} completed at ${completedAt}`);
-    // TODO: Re-enable event-based CostEntry/Invoice generation after EventEmitter fix
+    // @future(EDA-001): Re-enable event-based CostEntry/Invoice generation after EventEmitter fix
 
     return result;
   }

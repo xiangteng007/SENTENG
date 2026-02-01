@@ -211,7 +211,7 @@ export class TaiwanGovDataService {
 
     // Building permits require city-specific APIs or the national platform
     // For now, return mock data with proper structure
-    // TODO: Implement city-specific APIs (Taipei, New Taipei, etc.)
+    // @future(GOV-001): Implement city-specific building permit APIs (Taipei, New Taipei, etc.)
     return {
       data: [
         {

@@ -66,7 +66,7 @@ export class AccountingExportService {
       `Exporting to Digiwin format for period: ${period.startDate} - ${period.endDate}`,
     );
 
-    // TODO: Query actual transaction data
+    // @future(ACCT-001): Query actual transaction data from database
     const entries: DigiwinVoucherEntry[] = [
       {
         voucherNo: "V202601-0001",
@@ -209,7 +209,7 @@ export class AccountingExportService {
   ): Promise<string> {
     this.logger.log(`Exporting project costs for ${projectId}`);
 
-    // TODO: Query actual cost data
+    // @future(ACCT-002): Query actual cost data from cost_entries table
     const mockCosts = [
       {
         date: "2026-01-15",
@@ -248,7 +248,7 @@ export class AccountingExportService {
       `Exporting invoices for period: ${period.startDate} - ${period.endDate}`,
     );
 
-    // TODO: Query actual invoice data
+    // @future(ACCT-003): Query actual invoice data from invoices table
     const mockInvoices = [
       {
         invoiceNo: "AB-12345678",

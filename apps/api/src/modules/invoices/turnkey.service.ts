@@ -224,8 +224,8 @@ export class TurnkeyService {
       };
     }
 
-    // TODO: Implement SFTP upload with ssh2-sftp-client
-    // npm install ssh2-sftp-client @types/ssh2-sftp-client
+    // @future(EINV-001): Implement SFTP upload with ssh2-sftp-client
+    // Dependency: npm install ssh2-sftp-client @types/ssh2-sftp-client
     this.logger.log(`XML content length: ${xml.length} bytes`);
 
     return {

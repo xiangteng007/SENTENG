@@ -226,7 +226,7 @@ export class NhiApiService {
       return null;
     }
 
-    // TODO: Implement actual API call when credentials are available
+    // @future(NHI-001): Implement actual BLI API call when credentials are available
     this.logger.log(
       `Querying labor insurance for ${nationalId.substring(0, 3)}***`,
     );
