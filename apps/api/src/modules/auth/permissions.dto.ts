@@ -71,7 +71,15 @@ export const ROLE_PAGES: Record<number, string[]> = {
   // Level 1: user - 基本瀏覽
   1: ["dashboard"],
   // Level 2: 工程師 - 專案相關
-  2: ["dashboard", "projects", "schedule", "events"],
+  2: [
+    "dashboard",
+    "projects",
+    "schedule",
+    "events",
+    "site-logs",
+    "construction",
+    "schedules",
+  ],
   // Level 3: 會計 - 財務相關
   3: [
     "dashboard",
@@ -81,94 +89,163 @@ export const ROLE_PAGES: Record<number, string[]> = {
     "cost-entries",
     "profit",
     "invoice", // 發票小幫手
+    "reports",
   ],
   // Level 4: 經理 - 大部分功能
   4: [
+    // 總覽
     "dashboard",
+    "schedule",
+    // 專案管理
+    "projects",
+    "contracts",
+    "change-orders",
+    // 財務中心
+    "finance",
+    "quotations",
+    "payments",
+    "invoice",
+    "invoices",
+    // 關係人
     "clients",
     "vendors",
-    "projects",
-    "quotations",
-    "contracts",
-    "payments",
-    "change-orders",
-    "cost-entries",
-    "inventory",
+    "contacts",
+    // 供應鏈
     "procurements",
-    "finance",
+    "inventory",
+    // 工地管理
+    "site-logs",
+    "construction",
+    "schedules",
+    // 分析報表
+    "cost-entries",
     "profit",
-    "schedule",
-    "invoices",
-    "events",
-    "settings",
-    "integrations",
+    "reports",
+    // 智慧管理
+    "bim",
+    "drone",
+    "smart-home",
     // 工具箱
     "materials",
-    "invoice",
+    "materials-calc",
     "unit",
     "cost",
     "calc",
-    "materials-calc",
+    "regulations",
+    // 安全環保
+    "insurance",
+    "waste",
+    // 其他
+    "events",
+    "settings",
+    "integrations",
   ],
   // Level 5: admin - 全部功能
   5: [
+    // 總覽
     "dashboard",
+    "schedule",
+    // 專案管理
+    "projects",
+    "contracts",
+    "change-orders",
+    // 財務中心
+    "finance",
+    "quotations",
+    "payments",
+    "invoice",
+    "invoices",
+    // 關係人
     "clients",
     "vendors",
-    "projects",
-    "quotations",
-    "contracts",
-    "payments",
-    "change-orders",
-    "cost-entries",
-    "inventory",
+    "contacts",
+    // 供應鏈
     "procurements",
-    "finance",
+    "inventory",
+    // 工地管理
+    "site-logs",
+    "construction",
+    "schedules",
+    // 分析報表
+    "cost-entries",
     "profit",
-    "schedule",
-    "invoices",
-    "user-management",
-    "events",
-    "settings",
-    "integrations",
+    "reports",
+    // 智慧管理
+    "bim",
+    "drone",
+    "smart-home",
     // 工具箱
     "materials",
-    "invoice",
+    "materials-calc",
     "unit",
     "cost",
     "calc",
-    "materials-calc",
+    "regulations",
+    // 安全環保
+    "insurance",
+    "waste",
+    // 系統設定
+    "user-management",
+    "integrations",
+    "notifications",
+    // 其他
+    "events",
+    "settings",
   ],
   // Level 6: super_admin - 全部功能
   6: [
+    // 總覽
     "dashboard",
+    "schedule",
+    // 專案管理
+    "projects",
+    "contracts",
+    "change-orders",
+    // 財務中心
+    "finance",
+    "quotations",
+    "payments",
+    "invoice",
+    "invoices",
+    // 關係人
     "clients",
     "vendors",
-    "projects",
-    "quotations",
-    "contracts",
-    "payments",
-    "change-orders",
-    "cost-entries",
-    "inventory",
+    "contacts",
+    // 供應鏈
     "procurements",
-    "finance",
+    "inventory",
+    // 工地管理
+    "site-logs",
+    "construction",
+    "schedules",
+    // 分析報表
+    "cost-entries",
     "profit",
-    "schedule",
-    "invoices",
-    "user-management",
-    "events",
-    "settings",
-    "integrations",
+    "reports",
+    // 智慧管理
+    "bim",
+    "drone",
+    "smart-home",
     // 工具箱
     "materials",
-    "invoice",
+    "materials-calc",
     "unit",
     "cost",
     "calc",
-    "materials-calc",
+    "regulations",
+    // 安全環保
+    "insurance",
+    "waste",
+    // 系統設定
+    "user-management",
+    "integrations",
+    "notifications",
+    // 其他
+    "events",
+    "settings",
   ],
 };
+
 
 /**
  * 角色可執行動作對照表

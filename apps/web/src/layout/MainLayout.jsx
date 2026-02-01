@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Calendar as CalendarIcon, Briefcase, Users, Wallet, HardHat, Package, Bell, LayoutDashboard, Image as ImageIcon, Menu, X, FileText, Ruler, Calculator, Building2, GripVertical, RotateCcw, LogOut, Settings, ChevronDown, Check, Loader2, Receipt, FileSignature, BarChart3, DollarSign, Wrench, ChevronRight, Link } from 'lucide-react';
+import { Calendar as CalendarIcon, Briefcase, Users, Wallet, HardHat, Package, Bell, LayoutDashboard, Image as ImageIcon, Menu, X, FileText, Ruler, Calculator, Building2, GripVertical, RotateCcw, LogOut, Settings, ChevronDown, Check, Loader2, Receipt, FileSignature, BarChart3, DollarSign, Wrench, ChevronRight, Link, Camera, Cpu, Home, ClipboardList, Truck, Shield, AlertTriangle, Construction as ConstructionIcon, Recycle, BookOpen, PhoneCall } from 'lucide-react';
 import { NotificationPanel } from '../components/common/NotificationPanel';
 import { GoogleService } from '../services/GoogleService';
 import { useAuth } from '../context/AuthContext';
@@ -25,27 +25,61 @@ import { CSS } from '@dnd-kit/utilities';
 
 // 所有選單項目定義
 const ALL_MENU_ITEMS = {
+    // 總覽
     'dashboard': { id: 'dashboard', icon: LayoutDashboard, label: '儀表板' },
     'schedule': { id: 'schedule', icon: CalendarIcon, label: '行程管理' },
+    
+    // 專案管理
     'projects': { id: 'projects', icon: Briefcase, label: '專案管理' },
+    'contracts': { id: 'contracts', icon: FileSignature, label: '合約管理' },
+    'change-orders': { id: 'change-orders', icon: FileText, label: '變更單' },
+    
+    // 財務中心
+    'finance': { id: 'finance', icon: Wallet, label: '財務管理' },
     'quotations': { id: 'quotations', icon: FileText, label: '估價單' },
     'payments': { id: 'payments', icon: Receipt, label: '請款管理' },
-    'contracts': { id: 'contracts', icon: FileSignature, label: '合約管理' },
-    'profit': { id: 'profit', icon: BarChart3, label: '利潤分析' },
-    'cost-entries': { id: 'cost-entries', icon: DollarSign, label: '成本追蹤' },
-    'clients': { id: 'clients', icon: Users, label: '客戶管理' },
-    'finance': { id: 'finance', icon: Wallet, label: '財務管理' },
-    'vendors': { id: 'vendors', icon: HardHat, label: '廠商管理' },
-    'inventory': { id: 'inventory', icon: Package, label: '庫存管理' },
-    'procurements': { id: 'procurements', icon: Package, label: '採購管理' },
-    'materials': { id: 'materials', icon: ImageIcon, label: '建材資料' },
     'invoice': { id: 'invoice', icon: FileText, label: '發票小幫手' },
+    
+    // 關係人
+    'clients': { id: 'clients', icon: Users, label: '客戶管理' },
+    'vendors': { id: 'vendors', icon: HardHat, label: '廠商管理' },
+    'contacts': { id: 'contacts', icon: PhoneCall, label: '聯絡人' },
+    
+    // 供應鏈
+    'procurements': { id: 'procurements', icon: Package, label: '採購管理' },
+    'inventory': { id: 'inventory', icon: Package, label: '庫存管理' },
+    
+    // 分析報表
+    'cost-entries': { id: 'cost-entries', icon: DollarSign, label: '成本追蹤' },
+    'profit': { id: 'profit', icon: BarChart3, label: '利潤分析' },
+    'reports': { id: 'reports', icon: BarChart3, label: '報表中心' },
+    
+    // 工地管理
+    'site-logs': { id: 'site-logs', icon: ClipboardList, label: '工地日誌' },
+    'construction': { id: 'construction', icon: ConstructionIcon, label: '施工管理' },
+    'schedules': { id: 'schedules', icon: CalendarIcon, label: '工程進度' },
+    
+    // 智慧管理
+    'bim': { id: 'bim', icon: Building2, label: 'BIM 建模' },
+    'drone': { id: 'drone', icon: Camera, label: '空拍管理' },
+    'smart-home': { id: 'smart-home', icon: Home, label: '智慧家庭' },
+    
+    // 工具箱
+    'materials': { id: 'materials', icon: ImageIcon, label: '建材資料' },
+    'materials-calc': { id: 'materials-calc', icon: Calculator, label: '物料計算器' },
     'unit': { id: 'unit', icon: Ruler, label: '單位換算' },
     'cost': { id: 'cost', icon: Calculator, label: '成本估算' },
     'calc': { id: 'calc', icon: Building2, label: '物料換算' },
-    'materials-calc': { id: 'materials-calc', icon: Calculator, label: '物料計算器' },
+    'regulations': { id: 'regulations', icon: BookOpen, label: '法規查詢' },
+    
+    // 安全環保
+    'insurance': { id: 'insurance', icon: Shield, label: '保險管理' },
+    'waste': { id: 'waste', icon: Recycle, label: '廢棄物管理' },
+    
+    // 系統設定
     'user-management': { id: 'user-management', icon: Settings, label: '使用者管理' },
     'integrations': { id: 'integrations', icon: Link, label: '整合設定', path: '/settings/integrations' },
+    'notifications': { id: 'notifications', icon: Bell, label: '通知設定' },
 };
 
 // 群組定義（優化版分組結構）
@@ -61,7 +95,7 @@ const MENU_GROUPS = [
         id: 'project',
         label: '專案管理',
         icon: Briefcase,
-        items: ['projects', 'contracts'],
+        items: ['projects', 'contracts', 'change-orders'],
         defaultExpanded: true,
     },
     {
@@ -75,7 +109,7 @@ const MENU_GROUPS = [
         id: 'parties',
         label: '關係人',
         icon: Users,
-        items: ['clients', 'vendors'],
+        items: ['clients', 'vendors', 'contacts'],
         defaultExpanded: false,
     },
     {
@@ -86,24 +120,45 @@ const MENU_GROUPS = [
         defaultExpanded: false,
     },
     {
+        id: 'site',
+        label: '工地管理',
+        icon: ConstructionIcon,
+        items: ['site-logs', 'construction', 'schedules'],
+        defaultExpanded: false,
+    },
+    {
         id: 'analytics',
         label: '分析報表',
         icon: BarChart3,
-        items: ['cost-entries', 'profit'],
+        items: ['cost-entries', 'profit', 'reports'],
+        defaultExpanded: false,
+    },
+    {
+        id: 'smart',
+        label: '智慧管理',
+        icon: Cpu,
+        items: ['bim', 'drone', 'smart-home'],
         defaultExpanded: false,
     },
     {
         id: 'tools',
         label: '工具箱',
         icon: Wrench,
-        items: ['materials', 'materials-calc'],
+        items: ['materials', 'materials-calc', 'regulations'],
+        defaultExpanded: false,
+    },
+    {
+        id: 'safety',
+        label: '安全環保',
+        icon: Shield,
+        items: ['insurance', 'waste'],
         defaultExpanded: false,
     },
     {
         id: 'admin',
         label: '系統設定',
         icon: Settings,
-        items: ['user-management', 'integrations'],
+        items: ['user-management', 'integrations', 'notifications'],
         defaultExpanded: false,
         adminOnly: true,
     },
