@@ -10,7 +10,12 @@ import {
   UseGuards,
   InternalServerErrorException,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from "@nestjs/swagger";
 import { InjectDataSource } from "@nestjs/typeorm";
 import { DataSource } from "typeorm";
 import type { Response, Request } from "express";
@@ -32,6 +37,15 @@ export class AuthController {
   ) {}
 
   @Post("login")
+  @ApiOperation({
+    summary: "User login",
+    description: "Authenticate user and return JWT token in cookie",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Login successful, JWT set in HttpOnly cookie",
+  })
+  @ApiResponse({ status: 401, description: "Invalid credentials" })
   async login(
     @Body()
     body: {
@@ -59,6 +73,11 @@ export class AuthController {
   }
 
   @Post("logout")
+  @ApiOperation({
+    summary: "User logout",
+    description: "Clear JWT cookie and end session",
+  })
+  @ApiResponse({ status: 200, description: "Logout successful" })
   @HttpCode(HttpStatus.OK)
   logout(@Res({ passthrough: true }) response: Response) {
     // Clear the access token cookie
@@ -111,6 +130,16 @@ export class AuthController {
 
   @Get("me")
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: "Get current user",
+    description: "Returns authenticated user info and permissions",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "User information with permissions",
+  })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
   async me(@Req() request: Request) {
     const user = request["user"] as any;
     if (!user) return null;
@@ -148,6 +177,15 @@ export class AuthController {
    */
   @Get("permissions")
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: "Get user permissions",
+    description: "Authority source for frontend RBAC",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Permission matrix including pages and actions",
+  })
   async getPermissions(
     @Req() request: Request,
   ): Promise<PermissionsResponseDto & { dbPermissions: string[] }> {
