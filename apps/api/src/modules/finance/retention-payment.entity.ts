@@ -10,7 +10,6 @@ import {
 } from "typeorm";
 import { Project } from "../projects/project.entity";
 import { Contract } from "../contracts/contract.entity";
-import { Payment } from "../payments/payment.entity";
 
 /**
  * RetentionPayment (保留款)
@@ -43,10 +42,6 @@ export class RetentionPayment {
 
   @Column({ name: "payment_id", length: 36, nullable: true })
   paymentId: string;
-
-  @ManyToOne(() => Payment)
-  @JoinColumn({ name: "payment_id" })
-  payment: Payment;
 
   @Column({ name: "retention_type", length: 30, default: "PROGRESS" })
   retentionType: string; // PROGRESS | WARRANTY | FINAL

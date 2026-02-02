@@ -8,17 +8,17 @@ import {
   JoinColumn,
   Index,
 } from "typeorm";
-import { Project } from "../../projects/project.entity";
-import { Contract } from "../../contracts/contract.entity";
+import { Project } from "../projects/project.entity";
+import { Contract } from "../contracts/contract.entity";
 
 /**
  * DesignChangeRequest (設計變更申請)
  *
- * 與 ChangeOrder (工程變更單) 區分：
- * - DCR: 設計階段變更，影響圖說、規格、材料
- * - CO: 施工階段變更，影響金額、工期
+ * �?ChangeOrder (工程變更�? 區分：
+ * - DCR: 設計階段變更，影響圖說、規格、材�?
+ * - CO: 施工階段變更，影響金額、工�?
  *
- * 流程: 提出 → 設計審查 → 成本評估 → 核准/駁回 → 更新圖說
+ * 流程: 提出 �?設計審查 �?成本評估 �?核准/駁回 �?更新圖說
  */
 @Entity("design_change_requests")
 @Index(["projectId", "status"])
@@ -57,10 +57,10 @@ export class DesignChangeRequest {
   changeCategory: string; // ARCHITECTURAL | STRUCTURAL | MEP | INTERIOR | LANDSCAPE
 
   @Column({ name: "affected_areas", type: "text", nullable: true })
-  affectedAreas: string; // 受影響區域說明
+  affectedAreas: string; // 受影響區域說�?
 
   /**
-   * 受影響圖說清單
+   * 受影響圖說清�?
    * [{ drawingNo, drawingName, currentVersion, newVersion }]
    */
   @Column({ name: "affected_drawings", type: "jsonb", nullable: true })
@@ -92,10 +92,10 @@ export class DesignChangeRequest {
   actualCostImpact: number;
 
   // 工期影響
-  @Column({ name: "estimated_schedule_impact", default: 0, comment: "預估工期影響 (天)" })
+  @Column({ name: "estimated_schedule_impact", default: 0, comment: "預估工期影響 (�?" })
   estimatedScheduleImpact: number;
 
-  @Column({ name: "actual_schedule_impact", default: 0, comment: "實際工期影響 (天)" })
+  @Column({ name: "actual_schedule_impact", default: 0, comment: "實際工期影響 (�?" })
   actualScheduleImpact: number;
 
   // 日期
@@ -111,7 +111,7 @@ export class DesignChangeRequest {
   @Column({ name: "closed_date", type: "date", nullable: true })
   closedDate: Date;
 
-  // 申請與審核
+  // 申請與審�?
   @Column({ name: "requested_by", length: 100 })
   requestedBy: string;
 
@@ -128,7 +128,7 @@ export class DesignChangeRequest {
   reviewComments: string;
 
   /**
-   * 關聯工程變更單
+   * 關聯工程變更�?
    * 設計變更核准後可能產生的 CO
    */
   @Column({ name: "related_change_order_id", length: 36, nullable: true })
