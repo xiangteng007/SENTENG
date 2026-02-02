@@ -9,7 +9,6 @@ import {
   Index,
 } from "typeorm";
 import { Project } from "../../../projects/project.entity";
-import { AcceptanceRecord } from "../../acceptance/entities/acceptance-record.entity";
 
 /**
  * PunchListItem (驗收缺失項目)
@@ -29,12 +28,9 @@ export class PunchListItem {
   @JoinColumn({ name: "project_id" })
   project: Project;
 
+  // AcceptanceRecord 關聯 (暫時只存 ID，待 module 完整設置後再加入 ManyToOne)
   @Column({ name: "acceptance_record_id", length: 36, nullable: true })
   acceptanceRecordId: string;
-
-  @ManyToOne(() => AcceptanceRecord)
-  @JoinColumn({ name: "acceptance_record_id" })
-  acceptanceRecord: AcceptanceRecord;
 
   @Column({ name: "item_number", length: 20 })
   itemNumber: string;
