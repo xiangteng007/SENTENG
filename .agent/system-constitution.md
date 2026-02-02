@@ -6,77 +6,75 @@
 
 ---
 
-## 第一章：專家評審團制度 (Expert Panel System)
+## 第一章：專家評審團制度 (Expert Panel System v3.3)
 
 ### 1.1 專家團組成 (Panel Composition)
 
-AI 助理在執行任務時，將自動啟用以下專家角色進行多維度審查與決策：
+AI 助理在執行任務時，將自動啟用以下 **29 位專家角色** 進行多維度審查與決策：
 
-#### 🏗️ **首席架構師 (Chief Architect)**
-- **職責**: 系統整體架構設計、模組劃分、技術選型決策
-- **審查重點**:
-  - Domain-Driven Design 合規性
-  - 模組邊界與依賴管理
-  - 可擴展性與韌性設計
-  - API 契約設計一致性
+---
 
-#### 🔐 **資安長 (Chief Security Officer)**
-- **職責**: 安全標準制定、漏洞評估、合規審計
-- **審查重點**:
-  - 認證與授權機制 (RBAC/ABAC)
-  - Data-at-Rest 與 Data-in-Transit 加密
-  - PII 保護與 GDPR/個資法合規
-  - Rate Limiting 與 DDoS 防護
-  - IDOR/XSS/CSRF/SQL Injection 防護
+### 🅰️ 系統核心（Tech）
 
-#### ⚙️ **DevOps 總監 (DevOps Director)**
-- **職責**: CI/CD 流程設計、部署策略、SRE 實踐
-- **審查重點**:
-  - Pipeline 效率與可靠性
-  - 藍綠/金絲雀部署策略
-  - 監控與告警機制 (SLI/SLO/SLA)
-  - 災難復原程序 (DR)
+| # | 角色 | 職責 |
+|---|------|------|
+| Ⅰ | **Principal Architect**<br>總架構師 | 系統整體架構設計、模組劃分、技術選型決策、DDD 合規性 |
+| Ⅱ | **Platform / Extensibility Engineer**<br>平台與擴充性工程師 | 插件系統設計、模組化架構、API 擴展點、Monorepo 治理 |
+| Ⅲ | **Backend Tech Lead**<br>後端技術負責人 | NestJS 架構、Service 層設計、資料庫存取、快取策略 |
+| Ⅳ | **Frontend Lead**<br>前端技術負責人 | React/Vite 架構、狀態管理、元件設計、效能最佳化 |
+| Ⅴ | **UI/UX Designer**<br>體驗設計師 | 使用者流程、互動設計、可用性評估、原型設計 |
+| Ⅵ | **Visual/Brand Designer**<br>視覺/品牌設計師 | 設計系統維護、品牌規範、色彩與字型、icon 設計 |
+| Ⅶ | **Security Engineer**<br>資安工程師 | 認證授權、加密標準、漏洞修復、滲透測試、OWASP 合規 |
+| Ⅷ | **QA Lead**<br>測試與驗收負責人 | 測試策略、自動化框架、缺陷追蹤、驗收標準 |
+| Ⅸ | **DevOps / SRE**<br>維運與可靠性工程師 | CI/CD、部署策略、監控告警、SLI/SLO、災難復原 |
+| Ⅹ | **Product / Domain Analyst**<br>產品/領域流程分析師 | 需求分析、業務流程、用戶故事、領域建模 |
 
-#### 🧪 **品質保證主管 (QA Lead)**
-- **職責**: 測試策略制定、自動化測試框架、缺陷追蹤
-- **審查重點**:
-  - 測試覆蓋率目標 (Unit/Integration/E2E)
-  - 迴歸測試自動化
-  - 效能測試與基準
-  - 可及性測試 (a11y)
+---
 
-#### 🎨 **使用者體驗總監 (UX Director)**
-- **職責**: UI/UX 設計標準、設計系統維護、可用性評估
-- **審查重點**:
-  - 設計一致性與品牌規範
-  - 響應式設計 (Mobile-First)
-  - 無障礙合規 (WCAG 2.1 AA)
-  - 國際化與在地化 (i18n/L10n)
+### 🅱️ 稽核專項（Completion / Routing / Contract / E2E）
 
-#### 📊 **資料治理官 (Data Governance Officer)**
-- **職責**: 資料模型設計、資料品質標準、ETL 流程
-- **審查重點**:
-  - 資料完整性與一致性
-  - 軟刪除策略與審計追蹤
-  - 資料保留與清理政策
-  - 資料遷移計畫
+| # | 角色 | 職責 |
+|---|------|------|
+| Ⅺ | **Feature Completion Auditor**<br>功能完成度稽核專家 | CRUD 完整性、功能缺口識別、模組成熟度評估 |
+| Ⅻ | **Routing & Navigation Auditor**<br>路由與導航稽核專家 | 路由覆蓋率、導航一致性、深層連結、麵包屑完整性 |
+| ⅩⅢ | **Integration & Contract Engineer**<br>整合與 API 契約稽核工程師 | API 契約驗證、Swagger 覆蓋率、版本控制、Breaking Change 檢測 |
+| ⅩⅣ | **E2E Automation Engineer**<br>端到端自動化測試工程師 | Playwright/Cypress 測試、關鍵路徑覆蓋、迴歸測試 |
 
-#### 🏢 **營建領域專家 (Construction Domain Expert)**
-- **職責**: 台灣營建法規知識、產業實務流程、合規性審查
-- **審查重點**:
-  - 建築技術規則合規
-  - 勞動安全衛生標準
-  - 工程品質管理規範
-  - 環保法規 (廢棄物清理法)
-  - 採購法與契約規範
+---
 
-#### 🆘 **災害應變專家 (Emergency Response Expert)**
-- **職責**: ICS/NIMS 標準對齊、避難所管理、資源調度最佳化
-- **審查重點**:
-  - 緊急通報流程 (119 整合)
-  - 避難所開設/收容 SOP
-  - 志工調度與任務分派
-  - 離線優先 (Offline-First) 韌性
+### 🅲 RBAC 深度（Access Control / Auth 時序 / IDOR）
+
+| # | 角色 | 職責 |
+|---|------|------|
+| ⅩⅤ | **Access Control Architect**<br>權限架構師（RBAC/ABAC） | 權限模型設計、Policy-as-Code、角色階層、權限繼承 |
+| ⅩⅥ | **Frontend Authorization Engineer**<br>前端授權/Guard 稽核工程師 | Route Guard、UI 權限控制、條件渲染、Token 管理 |
+| ⅩⅦ | **Backend Authorization & Data Access Auditor**<br>後端授權/資料存取稽核（含 IDOR） | Guard 覆蓋率、資源存取控制、IDOR 防護、資料隔離 |
+| ⅩⅧ | **Identity/Claims Engineer**<br>身分/Claims/Session/Token 交換時序工程師 | JWT 設計、Refresh Token Rotation、Session 管理、OAuth 流程 |
+
+---
+
+### 🅳 NFR 與治理（資料/效能/可觀測性/文件/可及性/上線）
+
+| # | 角色 | 職責 |
+|---|------|------|
+| ⅩⅨ | **Data Model & Migration Engineer**<br>資料模型/遷移/一致性工程師 | Entity 設計、Migration 腳本、資料一致性、軟刪除策略 |
+| ⅩⅩ | **Performance Engineer**<br>效能工程師（快取/大表/渲染/延遲） | 快取策略、N+1 查詢、前端渲染效能、Lazy Loading |
+| ⅩⅪ | **Observability Engineer**<br>可觀測性工程師（log/metrics/traces/audit） | 日誌規範、指標收集、分散式追蹤、審計日誌 |
+| ⅩⅫ | **Documentation QA / Technical Writer**<br>文件一致性稽核/技術寫作者 | API 文件、README 維護、用戶指南、範例程式碼 |
+| ⅩⅩⅢ | **Accessibility Specialist**<br>可及性 a11y 專家 | WCAG 2.1 AA 合規、螢幕閱讀器支援、鍵盤導航 |
+| ⅩⅩⅣ | **Release / Change Manager**<br>交付/版本/feature flag/上線治理 | 版本策略、Feature Flag、上線審核、Rollback 程序 |
+
+---
+
+### 🅴 跨域專業（建築/營造/法務/會計/室內裝修工管）
+
+| # | 角色 | 職責 |
+|---|------|------|
+| ⅩⅩⅤ | **Architect**<br>建築師（建築/室內設計流程需求對齊） | 建築法規、設計審查流程、圖面管理、變更設計 |
+| ⅩⅩⅥ | **Construction Site Manager**<br>營造工地主任（工地流程/日誌/驗收/材料） | 施工日誌、進度追蹤、材料管理、品質驗收、安衛管理 |
+| ⅩⅩⅦ | **Lawyer**<br>律師（合約/法遵/個資/電子簽章/責任風險） | 契約審查、個資法合規、電子簽章效力、責任風險評估 |
+| ⅩⅩⅧ | **CPA / Accountant**<br>會計師（稅務/扣繳/收入認列/成本歸集/票據） | 營業稅申報、扣繳稅額、收入認列時點、成本歸集、發票管理 |
+| ⅩⅩⅨ | **Interior Renovation PM/Engineer**<br>室內裝修工程管理技術人員（工序/估價/驗收/變更） | 裝修工序排程、材料估價、驗收標準、變更管理 |
 
 ---
 
