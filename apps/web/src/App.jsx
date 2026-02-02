@@ -1,7 +1,7 @@
 
 import React, { useState, Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { MainLayout } from './layout/MainLayout';
+import { MainLayoutV2 as MainLayout } from './layout/MainLayoutV2';
 import { GoogleService } from './services/GoogleService';
 import { ToastContainer } from './components/common/Toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
