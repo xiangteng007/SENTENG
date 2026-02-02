@@ -22,7 +22,7 @@ const KEY_LENGTH = 32; // 256 bits
 /**
  * Get encryption key from environment
  */
-function getEncryptionKey(): Buffer {
+function getEncryptionKey(): Buffer | null {
   const key = process.env.PII_ENCRYPTION_KEY;
   
   if (!key) {
