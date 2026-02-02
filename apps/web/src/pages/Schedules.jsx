@@ -9,8 +9,10 @@ import {
   AlertTriangle,
   CheckCircle,
   Clock,
-  BarChart3
+  BarChart3,
+  X
 } from 'lucide-react';
+import api from '../services/api';
 
 export const Schedules = ({ addToast }) => {
   const [tasks, setTasks] = useState([]);
@@ -18,6 +20,7 @@ export const Schedules = ({ addToast }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [viewMode, setViewMode] = useState('month'); // 'week' | 'month' | 'quarter'
   const [selectedProject, setSelectedProject] = useState('all');
+  const [showAddModal, setShowAddModal] = useState(false);
 
   // Mock data
   useEffect(() => {
@@ -203,7 +206,7 @@ export const Schedules = ({ addToast }) => {
           <p className="text-gray-500 mt-1">甘特圖與要徑分析</p>
         </div>
         <button 
-          onClick={() => addToast?.('功能開發中', 'info')}
+          onClick={() => setShowAddModal(true)}
           className="btn-primary flex items-center gap-2"
         >
           <Plus size={18} />
@@ -377,6 +380,135 @@ export const Schedules = ({ addToast }) => {
           <span>里程碑</span>
         </div>
       </div>
+
+      {/* Add Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-6 border-b dark:border-gray-700">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">新增排程任務</h2>
+              <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form 
+              onSubmit={async (e) => {
+                e.preventDefault();
+                const fd = new FormData(e.target);
+                const data = {
+                  name: fd.get('name'),
+                  project: fd.get('project'),
+                  startDate: fd.get('startDate'),
+                  endDate: fd.get('endDate'),
+                  milestone: fd.get('milestone') === 'true',
+                  critical: fd.get('critical') === 'true',
+                  progress: 0,
+                  status: 'PENDING',
+                };
+                try {
+                  await api.post('/schedules/tasks', data);
+                  addToast?.('任務建立成功', 'success');
+                  setShowAddModal(false);
+                } catch (error) {
+                  addToast?.('建立失敗: ' + (error.response?.data?.message || error.message), 'error');
+                }
+              }}
+              className="p-6 space-y-6"
+            >
+              {/* Task Name */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  任務名稱 <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  required
+                  className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+                  placeholder="結構體施工"
+                />
+              </div>
+
+              {/* Project */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  所屬專案 <span className="text-red-500">*</span>
+                </label>
+                <select name="project" required className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
+                  {projects.map(p => (
+                    <option key={p} value={p}>{p}</option>
+                  ))}
+                  <option value="new">+ 新專案</option>
+                </select>
+              </div>
+
+              {/* Dates */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    開始日期 <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    name="startDate"
+                    defaultValue={new Date().toISOString().split('T')[0]}
+                    required
+                    className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    結束日期 <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    name="endDate"
+                    required
+                    className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+                  />
+                </div>
+              </div>
+
+              {/* Options */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">里程碑</label>
+                  <select name="milestone" className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
+                    <option value="false">否</option>
+                    <option value="true">是</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">要徑任務</label>
+                  <select name="critical" className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
+                    <option value="false">否</option>
+                    <option value="true">是</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex justify-end gap-3 pt-4 border-t dark:border-gray-700">
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  className="px-6 py-2.5 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
+                >
+                  取消
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  建立任務
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

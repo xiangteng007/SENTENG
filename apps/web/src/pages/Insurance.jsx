@@ -296,6 +296,182 @@ export const Insurance = ({ addToast }) => {
           })}
         </div>
       )}
+
+      {/* Add Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-6 border-b dark:border-gray-700">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">新增保單</h2>
+              <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form 
+              onSubmit={async (e) => {
+                e.preventDefault();
+                const fd = new FormData(e.target);
+                const data = {
+                  projectId: fd.get('projectId'),
+                  type: fd.get('type'),
+                  policyNumber: fd.get('policyNumber'),
+                  insurer: fd.get('insurer'),
+                  coverageAmount: parseFloat(fd.get('coverageAmount')),
+                  premium: parseFloat(fd.get('premium')),
+                  startDate: fd.get('startDate'),
+                  endDate: fd.get('endDate'),
+                  beneficiary: fd.get('beneficiary'),
+                  deductible: parseFloat(fd.get('deductible') || '0'),
+                };
+                try {
+                  await api.post('/insurance/policies', data);
+                  addToast?.('保單建立成功', 'success');
+                  setShowAddModal(false);
+                } catch (error) {
+                  addToast?.('建立失敗: ' + (error.response?.data?.message || error.message), 'error');
+                }
+              }}
+              className="p-6 space-y-6"
+            >
+              {/* Policy Type & Number */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    險種類型 <span className="text-red-500">*</span>
+                  </label>
+                  <select name="type" required className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
+                    {insuranceTypes.map(t => (
+                      <option key={t.value} value={t.value}>{t.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    保單號碼 <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="policyNumber"
+                    required
+                    className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+                    placeholder="CAR-2026-XXXX"
+                  />
+                </div>
+              </div>
+
+              {/* Insurer & Beneficiary */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    保險公司 <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="insurer"
+                    required
+                    className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+                    placeholder="國泰產險"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">受益人</label>
+                  <input
+                    type="text"
+                    name="beneficiary"
+                    className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+                    placeholder="森騰營造股份有限公司"
+                  />
+                </div>
+              </div>
+
+              {/* Coverage & Premium */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    保額 (TWD) <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    name="coverageAmount"
+                    required
+                    className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+                    placeholder="100000000"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    保費 (TWD) <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    name="premium"
+                    required
+                    className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+                    placeholder="280000"
+                  />
+                </div>
+              </div>
+
+              {/* Dates */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    生效日期 <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    name="startDate"
+                    defaultValue={new Date().toISOString().split('T')[0]}
+                    required
+                    className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    到期日期 <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    name="endDate"
+                    required
+                    className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+                  />
+                </div>
+              </div>
+
+              {/* Deductible */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">自負額 (TWD)</label>
+                <input
+                  type="number"
+                  name="deductible"
+                  className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+                  placeholder="0"
+                />
+              </div>
+
+              {/* Actions */}
+              <div className="flex justify-end gap-3 pt-4 border-t dark:border-gray-700">
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  className="px-6 py-2.5 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
+                >
+                  取消
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  建立保單
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
