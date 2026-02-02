@@ -13,12 +13,13 @@ describe('InventoryService', () => {
   const mockInventory: Partial<Inventory> = {
     id: 'INV-001',
     name: '木地板 (橡木)',
-    sku: 'FLOOR-OAK-001',
+    spec: 'FLOOR-OAK-001',
+    mainCategory: '建材',
     category: 'flooring',
     unit: '坪',
     quantity: 100,
-    unitPrice: 3500,
     safeStock: 10,
+    location: 'A-01',
     status: '充足',
   };
 
@@ -89,11 +90,11 @@ describe('InventoryService', () => {
     it('should create a new inventory item', async () => {
       const createDto = {
         name: '新品項',
-        sku: 'NEW-001',
+        spec: 'NEW-001',
+        mainCategory: '建材',
         category: 'materials',
         unit: '個',
         quantity: 50,
-        unitPrice: 100,
         safeStock: 10,
       };
       
