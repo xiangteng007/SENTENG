@@ -12,14 +12,17 @@ import {
   Eye,
   Cloud,
   Thermometer,
-  Wind
+  Wind,
+  X
 } from 'lucide-react';
+import api from '../services/api';
 
 export const Drone = ({ addToast }) => {
   const [flights, setFlights] = useState([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
   const [selectedProject, setSelectedProject] = useState('all');
+  const [showAddModal, setShowAddModal] = useState(false);
 
   // Mock data
   useEffect(() => {
@@ -137,7 +140,7 @@ export const Drone = ({ addToast }) => {
           <p className="text-gray-500 mt-1">工地進度空拍與正射影像</p>
         </div>
         <button 
-          onClick={() => addToast?.('功能開發中', 'info')}
+          onClick={() => setShowAddModal(true)}
           className="btn-primary flex items-center gap-2"
         >
           <Plus size={18} />
@@ -301,6 +304,123 @@ export const Drone = ({ addToast }) => {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Add Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-6 border-b dark:border-gray-700">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">排定飛行任務</h2>
+              <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form 
+              onSubmit={async (e) => {
+                e.preventDefault();
+                const fd = new FormData(e.target);
+                const data = {
+                  missionName: fd.get('missionName'),
+                  project: fd.get('project'),
+                  date: fd.get('date'),
+                  pilot: fd.get('pilot'),
+                  droneModel: fd.get('droneModel'),
+                  status: 'SCHEDULED',
+                };
+                try {
+                  await api.post('/drone/flights', data);
+                  addToast?.('飛行任務已排定', 'success');
+                  setShowAddModal(false);
+                } catch (error) {
+                  addToast?.('排定失敗: ' + (error.response?.data?.message || error.message), 'error');
+                }
+              }}
+              className="p-6 space-y-6"
+            >
+              {/* Mission Name */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  任務名稱 <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="missionName"
+                  required
+                  className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+                  placeholder="月度進度空拍"
+                />
+              </div>
+
+              {/* Project */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  所屬專案 <span className="text-red-500">*</span>
+                </label>
+                <select name="project" required className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
+                  {projects.map(p => (
+                    <option key={p} value={p}>{p}</option>
+                  ))}
+                  <option value="new">+ 新專案</option>
+                </select>
+              </div>
+
+              {/* Date */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  飛行日期 <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="date"
+                  name="date"
+                  required
+                  className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+                />
+              </div>
+
+              {/* Pilot & Drone */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">指派操作員</label>
+                  <input
+                    type="text"
+                    name="pilot"
+                    className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+                    placeholder="待指派"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">無人機型號</label>
+                  <select name="droneModel" className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
+                    <option value="DJI Mavic 3">DJI Mavic 3</option>
+                    <option value="DJI Phantom 4 RTK">DJI Phantom 4 RTK</option>
+                    <option value="DJI Mini 4 Pro">DJI Mini 4 Pro</option>
+                    <option value="Other">其他</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex justify-end gap-3 pt-4 border-t dark:border-gray-700">
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  className="px-6 py-2.5 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
+                >
+                  取消
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 bg-gradient-to-r from-sky-600 to-blue-600 text-white rounded-lg hover:from-sky-700 hover:to-blue-700 flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  排定任務
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>

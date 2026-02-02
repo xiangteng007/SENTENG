@@ -13,8 +13,10 @@ import {
   Settings,
   ToggleLeft,
   ToggleRight,
-  AlertTriangle
+  AlertTriangle,
+  X
 } from 'lucide-react';
+import api from '../services/api';
 
 export const SmartHome = ({ addToast }) => {
   const [devices, setDevices] = useState([]);
@@ -22,6 +24,7 @@ export const SmartHome = ({ addToast }) => {
   const [search, setSearch] = useState('');
   const [roomFilter, setRoomFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
+  const [showAddModal, setShowAddModal] = useState(false);
 
   // 設備類型
   const deviceTypes = [
@@ -178,7 +181,7 @@ export const SmartHome = ({ addToast }) => {
           <p className="text-gray-500 mt-1">IoT 設備監控與控制</p>
         </div>
         <button 
-          onClick={() => addToast?.('功能開發中', 'info')}
+          onClick={() => setShowAddModal(true)}
           className="btn-primary flex items-center gap-2"
         >
           <Plus size={18} />
@@ -347,6 +350,114 @@ export const SmartHome = ({ addToast }) => {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Add Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-6 border-b dark:border-gray-700">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">新增設備</h2>
+              <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form 
+              onSubmit={async (e) => {
+                e.preventDefault();
+                const fd = new FormData(e.target);
+                const data = {
+                  name: fd.get('name'),
+                  type: fd.get('type'),
+                  room: fd.get('room'),
+                  unit: fd.get('unit'),
+                  status: 'OFF',
+                  online: true,
+                };
+                try {
+                  await api.post('/smarthome/devices', data);
+                  addToast?.('設備新增成功', 'success');
+                  setShowAddModal(false);
+                } catch (error) {
+                  addToast?.('新增失敗: ' + (error.response?.data?.message || error.message), 'error');
+                }
+              }}
+              className="p-6 space-y-6"
+            >
+              {/* Device Name */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  設備名稱 <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  required
+                  className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+                  placeholder="客廳主燈"
+                />
+              </div>
+
+              {/* Type */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  設備類型 <span className="text-red-500">*</span>
+                </label>
+                <select name="type" required className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
+                  {deviceTypes.map(t => (
+                    <option key={t.value} value={t.value}>{t.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Room & Unit */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    房間 <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="room"
+                    required
+                    className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+                    placeholder="1F 客廳"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    住戶單位
+                  </label>
+                  <input
+                    type="text"
+                    name="unit"
+                    className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+                    placeholder="A1-25F"
+                  />
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex justify-end gap-3 pt-4 border-t dark:border-gray-700">
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  className="px-6 py-2.5 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
+                >
+                  取消
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-lg hover:from-emerald-700 hover:to-teal-700 flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  新增設備
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>
