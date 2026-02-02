@@ -11,8 +11,11 @@ import {
   Clock,
   Edit2,
   Trash2,
-  ChevronDown
+  ChevronDown,
+  X,
+  AlertCircle
 } from 'lucide-react';
+import api from '../services/api';
 
 export const Insurance = ({ addToast }) => {
   const [policies, setPolicies] = useState([]);
@@ -20,6 +23,7 @@ export const Insurance = ({ addToast }) => {
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
   const [expandedPolicy, setExpandedPolicy] = useState(null);
+  const [showAddModal, setShowAddModal] = useState(false);
 
   // 保險類型
   const insuranceTypes = [
@@ -149,7 +153,7 @@ export const Insurance = ({ addToast }) => {
           <p className="text-gray-500 mt-1">營造保險與保證金追蹤</p>
         </div>
         <button 
-          onClick={() => addToast?.('功能開發中', 'info')}
+          onClick={() => setShowAddModal(true)}
           className="btn-primary flex items-center gap-2"
         >
           <Plus size={18} />

@@ -11,6 +11,208 @@ const STATUS_CONFIG = {
   CANCELLED: { label: '已取消', color: 'bg-red-100 text-red-700', icon: AlertCircle },
 };
 
+// Create Procurement Modal Component
+const CreateProcurementModal = ({ onClose, onSuccess }) => {
+  const [formData, setFormData] = useState({
+    projectId: '',
+    title: '',
+    description: '',
+    type: 'material',
+    budgetAmount: '',
+    deadline: '',
+  });
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    // Fetch projects for dropdown
+    api.get('/projects').then(res => {
+      setProjects(res.data?.items || res.data || []);
+    }).catch(console.error);
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    if (!formData.projectId || !formData.title) {
+      setError('請填寫必填欄位');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await api.post('/procurements', {
+        ...formData,
+        budgetAmount: formData.budgetAmount ? parseFloat(formData.budgetAmount) : undefined,
+      });
+      onSuccess?.();
+    } catch (err) {
+      setError(err.response?.data?.message || '建立失敗，請稍後再試');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-6 border-b dark:border-gray-700">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">新增採購單</h2>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          {error && (
+            <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 flex items-center gap-2">
+              <AlertCircle className="w-5 h-5" />
+              {error}
+            </div>
+          )}
+
+          {/* Project Selection */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              專案 <span className="text-red-500">*</span>
+            </label>
+            <select
+              name="projectId"
+              value={formData.projectId}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:ring-2 focus:ring-blue-500"
+              required
+            >
+              <option value="">請選擇專案</option>
+              {projects.map(p => (
+                <option key={p.id} value={p.id}>{p.name || p.title}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Title */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              採購單標題 <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              placeholder="例：衛浴設備採購"
+              className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:ring-2 focus:ring-blue-500"
+              required
+              maxLength={200}
+            />
+          </div>
+
+          {/* Type & Budget */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                採購類型
+              </label>
+              <select
+                name="type"
+                value={formData.type}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="material">材料</option>
+                <option value="equipment">設備</option>
+                <option value="service">服務</option>
+                <option value="subcontract">分包</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                預算金額
+              </label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">NT$</span>
+                <input
+                  type="number"
+                  name="budgetAmount"
+                  value={formData.budgetAmount}
+                  onChange={handleChange}
+                  placeholder="0"
+                  className="w-full pl-14 pr-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Deadline */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              預計交貨日期
+            </label>
+            <input
+              type="date"
+              name="deadline"
+              value={formData.deadline}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          {/* Description */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              備註說明
+            </label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              rows={3}
+              placeholder="採購需求說明..."
+              className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 resize-none"
+            />
+          </div>
+
+          {/* Actions */}
+          <div className="flex justify-end gap-3 pt-4 border-t dark:border-gray-700">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-6 py-2.5 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            >
+              取消
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-50 flex items-center gap-2"
+            >
+              {loading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  建立中...
+                </>
+              ) : (
+                <>
+                  <Plus className="w-4 h-4" />
+                  建立採購單
+                </>
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+
 const Procurements = () => {
   const [procurements, setProcurements] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -216,27 +418,15 @@ const Procurements = () => {
         )}
       </div>
 
-      {/* Create Modal Placeholder */}
+      {/* Create Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold">新增採購單</h2>
-              <button onClick={() => setShowCreateModal(false)} className="p-2 hover:bg-gray-100 rounded-full">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <p className="text-gray-500 text-center py-12">採購單建立功能開發中...</p>
-            <div className="flex justify-end gap-3">
-              <button 
-                onClick={() => setShowCreateModal(false)}
-                className="px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50"
-              >
-                取消
-              </button>
-            </div>
-          </div>
-        </div>
+        <CreateProcurementModal
+          onClose={() => setShowCreateModal(false)}
+          onSuccess={() => {
+            setShowCreateModal(false);
+            fetchProcurements();
+          }}
+        />
       )}
     </div>
   );

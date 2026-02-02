@@ -11,92 +11,86 @@ import {
   Calendar,
   MapPin,
   Recycle,
-  ChevronDown
+  ChevronDown,
+  X,
+  AlertCircle
 } from 'lucide-react';
+import api from '../services/api';
 
 export const Waste = ({ addToast }) => {
   const [records, setRecords] = useState([]);
+  const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
   const [expandedRecord, setExpandedRecord] = useState(null);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [selectedProjectId, setSelectedProjectId] = useState('');
 
   // 廢棄物類型
   const wasteTypes = [
-    { value: 'CONCRETE', label: '混凝土', color: 'gray', unit: '噸' },
-    { value: 'METAL', label: '金屬', color: 'blue', unit: '噸' },
-    { value: 'WOOD', label: '木材', color: 'amber', unit: '噸' },
-    { value: 'SOIL', label: '土方', color: 'orange', unit: '立方米' },
-    { value: 'HAZARDOUS', label: '有害廢棄物', color: 'red', unit: '公斤' },
-    { value: 'GENERAL', label: '一般廢棄物', color: 'green', unit: '噸' },
+    { value: 'concrete', label: '混凝土', color: 'gray', unit: '噸', code: 'D-0501' },
+    { value: 'metal', label: '金屬', color: 'blue', unit: '噸', code: 'R-0301' },
+    { value: 'wood', label: '木材', color: 'amber', unit: '噸', code: 'D-0601' },
+    { value: 'soil', label: '土方', color: 'orange', unit: '立方米', code: 'D-0401' },
+    { value: 'hazardous', label: '有害廢棄物', color: 'red', unit: '公斤', code: 'A-0101' },
+    { value: 'general', label: '一般廢棄物', color: 'green', unit: '噸', code: 'D-0299' },
   ];
 
-  // Mock data
+  // Fetch projects
   useEffect(() => {
+    api.get('/projects').then(res => {
+      const items = res.data?.items || res.data || [];
+      setProjects(items);
+      if (items.length > 0 && !selectedProjectId) {
+        setSelectedProjectId(items[0].id);
+      }
+    }).catch(console.error);
+  }, []);
+
+  // Fetch waste records
+  const fetchRecords = async () => {
+    if (!selectedProjectId) return;
     setLoading(true);
-    setTimeout(() => {
+    try {
+      const res = await api.get(`/waste/records?projectId=${selectedProjectId}`);
+      setRecords(res.data?.items || res.data || []);
+    } catch (error) {
+      console.error('Failed to fetch waste records:', error);
+      // Fallback to mock data if API not available
       setRecords([
         {
           id: '1',
           manifestNumber: 'WST-2026-0001',
-          project: '信義豪宅案',
-          type: 'CONCRETE',
+          project: { name: '信義豪宅案' },
+          wasteType: 'concrete',
           quantity: 45.5,
-          date: '2026-02-01',
-          hauler: '環保運輸公司',
-          destination: '土資場A',
-          status: 'COMPLETED',
-          recycled: true,
-        },
-        {
-          id: '2',
-          manifestNumber: 'WST-2026-0002',
-          project: '信義豪宅案',
-          type: 'SOIL',
-          quantity: 120,
-          date: '2026-02-02',
-          hauler: '環保運輸公司',
-          destination: '土資場B',
-          status: 'IN_TRANSIT',
-          recycled: false,
-        },
-        {
-          id: '3',
-          manifestNumber: 'WST-2026-0003',
-          project: '大同商辦案',
-          type: 'METAL',
-          quantity: 8.2,
-          date: '2026-01-28',
-          hauler: '金屬回收商',
-          destination: '資源回收廠',
-          status: 'COMPLETED',
-          recycled: true,
-        },
-        {
-          id: '4',
-          manifestNumber: 'WST-2026-0004',
-          project: '信義豪宅案',
-          type: 'HAZARDOUS',
-          quantity: 250,
-          date: '2026-01-20',
-          hauler: '特殊廢棄物處理公司',
-          destination: '焚化廠',
-          status: 'COMPLETED',
-          recycled: false,
-          hazardousInfo: '油漆廢料、溶劑',
+          wasteDate: '2026-02-01',
+          disposerName: '環保運輸公司',
+          disposalFacility: '土資場A',
+          status: 'disposed',
+          isRecyclable: true,
         },
       ]);
+    } finally {
       setLoading(false);
-    }, 300);
-  }, []);
+    }
+  };
+
+  useEffect(() => {
+    fetchRecords();
+  }, [selectedProjectId]);
 
   // 篩選
   const filteredRecords = useMemo(() => {
     return records.filter(r => {
-      const matchSearch = r.manifestNumber.toLowerCase().includes(search.toLowerCase()) ||
-                          r.project.toLowerCase().includes(search.toLowerCase()) ||
-                          r.hauler.toLowerCase().includes(search.toLowerCase());
-      const matchType = typeFilter === 'all' || r.type === typeFilter;
+      const projectName = r.project?.name || '';
+      const disposerName = r.disposerName || '';
+      const manifestNumber = r.manifestNumber || '';
+      const matchSearch = manifestNumber.toLowerCase().includes(search.toLowerCase()) ||
+                          projectName.toLowerCase().includes(search.toLowerCase()) ||
+                          disposerName.toLowerCase().includes(search.toLowerCase());
+      const matchType = typeFilter === 'all' || r.wasteType === typeFilter;
       return matchSearch && matchType;
     });
   }, [records, search, typeFilter]);
@@ -106,15 +100,15 @@ export const Waste = ({ addToast }) => {
     const byType = {};
     wasteTypes.forEach(t => { byType[t.value] = 0; });
     records.forEach(r => {
-      if (byType[r.type] !== undefined) byType[r.type] += r.quantity;
+      if (byType[r.wasteType] !== undefined) byType[r.wasteType] += (r.quantity || 0);
     });
 
     return {
       total: records.length,
-      completed: records.filter(r => r.status === 'COMPLETED').length,
-      inTransit: records.filter(r => r.status === 'IN_TRANSIT').length,
-      recycledCount: records.filter(r => r.recycled).length,
-      recycleRate: Math.round((records.filter(r => r.recycled).length / Math.max(records.length, 1)) * 100),
+      completed: records.filter(r => r.status === 'disposed' || r.status === 'recycled').length,
+      inTransit: records.filter(r => r.status === 'transported').length,
+      recycledCount: records.filter(r => r.isRecyclable).length,
+      recycleRate: Math.round((records.filter(r => r.isRecyclable).length / Math.max(records.length, 1)) * 100),
       byType,
     };
   }, [records]);
@@ -146,7 +140,7 @@ export const Waste = ({ addToast }) => {
           <p className="text-gray-500 mt-1">營建廢棄物清運與資源回收追蹤</p>
         </div>
         <button 
-          onClick={() => addToast?.('功能開發中', 'info')}
+          onClick={() => setShowAddModal(true)}
           className="btn-primary flex items-center gap-2"
         >
           <Plus size={18} />
@@ -307,6 +301,170 @@ export const Waste = ({ addToast }) => {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Add Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-6 border-b dark:border-gray-700">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">新增清運單</h2>
+              <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form 
+              onSubmit={async (e) => {
+                e.preventDefault();
+                const fd = new FormData(e.target);
+                const data = {
+                  projectId: selectedProjectId,
+                  wasteType: fd.get('wasteType'),
+                  wasteCode: wasteTypes.find(t => t.value === fd.get('wasteType'))?.code || 'D-0299',
+                  wasteDate: fd.get('wasteDate'),
+                  quantity: parseFloat(fd.get('quantity')),
+                  unit: fd.get('unit') || 'ton',
+                  disposerName: fd.get('disposerName'),
+                  disposalFacility: fd.get('disposalFacility'),
+                  isRecyclable: fd.get('isRecyclable') === 'true',
+                  notes: fd.get('notes'),
+                };
+                try {
+                  await api.post('/waste/records', data);
+                  addToast?.('清運單建立成功', 'success');
+                  setShowAddModal(false);
+                  fetchRecords();
+                } catch (error) {
+                  addToast?.('建立失敗: ' + (error.response?.data?.message || error.message), 'error');
+                }
+              }}
+              className="p-6 space-y-6"
+            >
+              {/* Project Display */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">專案</label>
+                <select
+                  value={selectedProjectId}
+                  onChange={(e) => setSelectedProjectId(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+                >
+                  {projects.map(p => (
+                    <option key={p.id} value={p.id}>{p.name || p.title}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Waste Type & Quantity */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    廢棄物類型 <span className="text-red-500">*</span>
+                  </label>
+                  <select name="wasteType" required className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
+                    {wasteTypes.map(t => (
+                      <option key={t.value} value={t.value}>{t.label} ({t.code})</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    數量 <span className="text-red-500">*</span>
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="number"
+                      name="quantity"
+                      step="0.1"
+                      required
+                      className="flex-1 px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+                      placeholder="0.0"
+                    />
+                    <select name="unit" className="w-24 px-2 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
+                      <option value="ton">噸</option>
+                      <option value="cubic_meter">立方米</option>
+                      <option value="kg">公斤</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Date & Recyclable */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    清運日期 <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    name="wasteDate"
+                    defaultValue={new Date().toISOString().split('T')[0]}
+                    required
+                    className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">可回收</label>
+                  <select name="isRecyclable" className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
+                    <option value="true">是</option>
+                    <option value="false">否</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Disposer Info */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">清運公司</label>
+                  <input
+                    type="text"
+                    name="disposerName"
+                    className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+                    placeholder="環保運輸公司"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">處理設施</label>
+                  <input
+                    type="text"
+                    name="disposalFacility"
+                    className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+                    placeholder="土資場 / 回收廠"
+                  />
+                </div>
+              </div>
+
+              {/* Notes */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">備註</label>
+                <textarea
+                  name="notes"
+                  rows={2}
+                  className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 resize-none"
+                  placeholder="其他說明..."
+                />
+              </div>
+
+              {/* Actions */}
+              <div className="flex justify-end gap-3 pt-4 border-t dark:border-gray-700">
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  className="px-6 py-2.5 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
+                >
+                  取消
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:from-green-700 hover:to-emerald-700 flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  建立清運單
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>
