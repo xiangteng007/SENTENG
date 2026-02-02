@@ -28,7 +28,6 @@ import IntegrationsPage from './pages/IntegrationsPage';
 import Procurements from './pages/Procurements';
 import Events from './pages/Events';
 import ChangeOrders from './pages/ChangeOrders';
-import Customers from './pages/Customers';
 import Contacts from './pages/Contacts';
 import Reports from './pages/Reports';
 import SiteLogs from './pages/SiteLogs';
@@ -303,11 +302,6 @@ const AppContent = () => {
         <Route path="/change-orders" element={
           <ProtectedRoute pageId="change-orders">
             <ChangeOrders addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/customers" element={
-          <ProtectedRoute pageId="customers">
-            <Customers addToast={addToast} />
           </ProtectedRoute>
         } />
         <Route path="/contacts" element={

@@ -111,7 +111,7 @@ const MENU_GROUPS = [
         id: 'parties',
         label: '關係人',
         icon: Users,
-        items: ['clients', 'customers', 'vendors', 'contacts'],
+        items: ['clients', 'vendors', 'contacts'],
         defaultExpanded: false,
     },
     {
