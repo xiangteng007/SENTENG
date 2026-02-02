@@ -197,12 +197,16 @@ const SidebarGroup = ({ group, items, activeId, collapsed, expandedGroups, onTog
 const Sidebar = ({ activeTab, onNavigate }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout, canAccessPage, role } = useAuth();
+  const { user, signOut, canAccessPage, role } = useAuth();
   
   const [collapsed, setCollapsed] = useState(false);
   const [expandedGroups, setExpandedGroups] = useState(['overview']);
   const [searchQuery, setSearchQuery] = useState('');
-  const [darkMode, setDarkMode] = useState(true);
+  const [darkMode, setDarkMode] = useState(() => {
+    // Load dark mode preference from localStorage
+    const stored = localStorage.getItem('senteng_darkMode');
+    return stored !== null ? stored === 'true' : true;
+  });
 
   // Filter groups based on permissions
   const visibleGroups = useMemo(() => {
@@ -315,7 +319,14 @@ const Sidebar = ({ activeTab, onNavigate }) => {
       <div className={`border-t border-white/5 p-3 ${collapsed ? 'space-y-2' : ''}`}>
         {/* Theme Toggle */}
         <button
-          onClick={() => setDarkMode(!darkMode)}
+          onClick={() => {
+            const newMode = !darkMode;
+            setDarkMode(newMode);
+            localStorage.setItem('senteng_darkMode', String(newMode));
+            // Apply theme to document
+            document.documentElement.classList.toggle('light-mode', !newMode);
+            document.documentElement.classList.toggle('dark-mode', newMode);
+          }}
           className={`
             flex items-center gap-3 w-full rounded-lg transition-colors
             text-slate-400 hover:text-white hover:bg-white/5
@@ -329,13 +340,21 @@ const Sidebar = ({ activeTab, onNavigate }) => {
         
         {/* User Profile */}
         <div className={`flex items-center gap-3 ${collapsed ? 'justify-center mt-2' : 'px-3 py-2'}`}>
-          <div className="w-9 h-9 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/20">
-            <User size={18} className="text-white" />
-          </div>
+          {user?.photoURL ? (
+            <img 
+              src={user.photoURL} 
+              alt={user.displayName || 'User'} 
+              className="w-9 h-9 rounded-full object-cover shadow-lg"
+            />
+          ) : (
+            <div className="w-9 h-9 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/20">
+              <User size={18} className="text-white" />
+            </div>
+          )}
           {!collapsed && (
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-white truncate">
-                {user?.name || user?.email || '使用者'}
+                {user?.displayName || user?.email?.split('@')[0] || '使用者'}
               </p>
               <p className="text-xs text-slate-500 truncate">{role || 'user'}</p>
             </div>
@@ -344,7 +363,7 @@ const Sidebar = ({ activeTab, onNavigate }) => {
         
         {/* Logout */}
         <button
-          onClick={logout}
+          onClick={signOut}
           className={`
             flex items-center gap-3 w-full rounded-lg transition-colors
             text-slate-400 hover:text-red-400 hover:bg-red-500/10
