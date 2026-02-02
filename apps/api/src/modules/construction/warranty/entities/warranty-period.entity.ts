@@ -10,7 +10,6 @@ import {
 } from "typeorm";
 import { Project } from "../../../projects/project.entity";
 import { Contract } from "../../../contracts/contract.entity";
-import { AcceptanceRecord } from "../../acceptance/entities/acceptance-record.entity";
 
 /**
  * WarrantyPeriod (保固期管理)
@@ -37,12 +36,9 @@ export class WarrantyPeriod {
   @JoinColumn({ name: "contract_id" })
   contract: Contract;
 
+  // AcceptanceRecord 關聯 (暫時只存 ID，待 module 完整設置後再加入 ManyToOne)
   @Column({ name: "acceptance_record_id", length: 36, nullable: true })
   acceptanceRecordId: string;
-
-  @ManyToOne(() => AcceptanceRecord)
-  @JoinColumn({ name: "acceptance_record_id" })
-  acceptanceRecord: AcceptanceRecord;
 
   @Column({ length: 100 })
   title: string;
