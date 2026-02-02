@@ -1,0 +1,242 @@
+/**
+ * Dark Mode 樣式定義
+ * UI-003: Dark Mode Support
+ */
+
+/* ============================================
+   Dark Mode CSS Variables
+   ============================================ */
+
+:root {
+  /* Light mode (default) */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f9fafb;
+  --color-bg-tertiary: #f3f4f6;
+  --color-bg-elevated: #ffffff;
+  --color-bg-inverse: #1f2937;
+
+  --color-text-primary: #111827;
+  --color-text-secondary: #6b7280;
+  --color-text-tertiary: #9ca3af;
+  --color-text-inverse: #ffffff;
+  --color-text-link: #3b82f6;
+
+  --color-border-primary: #e5e7eb;
+  --color-border-secondary: #d1d5db;
+  --color-border-focus: #3b82f6;
+
+  --color-shadow: rgba(0, 0, 0, 0.1);
+  --color-overlay: rgba(0, 0, 0, 0.5);
+
+  /* Status colors - same in both modes */
+  --color-success: #10b981;
+  --color-success-bg: #d1fae5;
+  --color-warning: #f59e0b;
+  --color-warning-bg: #fef3c7;
+  --color-error: #ef4444;
+  --color-error-bg: #fee2e2;
+  --color-info: #3b82f6;
+  --color-info-bg: #dbeafe;
+
+  /* Accent colors */
+  --color-accent-primary: #3b82f6;
+  --color-accent-primary-hover: #2563eb;
+  --color-accent-secondary: #8b5cf6;
+}
+
+/* ============================================
+   Dark Mode Variables
+   ============================================ */
+
+[data-theme="dark"],
+.dark {
+  --color-bg-primary: #111827;
+  --color-bg-secondary: #1f2937;
+  --color-bg-tertiary: #374151;
+  --color-bg-elevated: #1f2937;
+  --color-bg-inverse: #ffffff;
+
+  --color-text-primary: #f9fafb;
+  --color-text-secondary: #d1d5db;
+  --color-text-tertiary: #9ca3af;
+  --color-text-inverse: #111827;
+  --color-text-link: #60a5fa;
+
+  --color-border-primary: #374151;
+  --color-border-secondary: #4b5563;
+  --color-border-focus: #60a5fa;
+
+  --color-shadow: rgba(0, 0, 0, 0.3);
+  --color-overlay: rgba(0, 0, 0, 0.7);
+
+  /* Status colors - adjusted for dark mode */
+  --color-success-bg: rgba(16, 185, 129, 0.2);
+  --color-warning-bg: rgba(245, 158, 11, 0.2);
+  --color-error-bg: rgba(239, 68, 68, 0.2);
+  --color-info-bg: rgba(59, 130, 246, 0.2);
+}
+
+/* System preference dark mode */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg-primary: #111827;
+    --color-bg-secondary: #1f2937;
+    --color-bg-tertiary: #374151;
+    --color-bg-elevated: #1f2937;
+    --color-bg-inverse: #ffffff;
+
+    --color-text-primary: #f9fafb;
+    --color-text-secondary: #d1d5db;
+    --color-text-tertiary: #9ca3af;
+    --color-text-inverse: #111827;
+    --color-text-link: #60a5fa;
+
+    --color-border-primary: #374151;
+    --color-border-secondary: #4b5563;
+    --color-border-focus: #60a5fa;
+
+    --color-shadow: rgba(0, 0, 0, 0.3);
+    --color-overlay: rgba(0, 0, 0, 0.7);
+
+    --color-success-bg: rgba(16, 185, 129, 0.2);
+    --color-warning-bg: rgba(245, 158, 11, 0.2);
+    --color-error-bg: rgba(239, 68, 68, 0.2);
+    --color-info-bg: rgba(59, 130, 246, 0.2);
+  }
+}
+
+/* ============================================
+   Component Overrides for Dark Mode
+   ============================================ */
+
+/* Body */
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Cards */
+.card,
+.panel {
+  background-color: var(--color-bg-elevated);
+  border-color: var(--color-border-primary);
+  box-shadow: 0 1px 3px var(--color-shadow);
+}
+
+/* Sidebar */
+.sidebar {
+  background-color: var(--color-bg-secondary);
+  border-color: var(--color-border-primary);
+}
+
+.sidebar-item:hover {
+  background-color: var(--color-bg-tertiary);
+}
+
+/* Tables */
+.table {
+  background-color: var(--color-bg-elevated);
+}
+
+.table th {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  border-color: var(--color-border-primary);
+}
+
+.table td {
+  border-color: var(--color-border-primary);
+}
+
+.table tr:hover {
+  background-color: var(--color-bg-tertiary);
+}
+
+/* Inputs */
+.input,
+.textarea,
+.select {
+  background-color: var(--color-bg-primary);
+  border-color: var(--color-border-primary);
+  color: var(--color-text-primary);
+}
+
+.input:focus,
+.textarea:focus,
+.select:focus {
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+.input::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+/* Buttons */
+.btn-secondary {
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-primary);
+}
+
+.btn-ghost:hover {
+  background-color: var(--color-bg-tertiary);
+}
+
+/* Modals */
+.modal-overlay {
+  background-color: var(--color-overlay);
+}
+
+.modal-content {
+  background-color: var(--color-bg-elevated);
+  border-color: var(--color-border-primary);
+}
+
+/* Dropdowns */
+.dropdown-menu {
+  background-color: var(--color-bg-elevated);
+  border-color: var(--color-border-primary);
+  box-shadow: 0 10px 15px var(--color-shadow);
+}
+
+.dropdown-item:hover {
+  background-color: var(--color-bg-tertiary);
+}
+
+/* Skeleton loading */
+.skeleton {
+  background-color: var(--color-bg-tertiary);
+}
+
+/* Tooltips */
+.tooltip {
+  background-color: var(--color-bg-inverse);
+  color: var(--color-text-inverse);
+}
+
+/* Badges */
+.badge {
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--color-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-border-secondary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-text-tertiary);
+}
