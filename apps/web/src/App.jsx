@@ -26,6 +26,21 @@ import ProfitAnalysis from './pages/ProfitAnalysis';
 import CostEntries from './pages/CostEntries';
 import IntegrationsPage from './pages/IntegrationsPage';
 import Procurements from './pages/Procurements';
+import Events from './pages/Events';
+import ChangeOrders from './pages/ChangeOrders';
+import Customers from './pages/Customers';
+import Contacts from './pages/Contacts';
+import Reports from './pages/Reports';
+import SiteLogs from './pages/SiteLogs';
+import Construction from './pages/Construction';
+import Schedules from './pages/Schedules';
+import Bim from './pages/Bim';
+import Drone from './pages/Drone';
+import SmartHome from './pages/SmartHome';
+import Regulations from './pages/Regulations';
+import Insurance from './pages/Insurance';
+import Waste from './pages/Waste';
+import Notifications from './pages/Notifications';
 
 // Lazy loaded pages (PERF-001: Code Splitting for heavy components)
 const MaterialCalculator = lazy(() => import('./pages/MaterialCalculator').then(m => ({ default: m.MaterialCalculator })));
@@ -278,6 +293,81 @@ const AppContent = () => {
         <Route path="/settings/integrations" element={
           <ProtectedRoute pageId="integrations">
             <IntegrationsPage addToast={addToast} />
+          </ProtectedRoute>
+        } />
+        <Route path="/events" element={
+          <ProtectedRoute pageId="events">
+            <Events addToast={addToast} />
+          </ProtectedRoute>
+        } />
+        <Route path="/change-orders" element={
+          <ProtectedRoute pageId="change-orders">
+            <ChangeOrders addToast={addToast} />
+          </ProtectedRoute>
+        } />
+        <Route path="/customers" element={
+          <ProtectedRoute pageId="customers">
+            <Customers addToast={addToast} />
+          </ProtectedRoute>
+        } />
+        <Route path="/contacts" element={
+          <ProtectedRoute pageId="contacts">
+            <Contacts addToast={addToast} />
+          </ProtectedRoute>
+        } />
+        <Route path="/reports" element={
+          <ProtectedRoute pageId="reports">
+            <Reports addToast={addToast} />
+          </ProtectedRoute>
+        } />
+        <Route path="/site-logs" element={
+          <ProtectedRoute pageId="site-logs">
+            <SiteLogs addToast={addToast} />
+          </ProtectedRoute>
+        } />
+        <Route path="/construction" element={
+          <ProtectedRoute pageId="construction">
+            <Construction addToast={addToast} />
+          </ProtectedRoute>
+        } />
+        <Route path="/schedules" element={
+          <ProtectedRoute pageId="schedules">
+            <Schedules addToast={addToast} />
+          </ProtectedRoute>
+        } />
+        <Route path="/bim" element={
+          <ProtectedRoute pageId="bim">
+            <Bim addToast={addToast} />
+          </ProtectedRoute>
+        } />
+        <Route path="/drone" element={
+          <ProtectedRoute pageId="drone">
+            <Drone addToast={addToast} />
+          </ProtectedRoute>
+        } />
+        <Route path="/smart-home" element={
+          <ProtectedRoute pageId="smart-home">
+            <SmartHome addToast={addToast} />
+          </ProtectedRoute>
+        } />
+        <Route path="/regulations" element={
+          <ProtectedRoute pageId="regulations">
+            <Regulations addToast={addToast} />
+          </ProtectedRoute>
+        } />
+        <Route path="/insurance" element={
+          <ProtectedRoute pageId="insurance">
+            <Insurance addToast={addToast} />
+          </ProtectedRoute>
+        } />
+        <Route path="/waste" element={
+          <ProtectedRoute pageId="waste">
+            <Waste addToast={addToast} />
+          </ProtectedRoute>
+        } />
+        <Route path="/notifications" element={
+          <ProtectedRoute pageId="notifications">
+            <Notifications addToast={addToast} />
           </ProtectedRoute>
         } />
         <Route path="/login" element={<LoginPage />} />
