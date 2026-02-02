@@ -40,7 +40,7 @@ jobs:
 
 
       - name: Install Web dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
         working-directory: apps/web
 
 

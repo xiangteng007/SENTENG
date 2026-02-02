@@ -57,6 +57,20 @@ export default defineConfig({
       '@firebase/auth',
       '@firebase/firestore',
       '@firebase/storage'
+    ],
+    esbuildOptions: {
+      target: 'esnext'
+    }
+  },
+  resolve: {
+    dedupe: [
+      'firebase',
+      '@firebase/app',
+      '@firebase/auth',
+      '@firebase/firestore',
+      '@firebase/storage',
+      '@firebase/util',
+      '@firebase/component'
     ]
   },
   build: {
