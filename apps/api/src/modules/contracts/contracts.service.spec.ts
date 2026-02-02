@@ -16,11 +16,11 @@ describe('ContractsService', () => {
   const mockContract: Partial<Contract> = {
     id: 'CON-2026-001',
     projectId: 'PRJ-001',
-    clientName: '森騰設計',
     title: '室內設計合約',
-    status: 'draft',
-    totalAmount: 500000,
-    signedDate: null,
+    status: 'CTR_DRAFT',
+    originalAmount: 500000,
+    currentAmount: 500000,
+    signDate: undefined,
     createdBy: 'user-123',
   };
 
@@ -113,9 +113,8 @@ describe('ContractsService', () => {
     it('should create a new contract', async () => {
       const createDto = {
         projectId: 'PRJ-001',
-        clientName: '森騰設計',
         title: '新合約',
-        totalAmount: 300000,
+        originalAmount: 300000,
       };
       
       mockRepository.count.mockResolvedValue(0);
@@ -131,17 +130,17 @@ describe('ContractsService', () => {
 
   describe('sign', () => {
     it('should sign a contract', async () => {
-      const draftContract = { ...mockContract, status: 'pending' };
+      const draftContract = { ...mockContract, status: 'CTR_PENDING' };
       mockRepository.findOne.mockResolvedValue(draftContract);
-      mockRepository.save.mockResolvedValue({ ...draftContract, status: 'signed' });
+      mockRepository.save.mockResolvedValue({ ...draftContract, status: 'CTR_SIGNED' });
       
       const result = await service.sign('CON-2026-001', '2026-02-01', 'user-123');
       
-      expect(result.status).toBe('signed');
+      expect(result.status).toBe('CTR_SIGNED');
     });
 
     it('should throw BadRequestException if contract already signed', async () => {
-      const signedContract = { ...mockContract, status: 'signed' };
+      const signedContract = { ...mockContract, status: 'CTR_SIGNED' };
       mockRepository.findOne.mockResolvedValue(signedContract);
       
       await expect(
@@ -152,13 +151,13 @@ describe('ContractsService', () => {
 
   describe('complete', () => {
     it('should complete a signed contract', async () => {
-      const signedContract = { ...mockContract, status: 'signed' };
+      const signedContract = { ...mockContract, status: 'CTR_SIGNED' };
       mockRepository.findOne.mockResolvedValue(signedContract);
-      mockRepository.save.mockResolvedValue({ ...signedContract, status: 'completed' });
+      mockRepository.save.mockResolvedValue({ ...signedContract, status: 'CTR_COMPLETED' });
       
       const result = await service.complete('CON-2026-001', 'user-123');
       
-      expect(result.status).toBe('completed');
+      expect(result.status).toBe('CTR_COMPLETED');
     });
   });
 
