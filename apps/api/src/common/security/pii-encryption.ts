@@ -166,22 +166,27 @@ export class PIIEncryptionService {
     if (!value) return "";
 
     switch (type) {
-      case "phone":
+      case "phone": {
         // 0912-345-678 -> 0912-***-678
         return value.replace(/(\d{4})[\d-]{4,}(\d{3})$/, "$1-***-$2");
-      case "email":
+      }
+      case "email": {
         // test@example.com -> t***@example.com
         const [local, domain] = value.split("@");
         if (!domain) return value;
         return `${local.charAt(0)}***@${domain}`;
-      case "id":
+      }
+      case "id": {
         // A123456789 -> A1234*****
         return value.substring(0, 5) + "*".repeat(Math.max(0, value.length - 5));
-      case "account":
+      }
+      case "account": {
         // 12345678901234 -> ****5678901234
         return "****" + value.substring(Math.max(0, value.length - 10));
-      default:
+      }
+      default: {
         return "*".repeat(value.length);
+      }
     }
   }
 }
