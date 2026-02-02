@@ -2,12 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { QuotationsService } from './quotations.service';
-import { Quotation } from './quotation.entity';
-import { NotFoundException, BadRequestException } from '@nestjs/common';
+import { Quotation, QuotationItem } from './quotation.entity';
+import { NotFoundException } from '@nestjs/common';
 
 describe('QuotationsService', () => {
   let service: QuotationsService;
-  let repository: jest.Mocked<Repository<Quotation>>;
+  let quotationsRepository: jest.Mocked<Repository<Quotation>>;
+  let itemsRepository: jest.Mocked<Repository<QuotationItem>>;
 
   const mockQuotation: Partial<Quotation> = {
     id: 'QUO-2026-001',
@@ -15,17 +16,26 @@ describe('QuotationsService', () => {
     title: '室內設計報價單',
     status: 'QUO_DRAFT',
     subtotal: 500000,
-    tax: 25000,
-    total: 525000,
+    taxRate: 5,
+    taxAmount: 25000,
+    totalAmount: 525000,
     createdBy: 'user-123',
   };
 
-  const mockRepository = {
+  const mockQuotationsRepository = {
     find: jest.fn(),
     findOne: jest.fn(),
     create: jest.fn(),
     save: jest.fn(),
     count: jest.fn(),
+    delete: jest.fn(),
+  };
+
+  const mockItemsRepository = {
+    find: jest.fn(),
+    findOne: jest.fn(),
+    create: jest.fn(),
+    save: jest.fn(),
     delete: jest.fn(),
   };
 
@@ -35,33 +45,38 @@ describe('QuotationsService', () => {
         QuotationsService,
         {
           provide: getRepositoryToken(Quotation),
-          useValue: mockRepository,
+          useValue: mockQuotationsRepository,
+        },
+        {
+          provide: getRepositoryToken(QuotationItem),
+          useValue: mockItemsRepository,
         },
       ],
     }).compile();
 
     service = module.get<QuotationsService>(QuotationsService);
-    repository = module.get(getRepositoryToken(Quotation));
+    quotationsRepository = module.get(getRepositoryToken(Quotation));
+    itemsRepository = module.get(getRepositoryToken(QuotationItem));
 
     jest.clearAllMocks();
   });
 
   describe('findAll', () => {
-    it('should return all quotations for admin', async () => {
-      mockRepository.find.mockResolvedValue([mockQuotation]);
+    it('should return all quotations', async () => {
+      mockQuotationsRepository.find.mockResolvedValue([mockQuotation]);
       
-      const result = await service.findAll({}, 'admin-user', 'admin');
+      const result = await service.findAll({});
       
       expect(result).toEqual([mockQuotation]);
-      expect(mockRepository.find).toHaveBeenCalled();
+      expect(mockQuotationsRepository.find).toHaveBeenCalled();
     });
 
     it('should filter by projectId', async () => {
-      mockRepository.find.mockResolvedValue([mockQuotation]);
+      mockQuotationsRepository.find.mockResolvedValue([mockQuotation]);
       
-      await service.findAll({ projectId: 'PRJ-001' }, 'user-123', 'member');
+      await service.findAll({ projectId: 'PRJ-001' });
       
-      expect(mockRepository.find).toHaveBeenCalledWith(
+      expect(mockQuotationsRepository.find).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({ projectId: 'PRJ-001' }),
         }),
@@ -69,11 +84,11 @@ describe('QuotationsService', () => {
     });
 
     it('should filter by status', async () => {
-      mockRepository.find.mockResolvedValue([mockQuotation]);
+      mockQuotationsRepository.find.mockResolvedValue([mockQuotation]);
       
-      await service.findAll({ status: 'QUO_DRAFT' }, 'user-123', 'admin');
+      await service.findAll({ status: 'QUO_DRAFT' });
       
-      expect(mockRepository.find).toHaveBeenCalledWith(
+      expect(mockQuotationsRepository.find).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({ status: 'QUO_DRAFT' }),
         }),
@@ -83,19 +98,17 @@ describe('QuotationsService', () => {
 
   describe('findOne', () => {
     it('should return a quotation by id', async () => {
-      mockRepository.findOne.mockResolvedValue(mockQuotation);
+      mockQuotationsRepository.findOne.mockResolvedValue(mockQuotation);
       
-      const result = await service.findOne('QUO-2026-001', 'user-123', 'member');
+      const result = await service.findOne('QUO-2026-001');
       
       expect(result).toEqual(mockQuotation);
     });
 
     it('should throw NotFoundException when quotation not found', async () => {
-      mockRepository.findOne.mockResolvedValue(null);
+      mockQuotationsRepository.findOne.mockResolvedValue(null);
       
-      await expect(
-        service.findOne('nonexistent', 'user-123', 'member'),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.findOne('nonexistent')).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -105,26 +118,24 @@ describe('QuotationsService', () => {
         projectId: 'PRJ-001',
         title: '新報價單',
         subtotal: 300000,
-        tax: 15000,
-        total: 315000,
+        taxRate: 5,
       };
       
-      mockRepository.count.mockResolvedValue(0);
-      mockRepository.create.mockReturnValue({ ...mockQuotation, ...createDto });
-      mockRepository.save.mockResolvedValue({ ...mockQuotation, ...createDto });
+      mockQuotationsRepository.count.mockResolvedValue(0);
+      mockQuotationsRepository.save.mockResolvedValue({ ...mockQuotation, ...createDto });
       
       const result = await service.create(createDto as any, 'user-123');
       
       expect(result.title).toBe('新報價單');
-      expect(mockRepository.save).toHaveBeenCalled();
+      expect(mockQuotationsRepository.save).toHaveBeenCalled();
     });
   });
 
   describe('update', () => {
     it('should update an existing quotation', async () => {
       const updateDto = { title: '更新後的報價單' };
-      mockRepository.findOne.mockResolvedValue(mockQuotation);
-      mockRepository.save.mockResolvedValue({ ...mockQuotation, ...updateDto });
+      mockQuotationsRepository.findOne.mockResolvedValue(mockQuotation);
+      mockQuotationsRepository.save.mockResolvedValue({ ...mockQuotation, ...updateDto });
       
       const result = await service.update('QUO-2026-001', updateDto as any, 'user-123');
       
@@ -132,7 +143,7 @@ describe('QuotationsService', () => {
     });
 
     it('should throw NotFoundException when updating non-existent quotation', async () => {
-      mockRepository.findOne.mockResolvedValue(null);
+      mockQuotationsRepository.findOne.mockResolvedValue(null);
       
       await expect(
         service.update('nonexistent', { title: 'test' } as any, 'user-123'),
@@ -140,11 +151,23 @@ describe('QuotationsService', () => {
     });
   });
 
-  describe('approve', () => {
-    it('should approve a draft quotation', async () => {
+  describe('submit', () => {
+    it('should submit a draft quotation', async () => {
       const draftQuotation = { ...mockQuotation, status: 'QUO_DRAFT' };
-      mockRepository.findOne.mockResolvedValue(draftQuotation);
-      mockRepository.save.mockResolvedValue({ ...draftQuotation, status: 'QUO_APPROVED' });
+      mockQuotationsRepository.findOne.mockResolvedValue(draftQuotation);
+      mockQuotationsRepository.save.mockResolvedValue({ ...draftQuotation, status: 'QUO_SUBMITTED' });
+      
+      const result = await service.submit('QUO-2026-001', 'user-123');
+      
+      expect(result.status).toBe('QUO_SUBMITTED');
+    });
+  });
+
+  describe('approve', () => {
+    it('should approve a submitted quotation', async () => {
+      const submittedQuotation = { ...mockQuotation, status: 'QUO_SUBMITTED' };
+      mockQuotationsRepository.findOne.mockResolvedValue(submittedQuotation);
+      mockQuotationsRepository.save.mockResolvedValue({ ...submittedQuotation, status: 'QUO_APPROVED' });
       
       const result = await service.approve('QUO-2026-001', 'user-123');
       
@@ -152,15 +175,15 @@ describe('QuotationsService', () => {
     });
   });
 
-  describe('lock', () => {
-    it('should lock an approved quotation', async () => {
-      const approvedQuotation = { ...mockQuotation, status: 'QUO_APPROVED' };
-      mockRepository.findOne.mockResolvedValue(approvedQuotation);
-      mockRepository.save.mockResolvedValue({ ...approvedQuotation, status: 'QUO_LOCKED' });
+  describe('reject', () => {
+    it('should reject a submitted quotation with reason', async () => {
+      const submittedQuotation = { ...mockQuotation, status: 'QUO_SUBMITTED' };
+      mockQuotationsRepository.findOne.mockResolvedValue(submittedQuotation);
+      mockQuotationsRepository.save.mockResolvedValue({ ...submittedQuotation, status: 'QUO_REJECTED' });
       
-      const result = await service.lock('QUO-2026-001', 'user-123');
+      const result = await service.reject('QUO-2026-001', '價格過高', 'user-123');
       
-      expect(result.status).toBe('QUO_LOCKED');
+      expect(result.status).toBe('QUO_REJECTED');
     });
   });
 });
