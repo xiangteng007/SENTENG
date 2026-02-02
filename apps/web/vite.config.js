@@ -46,6 +46,19 @@ export default defineConfig({
       }
     })
   ],
+  // Fix for Firebase module resolution in CI/build
+  optimizeDeps: {
+    include: [
+      'firebase/app',
+      'firebase/auth',
+      'firebase/firestore',
+      'firebase/storage',
+      '@firebase/app',
+      '@firebase/auth',
+      '@firebase/firestore',
+      '@firebase/storage'
+    ]
+  },
   build: {
     chunkSizeWarningLimit: 1500,
     rollupOptions: {
