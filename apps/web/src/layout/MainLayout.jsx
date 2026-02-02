@@ -354,7 +354,7 @@ export const MainLayout = ({ activeTab, setActiveTab, children, addToast }) => {
             {/* Mobile Menu Overlay */}
             {isMobileMenuOpen && (
                 <div
-                    className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden transition-opacity"
+                    className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 md:hidden transition-opacity"
                     onClick={() => setIsMobileMenuOpen(false)}
                 />
             )}
@@ -362,14 +362,14 @@ export const MainLayout = ({ activeTab, setActiveTab, children, addToast }) => {
             {/* Sidebar - Premium Glass Design with Grouped Navigation */}
             <aside className={`
                 w-72 glass-card-elevated border-r border-gray-100/50 flex flex-col z-50
-                fixed lg:relative h-full
+                fixed md:relative h-full
                 transform transition-all duration-300 ease-smooth
-                ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+                ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
             `}>
-                {/* Close button for mobile */}
+                {/* Close button for mobile - improved touch target */}
                 <button
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="lg:hidden absolute top-6 right-6 p-2 text-gray-400 hover:text-gray-600 rounded-xl hover:bg-gray-100 transition-colors"
+                    className="md:hidden absolute top-4 right-4 p-2.5 text-gray-400 hover:text-gray-600 rounded-xl hover:bg-gray-100 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
                 >
                     <X size={22} />
                 </button>
@@ -419,18 +419,18 @@ export const MainLayout = ({ activeTab, setActiveTab, children, addToast }) => {
 
             <main className="flex-1 flex flex-col h-screen overflow-hidden relative">
                 {/* Header */}
-                <header className="h-16 lg:h-18 flex items-center justify-between px-4 lg:px-8 bg-gradient-to-r from-transparent via-white/30 to-transparent">
-                    {/* Mobile Menu Button */}
+                <header className="h-16 md:h-18 flex items-center justify-between px-4 md:px-8 bg-gradient-to-r from-transparent via-white/30 to-transparent">
+                    {/* Mobile Menu Button - hidden on md and up */}
                     <button
                         onClick={() => setIsMobileMenuOpen(true)}
-                        className="lg:hidden p-2.5 text-gray-600 hover:text-gray-800 rounded-xl hover:bg-white/50 transition-all"
+                        className="md:hidden p-2.5 text-gray-600 hover:text-gray-800 rounded-xl hover:bg-white/50 transition-all min-w-[44px] min-h-[44px] flex items-center justify-center"
                     >
                         <Menu size={22} />
                     </button>
 
-                    <div className="flex-1 lg:flex-none" />
+                    <div className="flex-1 md:flex-none" />
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 sm:gap-4">
                         {/* Notification Button */}
                         <button
                             onClick={() => setIsNotificationOpen(!isNotificationOpen)}
@@ -505,7 +505,7 @@ export const MainLayout = ({ activeTab, setActiveTab, children, addToast }) => {
                 />
 
                 {/* Content Area */}
-                <div className="flex-1 overflow-auto p-4 lg:p-8 pt-2 scroll-smooth">
+                <div className="flex-1 overflow-auto p-4 md:p-6 lg:p-8 pt-2 scroll-smooth">
                     <div className="max-w-7xl mx-auto h-full">
                         {children}
                     </div>

@@ -43,7 +43,7 @@ export const WidgetWrapper = ({ widget, onResize, onDragStart, onDragEnter, onDr
                 </div>
                 <button
                     onClick={() => onResize(id, nextSize(size))}
-                    className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200 opacity-0 group-hover:opacity-100"
+                    className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200 opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
                     title={size === 'L' ? '縮小' : '放大'}
                 >
                     {size === 'L' ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
