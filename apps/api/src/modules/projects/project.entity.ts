@@ -126,6 +126,27 @@ export class Project {
   })
   costActual: number;
 
+  // Revenue Recognition (完工百分比法)
+  @Column({
+    name: "completion_percentage",
+    type: "decimal",
+    precision: 5,
+    scale: 2,
+    default: 0,
+    comment: "完工百分比 (0-100)",
+  })
+  completionPercentage: number;
+
+  @Column({
+    name: "recognized_revenue",
+    type: "decimal",
+    precision: 15,
+    scale: 2,
+    default: 0,
+    comment: "已認列收入",
+  })
+  recognizedRevenue: number;
+
   // Team
   @Column({ name: "pm_user_id", length: 20, nullable: true })
   pmUserId: string;
