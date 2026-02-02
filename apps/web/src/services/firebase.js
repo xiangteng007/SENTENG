@@ -38,29 +38,57 @@ const db = getFirestore(app);
 // Auth providers
 const googleProvider = new GoogleAuthProvider();
 
-// Default role configuration
+// Default role configuration - MUST match backend ROLE_PAGES in permissions.dto.ts
 const DEFAULT_ROLES = {
     super_admin: {
         name: 'super_admin',
-        level: 3,
+        level: 6,
         allowedPages: [
-            'dashboard', 'schedule', 'projects', 'quotations', 'payments', 'contracts', 'profit', 'cost-entries',
-            'clients', 'finance', 'vendors', 'inventory', 'materials', 'invoice', 'unit', 'cost', 'calc',
-            'user-management'
+            // 總覽
+            'dashboard', 'schedule', 'events',
+            // 專案管理
+            'projects', 'contracts', 'change-orders',
+            // 財務中心
+            'finance', 'quotations', 'payments', 'invoice', 'invoices',
+            // 關係人
+            'clients', 'customers', 'vendors', 'contacts',
+            // 供應鏈
+            'procurements', 'inventory',
+            // 工地管理
+            'site-logs', 'construction', 'schedules',
+            // 分析報表
+            'cost-entries', 'profit', 'reports',
+            // 智慧管理
+            'bim', 'drone', 'smart-home',
+            // 工具箱
+            'materials', 'materials-calc', 'unit', 'cost', 'calc', 'regulations',
+            // 安全環保
+            'insurance', 'waste',
+            // 系統設定
+            'user-management', 'integrations', 'notifications', 'settings',
         ],
     },
     admin: {
         name: 'admin',
-        level: 2,
+        level: 5,
         allowedPages: [
-            'dashboard', 'schedule', 'projects', 'quotations', 'payments', 'contracts', 'profit', 'cost-entries',
-            'clients', 'finance', 'vendors', 'inventory', 'materials'
+            'dashboard', 'schedule', 'events',
+            'projects', 'contracts', 'change-orders',
+            'finance', 'quotations', 'payments', 'invoice', 'invoices',
+            'clients', 'customers', 'vendors', 'contacts',
+            'procurements', 'inventory',
+            'site-logs', 'construction', 'schedules',
+            'cost-entries', 'profit', 'reports',
+            'bim', 'drone', 'smart-home',
+            'materials', 'materials-calc', 'unit', 'cost', 'calc', 'regulations',
+            'insurance', 'waste',
+            'user-management', 'integrations', 'notifications', 'settings',
         ],
     },
     user: {
         name: 'user',
         level: 1,
-        allowedPages: ['dashboard', 'schedule', 'projects', 'quotations', 'payments', 'contracts', 'profit', 'cost-entries'],
+        allowedPages: ['dashboard'],
     },
 };
 
