@@ -34,10 +34,20 @@ export const Regulations = ({ addToast }) => {
     { value: 'CONTRACT', label: '營建法規', color: 'indigo' },
   ];
 
-  // Mock data
-  useEffect(() => {
+  // Fetch data
+  const fetchData = async () => {
     setLoading(true);
-    setTimeout(() => {
+    try {
+      const [regsRes, checkRes] = await Promise.all([
+        api.get('/regulations').catch(() => null),
+        api.get('/regulations/checklists').catch(() => null),
+      ]);
+      if (regsRes?.data) setRegulations(regsRes.data?.items || regsRes.data || []);
+      if (checkRes?.data) setChecklists(checkRes.data?.items || checkRes.data || []);
+      if (!regsRes?.data && !checkRes?.data) throw new Error('No API');
+    } catch (error) {
+      console.error('Failed to fetch regulations:', error);
+      // Fallback to mock data if API not available
       setRegulations([
         {
           id: '1',
@@ -117,9 +127,13 @@ export const Regulations = ({ addToast }) => {
           status: 'IN_PROGRESS',
         },
       ]);
-
+    } finally {
       setLoading(false);
-    }, 300);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
   }, []);
 
   // 篩選法規

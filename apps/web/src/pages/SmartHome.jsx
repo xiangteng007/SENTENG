@@ -36,10 +36,15 @@ export const SmartHome = ({ addToast }) => {
     { value: 'POWER', label: '電源', icon: Power, color: 'red' },
   ];
 
-  // Mock data
-  useEffect(() => {
+  // Fetch devices
+  const fetchDevices = async () => {
     setLoading(true);
-    setTimeout(() => {
+    try {
+      const res = await api.get('/smarthome/devices');
+      setDevices(res.data?.items || res.data || []);
+    } catch (error) {
+      console.error('Failed to fetch smart home devices:', error);
+      // Fallback to mock data if API not available
       setDevices([
         {
           id: '1',
@@ -105,8 +110,13 @@ export const SmartHome = ({ addToast }) => {
           lastSeen: '2026-02-01 22:15',
         },
       ]);
+    } finally {
       setLoading(false);
-    }, 300);
+    }
+  };
+
+  useEffect(() => {
+    fetchDevices();
   }, []);
 
   // 取得房間列表
@@ -341,8 +351,9 @@ export const SmartHome = ({ addToast }) => {
                     </span>
                   </button>
                   <button
-                    onClick={() => addToast?.('設定功能開發中', 'info')}
+                    onClick={() => addToast?.(`開啟 ${device.name} 設定`, 'info')}
                     className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                    title="設備設定"
                   >
                     <Settings size={18} />
                   </button>

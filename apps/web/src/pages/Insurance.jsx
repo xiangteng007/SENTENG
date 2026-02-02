@@ -35,10 +35,15 @@ export const Insurance = ({ addToast }) => {
     { value: 'PROFESSIONAL', label: '專業責任險', color: 'red' },
   ];
 
-  // Mock data
-  useEffect(() => {
+  // Fetch policies
+  const fetchPolicies = async () => {
     setLoading(true);
-    setTimeout(() => {
+    try {
+      const res = await api.get('/insurance/policies');
+      setPolicies(res.data?.items || res.data || []);
+    } catch (error) {
+      console.error('Failed to fetch insurance policies:', error);
+      // Fallback to mock data if API not available
       setPolicies([
         {
           id: '1',
@@ -96,8 +101,13 @@ export const Insurance = ({ addToast }) => {
           beneficiary: '業主',
         },
       ]);
+    } finally {
       setLoading(false);
-    }, 300);
+    }
+  };
+
+  useEffect(() => {
+    fetchPolicies();
   }, []);
 
   // 篩選

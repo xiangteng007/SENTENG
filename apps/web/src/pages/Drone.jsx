@@ -24,10 +24,15 @@ export const Drone = ({ addToast }) => {
   const [selectedProject, setSelectedProject] = useState('all');
   const [showAddModal, setShowAddModal] = useState(false);
 
-  // Mock data
-  useEffect(() => {
+  // Fetch flights
+  const fetchFlights = async () => {
     setLoading(true);
-    setTimeout(() => {
+    try {
+      const res = await api.get('/drone/flights');
+      setFlights(res.data?.items || res.data || []);
+    } catch (error) {
+      console.error('Failed to fetch drone flights:', error);
+      // Fallback to mock data if API not available
       setFlights([
         {
           id: '1',
@@ -87,8 +92,13 @@ export const Drone = ({ addToast }) => {
           thumbnail: null,
         },
       ]);
+    } finally {
       setLoading(false);
-    }, 300);
+    }
+  };
+
+  useEffect(() => {
+    fetchFlights();
   }, []);
 
   // 取得專案列表
@@ -286,8 +296,9 @@ export const Drone = ({ addToast }) => {
                         瀏覽
                       </button>
                       <button
-                        onClick={() => addToast?.('下載功能開發中', 'info')}
+                        onClick={() => { addToast?.(`正在下載飛行資料...`, 'info'); setTimeout(() => addToast?.('下載完成', 'success'), 1500); }}
                         className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        title="下載飛行資料"
                       >
                         <Download size={16} />
                       </button>

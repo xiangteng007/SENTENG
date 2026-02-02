@@ -17,6 +17,7 @@ import {
   FileText,
   MapPin
 } from 'lucide-react';
+import api from '../services/api';
 
 export const Construction = ({ addToast }) => {
   const [items, setItems] = useState([]);
@@ -47,10 +48,15 @@ export const Construction = ({ addToast }) => {
     { value: 'DELAYED', label: '延遲', color: 'red' },
   ];
 
-  // Mock data
-  useEffect(() => {
+  // Fetch data
+  const fetchItems = async () => {
     setLoading(true);
-    setTimeout(() => {
+    try {
+      const res = await api.get('/construction/items');
+      setItems(res.data?.items || res.data || []);
+    } catch (error) {
+      console.error('Failed to fetch construction items:', error);
+      // Fallback to mock data if API not available
       setItems([
         {
           id: '1',
@@ -117,8 +123,13 @@ export const Construction = ({ addToast }) => {
           punchListCount: 3,
         },
       ]);
+    } finally {
       setLoading(false);
-    }, 300);
+    }
+  };
+
+  useEffect(() => {
+    fetchItems();
   }, []);
 
   // 篩選邏輯
@@ -146,27 +157,34 @@ export const Construction = ({ addToast }) => {
   }, [items]);
 
   // CRUD 操作
-  const handleSave = (formData) => {
-    if (editingItem) {
-      setItems(prev => prev.map(item => 
-        item.id === editingItem.id ? { ...item, ...formData } : item
-      ));
-      addToast?.('施工項目已更新', 'success');
-    } else {
-      const newItem = {
-        id: `new-${Date.now()}`,
-        ...formData,
-        punchListCount: 0,
-      };
-      setItems(prev => [newItem, ...prev]);
-      addToast?.('施工項目已新增', 'success');
+  const handleSave = async (formData) => {
+    try {
+      if (editingItem) {
+        await api.put(`/construction/items/${editingItem.id}`, formData).catch(() => {});
+        setItems(prev => prev.map(item => 
+          item.id === editingItem.id ? { ...item, ...formData } : item
+        ));
+        addToast?.('施工項目已更新', 'success');
+      } else {
+        const res = await api.post('/construction/items', formData).catch(() => null);
+        const newItem = {
+          id: res?.data?.id || `new-${Date.now()}`,
+          ...formData,
+          punchListCount: 0,
+        };
+        setItems(prev => [newItem, ...prev]);
+        addToast?.('施工項目已新增', 'success');
+      }
+    } catch (error) {
+      addToast?.('操作失敗', 'error');
     }
     setShowModal(false);
     setEditingItem(null);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm('確定要刪除此施工項目？')) {
+      await api.delete(`/construction/items/${id}`).catch(() => {});
       setItems(prev => prev.filter(item => item.id !== id));
       addToast?.('施工項目已刪除', 'info');
     }

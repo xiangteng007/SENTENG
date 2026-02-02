@@ -22,10 +22,15 @@ export const Schedules = ({ addToast }) => {
   const [selectedProject, setSelectedProject] = useState('all');
   const [showAddModal, setShowAddModal] = useState(false);
 
-  // Mock data
-  useEffect(() => {
+  // Fetch tasks
+  const fetchTasks = async () => {
     setLoading(true);
-    setTimeout(() => {
+    try {
+      const res = await api.get('/schedules/tasks');
+      setTasks(res.data?.items || res.data || []);
+    } catch (error) {
+      console.error('Failed to fetch schedule tasks:', error);
+      // Fallback to mock data if API not available
       setTasks([
         {
           id: '1',
@@ -100,8 +105,13 @@ export const Schedules = ({ addToast }) => {
           dependencies: ['5'],
         },
       ]);
+    } finally {
       setLoading(false);
-    }, 300);
+    }
+  };
+
+  useEffect(() => {
+    fetchTasks();
   }, []);
 
   // 篩選任務
