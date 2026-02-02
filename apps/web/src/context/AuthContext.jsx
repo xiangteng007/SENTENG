@@ -64,7 +64,7 @@ export const AuthProvider = ({ children }) => {
                         // 財務中心
                         'finance', 'quotations', 'payments', 'invoice',
                         // 關係人
-                        'clients', 'customers', 'vendors', 'contacts',
+                        'clients', 'vendors', 'contacts',
                         // 供應鏈
                         'procurements', 'inventory',
                         // 工地管理

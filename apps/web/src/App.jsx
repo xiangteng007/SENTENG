@@ -105,8 +105,8 @@ const NoPermission = () => {
 
 // Main App Content (wrapped by AuthProvider and Router)
 const AppContent = () => {
-  const { isAuthenticated, loading: authLoading, role } = useAuth();
-  const { data, loading, handleUpdate, handleFinanceUpdate } = useApiData(isAuthenticated);
+  const { isAuthenticated, loading: authLoading, role, backendAuthenticated } = useAuth();
+  const { data, loading, handleUpdate, handleFinanceUpdate } = useApiData(backendAuthenticated);
   const [toasts, setToasts] = useState([]);
   const location = useLocation();
   const navigate = useNavigate();
