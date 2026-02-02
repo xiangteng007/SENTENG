@@ -40,3 +40,17 @@ Thumbs.db
 
 .nx/cache
 .nx/workspace-data
+
+# Temporary and backup files
+*.bak
+*.bak_*
+cloud_run_*.json
+error.log
+
+# Cloud SQL Proxy (local development)
+cloud-sql-proxy.exe
+cloud_sql_proxy
+
+# Environment files
+.env.local
+.env.*.local
