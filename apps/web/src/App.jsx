@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { MainLayout } from './layout/MainLayout';
 import { GoogleService } from './services/GoogleService';
@@ -7,10 +7,11 @@ import { ToastContainer } from './components/common/Toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { useApiData } from './services/useApiData';
 import { OfflineIndicator } from './components/OfflineIndicator';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
 import LoginPage from './pages/LoginPage';
 import UserManagement from './pages/UserManagement';
 
-// Pages
+// Eagerly loaded pages (critical path)
 import Dashboard from './pages/Dashboard';
 import Schedule from './pages/Schedule';
 import Projects from './pages/Projects';
@@ -18,10 +19,6 @@ import Clients from './pages/Clients';
 import Vendors from './pages/Vendors';
 import Finance from './pages/Finance';
 import Inventory from './pages/Inventory';
-import { MaterialGallery } from './pages/MaterialGallery';
-import { InvoiceHelper } from './pages/InvoiceHelper';
-import { CostEstimator } from './pages/CostEstimator';
-import { MaterialCalculator } from './pages/MaterialCalculator';
 import Quotations from './pages/Quotations';
 import Payments from './pages/Payments';
 import Contracts from './pages/Contracts';
@@ -29,6 +26,12 @@ import ProfitAnalysis from './pages/ProfitAnalysis';
 import CostEntries from './pages/CostEntries';
 import IntegrationsPage from './pages/IntegrationsPage';
 import Procurements from './pages/Procurements';
+
+// Lazy loaded pages (PERF-001: Code Splitting for heavy components)
+const MaterialCalculator = lazy(() => import('./pages/MaterialCalculator').then(m => ({ default: m.MaterialCalculator })));
+const CostEstimator = lazy(() => import('./pages/CostEstimator').then(m => ({ default: m.CostEstimator })));
+const MaterialGallery = lazy(() => import('./pages/MaterialGallery').then(m => ({ default: m.MaterialGallery })));
+const InvoiceHelper = lazy(() => import('./pages/InvoiceHelper').then(m => ({ default: m.InvoiceHelper })));
 
 // Loading Screen Component
 const LoadingScreen = () => (
