@@ -197,6 +197,5 @@ export const MainLayoutV2 = ({ activeTab, setActiveTab, children, addToast }) =>
   );
 };
 
-// Export both versions for gradual migration
-export { MainLayoutV2 };
+// Export for default import compatibility
 export default MainLayoutV2;
