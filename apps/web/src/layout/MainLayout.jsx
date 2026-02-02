@@ -43,7 +43,6 @@ const ALL_MENU_ITEMS = {
     
     // 關係人
     'clients': { id: 'clients', icon: Users, label: '業主管理' },
-    'customers': { id: 'customers', icon: Users, label: '客戶管理' },
     'vendors': { id: 'vendors', icon: HardHat, label: '廠商管理' },
     'contacts': { id: 'contacts', icon: PhoneCall, label: '聯絡人' },
     

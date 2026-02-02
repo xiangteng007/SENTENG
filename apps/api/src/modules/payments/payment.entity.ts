@@ -81,6 +81,16 @@ export class PaymentApplication {
   netAmount: number;
 
   @Column({
+    name: "withholding_tax",
+    type: "decimal",
+    precision: 15,
+    scale: 2,
+    default: 0,
+    comment: "工程款扣繳稅額 (2%)",
+  })
+  withholdingTax: number;
+
+  @Column({
     name: "received_amount",
     type: "decimal",
     precision: 15,

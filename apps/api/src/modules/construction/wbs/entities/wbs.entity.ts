@@ -92,6 +92,12 @@ export class WbsItem {
   @Column({ name: "sort_order", default: 0 })
   sortOrder: number;
 
+  @Column({ name: "sequence_order", default: 0, comment: "工序順序 (室裝: 水電→泥作→木作→油漆)" })
+  sequenceOrder: number;
+
+  @Column({ name: "is_critical_path", default: false })
+  isCriticalPath: boolean;
+
   @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 

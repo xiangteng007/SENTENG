@@ -1,61 +1,297 @@
-import React from 'react';
-import { Shield, Plus, Filter, Search, AlertTriangle } from 'lucide-react';
-import { EmptyState } from '../components/common/EmptyState';
+import React, { useState, useEffect, useMemo } from 'react';
+import { 
+  Shield, 
+  Plus, 
+  Search, 
+  AlertTriangle, 
+  CheckCircle, 
+  Calendar,
+  DollarSign,
+  FileText,
+  Clock,
+  Edit2,
+  Trash2,
+  ChevronDown
+} from 'lucide-react';
 
 export const Insurance = ({ addToast }) => {
+  const [policies, setPolicies] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState('');
+  const [typeFilter, setTypeFilter] = useState('all');
+  const [expandedPolicy, setExpandedPolicy] = useState(null);
+
+  // 保險類型
+  const insuranceTypes = [
+    { value: 'CAR', label: '營造綜合保險', color: 'blue' },
+    { value: 'LIABILITY', label: '第三人責任險', color: 'green' },
+    { value: 'WORKER', label: '團體意外險', color: 'orange' },
+    { value: 'EQUIPMENT', label: '機具設備險', color: 'purple' },
+    { value: 'BOND', label: '履約保證金', color: 'indigo' },
+    { value: 'PROFESSIONAL', label: '專業責任險', color: 'red' },
+  ];
+
+  // Mock data
+  useEffect(() => {
+    setLoading(true);
+    setTimeout(() => {
+      setPolicies([
+        {
+          id: '1',
+          policyNumber: 'CAR-2026-0001',
+          type: 'CAR',
+          project: '信義豪宅案',
+          insurer: '國泰產險',
+          coverageAmount: 500000000,
+          premium: 1250000,
+          startDate: '2026-01-01',
+          endDate: '2027-12-31',
+          status: 'ACTIVE',
+          deductible: 500000,
+          beneficiary: '森騰營造股份有限公司',
+        },
+        {
+          id: '2',
+          policyNumber: 'LIA-2026-0001',
+          type: 'LIABILITY',
+          project: '信義豪宅案',
+          insurer: '富邦產險',
+          coverageAmount: 100000000,
+          premium: 280000,
+          startDate: '2026-01-01',
+          endDate: '2027-12-31',
+          status: 'ACTIVE',
+          deductible: 100000,
+          beneficiary: '第三人',
+        },
+        {
+          id: '3',
+          policyNumber: 'WKR-2026-0001',
+          type: 'WORKER',
+          project: '全案適用',
+          insurer: '新光產險',
+          coverageAmount: 30000000,
+          premium: 420000,
+          startDate: '2026-01-01',
+          endDate: '2026-12-31',
+          status: 'ACTIVE',
+          deductible: 0,
+          beneficiary: '員工/工人',
+        },
+        {
+          id: '4',
+          policyNumber: 'BOND-2026-0001',
+          type: 'BOND',
+          project: '大同商辦案',
+          insurer: '台灣產險',
+          coverageAmount: 50000000,
+          premium: 125000,
+          startDate: '2025-06-01',
+          endDate: '2026-06-30',
+          status: 'EXPIRING_SOON',
+          beneficiary: '業主',
+        },
+      ]);
+      setLoading(false);
+    }, 300);
+  }, []);
+
+  // 篩選
+  const filteredPolicies = useMemo(() => {
+    return policies.filter(p => {
+      const matchSearch = p.policyNumber.toLowerCase().includes(search.toLowerCase()) ||
+                          p.project.toLowerCase().includes(search.toLowerCase()) ||
+                          p.insurer.toLowerCase().includes(search.toLowerCase());
+      const matchType = typeFilter === 'all' || p.type === typeFilter;
+      return matchSearch && matchType;
+    });
+  }, [policies, search, typeFilter]);
+
+  // 統計
+  const stats = useMemo(() => {
+    return {
+      total: policies.length,
+      active: policies.filter(p => p.status === 'ACTIVE').length,
+      expiringSoon: policies.filter(p => p.status === 'EXPIRING_SOON').length,
+      totalCoverage: policies.reduce((acc, p) => acc + p.coverageAmount, 0),
+      totalPremium: policies.reduce((acc, p) => acc + p.premium, 0),
+    };
+  }, [policies]);
+
+  const getTypeInfo = (type) => insuranceTypes.find(t => t.value === type) || insuranceTypes[0];
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('zh-TW', { style: 'currency', currency: 'TWD', maximumFractionDigits: 0 }).format(amount);
+  };
+
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case 'ACTIVE':
+        return <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700">生效中</span>;
+      case 'EXPIRING_SOON':
+        return <span className="text-xs px-2 py-0.5 rounded-full bg-orange-100 text-orange-700">即將到期</span>;
+      case 'EXPIRED':
+        return <span className="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700">已到期</span>;
+      default:
+        return <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">{status}</span>;
+    }
+  };
+
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">保險管理</h1>
-          <p className="text-gray-500 mt-1">管理工程保險和責任險</p>
+          <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+            <Shield className="text-blue-500" size={28} />
+            保險管理
+          </h1>
+          <p className="text-gray-500 mt-1">營造保險與保證金追蹤</p>
         </div>
-        <button className="btn-primary flex items-center gap-2">
+        <button 
+          onClick={() => addToast?.('功能開發中', 'info')}
+          className="btn-primary flex items-center gap-2"
+        >
           <Plus size={18} />
           新增保單
         </button>
       </div>
 
-      {/* Quick Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="card p-4">
-          <p className="text-sm text-gray-500">有效保單</p>
-          <p className="text-2xl font-bold text-gray-800">0</p>
+      {/* Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="card p-4 text-center">
+          <div className="text-2xl font-bold text-gray-800">{stats.total}</div>
+          <div className="text-sm text-gray-500">保單總數</div>
         </div>
-        <div className="card p-4">
-          <p className="text-sm text-gray-500">即將到期</p>
-          <p className="text-2xl font-bold text-amber-600">0</p>
+        <div className="card p-4 text-center">
+          <div className="text-2xl font-bold text-green-600">{stats.active}</div>
+          <div className="text-sm text-gray-500">生效中</div>
         </div>
-        <div className="card p-4">
-          <p className="text-sm text-gray-500">理賠進行中</p>
-          <p className="text-2xl font-bold text-blue-600">0</p>
+        <div className="card p-4 text-center">
+          <div className="text-2xl font-bold text-orange-600">{stats.expiringSoon}</div>
+          <div className="text-sm text-gray-500">即將到期</div>
         </div>
-        <div className="card p-4">
-          <p className="text-sm text-gray-500">本年保費</p>
-          <p className="text-2xl font-bold text-gray-800">$0</p>
+        <div className="card p-4 text-center">
+          <div className="text-lg font-bold text-blue-600">{formatCurrency(stats.totalCoverage)}</div>
+          <div className="text-sm text-gray-500">總保額</div>
+        </div>
+        <div className="card p-4 text-center">
+          <div className="text-lg font-bold text-purple-600">{formatCurrency(stats.totalPremium)}</div>
+          <div className="text-sm text-gray-500">年度保費</div>
         </div>
       </div>
 
+      {/* Filters */}
       <div className="flex flex-wrap gap-3">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-          <input type="text" placeholder="搜尋保單..." className="input pl-10 w-full" />
+          <input
+            type="text"
+            placeholder="搜尋保單號碼、專案、保險公司..."
+            className="input pl-10 w-full"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
         </div>
-        <button className="btn-secondary flex items-center gap-2">
-          <Filter size={16} />
-          篩選
-        </button>
+        <select
+          className="input min-w-[150px]"
+          value={typeFilter}
+          onChange={(e) => setTypeFilter(e.target.value)}
+        >
+          <option value="all">所有類型</option>
+          {insuranceTypes.map(t => (
+            <option key={t.value} value={t.value}>{t.label}</option>
+          ))}
+        </select>
       </div>
 
-      <div className="card p-8">
-        <EmptyState
-          icon="file"
-          title="尚無保險資料"
-          description="新增工程險、責任險等保單記錄"
-          actionLabel="新增保單"
-          onAction={() => addToast?.('功能開發中', 'info')}
-        />
-      </div>
+      {/* Policies List */}
+      {loading ? (
+        <div className="card p-8 text-center text-gray-500">載入中...</div>
+      ) : filteredPolicies.length === 0 ? (
+        <div className="card p-8 text-center">
+          <Shield className="mx-auto text-gray-400 mb-4" size={48} />
+          <h3 className="font-semibold text-gray-700 mb-2">尚無保險資料</h3>
+          <p className="text-gray-500 mb-4">新增保單開始追蹤</p>
+          <button className="btn-primary">新增保單</button>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {filteredPolicies.map(policy => {
+            const typeInfo = getTypeInfo(policy.type);
+            return (
+              <div key={policy.id} className="card overflow-hidden">
+                <div 
+                  className="p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+                  onClick={() => setExpandedPolicy(expandedPolicy === policy.id ? null : policy.id)}
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-start gap-3 flex-1">
+                      <div className={`w-10 h-10 rounded-lg bg-${typeInfo.color}-100 flex items-center justify-center flex-shrink-0`}>
+                        <Shield className={`text-${typeInfo.color}-600`} size={20} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h3 className="font-semibold text-gray-800">{policy.policyNumber}</h3>
+                          <span className={`text-xs px-2 py-0.5 rounded-full bg-${typeInfo.color}-100 text-${typeInfo.color}-700`}>
+                            {typeInfo.label}
+                          </span>
+                          {getStatusBadge(policy.status)}
+                        </div>
+                        <div className="flex items-center gap-4 text-sm text-gray-500 mt-1 flex-wrap">
+                          <span className="flex items-center gap-1">
+                            <FileText size={14} />
+                            {policy.project}
+                          </span>
+                          <span>{policy.insurer}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <div className="text-right">
+                        <div className="text-lg font-bold text-blue-600">{formatCurrency(policy.coverageAmount)}</div>
+                        <div className="text-xs text-gray-500">保額</div>
+                      </div>
+                      <ChevronDown
+                        size={18}
+                        className={`text-gray-400 transition-transform ${expandedPolicy === policy.id ? 'rotate-180' : ''}`}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Expanded Details */}
+                {expandedPolicy === policy.id && (
+                  <div className="border-t px-4 py-3 bg-gray-50">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                      <div>
+                        <p className="text-xs text-gray-500 mb-1">保險期間</p>
+                        <p className="text-sm font-medium">{policy.startDate} ~ {policy.endDate}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500 mb-1">保費</p>
+                        <p className="text-sm font-medium">{formatCurrency(policy.premium)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500 mb-1">自負額</p>
+                        <p className="text-sm font-medium">{formatCurrency(policy.deductible || 0)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500 mb-1">受益人</p>
+                        <p className="text-sm font-medium">{policy.beneficiary}</p>
+                      </div>
+                    </div>
+                    <div className="flex justify-end gap-2 mt-4 pt-3 border-t">
+                      <button className="btn-secondary text-sm py-1.5">查看保單</button>
+                      <button className="btn-primary text-sm py-1.5">續保提醒</button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

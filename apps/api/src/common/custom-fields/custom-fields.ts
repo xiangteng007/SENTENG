@@ -85,41 +85,46 @@ export interface CustomFieldValue {
 // Custom Field Service
 // ============================================
 
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import {
+  CustomFieldDefinitionEntity,
+  CustomFieldValueEntity,
+} from "./custom-fields.entities";
 
 @Injectable()
 export class CustomFieldService {
   constructor(
-    @InjectRepository('CustomFieldDefinition')
-    private definitionRepo: Repository<CustomFieldDefinition>,
-    @InjectRepository('CustomFieldValue')
-    private valueRepo: Repository<CustomFieldValue>,
+    @InjectRepository(CustomFieldDefinitionEntity)
+    private definitionRepo: Repository<CustomFieldDefinitionEntity>,
+    @InjectRepository(CustomFieldValueEntity)
+    private valueRepo: Repository<CustomFieldValueEntity>,
   ) {}
 
   // 取得實體的所有自訂欄位定義
-  async getDefinitions(entityType: EntityType): Promise<CustomFieldDefinition[]> {
+  async getDefinitions(entityType: EntityType): Promise<CustomFieldDefinitionEntity[]> {
     return this.definitionRepo.find({
-      where: { entityType, isActive: true },
-      order: { sortOrder: 'ASC' },
+      where: { entityType: entityType as string, isActive: true },
+      order: { sortOrder: "ASC" },
     });
   }
 
   // 建立自訂欄位定義
   async createDefinition(
-    dto: Omit<CustomFieldDefinition, 'id' | 'createdAt' | 'sortOrder'>,
+    dto: Omit<CustomFieldDefinition, "id" | "createdAt" | "sortOrder">,
     userId: string,
-  ): Promise<CustomFieldDefinition> {
+  ): Promise<CustomFieldDefinitionEntity> {
     // 取得最大 sortOrder
     const maxSort = await this.definitionRepo
-      .createQueryBuilder('d')
-      .select('MAX(d.sortOrder)', 'max')
-      .where('d.entityType = :entityType', { entityType: dto.entityType })
+      .createQueryBuilder("d")
+      .select("MAX(d.sortOrder)", "max")
+      .where("d.entityType = :entityType", { entityType: dto.entityType })
       .getRawOne();
 
     const definition = this.definitionRepo.create({
       ...dto,
+      entityType: dto.entityType as string,
       sortOrder: (maxSort?.max || 0) + 1,
       createdBy: userId,
       createdAt: new Date(),
@@ -133,8 +138,8 @@ export class CustomFieldService {
   async updateDefinition(
     id: string,
     dto: Partial<CustomFieldDefinition>,
-  ): Promise<CustomFieldDefinition> {
-    await this.definitionRepo.update(id, dto);
+  ): Promise<CustomFieldDefinitionEntity> {
+    await this.definitionRepo.update(id, dto as any);
     return this.definitionRepo.findOneOrFail({ where: { id } });
   }
 
@@ -241,84 +246,5 @@ export class CustomFieldService {
   }
 }
 
-// ============================================
-// Entity Definition (TypeORM)
-// ============================================
-
-import { Entity, Column, PrimaryGeneratedColumn, Index } from 'typeorm';
-
-@Entity('custom_field_definitions')
-export class CustomFieldDefinitionEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Column()
-  @Index()
-  entityType: string;
-
-  @Column()
-  name: string;
-
-  @Column()
-  label: string;
-
-  @Column()
-  type: string;
-
-  @Column({ default: false })
-  required: boolean;
-
-  @Column('jsonb', { nullable: true })
-  options: any;
-
-  @Column('jsonb', { nullable: true })
-  config: any;
-
-  @Column({ default: 0 })
-  sortOrder: number;
-
-  @Column({ nullable: true })
-  group: string;
-
-  @Column('simple-array', { nullable: true })
-  visibleRoles: string[];
-
-  @Column('simple-array', { nullable: true })
-  editableRoles: string[];
-
-  @Column()
-  createdBy: string;
-
-  @Column()
-  createdAt: Date;
-
-  @Column({ default: true })
-  isActive: boolean;
-}
-
-@Entity('custom_field_values')
-@Index(['entityType', 'entityId'])
-export class CustomFieldValueEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Column()
-  fieldId: string;
-
-  @Column()
-  @Index()
-  entityType: string;
-
-  @Column()
-  @Index()
-  entityId: string;
-
-  @Column('jsonb')
-  value: any;
-
-  @Column()
-  updatedAt: Date;
-
-  @Column()
-  updatedBy: string;
-}
+// Entity definitions moved to custom-fields.entities.ts
+export { CustomFieldDefinitionEntity, CustomFieldValueEntity } from "./custom-fields.entities";
