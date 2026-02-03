@@ -194,7 +194,7 @@ const SidebarGroup = ({ group, items, activeId, collapsed, expandedGroups, onTog
 // Main Sidebar Component
 // ============================================
 
-const Sidebar = ({ activeTab, onNavigate }) => {
+const Sidebar = ({ activeTab, onNavigate, isMobileOpen, onMobileClose }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, signOut, canAccessPage, role } = useAuth();
@@ -252,14 +252,32 @@ const Sidebar = ({ activeTab, onNavigate }) => {
   }, [visibleGroups, searchQuery]);
 
   return (
-    <aside
-      className={`
-        fixed left-0 top-0 h-screen z-40 flex flex-col
-        bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950
-        border-r border-white/5 transition-all duration-300
-        ${collapsed ? 'w-[72px]' : 'w-[280px]'}
-      `}
-    >
+    <>
+      {/* Mobile Backdrop */}
+      {isMobileOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
+          onClick={onMobileClose}
+          aria-hidden="true"
+        />
+      )}
+      
+      <aside
+        className={`
+          h-screen flex flex-col
+          bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950
+          border-r border-white/5 transition-all duration-300
+          ${collapsed ? 'w-[72px]' : 'w-[280px]'}
+          
+          /* Mobile: fixed overlay, hidden by default */
+          fixed left-0 top-0 z-50
+          transform transition-transform duration-300 ease-out
+          ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}
+          
+          /* Desktop: always visible */
+          lg:translate-x-0 lg:relative lg:z-auto
+        `}
+      >
       {/* Header */}
       <div className={`flex items-center h-16 border-b border-white/5 ${collapsed ? 'justify-center px-2' : 'px-4'}`}>
         {!collapsed && (
@@ -375,7 +393,8 @@ const Sidebar = ({ activeTab, onNavigate }) => {
           {!collapsed && <span className="text-sm">登出</span>}
         </button>
       </div>
-    </aside>
+      </aside>
+    </>
   );
 };
 

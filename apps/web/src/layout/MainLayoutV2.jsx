@@ -36,7 +36,6 @@ export const MainLayoutV2 = ({ activeTab, setActiveTab, children, addToast }) =>
   const [hasUpcomingEvents, setHasUpcomingEvents] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // Check upcoming events
   useEffect(() => {
@@ -62,34 +61,21 @@ export const MainLayoutV2 = ({ activeTab, setActiveTab, children, addToast }) =>
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-slate-100 via-slate-50 to-white overflow-hidden">
-      {/* Mobile Menu Overlay */}
-      {isMobileMenuOpen && (
-        <div
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden transition-opacity"
-          onClick={() => setIsMobileMenuOpen(false)}
-        />
-      )}
-
-      {/* Sidebar */}
-      <div className={`
-        fixed lg:relative z-50 h-full
-        transform transition-transform duration-300 ease-out
-        ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-      `}>
-        <Sidebar 
-          activeTab={activeTab} 
-          onNavigate={(id) => {
-            setActiveTab(id);
-            setIsMobileMenuOpen(false);
-          }}
-        />
-      </div>
+      {/* Sidebar - handles its own mobile visibility */}
+      <Sidebar 
+        activeTab={activeTab} 
+        isMobileOpen={isMobileMenuOpen}
+        onMobileClose={() => setIsMobileMenuOpen(false)}
+        onNavigate={(id) => {
+          setActiveTab(id);
+          setIsMobileMenuOpen(false);
+        }}
+      />
 
       {/* Main Content */}
       <main className={`
         flex-1 flex flex-col h-screen overflow-hidden
         transition-all duration-300
-        ${sidebarCollapsed ? 'lg:ml-[72px]' : 'lg:ml-[280px]'}
         ml-0
       `}>
         {/* Header */}
