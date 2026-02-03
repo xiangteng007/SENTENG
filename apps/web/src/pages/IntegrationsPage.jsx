@@ -9,6 +9,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { integrationsApi } from '../services/integrationsApi';
 import { SyncStatusBadge } from '../components/common/SyncStatusBadge';
+import { useConfirm } from '../components/common/ConfirmModal';
 
 // Card 元件
 const Card = ({ title, children }) => (
@@ -38,6 +39,7 @@ export default function IntegrationsPage({ addToast }) {
     const [contactsLabel, setContactsLabel] = useState('Senteng ERP');
     const [autoSyncEvents, setAutoSyncEvents] = useState(true);
     const [autoSyncContacts, setAutoSyncContacts] = useState(true);
+    const { confirm, ConfirmDialog } = useConfirm();
 
     // 取得狀態
     const fetchStatus = useCallback(async () => {
@@ -74,7 +76,13 @@ export default function IntegrationsPage({ addToast }) {
 
     // 斷開連結
     const handleDisconnect = async () => {
-        if (!window.confirm('確定要斷開 Google 連結嗎？')) return;
+        const confirmed = await confirm({
+            title: '確認斷開連結',
+            message: '確定要斷開 Google 連結嗎？斷開後將無法同步行事曆與聯絡人。',
+            type: 'warning',
+            confirmText: '斷開連結',
+        });
+        if (!confirmed) return;
 
         try {
             await integrationsApi.disconnect();
@@ -256,6 +264,9 @@ export default function IntegrationsPage({ addToast }) {
                     </div>
                 )}
             </div>
+
+            {/* Confirm Dialog */}
+            <ConfirmDialog />
         </div>
     );
 }

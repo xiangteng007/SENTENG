@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { useConfirm } from '../components/common/ConfirmModal';
 import {
     ChangeOrderService,
     CHANGE_ORDER_STATUS,
@@ -441,6 +442,7 @@ const ChangeOrderList = ({ quotationId, onEdit, onBack, addToast }) => {
     const [quotation, setQuotation] = useState(null);
     const [loading, setLoading] = useState(true);
     const [cumulative, setCumulative] = useState({ totalAdded: 0, totalDeducted: 0, netChange: 0, count: 0 });
+    const { confirm, ConfirmDialog } = useConfirm();
 
     const loadData = async () => {
         try {
@@ -472,7 +474,13 @@ const ChangeOrderList = ({ quotationId, onEdit, onBack, addToast }) => {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm('確定要刪除此變更單？')) return;
+        const confirmed = await confirm({
+            title: '確認刪除',
+            message: '確定要刪除此變更單？此操作無法復原。',
+            type: 'danger',
+            confirmText: '刪除',
+        });
+        if (!confirmed) return;
         try {
             await ChangeOrderService.deleteChangeOrder(id);
             addToast?.('success', '已刪除');
@@ -593,6 +601,9 @@ const ChangeOrderList = ({ quotationId, onEdit, onBack, addToast }) => {
                     </div>
                 )}
             </div>
+
+            {/* Confirm Dialog */}
+            <ConfirmDialog />
         </div>
     );
 };

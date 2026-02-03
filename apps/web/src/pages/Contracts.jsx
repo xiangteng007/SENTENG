@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
+import { useConfirm } from '../components/common/ConfirmModal';
 import {
     FileText, Plus, Search, Eye, Edit2, Trash2, CheckCircle,
     Clock, AlertCircle, Building2, Users, Calendar, DollarSign,
@@ -259,12 +260,19 @@ const CreateContractModal = ({ isOpen, onClose, onSubmit, addToast }) => {
 // 合約詳情
 // ============================================
 const ContractDetail = ({ contract, onBack, onRefresh, addToast }) => {
+    const { confirm, ConfirmDialog } = useConfirm();
     const progress = contract.currentAmount > 0
         ? Math.round((contract.paidAmount / contract.currentAmount) * 100)
         : 0;
 
     const handleSign = async () => {
-        if (window.confirm('確定要簽約嗎？')) {
+        const confirmed = await confirm({
+            title: '確認簽約',
+            message: '確定要簽約嗎？簽約後合約將正式生效。',
+            type: 'warning',
+            confirmText: '簽約',
+        });
+        if (confirmed) {
             try {
                 await ContractService.sign(contract.id);
                 addToast?.('success', '合約已簽約');
@@ -276,7 +284,13 @@ const ContractDetail = ({ contract, onBack, onRefresh, addToast }) => {
     };
 
     const handleComplete = async () => {
-        if (window.confirm('確定要標記完工嗎？')) {
+        const confirmed = await confirm({
+            title: '確認完工',
+            message: '確定要標記完工嗎？',
+            type: 'info',
+            confirmText: '標記完工',
+        });
+        if (confirmed) {
             try {
                 await ContractService.complete(contract.id);
                 addToast?.('success', '已標記完工');
@@ -288,7 +302,13 @@ const ContractDetail = ({ contract, onBack, onRefresh, addToast }) => {
     };
 
     const handleClose = async () => {
-        if (window.confirm('確定要結案嗎？')) {
+        const confirmed = await confirm({
+            title: '確認結案',
+            message: '確定要結案嗎？結案後將無法再變更。',
+            type: 'warning',
+            confirmText: '結案',
+        });
+        if (confirmed) {
             try {
                 await ContractService.close(contract.id);
                 addToast?.('success', '已結案');
@@ -452,6 +472,9 @@ const ContractDetail = ({ contract, onBack, onRefresh, addToast }) => {
                     ))}
                 </div>
             </div>
+
+            {/* Confirm Dialog */}
+            <ConfirmDialog />
         </div>
     );
 };
@@ -465,6 +488,7 @@ const ContractList = ({ onView, addToast }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('ALL');
     const [showCreateModal, setShowCreateModal] = useState(false);
+    const { confirm, ConfirmDialog } = useConfirm();
 
     const loadContracts = async () => {
         setLoading(true);
@@ -517,7 +541,13 @@ const ContractList = ({ onView, addToast }) => {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm('確定要刪除此合約？')) return;
+        const confirmed = await confirm({
+            title: '確認刪除',
+            message: '確定要刪除此合約？此操作無法復原。',
+            type: 'danger',
+            confirmText: '刪除',
+        });
+        if (!confirmed) return;
         try {
             await ContractService.deleteContract(id);
             addToast?.('success', '已刪除');
@@ -654,6 +684,9 @@ const ContractList = ({ onView, addToast }) => {
                 onSubmit={handleCreate}
                 addToast={addToast}
             />
+
+            {/* Confirm Dialog */}
+            <ConfirmDialog />
         </div>
     );
 };

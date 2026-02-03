@@ -1,5 +1,6 @@
 // User Management Page (Super Admin Only)
 import React, { useState, useEffect } from 'react';
+import { useConfirm } from '../components/common/ConfirmModal';
 import {
     Users,
     Shield,
@@ -62,6 +63,7 @@ const UserManagement = ({ addToast }) => {
     const [activeTab, setActiveTab] = useState('users'); // 'users' | 'roles'
     const [editingRole, setEditingRole] = useState(null);
     const [rolePermissions, setRolePermissions] = useState({});
+    const { confirm, ConfirmDialog } = useConfirm();
 
     // Load users and roles
     useEffect(() => {
@@ -118,7 +120,13 @@ const UserManagement = ({ addToast }) => {
             return;
         }
 
-        if (!window.confirm('確定要刪除此使用者嗎？')) return;
+        const confirmed = await confirm({
+            title: '確認刪除',
+            message: '確定要刪除此使用者嗎？此操作無法復原。',
+            type: 'danger',
+            confirmText: '刪除',
+        });
+        if (!confirmed) return;
 
         try {
             await deleteUser(userId);
@@ -429,6 +437,9 @@ const UserManagement = ({ addToast }) => {
                     ))}
                 </div>
             )}
+
+            {/* Confirm Dialog */}
+            <ConfirmDialog />
         </div>
     );
 };
