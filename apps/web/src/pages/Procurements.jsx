@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, Package, Calendar, DollarSign, Building2, FileText, CheckCircle, Clock, AlertCircle, X, Truck, ChevronDown, ChevronUp } from 'lucide-react';
+import { Plus, Search, Package, Calendar, DollarSign, Building2, FileText, CheckCircle, Clock, AlertCircle, X, Truck, ChevronDown, ChevronUp, Edit2, Trash2 } from 'lucide-react';
 import api from '../services/api';
+import { useConfirm } from '../components/common/ConfirmModal';
 
 const STATUS_CONFIG = {
   DRAFT: { label: '草稿', color: 'bg-gray-100 text-gray-700', icon: FileText },
@@ -212,6 +213,192 @@ const CreateProcurementModal = ({ onClose, onSuccess }) => {
   );
 };
 
+// Edit Procurement Modal Component
+const EditProcurementModal = ({ procurement, onClose, onSuccess }) => {
+  const [formData, setFormData] = useState({
+    title: procurement?.title || '',
+    description: procurement?.description || '',
+    type: procurement?.type || 'material',
+    budgetAmount: procurement?.budgetAmount || '',
+    status: procurement?.status || 'DRAFT',
+    expectedDeliveryDate: procurement?.expectedDeliveryDate?.split('T')[0] || '',
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    if (!formData.title) {
+      setError('請填寫標題');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await api.patch(`/procurements/${procurement.id}`, {
+        ...formData,
+        budgetAmount: formData.budgetAmount ? parseFloat(formData.budgetAmount) : undefined,
+      });
+      onSuccess?.();
+    } catch (err) {
+      setError(err.response?.data?.message || '更新失敗，請稍後再試');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-6 border-b dark:border-gray-700">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">編輯採購單</h2>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          {error && (
+            <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 flex items-center gap-2">
+              <AlertCircle className="w-5 h-5" />
+              {error}
+            </div>
+          )}
+
+          {/* Title */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              採購單標題 <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+          {/* Type & Status */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                採購類型
+              </label>
+              <select
+                name="type"
+                value={formData.type}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="material">材料</option>
+                <option value="equipment">設備</option>
+                <option value="service">服務</option>
+                <option value="subcontract">分包</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                狀態
+              </label>
+              <select
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:ring-2 focus:ring-blue-500"
+              >
+                {Object.entries(STATUS_CONFIG).map(([key, config]) => (
+                  <option key={key} value={key}>{config.label}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Budget & Date */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                預算金額
+              </label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">NT$</span>
+                <input
+                  type="number"
+                  name="budgetAmount"
+                  value={formData.budgetAmount}
+                  onChange={handleChange}
+                  className="w-full pl-14 pr-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                預計交貨日期
+              </label>
+              <input
+                type="date"
+                name="expectedDeliveryDate"
+                value={formData.expectedDeliveryDate}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+
+          {/* Description */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              備註說明
+            </label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              rows={3}
+              className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 resize-none"
+            />
+          </div>
+
+          {/* Actions */}
+          <div className="flex justify-end gap-3 pt-4 border-t dark:border-gray-700">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-6 py-2.5 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            >
+              取消
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-50 flex items-center gap-2"
+            >
+              {loading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  更新中...
+                </>
+              ) : (
+                <>
+                  <CheckCircle className="w-4 h-4" />
+                  儲存變更
+                </>
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
 
 const Procurements = () => {
   const [procurements, setProcurements] = useState([]);
@@ -220,6 +407,8 @@ const Procurements = () => {
   const [statusFilter, setStatusFilter] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [expandedRow, setExpandedRow] = useState(null);
+  const [editingProcurement, setEditingProcurement] = useState(null);
+  const { confirm, ConfirmDialog } = useConfirm();
 
   useEffect(() => {
     fetchProcurements();
@@ -240,6 +429,34 @@ const Procurements = () => {
     }
   };
 
+  const handleDelete = async (id) => {
+    const confirmed = await confirm({
+      title: '刪除採購單',
+      message: '確定要刪除此採購單嗎？此操作無法復原。',
+      type: 'danger',
+      confirmText: '刪除',
+      cancelText: '取消'
+    });
+    if (!confirmed) return;
+    
+    try {
+      await api.delete(`/procurements/${id}`);
+      fetchProcurements();
+    } catch (error) {
+      console.error('Delete failed:', error);
+    }
+  };
+
+  const handleUpdate = async (id, data) => {
+    try {
+      await api.patch(`/procurements/${id}`, data);
+      fetchProcurements();
+      setEditingProcurement(null);
+    } catch (error) {
+      console.error('Update failed:', error);
+      throw error;
+    }
+  };
   const filteredProcurements = procurements.filter(p =>
     p.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     p.vendorName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -386,9 +603,22 @@ const Procurements = () => {
                     </td>
                     <td className="px-4 py-3"><StatusBadge status={procurement.status} /></td>
                     <td className="px-4 py-3">
-                      <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                        查看詳情
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); setEditingProcurement(procurement); }}
+                          className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          title="編輯"
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </button>
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); handleDelete(procurement.id); }}
+                          className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          title="刪除"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                   {expandedRow === procurement.id && (
@@ -428,6 +658,20 @@ const Procurements = () => {
           }}
         />
       )}
+
+      {/* Edit Modal */}
+      {editingProcurement && (
+        <EditProcurementModal
+          procurement={editingProcurement}
+          onClose={() => setEditingProcurement(null)}
+          onSuccess={() => {
+            setEditingProcurement(null);
+            fetchProcurements();
+          }}
+        />
+      )}
+
+      <ConfirmDialog />
     </div>
   );
 };

@@ -10,9 +10,130 @@ import {
   CheckCircle,
   Clock,
   BarChart3,
-  X
+  X,
+  Edit2,
+  Trash2
 } from 'lucide-react';
 import api from '../services/api';
+import { useConfirm } from '../components/common/ConfirmModal';
+
+// Edit Schedule Modal Component
+const EditScheduleModal = ({ task, projects, onClose, onSuccess }) => {
+  const [formData, setFormData] = useState({
+    name: task?.name || '',
+    project: task?.project || '',
+    startDate: task?.startDate?.split('T')[0] || '',
+    endDate: task?.endDate?.split('T')[0] || '',
+    progress: task?.progress || 0,
+    status: task?.status || 'PENDING',
+    milestone: task?.milestone || false,
+    critical: task?.critical || false,
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleChange = (e) => {
+    const { name, value, type } = e.target;
+    setFormData(prev => ({ 
+      ...prev, 
+      [name]: type === 'checkbox' ? e.target.checked : value 
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    
+    try {
+      await api.patch(`/schedules/tasks/${task.id}`, {
+        ...formData,
+        progress: parseInt(formData.progress),
+        milestone: formData.milestone === 'true' || formData.milestone === true,
+        critical: formData.critical === 'true' || formData.critical === true,
+      });
+      onSuccess?.();
+    } catch (err) {
+      setError(err.response?.data?.message || '更新失敗');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-6 border-b dark:border-gray-700">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">編輯任務</h2>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">{error}</div>
+          )}
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">任務名稱</label>
+            <input type="text" name="name" value={formData.name} onChange={handleChange} required className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700" />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">開始日期</label>
+              <input type="date" name="startDate" value={formData.startDate} onChange={handleChange} className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">結束日期</label>
+              <input type="date" name="endDate" value={formData.endDate} onChange={handleChange} className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">進度 (%)</label>
+              <input type="number" name="progress" min="0" max="100" value={formData.progress} onChange={handleChange} className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">狀態</label>
+              <select name="status" value={formData.status} onChange={handleChange} className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
+                <option value="PENDING">待處理</option>
+                <option value="IN_PROGRESS">進行中</option>
+                <option value="COMPLETED">已完成</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">里程碑</label>
+              <select name="milestone" value={String(formData.milestone)} onChange={handleChange} className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
+                <option value="false">否</option>
+                <option value="true">是</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">要徑任務</label>
+              <select name="critical" value={String(formData.critical)} onChange={handleChange} className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
+                <option value="false">否</option>
+                <option value="true">是</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-3 pt-4 border-t dark:border-gray-700">
+            <button type="button" onClick={onClose} className="px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50">取消</button>
+            <button type="submit" disabled={loading} className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg disabled:opacity-50">
+              {loading ? '更新中...' : '儲存變更'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
 
 export const Schedules = ({ addToast }) => {
   const [tasks, setTasks] = useState([]);
@@ -21,6 +142,9 @@ export const Schedules = ({ addToast }) => {
   const [viewMode, setViewMode] = useState('month'); // 'week' | 'month' | 'quarter'
   const [selectedProject, setSelectedProject] = useState('all');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [editingTask, setEditingTask] = useState(null);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const { confirm, ConfirmDialog } = useConfirm();
 
   // Fetch tasks
   const fetchTasks = async () => {
@@ -204,6 +328,27 @@ export const Schedules = ({ addToast }) => {
     setCurrentMonth(newDate);
   };
 
+  const handleDelete = async (id, e) => {
+    e?.stopPropagation();
+    const confirmed = await confirm({
+      title: '刪除任務',
+      message: '確定要刪除此排程任務嗎？此操作無法復原。',
+      type: 'danger',
+      confirmText: '刪除',
+      cancelText: '取消'
+    });
+    if (!confirmed) return;
+    
+    try {
+      await api.delete(`/schedules/tasks/${id}`);
+      addToast?.('任務已刪除', 'success');
+      setSelectedTask(null);
+      fetchTasks();
+    } catch (error) {
+      addToast?.('刪除失敗: ' + (error.response?.data?.message || error.message), 'error');
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -324,15 +469,33 @@ export const Schedules = ({ addToast }) => {
               const position = getTaskPosition(task);
               return (
                 <div key={task.id} className="flex border-b hover:bg-gray-50 transition-colors">
-                  <div className="w-64 flex-shrink-0 p-3 border-r flex items-center gap-2">
-                    {task.milestone ? (
-                      <Flag size={16} className="text-purple-500" />
-                    ) : task.critical ? (
-                      <AlertTriangle size={16} className="text-red-500" />
-                    ) : (
-                      <CheckCircle size={16} className="text-gray-400" />
-                    )}
-                    <span className="truncate text-sm">{task.name}</span>
+                  <div className="w-64 flex-shrink-0 p-3 border-r flex items-center justify-between">
+                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                      {task.milestone ? (
+                        <Flag size={16} className="text-purple-500 flex-shrink-0" />
+                      ) : task.critical ? (
+                        <AlertTriangle size={16} className="text-red-500 flex-shrink-0" />
+                      ) : (
+                        <CheckCircle size={16} className="text-gray-400 flex-shrink-0" />
+                      )}
+                      <span className="truncate text-sm">{task.name}</span>
+                    </div>
+                    <div className="flex items-center gap-1 flex-shrink-0">
+                      <button
+                        onClick={() => setEditingTask(task)}
+                        className="p-1 hover:bg-blue-50 rounded text-blue-600"
+                        title="編輯"
+                      >
+                        <Edit2 size={14} />
+                      </button>
+                      <button
+                        onClick={(e) => handleDelete(task.id, e)}
+                        className="p-1 hover:bg-red-50 rounded text-red-600"
+                        title="刪除"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
                   </div>
                   <div className="flex-1 relative h-12 flex items-center">
                     {/* Background Grid */}
@@ -519,6 +682,22 @@ export const Schedules = ({ addToast }) => {
           </div>
         </div>
       )}
+
+      {/* Edit Modal */}
+      {editingTask && (
+        <EditScheduleModal
+          task={editingTask}
+          projects={projects}
+          onClose={() => setEditingTask(null)}
+          onSuccess={() => {
+            setEditingTask(null);
+            fetchTasks();
+            addToast?.('任務已更新', 'success');
+          }}
+        />
+      )}
+
+      <ConfirmDialog />
     </div>
   );
 };

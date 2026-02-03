@@ -13,9 +13,173 @@ import {
   Recycle,
   ChevronDown,
   X,
-  AlertCircle
+  AlertCircle,
+  Edit2,
+  CheckCircle
 } from 'lucide-react';
 import api from '../services/api';
+import { useConfirm } from '../components/common/ConfirmModal';
+
+// Edit Waste Modal Component
+const EditWasteModal = ({ record, wasteTypes, onClose, onSuccess }) => {
+  const [formData, setFormData] = useState({
+    wasteType: record?.wasteType || record?.type || 'general',
+    quantity: record?.quantity || '',
+    disposerName: record?.disposerName || '',
+    disposalFacility: record?.disposalFacility || '',
+    isRecyclable: record?.isRecyclable ?? true,
+    notes: record?.notes || '',
+    status: record?.status || 'PENDING',
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleChange = (e) => {
+    const { name, value, type } = e.target;
+    setFormData(prev => ({ 
+      ...prev, 
+      [name]: type === 'checkbox' ? e.target.checked : value 
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    
+    try {
+      await api.patch(`/waste/records/${record.id}`, {
+        ...formData,
+        quantity: parseFloat(formData.quantity),
+        isRecyclable: formData.isRecyclable === 'true' || formData.isRecyclable === true,
+      });
+      onSuccess?.();
+    } catch (err) {
+      setError(err.response?.data?.message || '更新失敗');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-6 border-b dark:border-gray-700">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">編輯清運單</h2>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm flex items-center gap-2">
+              <AlertCircle className="w-4 h-4" />
+              {error}
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">廢棄物類型</label>
+              <select
+                name="wasteType"
+                value={formData.wasteType}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+              >
+                {wasteTypes.map(t => (
+                  <option key={t.value} value={t.value}>{t.label}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">數量</label>
+              <input
+                type="number"
+                name="quantity"
+                step="0.1"
+                value={formData.quantity}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">狀態</label>
+              <select
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+              >
+                <option value="PENDING">待處理</option>
+                <option value="IN_TRANSIT">運送中</option>
+                <option value="COMPLETED">已完成</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">可回收</label>
+              <select
+                name="isRecyclable"
+                value={String(formData.isRecyclable)}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+              >
+                <option value="true">是</option>
+                <option value="false">否</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">清運公司</label>
+            <input
+              type="text"
+              name="disposerName"
+              value={formData.disposerName}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">處理設施</label>
+            <input
+              type="text"
+              name="disposalFacility"
+              value={formData.disposalFacility}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+            />
+          </div>
+
+          <div className="flex justify-end gap-3 pt-4 border-t dark:border-gray-700">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50"
+            >
+              取消
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg disabled:opacity-50 flex items-center gap-2"
+            >
+              {loading ? '更新中...' : <>
+                <CheckCircle className="w-4 h-4" />
+                儲存變更
+              </>}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
 
 export const Waste = ({ addToast }) => {
   const [records, setRecords] = useState([]);
@@ -26,6 +190,8 @@ export const Waste = ({ addToast }) => {
   const [expandedRecord, setExpandedRecord] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState('');
+  const [editingRecord, setEditingRecord] = useState(null);
+  const { confirm, ConfirmDialog } = useConfirm();
 
   // 廢棄物類型
   const wasteTypes = [
@@ -114,6 +280,25 @@ export const Waste = ({ addToast }) => {
   }, [records]);
 
   const getTypeInfo = (type) => wasteTypes.find(t => t.value === type) || wasteTypes[5];
+
+  const handleDelete = async (id) => {
+    const confirmed = await confirm({
+      title: '刪除清運單',
+      message: '確定要刪除此清運紀錄嗎？此操作無法復原。',
+      type: 'danger',
+      confirmText: '刪除',
+      cancelText: '取消'
+    });
+    if (!confirmed) return;
+    
+    try {
+      await api.delete(`/waste/records/${id}`);
+      addToast?.('清運單已刪除', 'success');
+      fetchRecords();
+    } catch (error) {
+      addToast?.('刪除失敗: ' + (error.response?.data?.message || error.message), 'error');
+    }
+  };
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -263,6 +448,22 @@ export const Waste = ({ addToast }) => {
                       <div className="text-right">
                         <div className="text-lg font-bold">{record.quantity}</div>
                         <div className="text-xs text-gray-500">{typeInfo.unit}</div>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); setEditingRecord(record); }}
+                          className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          title="編輯"
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </button>
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); handleDelete(record.id); }}
+                          className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          title="刪除"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </div>
                       <ChevronDown
                         size={18}
@@ -467,6 +668,22 @@ export const Waste = ({ addToast }) => {
           </div>
         </div>
       )}
+
+      {/* Edit Modal */}
+      {editingRecord && (
+        <EditWasteModal
+          record={editingRecord}
+          wasteTypes={wasteTypes}
+          onClose={() => setEditingRecord(null)}
+          onSuccess={() => {
+            setEditingRecord(null);
+            fetchRecords();
+            addToast?.('清運單已更新', 'success');
+          }}
+        />
+      )}
+
+      <ConfirmDialog />
     </div>
   );
 };
