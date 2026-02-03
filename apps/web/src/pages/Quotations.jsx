@@ -13,6 +13,7 @@ import { SectionTitle } from '../components/common/Indicators';
 import SearchableSelect from '../components/common/SearchableSelect';
 import TemplateItemsEditor from '../components/quotation/TemplateItemsEditor';
 import QuotationEditor from './QuotationEditor';
+import { useConfirm } from '../components/common/ConfirmModal';
 import QuotationService, {
     QUOTATION_STATUS,
     QUOTATION_STATUS_LABELS,
@@ -508,6 +509,7 @@ const Quotations = ({ addToast, projects = [], clients = [] }) => {
     const [statusFilter, setStatusFilter] = useState('ALL');
     const [selectedQuotation, setSelectedQuotation] = useState(null);
     const [viewMode, setViewMode] = useState('list'); // list / editor
+    const { confirm, ConfirmDialog } = useConfirm();
 
     // 載入估價單
     useEffect(() => {
@@ -573,7 +575,13 @@ const Quotations = ({ addToast, projects = [], clients = [] }) => {
 
     // 複製估價單
     const handleCopy = async (quotation) => {
-        if (window.confirm(`確定要複製估價單「${quotation.title}」嗎？`)) {
+        const confirmed = await confirm({
+            title: '確認複製',
+            message: `確定要複製估價單「${quotation.title}」嗎？`,
+            type: 'info',
+            confirmText: '複製',
+        });
+        if (confirmed) {
             try {
                 await QuotationService.copyQuotation(quotation.id);
                 loadQuotations();
@@ -585,7 +593,13 @@ const Quotations = ({ addToast, projects = [], clients = [] }) => {
 
     // 刪除估價單
     const handleDelete = async (quotation) => {
-        if (window.confirm(`確定要刪除估價單「${quotation.title}」嗎？此操作無法復原。`)) {
+        const confirmed = await confirm({
+            title: '確認刪除',
+            message: `確定要刪除估價單「${quotation.title}」嗎？此操作無法復原。`,
+            type: 'danger',
+            confirmText: '刪除',
+        });
+        if (confirmed) {
             try {
                 await QuotationService.deleteQuotation(quotation.id);
                 loadQuotations();
@@ -747,6 +761,9 @@ const Quotations = ({ addToast, projects = [], clients = [] }) => {
                 projects={projects}
                 customers={clients}
             />
+
+            {/* Confirm Dialog */}
+            <ConfirmDialog />
         </div>
     );
 };

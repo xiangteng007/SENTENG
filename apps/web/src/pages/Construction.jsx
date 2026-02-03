@@ -18,6 +18,7 @@ import {
   MapPin
 } from 'lucide-react';
 import api from '../services/api';
+import { useConfirm } from '../components/common/ConfirmModal';
 
 export const Construction = ({ addToast }) => {
   const [items, setItems] = useState([]);
@@ -28,6 +29,7 @@ export const Construction = ({ addToast }) => {
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [expandedItem, setExpandedItem] = useState(null);
+  const { confirm, ConfirmDialog } = useConfirm();
 
   // 施工類型選項
   const constructionTypes = [
@@ -183,7 +185,13 @@ export const Construction = ({ addToast }) => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('確定要刪除此施工項目？')) {
+    const confirmed = await confirm({
+      title: '確認刪除',
+      message: '確定要刪除此施工項目？此操作無法復原。',
+      type: 'danger',
+      confirmText: '刪除',
+    });
+    if (confirmed) {
       await api.delete(`/construction/items/${id}`).catch(() => {});
       setItems(prev => prev.filter(item => item.id !== id));
       addToast?.('施工項目已刪除', 'info');
@@ -423,6 +431,9 @@ export const Construction = ({ addToast }) => {
           onClose={() => { setShowModal(false); setEditingItem(null); }}
         />
       )}
+
+      {/* Confirm Dialog */}
+      <ConfirmDialog />
     </div>
   );
 };
