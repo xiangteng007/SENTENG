@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useMemo, useEffect } from 'react';
+import api from '../services/api';
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -186,14 +187,30 @@ const Dashboard = ({ events = [], finance = {}, projects = [], clients = [] }) =
     };
   }, [finance, projects, clients, events]);
 
-  // Recent activities (mock for now)
-  const recentActivities = [
+  // Recent activities (with API fallback)
+  const [recentActivities, setRecentActivities] = useState([
     { type: 'project', title: '新專案「台北信義案」已建立', time: '10 分鐘前' },
     { type: 'payment', title: '收到「王先生」付款 NT$ 150,000', time: '1 小時前' },
     { type: 'contract', title: '「陳宅裝修」合約已簽署', time: '2 小時前' },
     { type: 'schedule', title: '明日有 3 場工地會勘', time: '3 小時前' },
     { type: 'alert', title: '「林宅案」請款單待審核', time: '昨天' },
-  ];
+  ]);
+
+  // Fetch activities from API
+  useEffect(() => {
+    const fetchActivities = async () => {
+      try {
+        const res = await api.get('/activities');
+        if (res.data?.items || res.data?.length) {
+          setRecentActivities(res.data?.items || res.data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch activities:', error);
+        // Keep fallback mock data
+      }
+    };
+    fetchActivities();
+  }, []);
 
   // Today's events
   const todayEvents = events?.filter(e => {

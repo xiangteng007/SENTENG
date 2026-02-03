@@ -3,7 +3,8 @@
  * Full notification center with history, preferences, and real-time updates
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import api from '../services/api';
 import { 
   Bell, 
   Settings, 
@@ -165,8 +166,8 @@ export const Notifications = ({ addToast }) => {
   const [showSettings, setShowSettings] = useState(false);
   const [filter, setFilter] = useState('all');
   
-  // Mock notifications
-  const [notifications, setNotifications] = useState([
+  // Mock notifications as initial/fallback
+  const mockNotifications = [
     { 
       id: 1, 
       type: 'payment', 
@@ -233,7 +234,25 @@ export const Notifications = ({ addToast }) => {
       read: true,
       starred: false,
     },
-  ]);
+  ];
+
+  const [notifications, setNotifications] = useState(mockNotifications);
+
+  // Fetch notifications from API
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const res = await api.get('/notifications');
+        if (res.data?.items || res.data?.length) {
+          setNotifications(res.data?.items || res.data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch notifications:', error);
+        // Keep fallback mock data
+      }
+    };
+    fetchNotifications();
+  }, []);
 
   // Settings state
   const [settings, setSettings] = useState({
