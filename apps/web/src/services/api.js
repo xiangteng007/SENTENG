@@ -1,5 +1,5 @@
 // API Configuration
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://erp-api-381507943724.asia-east1.run.app/api/v1';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://erp-api-710372530107.asia-east1.run.app/api/v1';
 
 class ApiService {
     constructor() {
