@@ -12,8 +12,90 @@ import {
   Settings,
   FileText,
   RefreshCw,
-  Filter
+  Filter,
+  X,
+  Edit2,
+  Trash2
 } from 'lucide-react';
+import { useConfirm } from '../components/common/ConfirmModal';
+
+// Edit Model Modal Component
+const EditModelModal = ({ model, categories, onClose, onSuccess }) => {
+  const [formData, setFormData] = useState({
+    name: model?.name || '',
+    project: model?.project || '',
+    category: model?.category || 'ARCH',
+    version: model?.version || 'v1.0',
+    status: model?.status || 'CURRENT',
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    try {
+      await api.patch(`/bim/models/${model.id}`, formData);
+      onSuccess?.();
+    } catch (err) {
+      setError(err.response?.data?.message || '更新失敗');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-6 border-b dark:border-gray-700">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">編輯模型</h2>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {error && <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">{error}</div>}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">模型名稱</label>
+            <input type="text" name="name" value={formData.name} onChange={handleChange} required className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">所屬專案</label>
+            <input type="text" name="project" value={formData.project} onChange={handleChange} className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700" />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">模型類型</label>
+              <select name="category" value={formData.category} onChange={handleChange} className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
+                {categories.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">狀態</label>
+              <select name="status" value={formData.status} onChange={handleChange} className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
+                <option value="CURRENT">現行版</option>
+                <option value="PROCESSING">處理中</option>
+                <option value="ARCHIVED">已封存</option>
+              </select>
+            </div>
+          </div>
+          <div className="flex justify-end gap-3 pt-4 border-t dark:border-gray-700">
+            <button type="button" onClick={onClose} className="px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50">取消</button>
+            <button type="submit" disabled={loading} className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg disabled:opacity-50">
+              {loading ? '更新中...' : '儲存變更'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
 
 export const Bim = ({ addToast }) => {
   const [models, setModels] = useState([]);
@@ -24,6 +106,8 @@ export const Bim = ({ addToast }) => {
   const [viewerMode, setViewerMode] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [editingModel, setEditingModel] = useState(null);
+  const { confirm, ConfirmDialog } = useConfirm();
 
   // 模型類別
   const categories = [
@@ -145,6 +229,25 @@ export const Bim = ({ addToast }) => {
     setSelectedModel(model);
     setViewerMode(true);
     addToast?.('3D 檢視器開啟中...', 'info');
+  };
+
+  const handleDelete = async (id) => {
+    const confirmed = await confirm({
+      title: '刪除模型',
+      message: '確定要刪除此 BIM 模型嗎？此操作無法復原。',
+      type: 'danger',
+      confirmText: '刪除',
+      cancelText: '取消'
+    });
+    if (!confirmed) return;
+    
+    try {
+      await api.delete(`/bim/models/${id}`);
+      addToast?.('模型已刪除', 'success');
+      fetchModels();
+    } catch (error) {
+      addToast?.('刪除失敗: ' + (error.response?.data?.message || error.message), 'error');
+    }
   };
 
   return (
@@ -288,6 +391,20 @@ export const Bim = ({ addToast }) => {
                     >
                       <Settings size={16} />
                     </button>
+                    <button
+                      onClick={() => setEditingModel(model)}
+                      className="p-2 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
+                      title="編輯"
+                    >
+                      <Edit2 size={16} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(model.id)}
+                      className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+                      title="刪除"
+                    >
+                      <Trash2 size={16} />
+                    </button>
                   </div>
                 </div>
               </div>
@@ -401,6 +518,22 @@ export const Bim = ({ addToast }) => {
           </div>
         </div>
       )}
+
+      {/* Edit Model Modal */}
+      {editingModel && (
+        <EditModelModal
+          model={editingModel}
+          categories={categories}
+          onClose={() => setEditingModel(null)}
+          onSuccess={() => {
+            setEditingModel(null);
+            fetchModels();
+            addToast?.('模型已更新', 'success');
+          }}
+        />
+      )}
+
+      <ConfirmDialog />
     </div>
   );
 };

@@ -11,9 +11,96 @@ import {
   Tag,
   FileText,
   Filter,
-  X
+  X,
+  Edit2,
+  Trash2
 } from 'lucide-react';
 import api from '../services/api';
+import { useConfirm } from '../components/common/ConfirmModal';
+
+// Edit Checklist Modal Component
+const EditChecklistModal = ({ checklist, categories, onClose, onSuccess }) => {
+  const [formData, setFormData] = useState({
+    title: checklist?.title || '',
+    category: checklist?.category || 'SAFETY',
+    project: checklist?.project || '',
+    totalItems: checklist?.totalItems || 10,
+    completedItems: checklist?.completedItems || 0,
+    status: checklist?.status || 'IN_PROGRESS',
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: name === 'totalItems' || name === 'completedItems' ? parseInt(value) || 0 : value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    try {
+      await api.patch(`/regulations/checklists/${checklist.id}`, formData);
+      onSuccess?.();
+    } catch (err) {
+      setError(err.response?.data?.message || '更新失敗');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-6 border-b dark:border-gray-700">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">編輯檢查表</h2>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {error && <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">{error}</div>}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">檢查表標題</label>
+            <input type="text" name="title" value={formData.title} onChange={handleChange} required className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700" />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">法規類別</label>
+              <select name="category" value={formData.category} onChange={handleChange} className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
+                {categories.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">狀態</label>
+              <select name="status" value={formData.status} onChange={handleChange} className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
+                <option value="IN_PROGRESS">進行中</option>
+                <option value="COMPLETED">已完成</option>
+              </select>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">總項目數</label>
+              <input type="number" name="totalItems" value={formData.totalItems} onChange={handleChange} min="1" className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">已完成項目</label>
+              <input type="number" name="completedItems" value={formData.completedItems} onChange={handleChange} min="0" className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700" />
+            </div>
+          </div>
+          <div className="flex justify-end gap-3 pt-4 border-t dark:border-gray-700">
+            <button type="button" onClick={onClose} className="px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50">取消</button>
+            <button type="submit" disabled={loading} className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-lg disabled:opacity-50">
+              {loading ? '更新中...' : '儲存變更'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
 
 export const Regulations = ({ addToast }) => {
   const [regulations, setRegulations] = useState([]);
@@ -23,6 +110,8 @@ export const Regulations = ({ addToast }) => {
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [activeTab, setActiveTab] = useState('regulations'); // 'regulations' | 'checklists'
   const [showAddModal, setShowAddModal] = useState(false);
+  const [editingChecklist, setEditingChecklist] = useState(null);
+  const { confirm, ConfirmDialog } = useConfirm();
 
   // 法規類別
   const categories = [
@@ -171,6 +260,25 @@ export const Regulations = ({ addToast }) => {
   }, [regulations, checklists]);
 
   const getCategoryInfo = (cat) => categories.find(c => c.value === cat) || categories[0];
+
+  const handleDeleteChecklist = async (id) => {
+    const confirmed = await confirm({
+      title: '刪除檢查表',
+      message: '確定要刪除此檢查表嗎？此操作無法復原。',
+      type: 'danger',
+      confirmText: '刪除',
+      cancelText: '取消'
+    });
+    if (!confirmed) return;
+    
+    try {
+      await api.delete(`/regulations/checklists/${id}`);
+      addToast?.('檢查表已刪除', 'success');
+      fetchData();
+    } catch (error) {
+      addToast?.('刪除失敗: ' + (error.response?.data?.message || error.message), 'error');
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -366,6 +474,20 @@ export const Regulations = ({ addToast }) => {
                     <button className="btn-secondary text-sm ml-4">
                       檢視
                     </button>
+                    <button
+                      onClick={() => setEditingChecklist(cl)}
+                      className="p-2 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors ml-2"
+                      title="編輯"
+                    >
+                      <Edit2 size={16} />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteChecklist(cl.id)}
+                      className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+                      title="刪除"
+                    >
+                      <Trash2 size={16} />
+                    </button>
                   </div>
                 </div>
               );
@@ -482,6 +604,22 @@ export const Regulations = ({ addToast }) => {
           </div>
         </div>
       )}
+
+      {/* Edit Checklist Modal */}
+      {editingChecklist && (
+        <EditChecklistModal
+          checklist={editingChecklist}
+          categories={categories}
+          onClose={() => setEditingChecklist(null)}
+          onSuccess={() => {
+            setEditingChecklist(null);
+            fetchData();
+            addToast?.('檢查表已更新', 'success');
+          }}
+        />
+      )}
+
+      <ConfirmDialog />
     </div>
   );
 };

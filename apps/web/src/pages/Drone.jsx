@@ -13,9 +13,99 @@ import {
   Cloud,
   Thermometer,
   Wind,
-  X
+  X,
+  Edit2,
+  Trash2
 } from 'lucide-react';
 import api from '../services/api';
+import { useConfirm } from '../components/common/ConfirmModal';
+
+// Edit Flight Modal Component
+const EditFlightModal = ({ flight, projects, onClose, onSuccess }) => {
+  const [formData, setFormData] = useState({
+    missionName: flight?.missionName || '',
+    project: flight?.project || '',
+    date: flight?.date?.split('T')[0] || '',
+    pilot: flight?.pilot || '',
+    droneModel: flight?.droneModel || 'DJI Mavic 3',
+    status: flight?.status || 'SCHEDULED',
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    try {
+      await api.patch(`/drone/flights/${flight.id}`, formData);
+      onSuccess?.();
+    } catch (err) {
+      setError(err.response?.data?.message || '更新失敗');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-6 border-b dark:border-gray-700">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">編輯飛行任務</h2>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {error && <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">{error}</div>}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">任務名稱</label>
+            <input type="text" name="missionName" value={formData.missionName} onChange={handleChange} required className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700" />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">飛行日期</label>
+              <input type="date" name="date" value={formData.date} onChange={handleChange} className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">狀態</label>
+              <select name="status" value={formData.status} onChange={handleChange} className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
+                <option value="SCHEDULED">已排程</option>
+                <option value="COMPLETED">已完成</option>
+                <option value="CANCELLED">已取消</option>
+              </select>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">操作員</label>
+              <input type="text" name="pilot" value={formData.pilot} onChange={handleChange} className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">無人機型號</label>
+              <select name="droneModel" value={formData.droneModel} onChange={handleChange} className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
+                <option value="DJI Mavic 3">DJI Mavic 3</option>
+                <option value="DJI Phantom 4 RTK">DJI Phantom 4 RTK</option>
+                <option value="DJI Mini 4 Pro">DJI Mini 4 Pro</option>
+              </select>
+            </div>
+          </div>
+          <div className="flex justify-end gap-3 pt-4 border-t dark:border-gray-700">
+            <button type="button" onClick={onClose} className="px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50">取消</button>
+            <button type="submit" disabled={loading} className="px-4 py-2 bg-gradient-to-r from-sky-600 to-blue-600 text-white rounded-lg disabled:opacity-50">
+              {loading ? '更新中...' : '儲存變更'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
 
 export const Drone = ({ addToast }) => {
   const [flights, setFlights] = useState([]);
@@ -23,6 +113,8 @@ export const Drone = ({ addToast }) => {
   const [search, setSearch] = useState('');
   const [selectedProject, setSelectedProject] = useState('all');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [editingFlight, setEditingFlight] = useState(null);
+  const { confirm, ConfirmDialog } = useConfirm();
 
   // Fetch flights
   const fetchFlights = async () => {
@@ -135,6 +227,25 @@ export const Drone = ({ addToast }) => {
       case 'cloudy': return '⛅';
       case 'rainy': return '🌧️';
       default: return '🌤️';
+    }
+  };
+
+  const handleDelete = async (id) => {
+    const confirmed = await confirm({
+      title: '刪除飛行任務',
+      message: '確定要刪除此飛行任務嗎？此操作無法復原。',
+      type: 'danger',
+      confirmText: '刪除',
+      cancelText: '取消'
+    });
+    if (!confirmed) return;
+    
+    try {
+      await api.delete(`/drone/flights/${id}`);
+      addToast?.('飛行任務已刪除', 'success');
+      fetchFlights();
+    } catch (error) {
+      addToast?.('刪除失敗: ' + (error.response?.data?.message || error.message), 'error');
     }
   };
 
@@ -304,12 +415,21 @@ export const Drone = ({ addToast }) => {
                       </button>
                     </>
                   ) : (
-                    <button
-                      onClick={() => addToast?.('編輯任務', 'info')}
-                      className="flex-1 btn-secondary text-sm py-1.5"
-                    >
-                      編輯任務
-                    </button>
+                    <div className="flex items-center gap-2 w-full">
+                      <button
+                        onClick={() => setEditingFlight(flight)}
+                        className="flex-1 btn-secondary text-sm py-1.5"
+                      >
+                        編輯任務
+                      </button>
+                      <button
+                        onClick={() => handleDelete(flight.id)}
+                        className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg"
+                        title="刪除"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   )}
                 </div>
               </div>
@@ -434,6 +554,22 @@ export const Drone = ({ addToast }) => {
           </div>
         </div>
       )}
+
+      {/* Edit Modal */}
+      {editingFlight && (
+        <EditFlightModal
+          flight={editingFlight}
+          projects={projects}
+          onClose={() => setEditingFlight(null)}
+          onSuccess={() => {
+            setEditingFlight(null);
+            fetchFlights();
+            addToast?.('飛行任務已更新', 'success');
+          }}
+        />
+      )}
+
+      <ConfirmDialog />
     </div>
   );
 };
