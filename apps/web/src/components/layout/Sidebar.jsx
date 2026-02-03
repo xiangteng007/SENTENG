@@ -269,12 +269,10 @@ const Sidebar = ({ activeTab, onNavigate, isMobileOpen, onMobileClose }) => {
           border-r border-white/5 transition-all duration-300
           ${collapsed ? 'w-[72px]' : 'w-[280px]'}
           
-          /* Mobile: fixed overlay, hidden by default */
           fixed left-0 top-0 z-50
           transform transition-transform duration-300 ease-out
           ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}
           
-          /* Desktop: always visible */
           lg:translate-x-0 lg:relative lg:z-auto
         `}
       >
