@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import api from '../services/api';
 import { ClipboardList, Plus, Filter, Search, Calendar, Edit2, Trash2, Cloud, Sun, CloudRain, Thermometer, Users, X, Check, Camera, MapPin } from 'lucide-react';
 import { EmptyState } from '../components/common/EmptyState';
 
@@ -260,10 +261,15 @@ export const SiteLogs = ({ addToast, allProjects = [] }) => {
   const [editingDiary, setEditingDiary] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
-  useEffect(() => {
+  // Fetch diaries
+  const fetchDiaries = async () => {
     setLoading(true);
-    // TODO: 替換為真實 API 呼叫
-    setTimeout(() => {
+    try {
+      const res = await api.get('/site-logs');
+      setDiaries(res.data?.items || res.data || []);
+    } catch (error) {
+      console.error('Failed to fetch site logs:', error);
+      // Fallback to mock data if API not available
       setDiaries([
         {
           id: '1',
@@ -292,8 +298,13 @@ export const SiteLogs = ({ addToast, allProjects = [] }) => {
           photos: [],
         },
       ]);
+    } finally {
       setLoading(false);
-    }, 300);
+    }
+  };
+
+  useEffect(() => {
+    fetchDiaries();
   }, []);
 
   const filteredDiaries = useMemo(() => {

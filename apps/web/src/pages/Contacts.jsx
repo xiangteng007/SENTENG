@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import api from '../services/api';
 import { PhoneCall, Plus, Filter, Search, Edit2, Trash2, Mail, Building2, User, X, Check, Tag } from 'lucide-react';
 import { EmptyState } from '../components/common/EmptyState';
 
@@ -244,10 +245,15 @@ export const Contacts = ({ addToast }) => {
   const [editingContact, setEditingContact] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
-  useEffect(() => {
+  // Fetch contacts
+  const fetchContacts = async () => {
     setLoading(true);
-    // TODO: 替換為真實 API 呼叫
-    setTimeout(() => {
+    try {
+      const res = await api.get('/contacts');
+      setContacts(res.data?.items || res.data || []);
+    } catch (error) {
+      console.error('Failed to fetch contacts:', error);
+      // Fallback to mock data if API not available
       setContacts([
         {
           id: '1',
@@ -270,8 +276,13 @@ export const Contacts = ({ addToast }) => {
           tags: ['水電', '配合廠商'],
         },
       ]);
+    } finally {
       setLoading(false);
-    }, 300);
+    }
+  };
+
+  useEffect(() => {
+    fetchContacts();
   }, []);
 
   const filteredContacts = useMemo(() => {

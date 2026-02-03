@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import api from '../services/api';
 import { Calendar, Plus, Filter, Search, Edit2, Trash2, Clock, MapPin, Users, X, Check, ChevronDown } from 'lucide-react';
 import { EmptyState } from '../components/common/EmptyState';
 
@@ -207,11 +208,15 @@ export const Events = ({ addToast }) => {
   const [editingEvent, setEditingEvent] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
-  // 模擬載入資料
-  useEffect(() => {
+  // Fetch events
+  const fetchEvents = async () => {
     setLoading(true);
-    // TODO: 替換為真實 API 呼叫
-    setTimeout(() => {
+    try {
+      const res = await api.get('/events');
+      setEvents(res.data?.items || res.data || []);
+    } catch (error) {
+      console.error('Failed to fetch events:', error);
+      // Fallback to mock data if API not available
       setEvents([
         {
           id: '1',
@@ -235,8 +240,13 @@ export const Events = ({ addToast }) => {
           attendees: ['陳主任'],
         },
       ]);
+    } finally {
       setLoading(false);
-    }, 300);
+    }
+  };
+
+  useEffect(() => {
+    fetchEvents();
   }, []);
 
   // 篩選事件

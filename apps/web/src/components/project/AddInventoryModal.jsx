@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Modal } from '../common/Modal';
 import { InputField } from '../common/InputField';
 
-export const AddInventoryModal = ({ isOpen, onClose, onConfirm, allInventory = [] }) => {
+export const AddInventoryModal = ({ isOpen, onClose, onConfirm, allInventory = [], currentUser = '系統' }) => {
     const [selectedItemId, setSelectedItemId] = useState('');
     const [type, setType] = useState('出');
     const [quantity, setQuantity] = useState('1');
@@ -31,7 +31,7 @@ export const AddInventoryModal = ({ isOpen, onClose, onConfirm, allInventory = [
                 type: type,
                 quantity: parseInt(quantity),
                 date: new Date().toISOString().split('T')[0],
-                operator: 'Alex', // TODO: Get from user session
+                operator: currentUser,
                 note: note
             };
             onConfirm(inventoryData);

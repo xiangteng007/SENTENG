@@ -101,7 +101,6 @@ const Finance = ({ data, loading, addToast, onAddTx, onUpdateAccounts, onUpdateL
     const handleDragEndAccount = () => {
         dragItem.current = null; dragOverItem.current = null;
         onUpdateAccounts(accounts);
-        // GoogleService.syncToSheet('accounts', accounts); // TODO: Implement sync
     };
 
     // Account CRUD
