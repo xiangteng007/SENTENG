@@ -17,12 +17,13 @@ export const LoadingSkeleton = ({ rows = 3 }) => (
 
 export const ProgressBar = ({ value, label, color = "gray", size = "default" }) => {
     const colors = {
-        gray: "from-gray-600 to-gray-500",
-        blue: "from-blue-500 to-indigo-500",
-        green: "from-emerald-500 to-teal-500",
+        gray: "from-zinc-600 to-zinc-500",
+        blue: "from-blue-500 to-blue-600",
+        green: "from-green-500 to-green-600",
         orange: "from-orange-400 to-amber-500",
         red: "from-red-500 to-rose-500",
-        purple: "from-violet-500 to-purple-600"
+        purple: "from-zinc-600 to-zinc-700",
+        gold: "from-[#D4AF37] to-[#B8960C]"
     };
 
     const sizes = {

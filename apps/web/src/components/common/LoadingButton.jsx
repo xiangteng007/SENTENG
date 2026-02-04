@@ -15,15 +15,15 @@ const variantStyles = {
         active:scale-[0.98]
     `,
     accent: `
-        bg-gradient-to-r from-indigo-600 to-violet-600 text-white
-        hover:from-indigo-500 hover:to-violet-500
-        shadow-lg shadow-indigo-200 hover:shadow-xl hover:shadow-indigo-300
+        bg-gradient-to-r from-[#D4AF37] to-[#B8960C] text-zinc-900
+        hover:from-[#E5C158] hover:to-[#D4AF37]
+        shadow-lg shadow-[#D4AF37]/20 hover:shadow-xl hover:shadow-[#D4AF37]/30
         active:scale-[0.98]
     `,
     success: `
-        bg-gradient-to-r from-emerald-600 to-teal-600 text-white
-        hover:from-emerald-500 hover:to-teal-500
-        shadow-lg shadow-emerald-200 hover:shadow-xl
+        bg-gradient-to-r from-green-600 to-green-700 text-white
+        hover:from-green-500 hover:to-green-600
+        shadow-lg shadow-green-200 hover:shadow-xl
         active:scale-[0.98]
     `,
     danger: `

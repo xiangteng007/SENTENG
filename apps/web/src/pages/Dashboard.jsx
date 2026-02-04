@@ -1,5 +1,6 @@
 /**
  * Dashboard - Premium Edition
+ * Design System v4.0: Modern Dark Gold
  * Enhanced with real-time stats, charts, and premium UI
  */
 
@@ -68,9 +69,9 @@ const ProjectProgressCard = ({ project }) => {
   const getStatusColor = (status) => {
     switch (status) {
       case 'CONSTRUCTION': return 'bg-blue-500';
-      case 'DESIGN': return 'bg-purple-500';
-      case 'COMPLETED': return 'bg-green-500';
-      default: return 'bg-gray-500';
+      case 'DESIGN': return 'bg-zinc-700';
+      case 'COMPLETED': return 'bg-green-600';
+      default: return 'bg-zinc-500';
     }
   };
   
@@ -131,7 +132,7 @@ const QuickAction = ({ icon: Icon, label, onClick, color }) => (
 // Schedule Item
 const ScheduleItem = ({ event }) => (
   <div className="flex items-center gap-3 py-2">
-    <div className="w-1 h-10 bg-indigo-500 rounded-full" />
+    <div className="w-1 h-10 bg-[#D4AF37] rounded-full" />
     <div className="flex-1">
       <p className="text-sm font-medium text-gray-900">{event.summary || event.title}</p>
       <p className="text-xs text-gray-500">
@@ -268,7 +269,7 @@ const Dashboard = ({ events = [], finance = {}, projects = [], clients = [] }) =
           value={formatCurrency(stats.revenue)}
           change="+12.5% 較上月"
           icon={DollarSign}
-          color="from-green-500 to-emerald-600"
+          color="from-green-600 to-green-700"
           trend="up"
         />
         <StatCard 
@@ -276,7 +277,7 @@ const Dashboard = ({ events = [], finance = {}, projects = [], clients = [] }) =
           value={stats.activeProjects}
           change={`${projects?.length || 0} 個總專案`}
           icon={Briefcase}
-          color="from-blue-500 to-indigo-600"
+          color="from-zinc-700 to-zinc-800"
           trend="up"
         />
         <StatCard 
@@ -284,7 +285,7 @@ const Dashboard = ({ events = [], finance = {}, projects = [], clients = [] }) =
           value={stats.totalClients}
           change="+3 本月新增"
           icon={Users}
-          color="from-purple-500 to-pink-600"
+          color="from-[#D4AF37] to-[#B8960C]"
           trend="up"
         />
         <StatCard 
@@ -305,10 +306,10 @@ const Dashboard = ({ events = [], finance = {}, projects = [], clients = [] }) =
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-                <Target size={18} className="text-indigo-500" />
+                <Target size={18} className="text-[#D4AF37]" />
                 進行中專案
               </h3>
-              <button className="text-sm text-indigo-600 hover:text-indigo-700 flex items-center gap-1">
+              <button className="text-sm text-zinc-700 hover:text-[#D4AF37] flex items-center gap-1">
                 查看全部 <ChevronRight size={16} />
               </button>
             </div>
@@ -333,7 +334,7 @@ const Dashboard = ({ events = [], finance = {}, projects = [], clients = [] }) =
                 <Activity size={18} className="text-orange-500" />
                 最新動態
               </h3>
-              <button className="text-sm text-indigo-600 hover:text-indigo-700 flex items-center gap-1">
+              <button className="text-sm text-zinc-700 hover:text-[#D4AF37] flex items-center gap-1">
                 查看全部 <ChevronRight size={16} />
               </button>
             </div>
@@ -387,7 +388,7 @@ const Dashboard = ({ events = [], finance = {}, projects = [], clients = [] }) =
               <QuickAction 
                 icon={Briefcase} 
                 label="新專案" 
-                color="from-purple-500 to-purple-600"
+                color="from-zinc-700 to-zinc-800"
               />
               <QuickAction 
                 icon={DollarSign} 

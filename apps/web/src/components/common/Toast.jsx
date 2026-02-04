@@ -5,9 +5,9 @@ import { CheckCircle2, AlertCircle, Info, X, ExternalLink } from 'lucide-react';
 const toastStyles = {
     success: {
         icon: CheckCircle2,
-        iconBg: "bg-emerald-100",
-        iconColor: "text-emerald-600",
-        borderColor: "border-l-emerald-500"
+        iconBg: "bg-green-100",
+        iconColor: "text-green-600",
+        borderColor: "border-l-green-600"
     },
     error: {
         icon: AlertCircle,
