@@ -51,6 +51,7 @@ const InvoiceHelper = lazy(() => import('./pages/InvoiceHelper').then(m => ({ de
 const GovernmentProjects = lazy(() => import('./pages/GovernmentProjects').then(m => ({ default: m.GovernmentProjects })));
 const OccupationalSafety = lazy(() => import('./pages/OccupationalSafety').then(m => ({ default: m.OccupationalSafety })));
 const FireSafetyRecords = lazy(() => import('./pages/FireSafetyRecords').then(m => ({ default: m.FireSafetyRecords })));
+const ProfessionalCalculators = lazy(() => import('./pages/ProfessionalCalculators').then(m => ({ default: m.ProfessionalCalculators })));
 
 // Loading Screen Component
 const LoadingScreen = () => (
@@ -383,6 +384,11 @@ const AppContent = () => {
         <Route path="/fire-safety" element={
           <ProtectedRoute pageId="fire-safety">
             <FireSafetyRecords addToast={addToast} />
+          </ProtectedRoute>
+        } />
+        <Route path="/calculators" element={
+          <ProtectedRoute pageId="calculators">
+            <ProfessionalCalculators addToast={addToast} />
           </ProtectedRoute>
         } />
         <Route path="/login" element={<LoginPage />} />
