@@ -7,61 +7,47 @@ export default {
   theme: {
     extend: {
       colors: {
-        morandi: {
-          base: "#F7F8FA",
-          card: "#FFFFFF",
-          text: {
-            primary: "#2D3142",
-            secondary: "#6B7280",
-            accent: "#1F2937",
-            muted: "#9CA3AF"
-          },
-          blue: {
-            50: "#F0F4F8",
-            100: "#D8E2DC",
-            200: "#B8C5C8",
-            300: "#9DA9B3",
-            400: "#8B9CAB",
-            500: "#7C90A0",
-            600: "#5D7080",
-            700: "#4A5568"
-          },
-          green: {
-            50: "#F0FDF4",
-            100: "#E6EFEC",
-            200: "#C9DBD6",
-            400: "#68D391",
-            500: "#95B8A8",
-            600: "#7A9E8E"
-          },
-          beige: {
-            50: "#FFFBF5",
-            100: "#F9F7F2",
-            200: "#EFEDE6",
-            500: "#DBCAB0",
-            600: "#BFA88F"
-          },
-          orange: {
-            50: "#FFF7ED",
-            100: "#FAEBE6",
-            400: "#FB923C",
-            500: "#E0B1A6",
-            600: "#C99185"
-          },
-          purple: {
-            50: "#FAF5FF",
-            100: "#F3E8FF",
-            500: "#A78BFA",
-            600: "#9333EA"
-          }
+        // Modern Dark Gold Design System v4.0
+        // 現代黑金配色
+        brand: {
+          primary: "#18181B",      // Zinc-900 主色
+          "primary-light": "#27272A", // Zinc-800 懸浮
+          sidebar: "#09090B",      // Zinc-950 深色背景
+          gold: "#D4AF37",         // 金色強調
+          "gold-light": "#E5C158", // 金色懸浮
+          "gold-dark": "#B8960C",  // 金色點擊
         },
-        // Premium accent colors
+        // 功能色
+        status: {
+          success: "#15803D",      // Green-700
+          "success-light": "#16A34A", // Green-600
+          warning: "#CA8A04",      // Yellow-600
+          "warning-light": "#EAB308", // Yellow-500
+          danger: "#BE123C",       // Rose-700
+          "danger-light": "#E11D48", // Rose-600
+          info: "#0369A1",         // Sky-700
+        },
+        // 中性色階 (Zinc)
+        neutral: {
+          50: "#FAFAFA",
+          100: "#F4F4F5",
+          200: "#E4E4E7",
+          300: "#D4D4D8",
+          400: "#A1A1AA",
+          500: "#71717A",
+          600: "#52525B",
+          700: "#3F3F46",
+          800: "#27272A",
+          900: "#18181B",
+          950: "#09090B",
+        },
+        // 保留向後兼容
         accent: {
-          primary: "#4F46E5",    // Indigo
-          secondary: "#0EA5E9",  // Sky blue
-          success: "#10B981",    // Emerald
-          warning: "#F59E0B",    // Amber
-          danger: "#EF4444",     // Red
+          primary: "#18181B",
+          secondary: "#D4AF37",
+          success: "#15803D",
+          warning: "#CA8A04",
+          danger: "#BE123C",
         }
       },
       fontFamily: {
@@ -72,14 +58,14 @@ export default {
         '2xs': ['0.625rem', { lineHeight: '0.875rem' }],
       },
       boxShadow: {
-        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.05)',
-        'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
-        'elevated': '0 10px 40px -10px rgba(0, 0, 0, 0.1), 0 2px 10px -2px rgba(0, 0, 0, 0.04)',
-        'glow': '0 0 20px rgba(79, 70, 229, 0.15)',
-        'glow-sm': '0 0 10px rgba(79, 70, 229, 0.1)',
-        'inner-soft': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.02)',
-        'card': '0 1px 3px rgba(0,0,0,0.04), 0 6px 16px rgba(0,0,0,0.04)',
-        'card-hover': '0 4px 12px rgba(0,0,0,0.08), 0 16px 32px rgba(0,0,0,0.06)',
+        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.08)',
+        'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.1), 0 10px 20px -2px rgba(0, 0, 0, 0.06)',
+        'elevated': '0 10px 40px -10px rgba(0, 0, 0, 0.15), 0 2px 10px -2px rgba(0, 0, 0, 0.08)',
+        'gold': '0 0 20px rgba(212, 175, 55, 0.2)',
+        'gold-sm': '0 0 10px rgba(212, 175, 55, 0.15)',
+        'inner-soft': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.03)',
+        'card': '0 1px 3px rgba(0,0,0,0.06), 0 6px 16px rgba(0,0,0,0.06)',
+        'card-hover': '0 4px 12px rgba(0,0,0,0.1), 0 16px 32px rgba(0,0,0,0.08)',
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
