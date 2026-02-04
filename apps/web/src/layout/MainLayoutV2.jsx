@@ -1,5 +1,6 @@
 /**
  * MainLayout v2.0 - Premium Edition
+ * Design System v4.0: Modern Dark Gold
  * Expert Panel Redesign with new Sidebar component
  */
 
@@ -14,16 +15,16 @@ const NotificationPanel = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
   
   return (
-    <div className="absolute right-4 top-20 w-80 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 animate-slide-up">
-      <div className="p-4 border-b border-gray-100">
+    <div className="absolute right-4 top-20 w-80 bg-white rounded-2xl shadow-xl border border-zinc-200 z-50 animate-slide-up">
+      <div className="p-4 border-b border-zinc-100">
         <div className="flex items-center justify-between">
-          <h3 className="font-semibold text-gray-800">通知</h3>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded-lg">
+          <h3 className="font-semibold text-zinc-800">通知</h3>
+          <button onClick={onClose} className="p-1 hover:bg-zinc-100 rounded-lg transition-colors">
             <X size={16} />
           </button>
         </div>
       </div>
-      <div className="p-4 text-center text-gray-500 text-sm">
+      <div className="p-4 text-center text-zinc-500 text-sm">
         目前沒有新通知
       </div>
     </div>
@@ -60,7 +61,7 @@ export const MainLayoutV2 = ({ activeTab, setActiveTab, children, addToast }) =>
   }, []);
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-slate-100 via-slate-50 to-white overflow-hidden">
+    <div className="flex h-screen bg-gradient-to-br from-zinc-100 via-zinc-50 to-white overflow-hidden">
       {/* Sidebar - handles its own mobile visibility */}
       <Sidebar 
         activeTab={activeTab} 
@@ -79,11 +80,11 @@ export const MainLayoutV2 = ({ activeTab, setActiveTab, children, addToast }) =>
         ml-0
       `}>
         {/* Header */}
-        <header className="h-16 flex items-center justify-between px-4 md:px-6 lg:px-8 bg-white/70 backdrop-blur-sm border-b border-gray-100/50">
+        <header className="h-16 flex items-center justify-between px-4 md:px-6 lg:px-8 bg-white/80 backdrop-blur-md border-b border-zinc-200/50">
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(true)}
-            className="lg:hidden p-2.5 text-gray-600 hover:text-gray-800 rounded-xl hover:bg-gray-100 transition-all"
+            className="lg:hidden p-2.5 text-zinc-600 hover:text-zinc-800 rounded-xl hover:bg-zinc-100 transition-all"
           >
             <Menu size={22} />
           </button>
@@ -96,7 +97,7 @@ export const MainLayoutV2 = ({ activeTab, setActiveTab, children, addToast }) =>
             {/* Notification Button */}
             <button
               onClick={() => setIsNotificationOpen(!isNotificationOpen)}
-              className="relative p-2.5 text-gray-500 hover:text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-xl transition-all duration-200"
+              className="relative p-2.5 text-zinc-500 hover:text-[#D4AF37] bg-zinc-50 hover:bg-zinc-100 rounded-xl transition-all duration-200"
             >
               <Bell size={18} strokeWidth={1.8} />
               {hasUpcomingEvents && (
@@ -108,7 +109,7 @@ export const MainLayoutV2 = ({ activeTab, setActiveTab, children, addToast }) =>
             <div className="relative">
               <button
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-gray-50 transition-all"
+                className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-zinc-50 transition-all"
               >
                 {user?.photoURL ? (
                   <img
@@ -117,15 +118,15 @@ export const MainLayoutV2 = ({ activeTab, setActiveTab, children, addToast }) =>
                     className="w-9 h-9 rounded-full border-2 border-white shadow-sm object-cover"
                   />
                 ) : (
-                  <div className="w-9 h-9 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center border-2 border-white shadow-sm">
-                    <span className="font-semibold text-indigo-600 text-sm">
+                  <div className="w-9 h-9 bg-gradient-to-br from-zinc-800 to-zinc-900 rounded-full flex items-center justify-center border-2 border-white shadow-sm ring-1 ring-[#D4AF37]/30">
+                    <span className="font-semibold text-[#D4AF37] text-sm">
                       {user?.displayName?.[0] || user?.email?.[0] || 'U'}
                     </span>
                   </div>
                 )}
                 <ChevronDown 
                   size={14} 
-                  className={`text-gray-400 transition-transform ${isUserMenuOpen ? 'rotate-180' : ''}`} 
+                  className={`text-zinc-400 transition-transform ${isUserMenuOpen ? 'rotate-180' : ''}`} 
                 />
               </button>
 
@@ -136,15 +137,15 @@ export const MainLayoutV2 = ({ activeTab, setActiveTab, children, addToast }) =>
                     className="fixed inset-0 z-40"
                     onClick={() => setIsUserMenuOpen(false)}
                   />
-                  <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50 animate-slide-up">
-                    <div className="px-4 py-3 border-b border-gray-100">
-                      <p className="text-sm font-medium text-gray-800">{user?.displayName || user?.email}</p>
-                      <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                  <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-xl shadow-xl border border-zinc-200 py-2 z-50 animate-slide-up">
+                    <div className="px-4 py-3 border-b border-zinc-100">
+                      <p className="text-sm font-medium text-zinc-800">{user?.displayName || user?.email}</p>
+                      <p className="text-xs text-zinc-500 truncate">{user?.email}</p>
                       <span className={`
                         inline-block mt-2 px-2 py-0.5 text-xs font-medium rounded-full
-                        ${role === 'super_admin' ? 'bg-purple-100 text-purple-700' :
-                          role === 'admin' ? 'bg-blue-100 text-blue-700' :
-                          'bg-gray-100 text-gray-700'
+                        ${role === 'super_admin' ? 'bg-[#D4AF37]/15 text-[#B8960C]' :
+                          role === 'admin' ? 'bg-zinc-800 text-white' :
+                          'bg-zinc-100 text-zinc-700'
                         }
                       `}>
                         {role === 'super_admin' ? '最高管理員' : 
