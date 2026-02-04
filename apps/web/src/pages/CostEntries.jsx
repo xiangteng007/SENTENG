@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import {
     DollarSign, Plus, Search, Filter, Calendar, Building2,
     User, FileText, Check, Clock, AlertCircle, TrendingUp,
@@ -33,7 +33,7 @@ function StatCard({ icon: Icon, label, value, color = 'gray', subValue }) {
         green: 'bg-green-50 text-green-600 border-green-200',
         red: 'bg-red-50 text-red-600 border-red-200',
         orange: 'bg-orange-50 text-orange-600 border-orange-200',
-        purple: 'bg-purple-50 text-purple-600 border-purple-200',
+        purple: 'bg-purple-50 text-zinc-700 border-purple-200',
         gray: 'bg-gray-50 text-gray-600 border-gray-200',
     };
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Plane, 
   Plus, 
@@ -284,7 +284,7 @@ export const Drone = ({ addToast }) => {
           <div className="text-sm text-gray-500">已排程</div>
         </div>
         <div className="card p-4 text-center">
-          <div className="text-2xl font-bold text-purple-600">{stats.totalPhotos.toLocaleString()}</div>
+          <div className="text-2xl font-bold text-zinc-700">{stats.totalPhotos.toLocaleString()}</div>
           <div className="text-sm text-gray-500">照片總數</div>
         </div>
         <div className="card p-4 text-center">

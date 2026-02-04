@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState } from 'react';
 import { Building2, Percent, Calendar, TrendingDown, ChevronDown, ChevronUp, AlertCircle } from 'lucide-react';
 
@@ -46,7 +46,7 @@ export const LoanAccountCard = ({ loan, onEdit, onViewDetails, onRecordPayment }
                 className="p-4 flex items-center justify-between cursor-pointer hover:bg-gray-50/50"
             >
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center text-white">
+                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-zinc-800 rounded-xl flex items-center justify-center text-white">
                         <Building2 size={20} />
                     </div>
                     <div>

@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState, useMemo, useEffect } from 'react';
 import { Modal } from '../components/common/Modal';
 import { InputField } from '../components/common/InputField';
@@ -93,7 +93,7 @@ const VendorRow = ({ vendor, onSelect, onDelete }) => {
             <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
                 <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center flex-shrink-0 ${categoryConfig.color === 'orange' ? 'bg-orange-100 text-orange-600' :
                     categoryConfig.color === 'blue' ? 'bg-blue-100 text-blue-600' :
-                        categoryConfig.color === 'purple' ? 'bg-purple-100 text-purple-600' :
+                        categoryConfig.color === 'purple' ? 'bg-zinc-100 text-zinc-700' :
                             'bg-gray-100 text-gray-600'
                     }`}>
                     <CategoryIcon size={20} className="sm:w-6 sm:h-6" />
@@ -372,7 +372,7 @@ const Vendors = ({ data = [], loading, addToast, onUpdateVendors, allProjects = 
                         <div className="flex items-center gap-4">
                             <div className={`w-16 h-16 rounded-full flex items-center justify-center ${categoryConfig.color === 'orange' ? 'bg-orange-100 text-orange-600' :
                                 categoryConfig.color === 'blue' ? 'bg-blue-100 text-blue-600' :
-                                    categoryConfig.color === 'purple' ? 'bg-purple-100 text-purple-600' :
+                                    categoryConfig.color === 'purple' ? 'bg-zinc-100 text-zinc-700' :
                                         'bg-gray-100 text-gray-600'
                                 }`}>
                                 <CategoryIcon size={32} />

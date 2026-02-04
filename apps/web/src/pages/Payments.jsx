@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 請款管理頁面 (Payments.jsx)
  * 請款單列表與編輯器
  */
@@ -222,7 +222,7 @@ const PaymentEditor = ({ payment, onSave, onBack, addToast }) => {
                     {payment?.status === PAYMENT_STATUS.APPROVED && (
                         <button
                             onClick={handleCreateInvoice}
-                            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+                            className="px-4 py-2 bg-zinc-700 text-white rounded-lg hover:bg-zinc-800"
                         >
                             開立發票
                         </button>

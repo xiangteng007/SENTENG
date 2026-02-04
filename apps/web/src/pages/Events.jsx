@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import api from '../services/api';
 import { Calendar, Plus, Filter, Search, Edit2, Trash2, Clock, MapPin, Users, X, Check, ChevronDown } from 'lucide-react';
 import { EmptyState } from '../components/common/EmptyState';
@@ -7,7 +7,7 @@ import { EmptyState } from '../components/common/EmptyState';
 const EVENT_TYPES = {
   MEETING: { label: '會議', color: 'bg-blue-100 text-blue-700' },
   SITE_VISIT: { label: '工地巡檢', color: 'bg-orange-100 text-orange-700' },
-  TRAINING: { label: '教育訓練', color: 'bg-purple-100 text-purple-700' },
+  TRAINING: { label: '教育訓練', color: 'bg-zinc-100 text-zinc-800' },
   CLIENT_MEETING: { label: '業主會議', color: 'bg-green-100 text-green-700' },
   DEADLINE: { label: '截止日', color: 'bg-red-100 text-red-700' },
   OTHER: { label: '其他', color: 'bg-gray-100 text-gray-700' },
@@ -340,7 +340,7 @@ export const Events = ({ addToast }) => {
           <p className="text-sm text-gray-500">已完成</p>
         </div>
         <div className="card p-4 text-center">
-          <p className="text-2xl font-bold text-purple-600">{events.length}</p>
+          <p className="text-2xl font-bold text-zinc-700">{events.length}</p>
           <p className="text-sm text-gray-500">全部活動</p>
         </div>
       </div>

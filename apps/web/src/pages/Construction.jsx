@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Construction as ConstructionIcon, 
   Plus, 
@@ -252,7 +252,7 @@ export const Construction = ({ addToast }) => {
           <div className="text-sm text-gray-500">延遲</div>
         </div>
         <div className="card p-4 text-center">
-          <div className="text-2xl font-bold text-purple-600">{stats.avgProgress}%</div>
+          <div className="text-2xl font-bold text-zinc-700">{stats.avgProgress}%</div>
           <div className="text-sm text-gray-500">平均進度</div>
         </div>
         <div className="card p-4 text-center">

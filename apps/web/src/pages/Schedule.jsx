@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState, useMemo } from 'react';
 import { ChevronLeft, ChevronRight, Plus, CalendarDays, Building2, X, RefreshCw, MapPin, Clock, FileText } from 'lucide-react';
 import { Modal } from '../components/common/Modal';
@@ -314,7 +314,7 @@ const Schedule = ({ data = [], loans = [], addToast, onUpdateCalendar }) => {
                                         <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm mb-1 ${isToday
                                             ? 'bg-blue-500 text-white font-bold shadow-md'
                                             : hasLoanEvent
-                                                ? 'bg-indigo-500 text-white font-bold shadow-md'
+                                                ? 'bg-[#D4AF37] text-white font-bold shadow-md'
                                                 : events.length > 0
                                                     ? 'bg-morandi-text-accent text-white font-bold shadow-md'
                                                     : holiday || weekend
@@ -341,7 +341,7 @@ const Schedule = ({ data = [], loans = [], addToast, onUpdateCalendar }) => {
                                                         setSelectedEvent(evt);
                                                     }}
                                                     className={`text-[10px] px-2 py-1 rounded-lg border truncate cursor-pointer ${evt.type === 'loan'
-                                                        ? 'bg-indigo-100/50 text-indigo-700 border-indigo-200 hover:bg-indigo-100'
+                                                        ? 'bg-[#D4AF37]/15/50 text-zinc-800 border-indigo-200 hover:bg-[#D4AF37]/15'
                                                         : 'bg-morandi-blue-100/50 text-morandi-blue-600 border-morandi-blue-100 hover:bg-morandi-blue-100'
                                                         }`}
                                                 >

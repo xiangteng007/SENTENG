@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Home, 
   Plus, 
@@ -82,7 +82,7 @@ const EditDeviceModal = ({ device, deviceTypes, onClose, onSuccess }) => {
           </div>
           <div className="flex justify-end gap-3 pt-4 border-t dark:border-gray-700">
             <button type="button" onClick={onClose} className="px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50">取消</button>
-            <button type="submit" disabled={loading} className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-lg disabled:opacity-50">
+            <button type="submit" disabled={loading} className="px-4 py-2 bg-gradient-to-r from-green-600 to-teal-600 text-white rounded-lg disabled:opacity-50">
               {loading ? '更新中...' : '儲存變更'}
             </button>
           </div>
@@ -266,7 +266,7 @@ export const SmartHome = ({ addToast }) => {
       case 'ACTIVE':
         return <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700">運作中</span>;
       case 'LOCKED':
-        return <span className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-700">已上鎖</span>;
+        return <span className="text-xs px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-800">已上鎖</span>;
       case 'UNLOCKED':
         return <span className="text-xs px-2 py-0.5 rounded-full bg-orange-100 text-orange-700">未上鎖</span>;
       default:
@@ -280,7 +280,7 @@ export const SmartHome = ({ addToast }) => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-            <Home className="text-emerald-500" size={28} />
+            <Home className="text-green-500" size={28} />
             智慧住宅整合
           </h1>
           <p className="text-gray-500 mt-1">IoT 設備監控與控制</p>
@@ -570,7 +570,7 @@ export const SmartHome = ({ addToast }) => {
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-lg hover:from-emerald-700 hover:to-teal-700 flex items-center gap-2"
+                  className="px-6 py-2.5 bg-gradient-to-r from-green-600 to-teal-600 text-white rounded-lg hover:from-green-700 hover:to-teal-700 flex items-center gap-2"
                 >
                   <Plus className="w-4 h-4" />
                   新增設備

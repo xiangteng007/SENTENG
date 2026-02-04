@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Trash2, 
   Plus, 
@@ -167,7 +167,7 @@ const EditWasteModal = ({ record, wasteTypes, onClose, onSuccess }) => {
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg disabled:opacity-50 flex items-center gap-2"
+              className="px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg disabled:opacity-50 flex items-center gap-2"
             >
               {loading ? '更新中...' : <>
                 <CheckCircle className="w-4 h-4" />
@@ -348,7 +348,7 @@ export const Waste = ({ addToast }) => {
           <div className="text-sm text-gray-500">運送中</div>
         </div>
         <div className="card p-4 text-center">
-          <div className="text-2xl font-bold text-emerald-600">{stats.recycleRate}%</div>
+          <div className="text-2xl font-bold text-green-600">{stats.recycleRate}%</div>
           <div className="text-sm text-gray-500">回收率</div>
         </div>
         <div className="card p-4 text-center">
@@ -658,7 +658,7 @@ export const Waste = ({ addToast }) => {
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:from-green-700 hover:to-emerald-700 flex items-center gap-2"
+                  className="px-6 py-2.5 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:from-green-700 hover:to-green-800 flex items-center gap-2"
                 >
                   <Plus className="w-4 h-4" />
                   建立清運單

@@ -1,4 +1,4 @@
-// User Management Page (Super Admin Only)
+﻿// User Management Page (Super Admin Only)
 import React, { useState, useEffect } from 'react';
 import { useConfirm } from '../components/common/ConfirmModal';
 import {
@@ -49,7 +49,7 @@ const ALL_PAGES = [
 
 // Role level labels
 const ROLE_LABELS = {
-    super_admin: { label: '最高管理員', color: 'bg-purple-500', textColor: 'text-purple-600' },
+    super_admin: { label: '最高管理員', color: 'bg-zinc-600', textColor: 'text-zinc-700' },
     admin: { label: '管理員', color: 'bg-blue-500', textColor: 'text-blue-600' },
     user: { label: '一般使用者', color: 'bg-gray-400', textColor: 'text-gray-600' },
 };

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import api from '../services/api';
 import { PhoneCall, Plus, Filter, Search, Edit2, Trash2, Mail, Building2, User, X, Check, Tag } from 'lucide-react';
 import { EmptyState } from '../components/common/EmptyState';
@@ -7,7 +7,7 @@ import { EmptyState } from '../components/common/EmptyState';
 const CONTACT_CATEGORIES = {
   CLIENT: { label: '業主', color: 'bg-blue-100 text-blue-700' },
   VENDOR: { label: '廠商', color: 'bg-orange-100 text-orange-700' },
-  PARTNER: { label: '合作夥伴', color: 'bg-purple-100 text-purple-700' },
+  PARTNER: { label: '合作夥伴', color: 'bg-zinc-100 text-zinc-800' },
   GOVERNMENT: { label: '政府機關', color: 'bg-green-100 text-green-700' },
   INTERNAL: { label: '內部', color: 'bg-gray-100 text-gray-700' },
   OTHER: { label: '其他', color: 'bg-yellow-100 text-yellow-700' },

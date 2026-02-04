@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState } from 'react';
 import {
     Calculator, Building2, Layers, Grid3X3, Paintbrush, BarChart3,
@@ -1487,7 +1487,7 @@ const StructureCalculator = ({ onAddRecord, vendors = [] }) => {
                             {/* 樓梯 */}
                             <div className="bg-gray-50 rounded-lg p-3 space-y-2">
                                 <div className="font-medium text-gray-700 text-sm flex items-center gap-2">
-                                    <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
+                                    <span className="w-2 h-2 bg-zinc-600 rounded-full"></span>
                                     樓梯鋼筋
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { BarChart3, Download, Filter, Calendar, FileText, DollarSign, Briefcase, Users, TrendingUp, PieChart, Loader2, Check } from 'lucide-react';
 
 // 報表定義
@@ -37,7 +37,7 @@ const REPORT_TEMPLATES = {
   analytics: {
     label: '分析報表',
     icon: TrendingUp,
-    color: 'from-purple-400 to-purple-600',
+    color: 'from-purple-400 to-zinc-800',
     reports: [
       { id: 'monthly_trend', name: '月度趨勢分析', description: '收入、成本月度變化趨勢' },
       { id: 'profitability', name: '獲利能力分析', description: '專案類型與客戶獲利比較' },
@@ -177,7 +177,7 @@ export const Reports = ({ addToast }) => {
           <p className="text-sm text-gray-500">已生成</p>
         </div>
         <div className="card p-4 text-center">
-          <p className="text-2xl font-bold text-purple-600">
+          <p className="text-2xl font-bold text-zinc-700">
             {Object.keys(REPORT_TEMPLATES).length}
           </p>
           <p className="text-sm text-gray-500">報表類別</p>

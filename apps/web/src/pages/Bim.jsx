@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import api from '../services/api';
 import { 
   Box, 
@@ -87,7 +87,7 @@ const EditModelModal = ({ model, categories, onClose, onSuccess }) => {
           </div>
           <div className="flex justify-end gap-3 pt-4 border-t dark:border-gray-700">
             <button type="button" onClick={onClose} className="px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50">取消</button>
-            <button type="submit" disabled={loading} className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg disabled:opacity-50">
+            <button type="submit" disabled={loading} className="px-4 py-2 bg-gradient-to-r from-zinc-700 to-blue-600 text-white rounded-lg disabled:opacity-50">
               {loading ? '更新中...' : '儲存變更'}
             </button>
           </div>
@@ -256,7 +256,7 @@ export const Bim = ({ addToast }) => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-            <Box className="text-purple-500" size={28} />
+            <Box className="text-zinc-600" size={28} />
             BIM 模型管理
           </h1>
           <p className="text-gray-500 mt-1">建築資訊模型檢視與管理</p>
@@ -290,7 +290,7 @@ export const Bim = ({ addToast }) => {
           <div className="text-sm text-gray-500">總元件數</div>
         </div>
         <div className="card p-4 text-center">
-          <div className="text-2xl font-bold text-purple-600">{stats.totalSize} MB</div>
+          <div className="text-2xl font-bold text-zinc-700">{stats.totalSize} MB</div>
           <div className="text-sm text-gray-500">總容量</div>
         </div>
         <div className="card p-4 text-center">

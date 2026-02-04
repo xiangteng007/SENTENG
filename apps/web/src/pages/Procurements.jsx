@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Plus, Search, Package, Calendar, DollarSign, Building2, FileText, CheckCircle, Clock, AlertCircle, X, Truck, ChevronDown, ChevronUp, Edit2, Trash2 } from 'lucide-react';
 import api from '../services/api';
 import { useConfirm } from '../components/common/ConfirmModal';
@@ -7,7 +7,7 @@ const STATUS_CONFIG = {
   DRAFT: { label: '草稿', color: 'bg-gray-100 text-gray-700', icon: FileText },
   PENDING: { label: '待審核', color: 'bg-yellow-100 text-yellow-700', icon: Clock },
   APPROVED: { label: '已核准', color: 'bg-blue-100 text-blue-700', icon: CheckCircle },
-  ORDERED: { label: '已訂購', color: 'bg-purple-100 text-purple-700', icon: Truck },
+  ORDERED: { label: '已訂購', color: 'bg-zinc-100 text-zinc-800', icon: Truck },
   RECEIVED: { label: '已收貨', color: 'bg-green-100 text-green-700', icon: CheckCircle },
   CANCELLED: { label: '已取消', color: 'bg-red-100 text-red-700', icon: AlertCircle },
 };
@@ -192,7 +192,7 @@ const CreateProcurementModal = ({ onClose, onSuccess }) => {
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-50 flex items-center gap-2"
+              className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-zinc-800 text-white rounded-lg hover:from-blue-700 hover:to-zinc-900 transition-all disabled:opacity-50 flex items-center gap-2"
             >
               {loading ? (
                 <>
@@ -379,7 +379,7 @@ const EditProcurementModal = ({ procurement, onClose, onSuccess }) => {
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-50 flex items-center gap-2"
+              className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-zinc-800 text-white rounded-lg hover:from-blue-700 hover:to-zinc-900 transition-all disabled:opacity-50 flex items-center gap-2"
             >
               {loading ? (
                 <>
@@ -497,7 +497,7 @@ const Procurements = () => {
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg"
+          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-zinc-800 text-white rounded-lg hover:from-blue-700 hover:to-zinc-900 transition-all shadow-lg"
         >
           <Plus className="w-5 h-5" />
           新增採購單

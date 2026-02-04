@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Calendar, 
   Plus, 
@@ -125,7 +125,7 @@ const EditScheduleModal = ({ task, projects, onClose, onSuccess }) => {
 
           <div className="flex justify-end gap-3 pt-4 border-t dark:border-gray-700">
             <button type="button" onClick={onClose} className="px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50">取消</button>
-            <button type="submit" disabled={loading} className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg disabled:opacity-50">
+            <button type="submit" disabled={loading} className="px-4 py-2 bg-gradient-to-r from-zinc-700 to-zinc-800 text-white rounded-lg disabled:opacity-50">
               {loading ? '更新中...' : '儲存變更'}
             </button>
           </div>
@@ -355,7 +355,7 @@ export const Schedules = ({ addToast }) => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-            <Calendar className="text-indigo-500" size={28} />
+            <Calendar className="text-[#D4AF37]" size={28} />
             工程進度排程
           </h1>
           <p className="text-gray-500 mt-1">甘特圖與要徑分析</p>
@@ -388,7 +388,7 @@ export const Schedules = ({ addToast }) => {
           <div className="text-sm text-gray-500">要徑任務</div>
         </div>
         <div className="card p-4 text-center">
-          <div className="text-2xl font-bold text-purple-600">{stats.milestones}</div>
+          <div className="text-2xl font-bold text-zinc-700">{stats.milestones}</div>
           <div className="text-sm text-gray-500">里程碑</div>
         </div>
         <div className="card p-4 text-center">
@@ -432,7 +432,7 @@ export const Schedules = ({ addToast }) => {
               <button
                 key={mode}
                 onClick={() => setViewMode(mode)}
-                className={`px-3 py-1.5 text-sm ${viewMode === mode ? 'bg-indigo-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
+                className={`px-3 py-1.5 text-sm ${viewMode === mode ? 'bg-[#D4AF37] text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
               >
                 {mode === 'week' ? '週' : '月'}
               </button>
@@ -472,7 +472,7 @@ export const Schedules = ({ addToast }) => {
                   <div className="w-64 flex-shrink-0 p-3 border-r flex items-center justify-between">
                     <div className="flex items-center gap-2 flex-1 min-w-0">
                       {task.milestone ? (
-                        <Flag size={16} className="text-purple-500 flex-shrink-0" />
+                        <Flag size={16} className="text-zinc-600 flex-shrink-0" />
                       ) : task.critical ? (
                         <AlertTriangle size={16} className="text-red-500 flex-shrink-0" />
                       ) : (
@@ -517,7 +517,7 @@ export const Schedules = ({ addToast }) => {
                         title={`${task.name} (${task.progress}%)`}
                       >
                         {task.milestone ? (
-                          <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-purple-600 rotate-45" />
+                          <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-zinc-700 rotate-45" />
                         ) : (
                           <div 
                             className="h-full bg-white/30 rounded-l"
@@ -549,7 +549,7 @@ export const Schedules = ({ addToast }) => {
           <span>要徑任務</span>
         </div>
         <div className="flex items-center gap-2">
-          <Flag size={16} className="text-purple-500" />
+          <Flag size={16} className="text-zinc-600" />
           <span>里程碑</span>
         </div>
       </div>
@@ -672,7 +672,7 @@ export const Schedules = ({ addToast }) => {
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 flex items-center gap-2"
+                  className="px-6 py-2.5 bg-gradient-to-r from-zinc-700 to-zinc-800 text-white rounded-lg hover:from-zinc-800 hover:to-purple-700 flex items-center gap-2"
                 >
                   <Plus className="w-4 h-4" />
                   建立任務

@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState, useEffect, useMemo } from 'react';
 import {
     Package, Plus, Search, Filter, Edit2, Trash2,
@@ -501,7 +501,7 @@ const Inventory = ({ data, addToast, onUpdateInventory }) => {
                             <button
                                 onClick={syncToSheet}
                                 disabled={isSyncing}
-                                className="flex items-center gap-2 px-3 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50 text-sm"
+                                className="flex items-center gap-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 text-sm"
                             >
                                 {isSyncing ? (
                                     <RefreshCw size={16} className="animate-spin" />
@@ -704,7 +704,7 @@ const Inventory = ({ data, addToast, onUpdateInventory }) => {
                                                 </button>
                                                 <button
                                                     onClick={() => openMovement(item, '出')}
-                                                    className="p-1.5 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+                                                    className="p-1.5 text-zinc-700 hover:bg-zinc-50 rounded-lg transition-colors"
                                                     title="出庫"
                                                 >
                                                     <ArrowUpCircle size={18} />
@@ -752,7 +752,7 @@ const Inventory = ({ data, addToast, onUpdateInventory }) => {
                                     {m.type === '入' ? (
                                         <ArrowDownCircle size={18} className="text-green-500" />
                                     ) : (
-                                        <ArrowUpCircle size={18} className="text-purple-500" />
+                                        <ArrowUpCircle size={18} className="text-zinc-600" />
                                     )}
                                     <div>
                                         <div className="font-medium text-gray-700">{m.itemName}</div>
@@ -760,7 +760,7 @@ const Inventory = ({ data, addToast, onUpdateInventory }) => {
                                     </div>
                                 </div>
                                 <div className="text-right">
-                                    <div className={`font-bold ${m.type === '入' ? 'text-green-600' : 'text-purple-600'}`}>
+                                    <div className={`font-bold ${m.type === '入' ? 'text-green-600' : 'text-zinc-700'}`}>
                                         {m.type === '入' ? '+' : '-'}{m.quantity}
                                     </div>
                                     <div className="text-xs text-gray-400">{formatDate(m.date)}</div>
