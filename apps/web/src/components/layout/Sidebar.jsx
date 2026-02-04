@@ -11,7 +11,8 @@ import {
   DollarSign, Package, FileText, CreditCard, Briefcase, BarChart3,
   ClipboardList, HardHat, Grid3X3, Cpu, Plane, Home, BookOpen,
   Shield, Trash2, Wrench, Settings, Link, Bell, ChevronRight,
-  ChevronLeft, Search, Moon, Sun, LogOut, User
+  ChevronLeft, Search, Moon, Sun, LogOut, User,
+  Calculator, Palette, Flag, Scale, Flame, Landmark, UserCheck
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -20,36 +21,57 @@ import { useAuth } from '../../context/AuthContext';
 // ============================================
 
 const ALL_MENU_ITEMS = {
+  // 總覽
   'dashboard': { id: 'dashboard', icon: LayoutDashboard, label: '儀表板', path: '/' },
   'schedule': { id: 'schedule', icon: CalendarIcon, label: '行程管理', path: '/schedule' },
   'events': { id: 'events', icon: CalendarIcon, label: '活動', path: '/events' },
+  // 專案業務
   'projects': { id: 'projects', icon: Building2, label: '專案管理', path: '/projects' },
   'clients': { id: 'clients', icon: Users, label: '客戶管理', path: '/clients' },
   'contacts': { id: 'contacts', icon: Users, label: '聯絡人', path: '/contacts' },
   'contracts': { id: 'contracts', icon: FileText, label: '合約管理', path: '/contracts' },
   'quotations': { id: 'quotations', icon: FileText, label: '報價管理', path: '/quotations' },
   'change-orders': { id: 'change-orders', icon: FileText, label: '變更單', path: '/change-orders' },
+  'milestones': { id: 'milestones', icon: Flag, label: '履約管理', path: '/milestones' },
+  'contract-alerts': { id: 'contract-alerts', icon: Bell, label: '合約到期', path: '/contract-alerts' },
+  // 政府標案
+  'government-projects': { id: 'government-projects', icon: Landmark, label: '政府標案', path: '/government-projects' },
+  // 人資管理
+  'labor-contracts': { id: 'labor-contracts', icon: FileText, label: '勞動契約', path: '/labor-contracts' },
+  'labor-disputes': { id: 'labor-disputes', icon: Scale, label: '勞資爭議', path: '/labor-disputes' },
+  // 供應鏈
   'vendors': { id: 'vendors', icon: Building2, label: '廠商管理', path: '/vendors' },
   'procurements': { id: 'procurements', icon: Package, label: '採購管理', path: '/procurements' },
   'inventory': { id: 'inventory', icon: Package, label: '庫存管理', path: '/inventory' },
+  // 財務會計
   'finance': { id: 'finance', icon: DollarSign, label: '財務管理', path: '/finance' },
   'invoice': { id: 'invoice', icon: FileText, label: '發票助手', path: '/invoice' },
   'payments': { id: 'payments', icon: CreditCard, label: '付款管理', path: '/payments' },
+  // 分析報表
   'cost-entries': { id: 'cost-entries', icon: DollarSign, label: '成本追蹤', path: '/cost-entries' },
   'profit': { id: 'profit', icon: BarChart3, label: '利潤分析', path: '/profit' },
   'reports': { id: 'reports', icon: BarChart3, label: '報表中心', path: '/reports' },
+  // 工地管理
   'site-logs': { id: 'site-logs', icon: ClipboardList, label: '工地日誌', path: '/site-logs' },
   'construction': { id: 'construction', icon: HardHat, label: '施工管理', path: '/construction' },
   'schedules': { id: 'schedules', icon: CalendarIcon, label: '進度排程', path: '/schedules' },
+  // 智慧管理
   'bim': { id: 'bim', icon: Grid3X3, label: 'BIM 中心', path: '/bim' },
   'drone': { id: 'drone', icon: Plane, label: '無人機', path: '/drone' },
   'smart-home': { id: 'smart-home', icon: Home, label: '智慧住宅', path: '/smart-home' },
+  // 工具箱
   'regulations': { id: 'regulations', icon: BookOpen, label: '法規查詢', path: '/regulations' },
   'materials': { id: 'materials', icon: Package, label: '材料圖庫', path: '/materials' },
   'materials-calc': { id: 'materials-calc', icon: Wrench, label: '材料估算', path: '/unit' },
   'cost': { id: 'cost', icon: DollarSign, label: '成本估價', path: '/cost' },
+  'calculators': { id: 'calculators', icon: Calculator, label: '專業計算器', path: '/calculators' },
+  'visual-tools': { id: 'visual-tools', icon: Palette, label: '視覺設計', path: '/visual-tools' },
+  // 安全環保
   'insurance': { id: 'insurance', icon: Shield, label: '保險管理', path: '/insurance' },
   'waste': { id: 'waste', icon: Trash2, label: '廢棄物', path: '/waste' },
+  'safety': { id: 'safety', icon: UserCheck, label: '職安衛', path: '/safety' },
+  'fire-safety': { id: 'fire-safety', icon: Flame, label: '消防檢測', path: '/fire-safety' },
+  // 系統設定
   'user-management': { id: 'user-management', icon: Settings, label: '使用者管理', path: '/admin/users' },
   'integrations': { id: 'integrations', icon: Link, label: '整合設定', path: '/settings/integrations' },
   'notifications': { id: 'notifications', icon: Bell, label: '通知設定', path: '/notifications' },
@@ -57,14 +79,16 @@ const ALL_MENU_ITEMS = {
 
 const MENU_GROUPS = [
   { id: 'overview', label: '總覽', icon: LayoutDashboard, items: ['dashboard', 'schedule', 'events'], defaultExpanded: true },
-  { id: 'project', label: '專案業務', icon: Briefcase, items: ['projects', 'clients', 'contacts', 'contracts', 'quotations', 'change-orders'] },
+  { id: 'project', label: '專案業務', icon: Briefcase, items: ['projects', 'clients', 'contracts', 'quotations', 'change-orders', 'milestones', 'contract-alerts'] },
+  { id: 'government', label: '政府標案', icon: Landmark, items: ['government-projects'] },
+  { id: 'hr', label: '人資管理', icon: UserCheck, items: ['labor-contracts', 'labor-disputes'] },
   { id: 'supply', label: '供應鏈', icon: Package, items: ['vendors', 'procurements', 'inventory'] },
   { id: 'finance', label: '財務會計', icon: DollarSign, items: ['finance', 'invoice', 'payments'] },
   { id: 'analytics', label: '分析報表', icon: BarChart3, items: ['cost-entries', 'profit', 'reports'] },
   { id: 'site', label: '工地管理', icon: HardHat, items: ['site-logs', 'construction', 'schedules'] },
   { id: 'smart', label: '智慧管理', icon: Cpu, items: ['bim', 'drone', 'smart-home'] },
-  { id: 'tools', label: '工具箱', icon: Wrench, items: ['materials', 'materials-calc', 'cost', 'regulations'] },
-  { id: 'safety', label: '安全環保', icon: Shield, items: ['insurance', 'waste'] },
+  { id: 'tools', label: '工具箱', icon: Wrench, items: ['materials', 'materials-calc', 'cost', 'regulations', 'calculators', 'visual-tools'] },
+  { id: 'safety', label: '安全環保', icon: Shield, items: ['insurance', 'waste', 'safety', 'fire-safety'] },
   { id: 'admin', label: '系統設定', icon: Settings, items: ['user-management', 'integrations', 'notifications'], adminOnly: true },
 ];
 
