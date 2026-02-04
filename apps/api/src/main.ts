@@ -63,33 +63,14 @@ async function bootstrap() {
   await runMigrations();
 
   // ========================================
-  // CORS Configuration
+  // CORS Configuration - DEBUG MODE: Allow ALL origins
   // Firebase Project: SENTENG (ID: senteng-4d9cb, Number: 738698283482)
   // ========================================
-  const isProduction = process.env.NODE_ENV === "production";
-  const allowedOrigins = isProduction
-    ? [
-        "https://senteng.co",
-        "https://www.senteng.co",
-        "https://senteng-4d9cb.web.app",
-        "https://senteng-4d9cb.firebaseapp.com",
-      ]
-    : [
-        "http://localhost:5173",
-        "http://localhost:5176",
-        "https://senteng.co",
-        "https://www.senteng.co",
-        "https://senteng-4d9cb.web.app",
-        "https://senteng-4d9cb.firebaseapp.com",
-      ];
-  const corsOrigins = process.env.CORS_ORIGINS
-    ? process.env.CORS_ORIGINS.split(",")
-    : allowedOrigins;
-
-  // Create app with CORS enabled at the earliest possible point
+  
+  // Create app with CORS - TEMPORARILY allowing all origins for debugging
   const app = await NestFactory.create(AppModule, {
     cors: {
-      origin: corsOrigins,
+      origin: true, // Allow ALL origins for debugging
       methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
       allowedHeaders: ["Content-Type", "Authorization", "X-CSRF-Token", "X-Requested-With"],
       credentials: true,
