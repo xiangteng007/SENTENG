@@ -127,32 +127,323 @@
   }
 
   .status-dot-active {
-    @apply bg-green-400;
-    box-shadow: 0 0 8px rgba(52, 211, 153, 0.5);
+    @apply bg-green-600;
+    box-shadow: 0 0 8px rgba(21, 128, 61, 0.5);
   }
 
   .status-dot-warning {
-    @apply bg-amber-400;
-    box-shadow: 0 0 8px rgba(251, 191, 36, 0.5);
+    @apply bg-yellow-600;
+    box-shadow: 0 0 8px rgba(202, 138, 4, 0.5);
   }
 
   .status-dot-danger {
-    @apply bg-red-400;
-    box-shadow: 0 0 8px rgba(248, 113, 113, 0.5);
+    @apply bg-rose-600;
+    box-shadow: 0 0 8px rgba(190, 18, 60, 0.5);
   }
 
-  /* Gradient text */
+  /* Gradient text - Modern Dark Gold */
   .gradient-text {
-    background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+    background: linear-gradient(135deg, #18181B 0%, #D4AF37 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
+  .gradient-text-gold {
+    background: linear-gradient(135deg, #D4AF37 0%, #B8960C 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Stat Card Widget */
+  .stat-card {
+    @apply rounded-xl p-5;
+    background: #FFFFFF;
+    border: 1px solid #E4E4E7;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  .stat-card-value {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+
+  .stat-card-trend-up {
+    color: #15803D;
+  }
+
+  .stat-card-trend-down {
+    color: #BE123C;
+  }
+
+  /* Progress Bar */
+  .progress-bar {
+    @apply h-2 rounded-full overflow-hidden;
+    background: #E4E4E7;
+  }
+
+  .progress-bar-fill {
+    @apply h-full rounded-full transition-all duration-500;
+    background: linear-gradient(90deg, #18181B 0%, #D4AF37 100%);
+  }
+
+  .progress-bar-gold .progress-bar-fill {
+    background: linear-gradient(90deg, #D4AF37 0%, #B8960C 100%);
+  }
+
+  /* Badge System */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-default {
+    @apply bg-zinc-100 text-zinc-700;
+  }
+
+  .badge-gold {
+    background: rgba(212, 175, 55, 0.15);
+    color: #B8960C;
+  }
+
+  .badge-success {
+    @apply bg-green-100 text-green-700;
+  }
+
+  .badge-warning {
+    @apply bg-yellow-100 text-yellow-700;
+  }
+
+  .badge-danger {
+    @apply bg-rose-100 text-rose-700;
+  }
+
+  /* Skeleton Loading */
+  .skeleton {
+    @apply rounded;
+    background: linear-gradient(90deg, #E4E4E7 25%, #D4D4D8 50%, #E4E4E7 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite linear;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* Empty State */
+  .empty-state {
+    @apply flex flex-col items-center justify-center py-12 px-6 text-center;
+  }
+
+  .empty-state-icon {
+    @apply w-16 h-16 mb-4 text-zinc-300;
+  }
+
+  .empty-state-title {
+    @apply text-lg font-medium text-zinc-700 mb-2;
+  }
+
+  .empty-state-description {
+    @apply text-sm text-zinc-500 mb-6 max-w-sm;
+  }
+
+  /* Tooltip */
+  .tooltip {
+    @apply absolute z-50 px-3 py-1.5 text-xs font-medium rounded-lg shadow-lg;
+    background: #18181B;
+    color: #FAFAFA;
+    animation: tooltipIn 0.15s ease-out;
+  }
+
+  @keyframes tooltipIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
   /* Divider with gradient */
   .divider-gradient {
     height: 1px;
-    background: linear-gradient(90deg, transparent 0%, #E5E7EB 50%, transparent 100%);
+    background: linear-gradient(90deg, transparent 0%, #E4E4E7 50%, transparent 100%);
+  }
+
+  /* ============================================
+     Form Components - Modern Dark Gold
+     ============================================ */
+  
+  /* Input Field */
+  .input-field {
+    @apply w-full px-4 py-2.5 rounded-lg text-sm transition-all duration-200;
+    background: #FFFFFF;
+    border: 1px solid #E4E4E7;
+    color: #18181B;
+  }
+
+  .input-field::placeholder {
+    color: #A1A1AA;
+  }
+
+  .input-field:focus {
+    outline: none;
+    border-color: #D4AF37;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.12);
+  }
+
+  .input-field:disabled {
+    background: #F4F4F5;
+    color: #A1A1AA;
+    cursor: not-allowed;
+  }
+
+  /* Select Field */
+  .select-field {
+    @apply w-full px-4 py-2.5 rounded-lg text-sm transition-all duration-200 appearance-none cursor-pointer;
+    background: #FFFFFF url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2371717A'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E") no-repeat right 12px center;
+    background-size: 16px;
+    border: 1px solid #E4E4E7;
+    color: #18181B;
+    padding-right: 40px;
+  }
+
+  .select-field:focus {
+    outline: none;
+    border-color: #D4AF37;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.12);
+  }
+
+  /* Checkbox */
+  .checkbox-field {
+    @apply w-5 h-5 rounded cursor-pointer transition-all duration-150;
+    appearance: none;
+    border: 2px solid #D4D4D8;
+    background: #FFFFFF;
+  }
+
+  .checkbox-field:checked {
+    background: #18181B;
+    border-color: #18181B;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23D4AF37'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z'/%3E%3C/svg%3E");
+    background-position: center;
+    background-size: 14px;
+  }
+
+  .checkbox-field:focus {
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+  }
+
+  /* Radio Button */
+  .radio-field {
+    @apply w-5 h-5 rounded-full cursor-pointer transition-all duration-150;
+    appearance: none;
+    border: 2px solid #D4D4D8;
+    background: #FFFFFF;
+  }
+
+  .radio-field:checked {
+    border-color: #18181B;
+    background: radial-gradient(circle, #D4AF37 40%, #FFFFFF 45%);
+  }
+
+  .radio-field:focus {
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+  }
+
+  /* Form Label */
+  .form-label {
+    @apply block text-sm font-medium mb-1.5;
+    color: #3F3F46;
+  }
+
+  /* Form Error */
+  .form-error {
+    @apply text-xs mt-1;
+    color: #BE123C;
+  }
+
+  /* ============================================
+     Table Components - Modern Dark Gold
+     ============================================ */
+  
+  .table-container {
+    @apply w-full overflow-x-auto rounded-xl;
+    background: #FFFFFF;
+    border: 1px solid #E4E4E7;
+  }
+
+  .table-styled {
+    @apply w-full;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  .table-styled th {
+    @apply px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider;
+    background: #FAFAFA;
+    color: #52525B;
+    border-bottom: 1px solid #E4E4E7;
+  }
+
+  .table-styled td {
+    @apply px-4 py-3.5 text-sm;
+    color: #18181B;
+    border-bottom: 1px solid #F4F4F5;
+  }
+
+  .table-styled tbody tr:hover {
+    background: rgba(212, 175, 55, 0.04);
+  }
+
+  .table-styled tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  /* Table Zebra Stripes */
+  .table-striped tbody tr:nth-child(even) {
+    background: #FAFAFA;
+  }
+
+  .table-striped tbody tr:nth-child(even):hover {
+    background: rgba(212, 175, 55, 0.06);
+  }
+
+  /* Modal Styles */
+  .modal-backdrop {
+    @apply fixed inset-0 z-50;
+    background: rgba(9, 9, 11, 0.7);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-content {
+    @apply relative rounded-2xl overflow-hidden;
+    background: #FFFFFF;
+    box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.25);
+    animation: modalIn 0.2s ease-out;
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.95) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .modal-header {
+    @apply flex items-center justify-between px-6 py-4;
+    border-bottom: 1px solid #E4E4E7;
+  }
+
+  .modal-title {
+    @apply text-lg font-semibold;
+    color: #18181B;
+  }
+
+  .modal-body {
+    @apply px-6 py-5;
+  }
+
+  .modal-footer {
+    @apply flex items-center justify-end gap-3 px-6 py-4;
+    background: #FAFAFA;
+    border-top: 1px solid #E4E4E7;
   }
 }
 
