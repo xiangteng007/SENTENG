@@ -201,7 +201,7 @@ const Dashboard = ({ events = [], finance = {}, projects = [], clients = [] }) =
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        const res = await api.get('/activities');
+        const res = await api.get('/events');
         if (res.data?.items || res.data?.length) {
           setRecentActivities(res.data?.items || res.data);
         }
