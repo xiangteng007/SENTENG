@@ -88,19 +88,25 @@ async function bootstrap() {
   const defaultOrigins = isProduction
     ? [
         "https://senteng.co",
+        "https://www.senteng.co",
+        "https://lightkeepers.nsq",
         "https://senteng-erp.web.app",
         "https://senteng-erp.firebaseapp.com",
         "https://senteng-4d9cb.web.app",
         "https://senteng-4d9cb.firebaseapp.com",
+        "https://senteng-system.vercel.app",
       ]
     : [
         "http://localhost:5173",
         "http://localhost:5176",
         "https://senteng.co",
+        "https://www.senteng.co",
+        "https://lightkeepers.nsq",
         "https://senteng-erp.web.app",
         "https://senteng-erp.firebaseapp.com",
         "https://senteng-4d9cb.web.app",
         "https://senteng-4d9cb.firebaseapp.com",
+        "https://senteng-system.vercel.app",
       ];
   const corsOrigins = process.env.CORS_ORIGINS
     ? process.env.CORS_ORIGINS.split(",")
@@ -108,7 +114,7 @@ async function bootstrap() {
   app.enableCors({
     origin: corsOrigins,
     methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-CSRF-Token", "X-Requested-With"],
     credentials: true, // Required for cookies
   });
 
