@@ -52,6 +52,9 @@ const GovernmentProjects = lazy(() => import('./pages/GovernmentProjects').then(
 const OccupationalSafety = lazy(() => import('./pages/OccupationalSafety').then(m => ({ default: m.OccupationalSafety })));
 const FireSafetyRecords = lazy(() => import('./pages/FireSafetyRecords').then(m => ({ default: m.FireSafetyRecords })));
 const ProfessionalCalculators = lazy(() => import('./pages/ProfessionalCalculators').then(m => ({ default: m.ProfessionalCalculators })));
+const LaborContracts = lazy(() => import('./pages/LaborContracts').then(m => ({ default: m.LaborContracts })));
+const ContractAlerts = lazy(() => import('./pages/ContractAlerts').then(m => ({ default: m.ContractAlerts })));
+const VisualEnhancements = lazy(() => import('./pages/VisualEnhancements').then(m => ({ default: m.VisualEnhancements })));
 
 // Loading Screen Component
 const LoadingScreen = () => (
@@ -389,6 +392,21 @@ const AppContent = () => {
         <Route path="/calculators" element={
           <ProtectedRoute pageId="calculators">
             <ProfessionalCalculators addToast={addToast} />
+          </ProtectedRoute>
+        } />
+        <Route path="/labor-contracts" element={
+          <ProtectedRoute pageId="labor-contracts">
+            <LaborContracts addToast={addToast} />
+          </ProtectedRoute>
+        } />
+        <Route path="/contract-alerts" element={
+          <ProtectedRoute pageId="contract-alerts">
+            <ContractAlerts addToast={addToast} />
+          </ProtectedRoute>
+        } />
+        <Route path="/visual-tools" element={
+          <ProtectedRoute pageId="visual-tools">
+            <VisualEnhancements addToast={addToast} />
           </ProtectedRoute>
         } />
         <Route path="/login" element={<LoginPage />} />
