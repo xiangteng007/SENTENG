@@ -208,6 +208,17 @@ const Sidebar = ({ activeTab, onNavigate, isMobileOpen, onMobileClose }) => {
     return stored !== null ? stored === 'true' : true;
   });
 
+  // Apply theme on mount and when darkMode changes
+  React.useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.remove('light-mode');
+      document.documentElement.classList.add('dark-mode');
+    } else {
+      document.documentElement.classList.remove('dark-mode');
+      document.documentElement.classList.add('light-mode');
+    }
+  }, [darkMode]);
+
   // Filter groups based on permissions
   const visibleGroups = useMemo(() => {
     return MENU_GROUPS.filter(group => {
@@ -339,9 +350,6 @@ const Sidebar = ({ activeTab, onNavigate, isMobileOpen, onMobileClose }) => {
             const newMode = !darkMode;
             setDarkMode(newMode);
             localStorage.setItem('senteng_darkMode', String(newMode));
-            // Apply theme to document
-            document.documentElement.classList.toggle('light-mode', !newMode);
-            document.documentElement.classList.toggle('dark-mode', newMode);
           }}
           className={`
             flex items-center gap-3 w-full rounded-lg transition-colors
