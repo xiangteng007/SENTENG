@@ -47,6 +47,11 @@ const CostEstimator = lazy(() => import('./pages/CostEstimator').then(m => ({ de
 const MaterialGallery = lazy(() => import('./pages/MaterialGallery').then(m => ({ default: m.MaterialGallery })));
 const InvoiceHelper = lazy(() => import('./pages/InvoiceHelper').then(m => ({ default: m.InvoiceHelper })));
 
+// NEW: Expert Panel v4.9 P2 Modules
+const GovernmentProjects = lazy(() => import('./pages/GovernmentProjects').then(m => ({ default: m.GovernmentProjects })));
+const OccupationalSafety = lazy(() => import('./pages/OccupationalSafety').then(m => ({ default: m.OccupationalSafety })));
+const FireSafetyRecords = lazy(() => import('./pages/FireSafetyRecords').then(m => ({ default: m.FireSafetyRecords })));
+
 // Loading Screen Component
 const LoadingScreen = () => (
   <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 flex items-center justify-center">
@@ -362,6 +367,22 @@ const AppContent = () => {
         <Route path="/notifications" element={
           <ProtectedRoute pageId="notifications">
             <Notifications addToast={addToast} />
+          </ProtectedRoute>
+        } />
+        {/* NEW: Expert Panel v4.9 P2 Modules */}
+        <Route path="/government-projects" element={
+          <ProtectedRoute pageId="government-projects">
+            <GovernmentProjects addToast={addToast} />
+          </ProtectedRoute>
+        } />
+        <Route path="/safety" element={
+          <ProtectedRoute pageId="safety">
+            <OccupationalSafety addToast={addToast} />
+          </ProtectedRoute>
+        } />
+        <Route path="/fire-safety" element={
+          <ProtectedRoute pageId="fire-safety">
+            <FireSafetyRecords addToast={addToast} />
           </ProtectedRoute>
         } />
         <Route path="/login" element={<LoginPage />} />
