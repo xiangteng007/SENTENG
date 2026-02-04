@@ -67,24 +67,11 @@ async function bootstrap() {
   // Enable cookie parsing for HttpOnly JWT tokens
   app.use(cookieParser());
 
-  // CSRF Protection using Double Submit Cookie pattern
-  // Must be after cookie-parser
-  const csrfMiddleware = new CsrfMiddleware();
-  app.use((req: any, res: any, next: any) =>
-    csrfMiddleware.use(req, res, next),
-  );
-
-  // Security headers with Helmet
-  app.use(
-    helmet({
-      contentSecurityPolicy: false, // Disable CSP for API (frontend handles it)
-      crossOriginEmbedderPolicy: false, // Allow embedding from other origins
-    }),
-  );
-
-  // Enable CORS with credentials for cookies
-  // Production: Set CORS_ORIGINS env var (comma-separated)
+  // ========================================
+  // CORS MUST BE FIRST - Before any other middleware
+  // This ensures OPTIONS preflight requests get proper headers
   // Firebase Project: SENTENG (ID: senteng-4d9cb, Number: 738698283482)
+  // ========================================
   const isProduction = process.env.NODE_ENV === "production";
   const defaultOrigins = isProduction
     ? [
@@ -110,6 +97,21 @@ async function bootstrap() {
     allowedHeaders: ["Content-Type", "Authorization", "X-CSRF-Token", "X-Requested-With"],
     credentials: true, // Required for cookies
   });
+
+  // Security headers with Helmet (after CORS)
+  app.use(
+    helmet({
+      contentSecurityPolicy: false, // Disable CSP for API (frontend handles it)
+      crossOriginEmbedderPolicy: false, // Allow embedding from other origins
+    }),
+  );
+
+  // CSRF Protection using Double Submit Cookie pattern
+  // Must be after cookie-parser and CORS
+  const csrfMiddleware = new CsrfMiddleware();
+  app.use((req: any, res: any, next: any) =>
+    csrfMiddleware.use(req, res, next),
+  );
 
   // Global exception filter (unified error format)
   app.useGlobalFilters(new AllExceptionsFilter());
