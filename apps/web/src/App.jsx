@@ -55,6 +55,8 @@ const ProfessionalCalculators = lazy(() => import('./pages/ProfessionalCalculato
 const LaborContracts = lazy(() => import('./pages/LaborContracts').then(m => ({ default: m.LaborContracts })));
 const ContractAlerts = lazy(() => import('./pages/ContractAlerts').then(m => ({ default: m.ContractAlerts })));
 const VisualEnhancements = lazy(() => import('./pages/VisualEnhancements').then(m => ({ default: m.VisualEnhancements })));
+const MilestoneTracker = lazy(() => import('./pages/MilestoneTracker').then(m => ({ default: m.MilestoneTracker })));
+const LaborDisputes = lazy(() => import('./pages/LaborDisputes').then(m => ({ default: m.LaborDisputes })));
 
 // Loading Screen Component
 const LoadingScreen = () => (
@@ -407,6 +409,16 @@ const AppContent = () => {
         <Route path="/visual-tools" element={
           <ProtectedRoute pageId="visual-tools">
             <VisualEnhancements addToast={addToast} />
+          </ProtectedRoute>
+        } />
+        <Route path="/milestones" element={
+          <ProtectedRoute pageId="milestones">
+            <MilestoneTracker addToast={addToast} />
+          </ProtectedRoute>
+        } />
+        <Route path="/labor-disputes" element={
+          <ProtectedRoute pageId="labor-disputes">
+            <LaborDisputes addToast={addToast} />
           </ProtectedRoute>
         } />
         <Route path="/login" element={<LoginPage />} />
