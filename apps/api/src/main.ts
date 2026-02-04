@@ -84,13 +84,12 @@ async function bootstrap() {
 
   // Enable CORS with credentials for cookies
   // Production: Set CORS_ORIGINS env var (comma-separated)
+  // Firebase Project: SENTENG (ID: senteng-4d9cb, Number: 738698283482)
   const isProduction = process.env.NODE_ENV === "production";
   const defaultOrigins = isProduction
     ? [
         "https://senteng.co",
         "https://www.senteng.co",
-        "https://senteng-erp.web.app",
-        "https://senteng-erp.firebaseapp.com",
         "https://senteng-4d9cb.web.app",
         "https://senteng-4d9cb.firebaseapp.com",
       ]
@@ -99,8 +98,6 @@ async function bootstrap() {
         "http://localhost:5176",
         "https://senteng.co",
         "https://www.senteng.co",
-        "https://senteng-erp.web.app",
-        "https://senteng-erp.firebaseapp.com",
         "https://senteng-4d9cb.web.app",
         "https://senteng-4d9cb.firebaseapp.com",
       ];
