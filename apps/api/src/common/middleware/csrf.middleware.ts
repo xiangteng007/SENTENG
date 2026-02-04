@@ -21,7 +21,14 @@ export class CsrfMiddleware implements NestMiddleware {
   private readonly TOKEN_LENGTH = 32;
   
   // Paths that should skip CSRF validation (user can't have token yet)
+  // Include both with and without /api/v1 prefix for compatibility
   private readonly SKIP_PATHS = [
+    "/auth/login",
+    "/auth/register", 
+    "/auth/forgot-password",
+    "/auth/reset-password",
+    "/auth/firebase",
+    "/health",
     "/api/v1/auth/login",
     "/api/v1/auth/register",
     "/api/v1/auth/forgot-password",
@@ -52,7 +59,7 @@ export class CsrfMiddleware implements NestMiddleware {
 
     // Skip validation for auth endpoints (user can't have token before login)
     const requestPath = req.path;
-    if (this.SKIP_PATHS.some(path => requestPath.startsWith(path.replace("/api/v1", "")))) {
+    if (this.SKIP_PATHS.some(path => requestPath === path || requestPath.startsWith(path + "/"))) {
       return next();
     }
 
