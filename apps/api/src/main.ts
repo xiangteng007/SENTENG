@@ -62,15 +62,8 @@ async function bootstrap() {
   // Run migrations before starting the app
   await runMigrations();
 
-  const app = await NestFactory.create(AppModule);
-  const expressApp = app.getHttpAdapter().getInstance();
-
-  // Enable cookie parsing for HttpOnly JWT tokens
-  app.use(cookieParser());
-
   // ========================================
-  // CORS - Using express middleware directly for reliability
-  // This ensures OPTIONS preflight requests get proper headers
+  // CORS Configuration
   // Firebase Project: SENTENG (ID: senteng-4d9cb, Number: 738698283482)
   // ========================================
   const isProduction = process.env.NODE_ENV === "production";
@@ -93,23 +86,18 @@ async function bootstrap() {
     ? process.env.CORS_ORIGINS.split(",")
     : allowedOrigins;
 
-  // Use raw express CORS middleware for maximum reliability
-  expressApp.use((req: any, res: any, next: any) => {
-    const origin = req.headers.origin;
-    if (corsOrigins.includes(origin)) {
-      res.setHeader("Access-Control-Allow-Origin", origin);
-    }
-    res.setHeader("Access-Control-Allow-Methods", "GET,POST,PATCH,PUT,DELETE,OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization,X-CSRF-Token,X-Requested-With");
-    res.setHeader("Access-Control-Allow-Credentials", "true");
-    
-    // Handle preflight
-    if (req.method === "OPTIONS") {
-      res.status(204).end();
-      return;
-    }
-    next();
+  // Create app with CORS enabled at the earliest possible point
+  const app = await NestFactory.create(AppModule, {
+    cors: {
+      origin: corsOrigins,
+      methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
+      allowedHeaders: ["Content-Type", "Authorization", "X-CSRF-Token", "X-Requested-With"],
+      credentials: true,
+    },
   });
+
+  // Enable cookie parsing for HttpOnly JWT tokens
+  app.use(cookieParser());
 
   // Security headers with Helmet (after CORS)
   app.use(
