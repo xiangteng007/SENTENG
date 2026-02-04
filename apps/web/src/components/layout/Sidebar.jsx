@@ -388,7 +388,10 @@ const Sidebar = ({ activeTab, onNavigate, isMobileOpen, onMobileClose }) => {
         
         {/* Logout */}
         <button
-          onClick={signOut}
+          onClick={async () => {
+            await signOut();
+            navigate('/login');
+          }}
           className={`
             flex items-center gap-3 w-full rounded-lg transition-colors
             text-zinc-400 hover:text-red-400 hover:bg-red-500/10
