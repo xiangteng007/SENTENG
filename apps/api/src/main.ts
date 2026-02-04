@@ -11,6 +11,7 @@ import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import * as Sentry from "@sentry/nestjs";
 import helmet from "helmet";
 import { DataSource } from "typeorm";
+import cors from "cors";
 
 const cookieParser = require("cookie-parser");
 import { AppModule } from "./app.module";
@@ -62,20 +63,21 @@ async function bootstrap() {
   // Run migrations before starting the app
   await runMigrations();
 
+  // Create app WITHOUT NestJS CORS (we'll use cors middleware directly)
+  const app = await NestFactory.create(AppModule);
+
   // ========================================
-  // CORS Configuration - DEBUG MODE: Allow ALL origins
+  // CORS - Using cors middleware directly (MOST RELIABLE)
   // Firebase Project: SENTENG (ID: senteng-4d9cb, Number: 738698283482)
   // ========================================
-  
-  // Create app with CORS - TEMPORARILY allowing all origins for debugging
-  const app = await NestFactory.create(AppModule, {
-    cors: {
-      origin: true, // Allow ALL origins for debugging
-      methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
-      allowedHeaders: ["Content-Type", "Authorization", "X-CSRF-Token", "X-Requested-With"],
-      credentials: true,
-    },
-  });
+  app.use(cors({
+    origin: true, // Allow all origins for debugging
+    methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-CSRF-Token", "X-Requested-With"],
+    credentials: true,
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+  }));
 
   // Enable cookie parsing for HttpOnly JWT tokens
   app.use(cookieParser());
