@@ -106,8 +106,8 @@ const SidebarItem = ({ item, active, collapsed, onClick }) => {
         group relative w-full flex items-center gap-3 rounded-xl transition-all duration-200
         ${collapsed ? 'px-3 py-2.5 justify-center' : 'px-4 py-2.5'}
         ${active
-          ? 'bg-gradient-to-r from-zinc-800 to-zinc-700 text-white shadow-lg shadow-zinc-900/30 ring-1 ring-[#D4AF37]/30'
-          : 'text-zinc-400 hover:text-white hover:bg-white/5'
+          ? 'bg-gradient-to-r from-zinc-800 to-zinc-700 !text-white shadow-lg shadow-zinc-900/30 ring-1 ring-[#D4AF37]/30'
+          : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-white/5'
         }
       `}
       title={collapsed ? item.label : undefined}
