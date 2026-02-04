@@ -1,5 +1,6 @@
 /**
  * Notifications - Premium Edition
+ * Design System v4.0: Modern Dark Gold
  * Full notification center with history, preferences, and real-time updates
  */
 
@@ -44,9 +45,9 @@ const NotificationItem = ({ notification, onMarkRead, onDelete, onStar }) => {
   const colors = {
     payment: 'bg-green-100 text-green-600',
     project: 'bg-blue-100 text-blue-600',
-    contract: 'bg-purple-100 text-purple-600',
-    schedule: 'bg-indigo-100 text-indigo-600',
-    system: 'bg-gray-100 text-gray-600',
+    contract: 'bg-zinc-100 text-zinc-700',
+    schedule: 'bg-[#D4AF37]/15 text-[#B8960C]',
+    system: 'bg-zinc-100 text-zinc-600',
     alert: 'bg-red-100 text-red-600',
     user: 'bg-orange-100 text-orange-600',
   };
@@ -95,7 +96,7 @@ const NotificationItem = ({ notification, onMarkRead, onDelete, onStar }) => {
           )}
           
           {notification.action && (
-            <button className="text-xs text-indigo-600 hover:text-indigo-700 flex items-center gap-1">
+            <button className="text-xs text-zinc-700 hover:text-[#D4AF37] flex items-center gap-1">
               {notification.action}
               <ChevronDown size={12} className="rotate-[-90deg]" />
             </button>
@@ -128,7 +129,7 @@ const SettingToggle = ({ label, description, icon: Icon, checked, onChange }) =>
     <button
       onClick={onChange}
       className={`relative w-12 h-6 rounded-full transition-colors ${
-        checked ? 'bg-indigo-500' : 'bg-gray-300'
+        checked ? 'bg-[#D4AF37]' : 'bg-zinc-300'
       }`}
     >
       <span
@@ -146,14 +147,14 @@ const TabButton = ({ active, onClick, children, count }) => (
     onClick={onClick}
     className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 ${
       active 
-        ? 'bg-indigo-100 text-indigo-700' 
-        : 'text-gray-600 hover:bg-gray-100'
+        ? 'bg-[#D4AF37]/15 text-[#B8960C]' 
+        : 'text-zinc-600 hover:bg-zinc-100'
     }`}
   >
     {children}
     {count > 0 && (
       <span className={`px-1.5 py-0.5 rounded-full text-xs ${
-        active ? 'bg-indigo-200 text-indigo-800' : 'bg-gray-200 text-gray-700'
+        active ? 'bg-[#D4AF37]/30 text-[#B8960C]' : 'bg-zinc-200 text-zinc-700'
       }`}>
         {count}
       </span>
@@ -358,7 +359,7 @@ export const Notifications = ({ addToast }) => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <Bell className="text-indigo-500" />
+            <Bell className="text-[#D4AF37]" />
             通知中心
           </h1>
           <p className="text-gray-500 mt-1">
@@ -376,7 +377,7 @@ export const Notifications = ({ addToast }) => {
           </button>
           <button 
             onClick={() => setShowSettings(!showSettings)}
-            className={`btn-secondary flex items-center gap-2 text-sm ${showSettings ? 'bg-indigo-50 text-indigo-600' : ''}`}
+            className={`btn-secondary flex items-center gap-2 text-sm ${showSettings ? 'bg-[#D4AF37]/15 text-[#B8960C]' : ''}`}
           >
             <Settings size={16} />
             設定
@@ -454,7 +455,7 @@ export const Notifications = ({ addToast }) => {
               <select
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
-                className="text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]"
               >
                 {notificationTypes.map(type => (
                   <option key={type.value} value={type.value}>{type.label}</option>
