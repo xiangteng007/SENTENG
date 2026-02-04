@@ -63,17 +63,18 @@ async function bootstrap() {
   await runMigrations();
 
   const app = await NestFactory.create(AppModule);
+  const expressApp = app.getHttpAdapter().getInstance();
 
   // Enable cookie parsing for HttpOnly JWT tokens
   app.use(cookieParser());
 
   // ========================================
-  // CORS MUST BE FIRST - Before any other middleware
+  // CORS - Using express middleware directly for reliability
   // This ensures OPTIONS preflight requests get proper headers
   // Firebase Project: SENTENG (ID: senteng-4d9cb, Number: 738698283482)
   // ========================================
   const isProduction = process.env.NODE_ENV === "production";
-  const defaultOrigins = isProduction
+  const allowedOrigins = isProduction
     ? [
         "https://senteng.co",
         "https://www.senteng.co",
@@ -90,12 +91,24 @@ async function bootstrap() {
       ];
   const corsOrigins = process.env.CORS_ORIGINS
     ? process.env.CORS_ORIGINS.split(",")
-    : defaultOrigins;
-  app.enableCors({
-    origin: corsOrigins,
-    methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-CSRF-Token", "X-Requested-With"],
-    credentials: true, // Required for cookies
+    : allowedOrigins;
+
+  // Use raw express CORS middleware for maximum reliability
+  expressApp.use((req: any, res: any, next: any) => {
+    const origin = req.headers.origin;
+    if (corsOrigins.includes(origin)) {
+      res.setHeader("Access-Control-Allow-Origin", origin);
+    }
+    res.setHeader("Access-Control-Allow-Methods", "GET,POST,PATCH,PUT,DELETE,OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization,X-CSRF-Token,X-Requested-With");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    
+    // Handle preflight
+    if (req.method === "OPTIONS") {
+      res.status(204).end();
+      return;
+    }
+    next();
   });
 
   // Security headers with Helmet (after CORS)
