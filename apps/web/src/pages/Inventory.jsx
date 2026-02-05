@@ -12,6 +12,7 @@ import { Modal } from '../components/common/Modal';
 import { InputField } from '../components/common/InputField';
 import { SectionTitle } from '../components/common/Indicators';
 import { GoogleService } from '../services/GoogleService';
+import { StatCardPro, InventoryLevel } from '../components/common/ModuleComponents';
 
 // 庫存類別 - 兩層結構
 const CATEGORY_TREE = {
@@ -538,33 +539,33 @@ const Inventory = ({ data, addToast, onUpdateInventory }) => {
                 </div>
             </div>
 
-            {/* 統計卡片 */}
+            {/* 統計卡片 - Using StatCardPro */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-                <StatCard
+                <StatCardPro
                     icon={Box}
-                    label="總品項數"
+                    title="總品項數"
                     value={stats.total}
-                    color="blue"
+                    accentColor="carbon"
                 />
-                <StatCard
+                <StatCardPro
                     icon={AlertTriangle}
-                    label="庫存偏低"
+                    title="庫存偏低"
                     value={stats.lowStock}
-                    color="orange"
-                    onClick={() => setStatusFilter('庫存偏低')}
+                    accentColor="warning"
+                    trend={stats.lowStock > 0 ? 'down' : 'up'}
                 />
-                <StatCard
+                <StatCardPro
                     icon={XCircle}
-                    label="缺貨"
+                    title="缺貨"
                     value={stats.outOfStock}
-                    color="red"
-                    onClick={() => setStatusFilter('缺貨')}
+                    accentColor="danger"
+                    trend={stats.outOfStock > 0 ? 'down' : 'up'}
                 />
-                <StatCard
+                <StatCardPro
                     icon={TrendingDown}
-                    label="本月出庫"
+                    title="本月出庫"
                     value={stats.monthOut}
-                    color="purple"
+                    accentColor="copper"
                 />
             </div>
 

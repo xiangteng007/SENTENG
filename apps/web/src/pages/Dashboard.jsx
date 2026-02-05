@@ -401,26 +401,30 @@ const Dashboard = ({ events = [], finance = {}, projects = [], clients = [] }) =
             </div>
           </div>
 
-          {/* Alerts */}
-          <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-6 border border-amber-100">
-            <h3 className="font-semibold text-amber-900 mb-3 flex items-center gap-2">
+          {/* Alerts - Using AlertCard */}
+          <div className="space-y-3">
+            <h3 className="font-semibold text-stone-900 mb-3 flex items-center gap-2">
               <Bell size={18} className="text-amber-600" />
               待處理事項
             </h3>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 text-sm">
-                <AlertTriangle size={16} className="text-amber-600" />
-                <span className="text-amber-800">{stats.pendingPayments} 筆請款待審核</span>
-              </div>
-              <div className="flex items-center gap-3 text-sm">
-                <Clock size={16} className="text-amber-600" />
-                <span className="text-amber-800">2 份合約即將到期</span>
-              </div>
-              <div className="flex items-center gap-3 text-sm">
-                <CheckCircle size={16} className="text-amber-600" />
-                <span className="text-amber-800">3 個驗收待簽核</span>
-              </div>
-            </div>
+            <AlertCard 
+              type="warning"
+              title={`${stats.pendingPayments} 筆請款待審核`}
+              message="點擊查看詳細資訊"
+              action="前往審核"
+            />
+            <AlertCard 
+              type="info"
+              title="2 份合約即將到期"
+              message="請確認續約事宜"
+              action="查看合約"
+            />
+            <AlertCard 
+              type="success"
+              title="3 個驗收待簽核"
+              message="已通過品質檢查"
+              action="簽核"
+            />
           </div>
         </div>
       </div>
