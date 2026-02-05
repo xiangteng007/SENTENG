@@ -116,13 +116,24 @@ const CreateContractModal = ({ isOpen, onClose, onSubmit, addToast }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-                <div className="p-6 border-b border-gray-100">
-                    <h2 className="text-xl font-bold text-gray-800">從估價單建立合約</h2>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+                {/* Gradient Header */}
+                <div className="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 bg-white/20 rounded-xl">
+                                <FileText size={20} className="text-white" />
+                            </div>
+                            <h2 className="text-lg font-bold text-white">從估價單建立合約</h2>
+                        </div>
+                        <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-xl transition-colors">
+                            <X size={20} className="text-white" />
+                        </button>
+                    </div>
                 </div>
 
-                <div className="p-6 space-y-6">
+                <div className="p-6 space-y-5 overflow-y-auto max-h-[calc(90vh-140px)]">
                     {/* 選擇估價單 */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
