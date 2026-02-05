@@ -12,7 +12,10 @@ import {
     Layers, Package, Percent, FileSpreadsheet, RotateCcw, FilePlus2
 } from 'lucide-react';
 import { SectionTitle } from '../components/common/Indicators';
-import { QuotationPdfButton } from '../components/quotation/QuotationPdfExport';
+// PERF: Dynamic import for PDF (1.58MB) - loads only when user clicks PDF button
+const QuotationPdfButton = React.lazy(() => 
+    import('../components/quotation/QuotationPdfExport').then(m => ({ default: m.QuotationPdfButton }))
+);
 import ChangeOrders from './ChangeOrders';
 import QuotationService, {
     QUOTATION_STATUS,
@@ -749,16 +752,18 @@ const QuotationEditor = ({ quotationId, onBack, addToast }) => {
                     <Download size={16} /> 匯出
                 </button>
 
-                {/* PDF 下載 */}
-                <QuotationPdfButton
-                    quotation={{
-                        ...quotation,
-                        items: items,
-                        taxRate: settings.taxRate,
-                        isTaxIncluded: settings.taxType === TAX_TYPES.INCLUSIVE,
-                    }}
-                    className="text-sm py-1.5"
-                />
+                {/* PDF 下載 - Lazy loaded */}
+                <React.Suspense fallback={<span className="px-3 py-1.5 text-gray-400 text-sm">載入中...</span>}>
+                    <QuotationPdfButton
+                        quotation={{
+                            ...quotation,
+                            items: items,
+                            taxRate: settings.taxRate,
+                            isTaxIncluded: settings.taxType === TAX_TYPES.INCLUSIVE,
+                        }}
+                        className="text-sm py-1.5"
+                    />
+                </React.Suspense>
             </div>
 
             {/* 費用設定 */}

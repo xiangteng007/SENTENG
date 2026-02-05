@@ -102,6 +102,7 @@ const SidebarItem = ({ item, active, collapsed, onClick }) => {
   return (
     <button
       onClick={() => onClick(item)}
+      aria-label={item.label}
       className={`
         group relative w-full flex items-center gap-3 rounded-xl transition-all duration-200
         ${collapsed ? 'px-3 py-2.5 justify-center' : 'px-4 py-2.5'}
@@ -329,6 +330,7 @@ const Sidebar = ({ activeTab, onNavigate, isMobileOpen, onMobileClose }) => {
         {/* Collapse Toggle */}
         <button
           onClick={() => setCollapsed(!collapsed)}
+          aria-label={collapsed ? '展開側邊欄' : '收合側邊欄'}
           className="p-2 text-zinc-400 hover:text-[#D4AF37] hover:bg-zinc-800 rounded-lg transition-colors"
         >
           {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
@@ -416,6 +418,7 @@ const Sidebar = ({ activeTab, onNavigate, isMobileOpen, onMobileClose }) => {
             await signOut();
             navigate('/login');
           }}
+          aria-label="登出系統"
           className={`
             flex items-center gap-3 w-full rounded-lg transition-colors
             text-zinc-400 hover:text-red-400 hover:bg-red-500/10

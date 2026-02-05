@@ -86,6 +86,18 @@ export default defineConfig({
           if (id.includes('node_modules/@react-pdf')) {
             return 'pdf';
           }
+          // Split icons into separate chunk (P2: Chunk optimization)
+          if (id.includes('node_modules/lucide-react')) {
+            return 'icons';
+          }
+          // Split charts into separate chunk
+          if (id.includes('node_modules/recharts') || id.includes('node_modules/d3-')) {
+            return 'charts';
+          }
+          // Split React core into vendor chunk
+          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom') || id.includes('node_modules/react-router')) {
+            return 'vendor-react';
+          }
         }
       }
     }
