@@ -253,29 +253,8 @@ export const Contacts = ({ addToast }) => {
       setContacts(res.data?.items || res.data || []);
     } catch (error) {
       console.error('Failed to fetch contacts:', error);
-      // Fallback to mock data if API not available
-      setContacts([
-        {
-          id: '1',
-          name: '陳大明',
-          category: 'CLIENT',
-          company: '大明建設股份有限公司',
-          position: '董事長',
-          phone: '02-2345-6789',
-          email: 'chen@daming.com.tw',
-          tags: ['VIP', '信義區'],
-        },
-        {
-          id: '2',
-          name: '林美華',
-          category: 'VENDOR',
-          company: '華美水電工程行',
-          position: '負責人',
-          phone: '0912-345-678',
-          email: 'lin@huamei.com',
-          tags: ['水電', '配合廠商'],
-        },
-      ]);
+      // No fallback to mock data - show empty state instead
+      setContacts([]);
     } finally {
       setLoading(false);
     }

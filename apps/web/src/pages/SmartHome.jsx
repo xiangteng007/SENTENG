@@ -120,72 +120,8 @@ export const SmartHome = ({ addToast }) => {
       setDevices(res.data?.items || res.data || []);
     } catch (error) {
       console.error('Failed to fetch smart home devices:', error);
-      // Fallback to mock data if API not available
-      setDevices([
-        {
-          id: '1',
-          name: '客廳主燈',
-          type: 'LIGHT',
-          room: '1F 客廳',
-          unit: 'A1-25F',
-          status: 'ON',
-          value: 80,
-          online: true,
-          battery: null,
-        },
-        {
-          id: '2',
-          name: '中央空調',
-          type: 'HVAC',
-          room: '1F 客廳',
-          unit: 'A1-25F',
-          status: 'ON',
-          value: 24,
-          online: true,
-          mode: 'COOLING',
-        },
-        {
-          id: '3',
-          name: '玄關電子鎖',
-          type: 'LOCK',
-          room: '1F 玄關',
-          unit: 'A1-25F',
-          status: 'LOCKED',
-          online: true,
-          battery: 85,
-        },
-        {
-          id: '4',
-          name: '門口攝影機',
-          type: 'CAMERA',
-          room: '1F 玄關',
-          unit: 'A1-25F',
-          status: 'RECORDING',
-          online: true,
-          storage: 75,
-        },
-        {
-          id: '5',
-          name: '動態感測器',
-          type: 'SENSOR',
-          room: '2F 走廊',
-          unit: 'A1-25F',
-          status: 'ACTIVE',
-          online: true,
-          battery: 62,
-          lastTriggered: '2026-02-02 14:30',
-        },
-        {
-          id: '6',
-          name: '智慧插座 A',
-          type: 'POWER',
-          room: '1F 書房',
-          unit: 'A1-25F',
-          status: 'OFF',
-          online: false,
-          lastSeen: '2026-02-01 22:15',
-        },
-      ]);
+      // No fallback to mock data - show empty state instead
+      setDevices([]);
     } finally {
       setLoading(false);
     }
