@@ -79,7 +79,7 @@ const ContactCard = ({ contact, onEdit, onDelete }) => {
   );
 };
 
-// 新增/編輯聯絡人 Modal
+// 新增/編輯聯絡人 Modal - Enhanced Design
 const ContactModal = ({ contact, onSave, onClose }) => {
   const [form, setForm] = useState({
     name: contact?.name || '',
@@ -104,33 +104,45 @@ const ContactModal = ({ contact, onSave, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-lg font-semibold">{contact ? '編輯聯絡人' : '新增聯絡人'}</h2>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
-            <X size={20} />
-          </button>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-hidden">
+        {/* Gradient Header */}
+        <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-white/20 rounded-xl">
+                <User size={20} className="text-white" />
+              </div>
+              <h2 className="text-lg font-bold text-white">{contact ? '編輯聯絡人' : '新增聯絡人'}</h2>
+            </div>
+            <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-xl transition-colors">
+              <X size={20} className="text-white" />
+            </button>
+          </div>
         </div>
         
-        <form onSubmit={handleSubmit} className="p-4 space-y-4">
+        <form onSubmit={handleSubmit} className="p-6 space-y-5 overflow-y-auto max-h-[calc(90vh-140px)]">
+          {/* Name & Category */}
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">姓名 *</label>
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium text-gray-700">
+                姓名 <span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="input w-full"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 required
+                placeholder="輸入姓名"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">分類</label>
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium text-gray-700">分類</label>
               <select
                 value={form.category}
                 onChange={(e) => setForm({ ...form, category: e.target.value })}
-                className="input w-full"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 {Object.entries(CONTACT_CATEGORIES).map(([key, { label }]) => (
                   <option key={key} value={key}>{label}</option>
@@ -139,94 +151,126 @@ const ContactModal = ({ contact, onSave, onClose }) => {
             </div>
           </div>
           
+          {/* Company & Position */}
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">公司</label>
+            <div className="space-y-1.5">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                <Building2 size={14} className="text-gray-400" />
+                公司
+              </label>
               <input
                 type="text"
                 value={form.company}
                 onChange={(e) => setForm({ ...form, company: e.target.value })}
-                className="input w-full"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="公司名稱"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">職稱</label>
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium text-gray-700">職稱</label>
               <input
                 type="text"
                 value={form.position}
                 onChange={(e) => setForm({ ...form, position: e.target.value })}
-                className="input w-full"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="職稱"
               />
             </div>
           </div>
           
+          {/* Phone & Email */}
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">電話</label>
+            <div className="space-y-1.5">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                <PhoneCall size={14} className="text-gray-400" />
+                電話
+              </label>
               <input
                 type="tel"
                 value={form.phone}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                className="input w-full"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="0912-345-678"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <div className="space-y-1.5">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                <Mail size={14} className="text-gray-400" />
+                Email
+              </label>
               <input
                 type="email"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="input w-full"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="email@example.com"
               />
             </div>
           </div>
           
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">LINE ID</label>
+          {/* LINE ID */}
+          <div className="space-y-1.5">
+            <label className="block text-sm font-medium text-gray-700">LINE ID</label>
             <input
               type="text"
               value={form.lineId}
               onChange={(e) => setForm({ ...form, lineId: e.target.value })}
-              className="input w-full"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="LINE ID"
             />
           </div>
           
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">地址</label>
+          {/* Address */}
+          <div className="space-y-1.5">
+            <label className="block text-sm font-medium text-gray-700">地址</label>
             <input
               type="text"
               value={form.address}
               onChange={(e) => setForm({ ...form, address: e.target.value })}
-              className="input w-full"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="地址"
             />
           </div>
           
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">標籤</label>
+          {/* Tags */}
+          <div className="space-y-1.5">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+              <Tag size={14} className="text-gray-400" />
+              標籤
+            </label>
             <input
               type="text"
               value={form.tags}
               onChange={(e) => setForm({ ...form, tags: e.target.value })}
-              className="input w-full"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="以逗號分隔，例：VIP, 設計師"
             />
           </div>
           
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">備註</label>
+          {/* Notes */}
+          <div className="space-y-1.5">
+            <label className="block text-sm font-medium text-gray-700">備註</label>
             <textarea
               value={form.notes}
               onChange={(e) => setForm({ ...form, notes: e.target.value })}
-              className="input w-full h-20 resize-none"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none h-20"
+              placeholder="備註資訊..."
             />
           </div>
           
-          <div className="flex justify-end gap-3 pt-4 border-t">
-            <button type="button" onClick={onClose} className="btn-secondary">
+          {/* Buttons */}
+          <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-5 py-2.5 text-gray-600 hover:bg-gray-100 rounded-xl transition-colors font-medium"
+            >
               取消
             </button>
-            <button type="submit" className="btn-primary flex items-center gap-2">
+            <button
+              type="submit"
+              className="px-6 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl hover:from-blue-600 hover:to-indigo-700 transition-all font-medium flex items-center gap-2 shadow-lg shadow-blue-500/25"
+            >
               <Check size={16} />
               儲存
             </button>

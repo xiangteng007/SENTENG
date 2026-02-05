@@ -22,7 +22,7 @@ import {
 import api from '../services/api';
 import { useConfirm } from '../components/common/ConfirmModal';
 
-// Edit Device Modal Component
+// Edit Device Modal Component - Enhanced Design
 const EditDeviceModal = ({ device, deviceTypes, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
     name: device?.name || '',
@@ -54,35 +54,107 @@ const EditDeviceModal = ({ device, deviceTypes, onClose, onSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-6 border-b dark:border-gray-700">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">編輯設備</h2>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
-            <X className="w-5 h-5" />
-          </button>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-hidden">
+        {/* Gradient Header */}
+        <div className="bg-gradient-to-r from-green-500 to-teal-600 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-white/20 rounded-xl">
+                <Home size={20} className="text-white" />
+              </div>
+              <h2 className="text-lg font-bold text-white">編輯設備</h2>
+            </div>
+            <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-xl transition-colors">
+              <X size={20} className="text-white" />
+            </button>
+          </div>
         </div>
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          {error && <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">{error}</div>}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">設備名稱</label>
-            <input type="text" name="name" value={formData.name} onChange={handleChange} required className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700" />
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-5 overflow-y-auto max-h-[calc(90vh-140px)]">
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">{error}</div>
+          )}
+
+          {/* Device Name */}
+          <div className="space-y-1.5">
+            <label className="block text-sm font-medium text-gray-700">
+              設備名稱 <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="輸入設備名稱"
+            />
           </div>
+
+          {/* Type - Visual Pills */}
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">設備類型</label>
+            <div className="grid grid-cols-3 gap-2">
+              {deviceTypes.map((t) => (
+                <button
+                  key={t.value}
+                  type="button"
+                  onClick={() => setFormData(prev => ({ ...prev, type: t.value }))}
+                  className={`px-3 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-1 ${
+                    formData.type === t.value
+                      ? 'ring-2 ring-offset-2 ring-green-500 bg-green-100 text-green-700'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  <t.icon size={14} />
+                  {t.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Room & Unit */}
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">設備類型</label>
-              <select name="type" value={formData.type} onChange={handleChange} className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
-                {deviceTypes.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
-              </select>
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium text-gray-700">房間</label>
+              <input
+                type="text"
+                name="room"
+                value={formData.room}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                placeholder="例：1F 客廳"
+              />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">房間</label>
-              <input type="text" name="room" value={formData.room} onChange={handleChange} className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700" />
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium text-gray-700">住戶單位</label>
+              <input
+                type="text"
+                name="unit"
+                value={formData.unit}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                placeholder="例：A1-25F"
+              />
             </div>
           </div>
-          <div className="flex justify-end gap-3 pt-4 border-t dark:border-gray-700">
-            <button type="button" onClick={onClose} className="px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50">取消</button>
-            <button type="submit" disabled={loading} className="px-4 py-2 bg-gradient-to-r from-green-600 to-teal-600 text-white rounded-lg disabled:opacity-50">
+
+          {/* Buttons */}
+          <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-5 py-2.5 text-gray-600 hover:bg-gray-100 rounded-xl transition-colors font-medium"
+            >
+              取消
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-6 py-2.5 bg-gradient-to-r from-green-500 to-teal-600 text-white rounded-xl hover:from-green-600 hover:to-teal-700 transition-all font-medium flex items-center gap-2 shadow-lg shadow-green-500/25 disabled:opacity-50"
+            >
+              <CheckCircle size={18} />
               {loading ? '更新中...' : '儲存變更'}
             </button>
           </div>
