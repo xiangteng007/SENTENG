@@ -8,7 +8,7 @@ import { useConfirm } from '../components/common/ConfirmModal';
 import {
     FileText, Plus, Search, Eye, Edit2, Trash2, CheckCircle,
     Clock, AlertCircle, Building2, Users, Calendar, DollarSign,
-    FileSignature, Shield, TrendingUp, ArrowRight
+    FileSignature, Shield, TrendingUp, ArrowRight, X
 } from 'lucide-react';
 import { SectionTitle } from '../components/common/Indicators';
 import ContractService, {
