@@ -79,7 +79,7 @@ const ALL_MENU_ITEMS = {
 
 const MENU_GROUPS = [
   { id: 'overview', label: '總覽', icon: LayoutDashboard, items: ['dashboard', 'schedule', 'events'], defaultExpanded: true },
-  { id: 'project', label: '專案業務', icon: Briefcase, items: ['projects', 'clients', 'contracts', 'quotations', 'change-orders', 'milestones', 'contract-alerts'] },
+  { id: 'project', label: '專案業務', icon: Briefcase, items: ['projects', 'clients', 'contacts', 'contracts', 'quotations', 'change-orders', 'milestones', 'contract-alerts'] },
   { id: 'government', label: '政府標案', icon: Landmark, items: ['government-projects'] },
   { id: 'hr', label: '人資管理', icon: UserCheck, items: ['labor-contracts', 'labor-disputes'] },
   { id: 'supply', label: '供應鏈', icon: Package, items: ['vendors', 'procurements', 'inventory'] },
