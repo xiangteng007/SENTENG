@@ -1,5 +1,5 @@
 
-import React, { useState, Suspense, lazy } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { MainLayoutV2 as MainLayout } from './layout/MainLayoutV2';
 import { GoogleService } from './services/GoogleService';
@@ -8,6 +8,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { useApiData } from './services/useApiData';
 import { OfflineIndicator } from './components/OfflineIndicator';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
+import CommandPalette from './components/common/CommandPalette';
 import LoginPage from './pages/LoginPage';
 import UserManagement from './pages/UserManagement';
 
@@ -119,8 +120,21 @@ const AppContent = () => {
   const { isAuthenticated, loading: authLoading, role, backendAuthenticated } = useAuth();
   const { data, loading, handleUpdate, handleFinanceUpdate } = useApiData(backendAuthenticated);
   const [toasts, setToasts] = useState([]);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Global Cmd+K shortcut for Command Palette
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsCommandPaletteOpen(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // Specific Page State used across components (lifted up for persistence)
   const [activeProject, setActiveProject] = useState(null);
@@ -426,6 +440,7 @@ const AppContent = () => {
       </Routes>
       <ToastContainer toasts={toasts} removeToast={removeToast} />
       <OfflineIndicator />
+      <CommandPalette isOpen={isCommandPaletteOpen} onClose={() => setIsCommandPaletteOpen(false)} />
     </MainLayout>
   );
 };
