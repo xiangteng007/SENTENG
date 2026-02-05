@@ -9,8 +9,16 @@ import { useApiData } from './services/useApiData';
 import { OfflineIndicator } from './components/OfflineIndicator';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import CommandPalette from './components/common/CommandPalette';
+import { PageLoadingSkeleton } from './components/common/PageLoadingSkeleton';
+import { initPerformanceMonitoring } from './utils/performanceMonitor';
 import LoginPage from './pages/LoginPage';
 import UserManagement from './pages/UserManagement';
+
+// Initialize performance monitoring in production
+if (typeof window !== 'undefined') {
+  initPerformanceMonitoring();
+}
+
 
 // Eagerly loaded pages (critical path - keep bundle small)
 import Dashboard from './pages/Dashboard';
