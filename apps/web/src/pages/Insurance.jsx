@@ -18,7 +18,7 @@ import {
 import api from '../services/api';
 import { useConfirm } from '../components/common/ConfirmModal';
 
-// Edit Insurance Modal Component
+// Edit Insurance Modal Component - Enhanced Design
 const EditInsuranceModal = ({ policy, insuranceTypes, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
     type: policy?.type || 'CAR',
@@ -60,78 +60,181 @@ const EditInsuranceModal = ({ policy, insuranceTypes, onClose, onSuccess }) => {
     }
   };
 
+  const statusOptions = [
+    { value: 'ACTIVE', label: '生效中', color: 'bg-green-100 text-green-700 ring-green-500' },
+    { value: 'EXPIRING_SOON', label: '即將到期', color: 'bg-orange-100 text-orange-700 ring-orange-500' },
+    { value: 'EXPIRED', label: '已到期', color: 'bg-red-100 text-red-700 ring-red-500' },
+  ];
+
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-6 border-b dark:border-gray-700">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">編輯保單</h2>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
-            <X className="w-5 h-5" />
-          </button>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
+        {/* Gradient Header */}
+        <div className="bg-gradient-to-r from-emerald-500 to-teal-600 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-white/20 rounded-xl">
+                <Shield size={20} className="text-white" />
+              </div>
+              <h2 className="text-lg font-bold text-white">編輯保單</h2>
+            </div>
+            <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-xl transition-colors">
+              <X size={20} className="text-white" />
+            </button>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-6 space-y-5 overflow-y-auto max-h-[calc(90vh-140px)]">
           {error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm flex items-center gap-2">
+            <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm flex items-center gap-2">
               <AlertCircle className="w-4 h-4" />
               {error}
             </div>
           )}
 
+          {/* Type & Status */}
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">險種類型</label>
-              <select name="type" value={formData.type} onChange={handleChange} className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
-                {insuranceTypes.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium text-gray-700">險種類型</label>
+              <select
+                name="type"
+                value={formData.type}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+              >
+                {insuranceTypes.map(t => (
+                  <option key={t.value} value={t.value}>{t.label}</option>
+                ))}
               </select>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">狀態</label>
-              <select name="status" value={formData.status} onChange={handleChange} className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
-                <option value="ACTIVE">生效中</option>
-                <option value="EXPIRING_SOON">即將到期</option>
-                <option value="EXPIRED">已到期</option>
-              </select>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">狀態</label>
+              <div className="flex gap-2">
+                {statusOptions.map((s) => (
+                  <button
+                    key={s.value}
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, status: s.value }))}
+                    className={`flex-1 px-2 py-2 rounded-xl text-xs font-medium transition-all ${
+                      formData.status === s.value
+                        ? 'ring-2 ring-offset-1 ' + s.color
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    {s.label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
+          {/* Insurer & Beneficiary */}
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">保險公司</label>
-              <input type="text" name="insurer" value={formData.insurer} onChange={handleChange} className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700" />
+            <div className="space-y-1.5">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                <FileText size={14} className="text-gray-400" />
+                保險公司
+              </label>
+              <input
+                type="text"
+                name="insurer"
+                value={formData.insurer}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                placeholder="保險公司名稱"
+              />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">受益人</label>
-              <input type="text" name="beneficiary" value={formData.beneficiary} onChange={handleChange} className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700" />
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium text-gray-700">受益人</label>
+              <input
+                type="text"
+                name="beneficiary"
+                value={formData.beneficiary}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                placeholder="受益人名稱"
+              />
             </div>
           </div>
 
+          {/* Coverage & Premium */}
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">保額 (TWD)</label>
-              <input type="number" name="coverageAmount" value={formData.coverageAmount} onChange={handleChange} className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700" />
+            <div className="space-y-1.5">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                <DollarSign size={14} className="text-gray-400" />
+                保額 (TWD)
+              </label>
+              <input
+                type="number"
+                name="coverageAmount"
+                value={formData.coverageAmount}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                placeholder="保額金額"
+              />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">保費 (TWD)</label>
-              <input type="number" name="premium" value={formData.premium} onChange={handleChange} className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700" />
+            <div className="space-y-1.5">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                <DollarSign size={14} className="text-gray-400" />
+                保費 (TWD)
+              </label>
+              <input
+                type="number"
+                name="premium"
+                value={formData.premium}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                placeholder="年繳保費"
+              />
             </div>
           </div>
 
+          {/* Dates */}
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">生效日期</label>
-              <input type="date" name="startDate" value={formData.startDate} onChange={handleChange} className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700" />
+            <div className="space-y-1.5">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                <Calendar size={14} className="text-gray-400" />
+                生效日期
+              </label>
+              <input
+                type="date"
+                name="startDate"
+                value={formData.startDate}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+              />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">到期日期</label>
-              <input type="date" name="endDate" value={formData.endDate} onChange={handleChange} className="w-full px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700" />
+            <div className="space-y-1.5">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                <Calendar size={14} className="text-gray-400" />
+                到期日期
+              </label>
+              <input
+                type="date"
+                name="endDate"
+                value={formData.endDate}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+              />
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 pt-4 border-t dark:border-gray-700">
-            <button type="button" onClick={onClose} className="px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50">取消</button>
-            <button type="submit" disabled={loading} className="px-4 py-2 bg-gradient-to-r from-blue-600 to-zinc-800 text-white rounded-lg disabled:opacity-50 flex items-center gap-2">
-              {loading ? '更新中...' : <><CheckCircle className="w-4 h-4" /> 儲存變更</>}
+          {/* Buttons */}
+          <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-5 py-2.5 text-gray-600 hover:bg-gray-100 rounded-xl transition-colors font-medium"
+            >
+              取消
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl hover:from-emerald-600 hover:to-teal-700 transition-all font-medium flex items-center gap-2 shadow-lg shadow-emerald-500/25 disabled:opacity-50"
+            >
+              <CheckCircle className="w-4 h-4" />
+              {loading ? '更新中...' : '儲存變更'}
             </button>
           </div>
         </form>
