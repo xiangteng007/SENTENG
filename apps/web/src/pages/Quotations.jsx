@@ -63,20 +63,24 @@ const TemplatePreviewModal = ({ isOpen, onClose, template }) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[60] p-4">
-            <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col">
-                {/* 標題 */}
-                <div className="p-5 border-b border-gray-100 flex justify-between items-center">
-                    <div>
-                        <h3 className="text-lg font-bold text-gray-800">{template.name}</h3>
-                        <p className="text-sm text-gray-500">{template.description}</p>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden">
+                {/* Gradient Header */}
+                <div className="bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-4">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 bg-white/20 rounded-xl">
+                                <Eye size={20} className="text-white" />
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-bold text-white">{template.name}</h3>
+                                <p className="text-sm text-white/80">{template.description}</p>
+                            </div>
+                        </div>
+                        <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-xl transition-colors">
+                            <X size={20} className="text-white" />
+                        </button>
                     </div>
-                    <button
-                        onClick={onClose}
-                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                    >
-                        <X size={20} className="text-gray-500" />
-                    </button>
                 </div>
 
                 {/* 內容 */}

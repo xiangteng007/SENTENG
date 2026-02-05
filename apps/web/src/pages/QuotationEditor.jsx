@@ -245,13 +245,21 @@ const CatalogSearchModal = ({ isOpen, onClose, onSelect }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[80vh] flex flex-col">
-                <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-800">從工項庫選擇</h3>
-                    <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded-lg">
-                        <X size={20} />
-                    </button>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] flex flex-col overflow-hidden">
+                {/* Gradient Header */}
+                <div className="bg-gradient-to-r from-orange-500 to-rose-500 px-6 py-4">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 bg-white/20 rounded-xl">
+                                <Search size={20} className="text-white" />
+                            </div>
+                            <h3 className="text-lg font-bold text-white">從工項庫選擇</h3>
+                        </div>
+                        <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-xl transition-colors">
+                            <X size={20} className="text-white" />
+                        </button>
+                    </div>
                 </div>
 
                 <div className="p-4 space-y-3 border-b border-gray-100">
