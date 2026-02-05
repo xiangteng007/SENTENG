@@ -383,13 +383,21 @@ export const Bim = ({ addToast }) => {
 
       {/* Upload Modal */}
       {showUploadModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg">
-            <div className="flex items-center justify-between p-6 border-b dark:border-gray-700">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">上傳 BIM 模型</h2>
-              <button onClick={() => setShowUploadModal(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
-                ✕
-              </button>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
+            {/* Gradient Header */}
+            <div className="bg-gradient-to-r from-cyan-500 to-blue-600 px-6 py-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-white/20 rounded-xl">
+                    <Upload size={20} className="text-white" />
+                  </div>
+                  <h2 className="text-lg font-bold text-white">上傳 BIM 模型</h2>
+                </div>
+                <button onClick={() => setShowUploadModal(false)} className="p-2 hover:bg-white/20 rounded-xl transition-colors">
+                  <X size={20} className="text-white" />
+                </button>
+              </div>
             </div>
             <form 
               onSubmit={(e) => {
@@ -427,13 +435,21 @@ export const Bim = ({ addToast }) => {
 
       {/* Settings Modal */}
       {showSettingsModal && selectedModel && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg">
-            <div className="flex items-center justify-between p-6 border-b dark:border-gray-700">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">模型設定 - {selectedModel.name}</h2>
-              <button onClick={() => setShowSettingsModal(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
-                ✕
-              </button>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
+            {/* Gradient Header */}
+            <div className="bg-gradient-to-r from-zinc-600 to-gray-700 px-6 py-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-white/20 rounded-xl">
+                    <Settings size={20} className="text-white" />
+                  </div>
+                  <h2 className="text-lg font-bold text-white">模型設定 - {selectedModel.name}</h2>
+                </div>
+                <button onClick={() => setShowSettingsModal(false)} className="p-2 hover:bg-white/20 rounded-xl transition-colors">
+                  <X size={20} className="text-white" />
+                </button>
+              </div>
             </div>
             <div className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4 text-sm">

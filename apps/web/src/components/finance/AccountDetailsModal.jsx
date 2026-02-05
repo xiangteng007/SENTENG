@@ -66,21 +66,28 @@ export const AccountDetailsModal = ({ isOpen, onClose, account, allTransactions 
     }
 
     return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2 sm:p-4 overflow-y-auto">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl my-auto flex flex-col animate-slide-up max-h-[95vh]">
-                {/* Header */}
-                <div className="flex justify-between items-start p-4 sm:p-6 border-b border-gray-100 flex-shrink-0">
-                    <div>
-                        <h3 className="text-xl sm:text-2xl font-bold text-gray-800">{accountName}</h3>
-                        <div className="flex items-center gap-2 sm:gap-4 mt-2 text-xs sm:text-sm text-gray-500 flex-wrap">
-                            <span>{accountBank}</span>
-                            <span className="hidden sm:inline">•</span>
-                            <span className="font-mono text-xs">{accountNumber}</span>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 overflow-y-auto">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl my-auto flex flex-col animate-slide-up max-h-[95vh] overflow-hidden">
+                {/* Gradient Header */}
+                <div className="bg-gradient-to-r from-blue-600 to-indigo-700 px-4 sm:px-6 py-4 flex-shrink-0">
+                    <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 bg-white/20 rounded-xl">
+                                <TrendingUp size={20} className="text-white" />
+                            </div>
+                            <div>
+                                <h3 className="text-xl sm:text-2xl font-bold text-white">{accountName}</h3>
+                                <div className="flex items-center gap-2 sm:gap-4 mt-1 text-xs sm:text-sm text-white/80 flex-wrap">
+                                    <span>{accountBank}</span>
+                                    <span className="hidden sm:inline">•</span>
+                                    <span className="font-mono text-xs">{accountNumber}</span>
+                                </div>
+                            </div>
                         </div>
+                        <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-xl transition-colors flex-shrink-0">
+                            <X size={24} className="text-white" />
+                        </button>
                     </div>
-                    <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0">
-                        <X size={24} className="text-gray-400" />
-                    </button>
                 </div>
 
                 {/* Statistics Cards */}
