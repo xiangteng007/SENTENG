@@ -136,86 +136,9 @@ export const Regulations = ({ addToast }) => {
       if (!regsRes?.data && !checkRes?.data) throw new Error('No API');
     } catch (error) {
       console.error('Failed to fetch regulations:', error);
-      // Fallback to mock data if API not available
-      setRegulations([
-        {
-          id: '1',
-          title: '建築技術規則建築設計施工編',
-          category: 'BUILDING',
-          version: '111.10.07',
-          summary: '建築物設計、施工相關技術規範',
-          applicableTo: ['設計', '施工'],
-          lastReviewed: '2026-01-15',
-          link: 'https://law.moj.gov.tw/',
-          keywords: ['樓地板', '淨高', '樓梯', '消防'],
-        },
-        {
-          id: '2',
-          title: '職業安全衛生設施規則',
-          category: 'SAFETY',
-          version: '112.08.15',
-          summary: '營造工地安全設施、防護措施規範',
-          applicableTo: ['施工', '安全'],
-          lastReviewed: '2026-01-20',
-          link: 'https://law.moj.gov.tw/',
-          keywords: ['護欄', '安全網', '開口', '墜落'],
-        },
-        {
-          id: '3',
-          title: '營建工程空氣污染防制設施管理辦法',
-          category: 'ENVIRONMENT',
-          version: '110.03.25',
-          summary: '營建工地空污防制措施',
-          applicableTo: ['施工'],
-          lastReviewed: '2025-12-10',
-          link: 'https://law.moj.gov.tw/',
-          keywords: ['揚塵', '洗車台', '覆蓋'],
-        },
-        {
-          id: '4',
-          title: '各類場所消防安全設備設置標準',
-          category: 'FIRE',
-          version: '111.12.20',
-          summary: '消防設備設置規範',
-          applicableTo: ['設計', '施工'],
-          lastReviewed: '2026-01-05',
-          link: 'https://law.moj.gov.tw/',
-          keywords: ['滅火器', '警報', '避難', '消防栓'],
-        },
-      ]);
-
-      setChecklists([
-        {
-          id: '1',
-          title: '營造工地安全衛生自主檢查表',
-          category: 'SAFETY',
-          project: '信義豪宅案',
-          totalItems: 25,
-          completedItems: 22,
-          lastChecked: '2026-02-01',
-          status: 'IN_PROGRESS',
-        },
-        {
-          id: '2',
-          title: '建築結構施工查核表',
-          category: 'BUILDING',
-          project: '信義豪宅案',
-          totalItems: 18,
-          completedItems: 18,
-          lastChecked: '2026-01-28',
-          status: 'COMPLETED',
-        },
-        {
-          id: '3',
-          title: '空污防制設施檢查表',
-          category: 'ENVIRONMENT',
-          project: '大同商辦案',
-          totalItems: 12,
-          completedItems: 8,
-          lastChecked: '2026-01-30',
-          status: 'IN_PROGRESS',
-        },
-      ]);
+      // No fallback to mock data - show empty state instead
+      setRegulations([]);
+      setChecklists([]);
     } finally {
       setLoading(false);
     }

@@ -124,66 +124,8 @@ export const Drone = ({ addToast }) => {
       setFlights(res.data?.items || res.data || []);
     } catch (error) {
       console.error('Failed to fetch drone flights:', error);
-      // Fallback to mock data if API not available
-      setFlights([
-        {
-          id: '1',
-          missionName: '月度進度空拍 - 2026/02',
-          project: '信義豪宅案',
-          date: '2026-02-01',
-          pilot: '王小明',
-          droneModel: 'DJI Mavic 3',
-          duration: 45,
-          photos: 256,
-          videos: 3,
-          weather: { temp: 18, wind: 12, condition: 'cloudy' },
-          status: 'COMPLETED',
-          thumbnail: null,
-        },
-        {
-          id: '2',
-          missionName: '外牆施工記錄',
-          project: '信義豪宅案',
-          date: '2026-01-28',
-          pilot: '李小華',
-          droneModel: 'DJI Phantom 4 RTK',
-          duration: 32,
-          photos: 180,
-          videos: 2,
-          weather: { temp: 15, wind: 8, condition: 'sunny' },
-          status: 'COMPLETED',
-          thumbnail: null,
-        },
-        {
-          id: '3',
-          missionName: '基地測量',
-          project: '大同商辦案',
-          date: '2026-01-20',
-          pilot: '王小明',
-          droneModel: 'DJI Phantom 4 RTK',
-          duration: 60,
-          photos: 420,
-          videos: 0,
-          weather: { temp: 20, wind: 5, condition: 'sunny' },
-          status: 'COMPLETED',
-          thumbnail: null,
-          orthomap: true,
-        },
-        {
-          id: '4',
-          missionName: '預定飛行 - 2026/02/10',
-          project: '信義豪宅案',
-          date: '2026-02-10',
-          pilot: '待指派',
-          droneModel: 'DJI Mavic 3',
-          duration: 0,
-          photos: 0,
-          videos: 0,
-          weather: null,
-          status: 'SCHEDULED',
-          thumbnail: null,
-        },
-      ]);
+      // No fallback to mock data - show empty state instead
+      setFlights([]);
     } finally {
       setLoading(false);
     }

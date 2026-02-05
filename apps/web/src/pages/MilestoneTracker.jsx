@@ -171,28 +171,45 @@ const GanttChart = ({ milestones }) => {
 export const MilestoneTracker = ({ addToast }) => {
   const [viewMode, setViewMode] = useState('list'); // list, gantt
   const [filterStatus, setFilterStatus] = useState('all');
+  const [milestones, setMilestones] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const mockMilestones = [
-    { id: 1, name: '設計圖送審', description: '結構設計圖送建築師審核', dueDate: '2026-02-15', startDate: '2026-01-20', status: 'completed', amount: 0 },
-    { id: 2, name: '地基開挖完成', description: '基礎開挖與地樁施工', dueDate: '2026-03-01', startDate: '2026-02-16', status: 'inProgress', progress: 65, amount: 500000 },
-    { id: 3, name: '主體結構完成', description: 'RC 結構體澆置完成', dueDate: '2026-05-15', startDate: '2026-03-02', status: 'pending', amount: 2000000 },
-    { id: 4, name: '水電管線配置', description: '機電工程管線佈設', dueDate: '2026-04-10', startDate: '2026-03-15', status: 'delayed', amount: 800000 },
-    { id: 5, name: '外牆裝修', description: '外牆磁磚與防水工程', dueDate: '2026-06-30', startDate: '2026-05-16', status: 'pending', amount: 600000 },
-    { id: 6, name: '驗收完成', description: '業主驗收與移交', dueDate: '2026-07-31', startDate: '2026-07-01', status: 'pending', amount: 0 },
-  ];
+  // Fetch milestones from API
+  React.useEffect(() => {
+    const fetchMilestones = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch('/api/v1/milestones');
+        if (res.ok) {
+          const data = await res.json();
+          setMilestones(data?.items || data || []);
+        } else {
+          // No fallback to mock data - show empty state instead
+          setMilestones([]);
+        }
+      } catch (error) {
+        console.error('Failed to fetch milestones:', error);
+        // No fallback to mock data - show empty state instead
+        setMilestones([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchMilestones();
+  }, []);
 
   const filteredMilestones = useMemo(() => {
-    if (filterStatus === 'all') return mockMilestones;
-    return mockMilestones.filter(m => m.status === filterStatus);
-  }, [filterStatus]);
+    if (filterStatus === 'all') return milestones;
+    return milestones.filter(m => m.status === filterStatus);
+  }, [filterStatus, milestones]);
 
   const stats = useMemo(() => {
-    const total = mockMilestones.length;
-    const completed = mockMilestones.filter(m => m.status === 'completed').length;
-    const delayed = mockMilestones.filter(m => m.status === 'delayed').length;
-    const inProgress = mockMilestones.filter(m => m.status === 'inProgress').length;
-    return { total, completed, delayed, inProgress, progress: Math.round(completed / total * 100) };
-  }, []);
+    const total = milestones.length;
+    const completed = milestones.filter(m => m.status === 'completed').length;
+    const delayed = milestones.filter(m => m.status === 'delayed').length;
+    const inProgress = milestones.filter(m => m.status === 'inProgress').length;
+    return { total, completed, delayed, inProgress, progress: total > 0 ? Math.round(completed / total * 100) : 0 };
+  }, [milestones]);
 
   const handleComplete = (id) => {
     addToast?.(`里程碑 #${id} 已標記完成`, 'success');
@@ -276,7 +293,7 @@ export const MilestoneTracker = ({ addToast }) => {
 
       {/* Content */}
       {viewMode === 'gantt' ? (
-        <GanttChart milestones={mockMilestones} />
+        <GanttChart milestones={milestones} />
       ) : (
         <div className="grid md:grid-cols-2 gap-4">
           {filteredMilestones.map(milestone => (

@@ -154,81 +154,8 @@ export const Schedules = ({ addToast }) => {
       setTasks(res.data?.items || res.data || []);
     } catch (error) {
       console.error('Failed to fetch schedule tasks:', error);
-      // Fallback to mock data if API not available
-      setTasks([
-        {
-          id: '1',
-          name: '基礎開挖',
-          project: '信義豪宅案',
-          startDate: '2026-01-05',
-          endDate: '2026-01-20',
-          progress: 100,
-          status: 'COMPLETED',
-          milestone: false,
-          critical: true,
-          dependencies: [],
-        },
-        {
-          id: '2',
-          name: '結構體施工',
-          project: '信義豪宅案',
-          startDate: '2026-01-18',
-          endDate: '2026-02-28',
-          progress: 45,
-          status: 'IN_PROGRESS',
-          milestone: false,
-          critical: true,
-          dependencies: ['1'],
-        },
-        {
-          id: '3',
-          name: '1F 結構完成',
-          project: '信義豪宅案',
-          startDate: '2026-02-05',
-          endDate: '2026-02-05',
-          progress: 100,
-          status: 'COMPLETED',
-          milestone: true,
-          critical: true,
-          dependencies: ['2'],
-        },
-        {
-          id: '4',
-          name: '水電管線配置',
-          project: '信義豪宅案',
-          startDate: '2026-02-01',
-          endDate: '2026-02-20',
-          progress: 60,
-          status: 'IN_PROGRESS',
-          milestone: false,
-          critical: false,
-          dependencies: ['3'],
-        },
-        {
-          id: '5',
-          name: '外牆施工',
-          project: '大同商辦案',
-          startDate: '2026-01-15',
-          endDate: '2026-02-15',
-          progress: 75,
-          status: 'IN_PROGRESS',
-          milestone: false,
-          critical: true,
-          dependencies: [],
-        },
-        {
-          id: '6',
-          name: '室內裝修',
-          project: '大同商辦案',
-          startDate: '2026-02-10',
-          endDate: '2026-03-15',
-          progress: 10,
-          status: 'IN_PROGRESS',
-          milestone: false,
-          critical: false,
-          dependencies: ['5'],
-        },
-      ]);
+      // No fallback to mock data - show empty state instead
+      setTasks([]);
     } finally {
       setLoading(false);
     }

@@ -216,30 +216,8 @@ export const Events = ({ addToast }) => {
       setEvents(res.data?.items || res.data || []);
     } catch (error) {
       console.error('Failed to fetch events:', error);
-      // Fallback to mock data if API not available
-      setEvents([
-        {
-          id: '1',
-          title: '專案進度會議',
-          description: '討論 Q1 專案進度與資源分配',
-          type: 'MEETING',
-          status: 'UPCOMING',
-          startTime: '2026-02-05T14:00',
-          endTime: '2026-02-05T15:30',
-          location: '總公司 3F 會議室',
-          attendees: ['張經理', '李工程師', '王設計師'],
-        },
-        {
-          id: '2',
-          title: '信義區工地巡檢',
-          description: '第三期工程工地安全巡檢',
-          type: 'SITE_VISIT',
-          status: 'UPCOMING',
-          startTime: '2026-02-06T09:00',
-          location: '台北市信義區',
-          attendees: ['陳主任'],
-        },
-      ]);
+      // No fallback to mock data - show empty state instead
+      setEvents([]);
     } finally {
       setLoading(false);
     }

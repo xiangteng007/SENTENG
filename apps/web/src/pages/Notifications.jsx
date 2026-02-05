@@ -167,77 +167,8 @@ export const Notifications = ({ addToast }) => {
   const [showSettings, setShowSettings] = useState(false);
   const [filter, setFilter] = useState('all');
   
-  // Mock notifications as initial/fallback
-  const mockNotifications = [
-    { 
-      id: 1, 
-      type: 'payment', 
-      title: '收到新款項', 
-      message: '「王先生」已付款 NT$ 150,000 至您的帳戶', 
-      time: '5 分鐘前',
-      read: false,
-      starred: true,
-      action: '查看明細'
-    },
-    { 
-      id: 2, 
-      type: 'alert', 
-      title: '請款單待審核', 
-      message: '「林宅裝修案」有 2 筆請款單等待您的審核', 
-      time: '1 小時前',
-      read: false,
-      starred: false,
-      action: '前往審核'
-    },
-    { 
-      id: 3, 
-      type: 'project', 
-      title: '專案狀態更新', 
-      message: '「台北信義案」已進入施工階段', 
-      time: '2 小時前',
-      read: false,
-      starred: false,
-    },
-    { 
-      id: 4, 
-      type: 'schedule', 
-      title: '今日行程提醒', 
-      message: '14:00 有一場工地會勘：陳宅裝修案', 
-      time: '3 小時前',
-      read: true,
-      starred: false,
-    },
-    { 
-      id: 5, 
-      type: 'contract', 
-      title: '合約即將到期', 
-      message: '「張宅修繕」合約將於 7 天後到期', 
-      time: '昨天',
-      read: true,
-      starred: false,
-      action: '查看合約'
-    },
-    { 
-      id: 6, 
-      type: 'user', 
-      title: '新客戶加入', 
-      message: '李小姐已加入為新客戶，請確認聯絡資訊', 
-      time: '昨天',
-      read: true,
-      starred: false,
-    },
-    { 
-      id: 7, 
-      type: 'system', 
-      title: '系統維護通知', 
-      message: '系統將於本週日 02:00-04:00 進行例行維護', 
-      time: '2 天前',
-      read: true,
-      starred: false,
-    },
-  ];
-
-  const [notifications, setNotifications] = useState(mockNotifications);
+  // Start with empty notifications, fetch from API
+  const [notifications, setNotifications] = useState([]);
 
   // Fetch notifications from API
   useEffect(() => {
@@ -247,9 +178,10 @@ export const Notifications = ({ addToast }) => {
         if (res.data?.items || res.data?.length) {
           setNotifications(res.data?.items || res.data);
         }
+        // No fallback to mock data - show empty state instead
       } catch (error) {
         console.error('Failed to fetch notifications:', error);
-        // Keep fallback mock data
+        // No fallback to mock data - empty state will be shown
       }
     };
     fetchNotifications();

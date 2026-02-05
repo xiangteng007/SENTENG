@@ -168,64 +168,8 @@ export const Insurance = ({ addToast }) => {
       setPolicies(res.data?.items || res.data || []);
     } catch (error) {
       console.error('Failed to fetch insurance policies:', error);
-      // Fallback to mock data if API not available
-      setPolicies([
-        {
-          id: '1',
-          policyNumber: 'CAR-2026-0001',
-          type: 'CAR',
-          project: '信義豪宅案',
-          insurer: '國泰產險',
-          coverageAmount: 500000000,
-          premium: 1250000,
-          startDate: '2026-01-01',
-          endDate: '2027-12-31',
-          status: 'ACTIVE',
-          deductible: 500000,
-          beneficiary: '森騰營造股份有限公司',
-        },
-        {
-          id: '2',
-          policyNumber: 'LIA-2026-0001',
-          type: 'LIABILITY',
-          project: '信義豪宅案',
-          insurer: '富邦產險',
-          coverageAmount: 100000000,
-          premium: 280000,
-          startDate: '2026-01-01',
-          endDate: '2027-12-31',
-          status: 'ACTIVE',
-          deductible: 100000,
-          beneficiary: '第三人',
-        },
-        {
-          id: '3',
-          policyNumber: 'WKR-2026-0001',
-          type: 'WORKER',
-          project: '全案適用',
-          insurer: '新光產險',
-          coverageAmount: 30000000,
-          premium: 420000,
-          startDate: '2026-01-01',
-          endDate: '2026-12-31',
-          status: 'ACTIVE',
-          deductible: 0,
-          beneficiary: '員工/工人',
-        },
-        {
-          id: '4',
-          policyNumber: 'BOND-2026-0001',
-          type: 'BOND',
-          project: '大同商辦案',
-          insurer: '台灣產險',
-          coverageAmount: 50000000,
-          premium: 125000,
-          startDate: '2025-06-01',
-          endDate: '2026-06-30',
-          status: 'EXPIRING_SOON',
-          beneficiary: '業主',
-        },
-      ]);
+      // No fallback to mock data - show empty state instead
+      setPolicies([]);
     } finally {
       setLoading(false);
     }

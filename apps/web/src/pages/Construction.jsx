@@ -58,73 +58,8 @@ export const Construction = ({ addToast }) => {
       setItems(res.data?.items || res.data || []);
     } catch (error) {
       console.error('Failed to fetch construction items:', error);
-      // Fallback to mock data if API not available
-      setItems([
-        {
-          id: '1',
-          name: '1F 結構牆施工',
-          type: 'STRUCTURE',
-          status: 'COMPLETED',
-          projectId: 'p001',
-          projectName: '信義豪宅案',
-          location: '1F 東側',
-          plannedStart: '2026-01-10',
-          plannedEnd: '2026-01-25',
-          actualStart: '2026-01-10',
-          actualEnd: '2026-01-24',
-          percentComplete: 100,
-          assignedTeam: '結構組',
-          notes: '提前一天完成',
-          punchListCount: 0,
-        },
-        {
-          id: '2',
-          name: '2F 水電管線配置',
-          type: 'MEP',
-          status: 'IN_PROGRESS',
-          projectId: 'p001',
-          projectName: '信義豪宅案',
-          location: '2F 全區',
-          plannedStart: '2026-01-20',
-          plannedEnd: '2026-02-10',
-          actualStart: '2026-01-21',
-          percentComplete: 65,
-          assignedTeam: '水電組',
-          notes: '管線預埋中',
-          punchListCount: 2,
-        },
-        {
-          id: '3',
-          name: '3F 室內隔間',
-          type: 'INTERIOR',
-          status: 'NOT_STARTED',
-          projectId: 'p001',
-          projectName: '信義豪宅案',
-          location: '3F 主臥區',
-          plannedStart: '2026-02-15',
-          plannedEnd: '2026-03-01',
-          percentComplete: 0,
-          assignedTeam: '室裝組',
-          notes: '等待 2F 完工',
-          punchListCount: 0,
-        },
-        {
-          id: '4',
-          name: '外牆防水處理',
-          type: 'EXTERIOR',
-          status: 'DELAYED',
-          projectId: 'p002',
-          projectName: '大同商辦案',
-          location: '外牆全區',
-          plannedStart: '2026-01-15',
-          plannedEnd: '2026-01-30',
-          actualStart: '2026-01-18',
-          percentComplete: 40,
-          assignedTeam: '外牆組',
-          notes: '因天候延遲',
-          punchListCount: 3,
-        },
-      ]);
+      // No fallback to mock data - show empty state instead
+      setItems([]);
     } finally {
       setLoading(false);
     }

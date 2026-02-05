@@ -223,21 +223,8 @@ export const Waste = ({ addToast }) => {
       setRecords(res.data?.items || res.data || []);
     } catch (error) {
       console.error('Failed to fetch waste records:', error);
-      // Fallback to mock data if API not available
-      setRecords([
-        {
-          id: '1',
-          manifestNumber: 'WST-2026-0001',
-          project: { name: '信義豪宅案' },
-          wasteType: 'concrete',
-          quantity: 45.5,
-          wasteDate: '2026-02-01',
-          disposerName: '環保運輸公司',
-          disposalFacility: '土資場A',
-          status: 'disposed',
-          isRecyclable: true,
-        },
-      ]);
+      // No fallback to mock data - show empty state instead
+      setRecords([]);
     } finally {
       setLoading(false);
     }

@@ -126,74 +126,8 @@ export const Bim = ({ addToast }) => {
       setModels(res.data?.items || res.data || []);
     } catch (error) {
       console.error('Failed to fetch BIM models:', error);
-      // Fallback to mock data if API not available
-      setModels([
-        {
-          id: '1',
-          name: '信義豪宅案_建築模型',
-          project: '信義豪宅案',
-          category: 'ARCH',
-          version: 'v3.2',
-          lastUpdated: '2026-02-01',
-          fileSize: '245 MB',
-          format: 'IFC',
-          elements: 12580,
-          status: 'CURRENT',
-          thumbnail: null,
-        },
-        {
-          id: '2',
-          name: '信義豪宅案_結構模型',
-          project: '信義豪宅案',
-          category: 'STRUCT',
-          version: 'v2.8',
-          lastUpdated: '2026-01-28',
-          fileSize: '189 MB',
-          format: 'IFC',
-          elements: 8920,
-          status: 'CURRENT',
-          thumbnail: null,
-        },
-        {
-          id: '3',
-          name: '信義豪宅案_MEP模型',
-          project: '信義豪宅案',
-          category: 'MEP',
-          version: 'v2.5',
-          lastUpdated: '2026-01-25',
-          fileSize: '312 MB',
-          format: 'IFC',
-          elements: 24150,
-          status: 'CURRENT',
-          thumbnail: null,
-        },
-        {
-          id: '4',
-          name: '信義豪宅案_整合模型',
-          project: '信義豪宅案',
-          category: 'COMBINED',
-          version: 'v1.9',
-          lastUpdated: '2026-02-02',
-          fileSize: '756 MB',
-          format: 'IFC',
-          elements: 45650,
-          status: 'PROCESSING',
-          thumbnail: null,
-        },
-        {
-          id: '5',
-          name: '大同商辦案_建築模型',
-          project: '大同商辦案',
-          category: 'ARCH',
-          version: 'v2.1',
-          lastUpdated: '2026-01-20',
-          fileSize: '198 MB',
-          format: 'RVT',
-          elements: 9800,
-          status: 'CURRENT',
-          thumbnail: null,
-        },
-      ]);
+      // No fallback to mock data - show empty state instead
+      setModels([]);
     } finally {
       setLoading(false);
     }
