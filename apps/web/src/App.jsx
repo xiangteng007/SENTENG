@@ -12,41 +12,44 @@ import CommandPalette from './components/common/CommandPalette';
 import LoginPage from './pages/LoginPage';
 import UserManagement from './pages/UserManagement';
 
-// Eagerly loaded pages (critical path)
+// Eagerly loaded pages (critical path - keep bundle small)
 import Dashboard from './pages/Dashboard';
 import Schedule from './pages/Schedule';
 import Projects from './pages/Projects';
-import Clients from './pages/Clients';
-import Vendors from './pages/Vendors';
 import Finance from './pages/Finance';
-import Inventory from './pages/Inventory';
-import Quotations from './pages/Quotations';
-import Payments from './pages/Payments';
-import Contracts from './pages/Contracts';
-import ProfitAnalysis from './pages/ProfitAnalysis';
-import CostEntries from './pages/CostEntries';
-import IntegrationsPage from './pages/IntegrationsPage';
-import Procurements from './pages/Procurements';
+import Notifications from './pages/Notifications';
 import Events from './pages/Events';
-import ChangeOrders from './pages/ChangeOrders';
 import Contacts from './pages/Contacts';
 import Reports from './pages/Reports';
 import SiteLogs from './pages/SiteLogs';
 import Construction from './pages/Construction';
-import Schedules from './pages/Schedules';
-import Bim from './pages/Bim';
-import Drone from './pages/Drone';
-import SmartHome from './pages/SmartHome';
-import Regulations from './pages/Regulations';
-import Insurance from './pages/Insurance';
-import Waste from './pages/Waste';
-import Notifications from './pages/Notifications';
 
 // Lazy loaded pages (PERF-001: Code Splitting for heavy components)
 const MaterialCalculator = lazy(() => import('./pages/MaterialCalculator').then(m => ({ default: m.MaterialCalculator })));
 const CostEstimator = lazy(() => import('./pages/CostEstimator').then(m => ({ default: m.CostEstimator })));
 const MaterialGallery = lazy(() => import('./pages/MaterialGallery').then(m => ({ default: m.MaterialGallery })));
 const InvoiceHelper = lazy(() => import('./pages/InvoiceHelper').then(m => ({ default: m.InvoiceHelper })));
+
+// PERF-002: Additional heavy pages (>25KB) moved to lazy loading
+const Vendors = lazy(() => import('./pages/Vendors'));
+const Inventory = lazy(() => import('./pages/Inventory'));
+const Quotations = lazy(() => import('./pages/Quotations'));
+const QuotationEditor = lazy(() => import('./pages/QuotationEditor'));
+const Clients = lazy(() => import('./pages/Clients'));
+const Contracts = lazy(() => import('./pages/Contracts'));
+const CostEntries = lazy(() => import('./pages/CostEntries'));
+const Payments = lazy(() => import('./pages/Payments'));
+const Procurements = lazy(() => import('./pages/Procurements'));
+const ChangeOrders = lazy(() => import('./pages/ChangeOrders'));
+const Insurance = lazy(() => import('./pages/Insurance'));
+const Waste = lazy(() => import('./pages/Waste'));
+const Bim = lazy(() => import('./pages/Bim'));
+const Drone = lazy(() => import('./pages/Drone'));
+const SmartHome = lazy(() => import('./pages/SmartHome'));
+const Regulations = lazy(() => import('./pages/Regulations'));
+const Schedules = lazy(() => import('./pages/Schedules'));
+const ProfitAnalysis = lazy(() => import('./pages/ProfitAnalysis'));
+const IntegrationsPage = lazy(() => import('./pages/IntegrationsPage'));
 
 // NEW: Expert Panel v4.9 P2 Modules
 const GovernmentProjects = lazy(() => import('./pages/GovernmentProjects').then(m => ({ default: m.GovernmentProjects })));
