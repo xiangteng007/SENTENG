@@ -611,8 +611,8 @@ textarea:focus-visible {
 
 @media (max-width: 640px) {
   .glass-card, .glass-card-elevated {
-    backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
   }
 }
 

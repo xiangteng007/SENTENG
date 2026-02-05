@@ -1,12 +1,50 @@
 /**
- * Design Tokens (UI-001)
- * Centralized design system tokens for consistent styling
+ * Design Tokens (UI-001) v5.0
+ * Carbon Copper Industrial Theme
+ * SENTENG ERP - 2026 Redesign
  */
 
 :root {
-  /* ========== Colors ========== */
+  /* ========== Carbon Copper Industrial Palette ========== */
   
-  /* Primary Brand */
+  /* Carbon Gray Series (Primary) */
+  --color-carbon-50: #FAFAF9;
+  --color-carbon-100: #F5F5F4;
+  --color-carbon-200: #E7E5E4;
+  --color-carbon-300: #D6D3D1;
+  --color-carbon-400: #A8A29E;
+  --color-carbon-500: #78716C;
+  --color-carbon-600: #57534E;
+  --color-carbon-700: #44403C;
+  --color-carbon-800: #292524;
+  --color-carbon-900: #1C1917;
+  --color-carbon-950: #0C0A09;
+
+  /* Copper Accent Series */
+  --color-copper-50: #FDF8F6;
+  --color-copper-100: #F9EDE8;
+  --color-copper-200: #F5D5C8;
+  --color-copper-300: #E8B4A0;
+  --color-copper-400: #DA8A68;
+  --color-copper-500: #CD6839;  /* Primary Copper */
+  --color-copper-600: #B8522A;
+  --color-copper-700: #9A4423;
+  --color-copper-800: #7D3A21;
+  --color-copper-900: #67321F;
+
+  /* Gold Accent Series (Preserved) */
+  --color-gold-50: #FFFBEB;
+  --color-gold-100: #FEF3C7;
+  --color-gold-200: #FDE68A;
+  --color-gold-300: #FCD34D;
+  --color-gold-400: #FBBF24;
+  --color-gold-500: #D4AF37;  /* Primary Gold */
+  --color-gold-600: #B8960C;
+  --color-gold-700: #A16207;
+  --color-gold-800: #854D0E;
+  --color-gold-900: #713F12;
+
+  /* Legacy Primary (Backward Compatibility) */
   --color-primary-50: #f8fafc;
   --color-primary-100: #f1f5f9;
   --color-primary-200: #e2e8f0;
@@ -44,7 +82,7 @@
 
   /* ========== Typography ========== */
   
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Inter', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
 
   /* Font Sizes */
@@ -83,22 +121,75 @@
   --space-16: 4rem;     /* 64px */
   --space-20: 5rem;     /* 80px */
 
-  /* ========== Border Radius ========== */
+  /* ========== Border Radius (Unified 12/6 Strategy) ========== */
   
   --radius-sm: 0.25rem;   /* 4px */
-  --radius-md: 0.375rem;  /* 6px */
+  --radius-md: 0.375rem;  /* 6px - Inner elements */
   --radius-lg: 0.5rem;    /* 8px */
-  --radius-xl: 0.75rem;   /* 12px */
+  --radius-xl: 0.75rem;   /* 12px - Primary containers */
   --radius-2xl: 1rem;     /* 16px */
   --radius-3xl: 1.5rem;   /* 24px */
   --radius-full: 9999px;
 
-  /* ========== Shadows ========== */
+  /* ========== 5-Level Shadow System (v5.0) ========== */
   
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.03);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.08);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.08);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+
+  /* Elevation Shadows (with Copper Tint) */
+  --shadow-copper-sm: 0 2px 8px -2px rgba(205, 104, 57, 0.15);
+  --shadow-copper-md: 0 4px 16px -4px rgba(205, 104, 57, 0.2);
+  --shadow-copper-lg: 0 8px 24px -6px rgba(205, 104, 57, 0.25);
+
+  /* Gold Accent Shadows */
+  --shadow-gold-sm: 0 2px 8px -2px rgba(212, 175, 55, 0.2);
+  --shadow-gold-md: 0 4px 16px -4px rgba(212, 175, 55, 0.3);
+  --shadow-gold-lg: 0 8px 24px -6px rgba(212, 175, 55, 0.35);
+
+  /* ========== Gradient System (v5.0) ========== */
+  
+  /* Carbon Gradients */
+  --gradient-carbon: linear-gradient(135deg, var(--color-carbon-800) 0%, var(--color-carbon-900) 100%);
+  --gradient-carbon-subtle: linear-gradient(180deg, var(--color-carbon-50) 0%, var(--color-carbon-100) 100%);
+  
+  /* Copper Gradients */
+  --gradient-copper: linear-gradient(135deg, var(--color-copper-500) 0%, var(--color-copper-600) 100%);
+  --gradient-copper-warm: linear-gradient(135deg, var(--color-copper-400) 0%, var(--color-copper-600) 100%);
+  
+  /* Gold Gradients (Legacy) */
+  --gradient-gold: linear-gradient(135deg, var(--color-gold-500) 0%, var(--color-gold-600) 100%);
+  
+  /* Mixed Accent Gradients */
+  --gradient-carbon-copper: linear-gradient(135deg, var(--color-carbon-900) 0%, var(--color-copper-700) 100%);
+  --gradient-copper-gold: linear-gradient(135deg, var(--color-copper-500) 0%, var(--color-gold-500) 100%);
+
+  /* ========== Motion System (v5.0) ========== */
+  
+  /* Duration */
+  --motion-instant: 50ms;
+  --motion-fast: 150ms;
+  --motion-normal: 200ms;
+  --motion-slow: 300ms;
+  --motion-slower: 500ms;
+
+  /* Easing */
+  --ease-linear: linear;
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-enter: cubic-bezier(0, 0, 0.2, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-elastic: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  /* Combined Transitions */
+  --transition-fast: var(--motion-fast) var(--ease-standard);
+  --transition-normal: var(--motion-normal) var(--ease-standard);
+  --transition-slow: var(--motion-slow) var(--ease-standard);
+  --transition-enter: var(--motion-normal) var(--ease-enter);
+  --transition-exit: var(--motion-fast) var(--ease-exit);
 
   /* ========== Z-Index ========== */
   
@@ -110,12 +201,7 @@
   --z-popover: 1060;
   --z-tooltip: 1070;
   --z-toast: 1080;
-
-  /* ========== Transitions ========== */
-  
-  --transition-fast: 150ms ease;
-  --transition-normal: 200ms ease;
-  --transition-slow: 300ms ease;
+  --z-command-palette: 1100;
 
   /* ========== Breakpoints (for reference in JS) ========== */
   
@@ -124,33 +210,95 @@
   --breakpoint-lg: 1024px;
   --breakpoint-xl: 1280px;
   --breakpoint-2xl: 1536px;
+
+  /* ========== Surface Elevation (v5.0) ========== */
+  
+  --surface-base: var(--color-carbon-50);
+  --surface-raised: #FFFFFF;
+  --surface-overlay: rgba(255, 255, 255, 0.95);
+  --surface-sunken: var(--color-carbon-100);
+  --surface-interactive: var(--color-carbon-200);
 }
 
-/* Dark mode tokens (UI-003) */
-@media (prefers-color-scheme: dark) {
-  :root.dark {
-    --color-bg-primary: var(--color-primary-900);
-    --color-bg-secondary: var(--color-primary-800);
-    --color-text-primary: var(--color-primary-50);
-    --color-text-secondary: var(--color-primary-300);
-    --color-border: var(--color-primary-700);
-  }
+/* Dark mode tokens (UI-003) - Carbon Copper Industrial */
+[data-theme="dark"],
+:root.dark {
+  /* Surface Colors */
+  --color-bg-primary: var(--color-carbon-950);
+  --color-bg-secondary: var(--color-carbon-900);
+  --color-text-primary: var(--color-carbon-100);
+  --color-text-secondary: var(--color-carbon-400);
+  --color-border: var(--color-carbon-700);
+  
+  /* Surface Elevation Override */
+  --surface-base: var(--color-carbon-950);
+  --surface-raised: var(--color-carbon-900);
+  --surface-overlay: rgba(28, 25, 23, 0.95);
+  --surface-sunken: var(--color-carbon-950);
+  --surface-interactive: var(--color-carbon-800);
 }
 
 /* Light mode defaults */
 :root {
   --color-bg-primary: #ffffff;
-  --color-bg-secondary: var(--color-primary-50);
-  --color-text-primary: var(--color-primary-900);
-  --color-text-secondary: var(--color-primary-500);
-  --color-border: var(--color-primary-200);
+  --color-bg-secondary: var(--color-carbon-50);
+  --color-text-primary: var(--color-carbon-900);
+  --color-text-secondary: var(--color-carbon-500);
+  --color-border: var(--color-carbon-200);
 }
 
-/* ========== Component States (UI-002) ========== */
+/* ========== Component States (UI-002) - v5.0 ========== */
 
-/* Button States */
+/* Carbon Button (Primary) */
+.btn-carbon {
+  background: var(--gradient-carbon);
+  color: white;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-normal);
+}
+
+.btn-carbon:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-1px);
+}
+
+.btn-carbon:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Copper Button (Accent) */
+.btn-copper {
+  background: var(--gradient-copper);
+  color: white;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-copper-md);
+  transition: all var(--transition-normal);
+}
+
+.btn-copper:hover {
+  box-shadow: var(--shadow-copper-lg);
+  transform: translateY(-1px);
+}
+
+/* Gold Button (Preserved) */
+.btn-gold {
+  background: var(--gradient-gold);
+  color: var(--color-carbon-900);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-gold-md);
+  transition: all var(--transition-normal);
+}
+
+.btn-gold:hover {
+  box-shadow: var(--shadow-gold-lg);
+  transform: translateY(-1px);
+}
+
+/* Button States (Legacy) */
 .btn-primary {
-  background-color: var(--color-primary-800);
+  background-color: var(--color-carbon-800);
   color: white;
   transition: background-color var(--transition-fast);
 }
