@@ -76,7 +76,7 @@ const EventCard = ({ event, onEdit, onDelete }) => {
   );
 };
 
-// 新增/編輯活動 Modal
+// 新增/編輯活動 Modal - Enhanced Design
 const EventModal = ({ event, onSave, onClose }) => {
   const [form, setForm] = useState({
     title: event?.title || '',
@@ -97,101 +97,150 @@ const EventModal = ({ event, onSave, onClose }) => {
     });
   };
 
+  const selectedType = EVENT_TYPES[form.type] || EVENT_TYPES.OTHER;
+
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-lg font-semibold">{event ? '編輯活動' : '新增活動'}</h2>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
-            <X size={20} />
-          </button>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-hidden">
+        {/* Header with gradient */}
+        <div className="bg-gradient-to-r from-orange-500 to-orange-600 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-white/20 rounded-xl">
+                <Calendar size={20} className="text-white" />
+              </div>
+              <h2 className="text-lg font-bold text-white">{event ? '編輯活動' : '新增活動'}</h2>
+            </div>
+            <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-xl transition-colors">
+              <X size={20} className="text-white" />
+            </button>
+          </div>
         </div>
         
-        <form onSubmit={handleSubmit} className="p-4 space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">活動名稱 *</label>
+        <form onSubmit={handleSubmit} className="p-6 space-y-5 overflow-y-auto max-h-[calc(90vh-140px)]">
+          {/* 活動名稱 */}
+          <div className="space-y-1.5">
+            <label className="block text-sm font-medium text-gray-700">
+              活動名稱 <span className="text-red-500">*</span>
+            </label>
             <input
               type="text"
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
-              className="input w-full"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+              placeholder="輸入活動名稱"
               required
             />
           </div>
           
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">活動類型</label>
-            <select
-              value={form.type}
-              onChange={(e) => setForm({ ...form, type: e.target.value })}
-              className="input w-full"
-            >
-              {Object.entries(EVENT_TYPES).map(([key, { label }]) => (
-                <option key={key} value={key}>{label}</option>
+          {/* 活動類型 - Visual Pills */}
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">活動類型</label>
+            <div className="grid grid-cols-3 gap-2">
+              {Object.entries(EVENT_TYPES).map(([key, { label, color }]) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => setForm({ ...form, type: key })}
+                  className={`px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                    form.type === key 
+                      ? 'ring-2 ring-orange-500 ring-offset-2 ' + color
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {label}
+                </button>
               ))}
-            </select>
+            </div>
           </div>
           
+          {/* 時間選擇 */}
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">開始時間 *</label>
+            <div className="space-y-1.5">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                <Clock size={14} className="text-gray-400" />
+                開始時間 <span className="text-red-500">*</span>
+              </label>
               <input
                 type="datetime-local"
                 value={form.startTime}
                 onChange={(e) => setForm({ ...form, startTime: e.target.value })}
-                className="input w-full"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 required
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">結束時間</label>
+            <div className="space-y-1.5">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                <Clock size={14} className="text-gray-400" />
+                結束時間
+              </label>
               <input
                 type="datetime-local"
                 value={form.endTime}
                 onChange={(e) => setForm({ ...form, endTime: e.target.value })}
-                className="input w-full"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               />
             </div>
           </div>
           
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">地點</label>
+          {/* 地點 */}
+          <div className="space-y-1.5">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+              <MapPin size={14} className="text-gray-400" />
+              地點
+            </label>
             <input
               type="text"
               value={form.location}
               onChange={(e) => setForm({ ...form, location: e.target.value })}
-              className="input w-full"
-              placeholder="例：總公司會議室A"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              placeholder="例：總公司會議室A、工地現場"
             />
           </div>
           
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">參與人員</label>
+          {/* 參與人員 */}
+          <div className="space-y-1.5">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+              <Users size={14} className="text-gray-400" />
+              參與人員
+            </label>
             <input
               type="text"
               value={form.attendees}
               onChange={(e) => setForm({ ...form, attendees: e.target.value })}
-              className="input w-full"
-              placeholder="以逗號分隔，例：張三, 李四"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              placeholder="以逗號分隔，例：張三, 李四, 王五"
             />
+            {form.attendees && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {form.attendees.split(',').map((name, i) => name.trim() && (
+                  <span key={i} className="px-2 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-medium">
+                    {name.trim()}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
           
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">活動說明</label>
+          {/* 活動說明 */}
+          <div className="space-y-1.5">
+            <label className="block text-sm font-medium text-gray-700">活動說明</label>
             <textarea
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
-              className="input w-full h-24 resize-none"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none h-24"
+              placeholder="補充說明、注意事項等..."
             />
           </div>
           
-          <div className="flex justify-end gap-3 pt-4 border-t">
-            <button type="button" onClick={onClose} className="btn-secondary">
+          {/* 按鈕區 */}
+          <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+            <button type="button" onClick={onClose} className="px-5 py-2.5 text-gray-600 hover:bg-gray-100 rounded-xl transition-colors font-medium">
               取消
             </button>
-            <button type="submit" className="btn-primary flex items-center gap-2">
-              <Check size={16} />
-              儲存
+            <button type="submit" className="px-6 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl hover:from-orange-600 hover:to-orange-700 transition-all font-medium flex items-center gap-2 shadow-lg shadow-orange-500/25">
+              <Check size={18} />
+              儲存活動
             </button>
           </div>
         </form>
@@ -199,6 +248,7 @@ const EventModal = ({ event, onSave, onClose }) => {
     </div>
   );
 };
+
 
 export const Events = ({ addToast }) => {
   const [events, setEvents] = useState([]);
