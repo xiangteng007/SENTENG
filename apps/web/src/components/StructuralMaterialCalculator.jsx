@@ -1105,18 +1105,26 @@ const StructuralMaterialCalculator = () => {
 
             {/* 新增/編輯構件對話框 */}
             {showAddModal && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-                        <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-                            <h3 className="font-bold text-gray-800">
-                                {editingId ? '編輯構件' : '新增構件'}
-                            </h3>
-                            <button onClick={() => setShowAddModal(false)} className="p-1 hover:bg-gray-100 rounded-lg">
-                                <X size={20} />
-                            </button>
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] flex flex-col overflow-hidden">
+                        {/* Gradient Header */}
+                        <div className="bg-gradient-to-r from-orange-500 to-amber-600 px-6 py-4 flex-shrink-0">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-white/20 rounded-xl">
+                                        <Calculator size={20} className="text-white" />
+                                    </div>
+                                    <h3 className="text-lg font-bold text-white">
+                                        {editingId ? '編輯構件' : '新增構件'}
+                                    </h3>
+                                </div>
+                                <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-white/20 rounded-xl transition-colors">
+                                    <X size={20} className="text-white" />
+                                </button>
+                            </div>
                         </div>
 
-                        <div className="p-4 space-y-4">
+                        <div className="p-4 space-y-4 overflow-y-auto flex-1">
                             {/* 構件類型選擇 */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">構件類型</label>
