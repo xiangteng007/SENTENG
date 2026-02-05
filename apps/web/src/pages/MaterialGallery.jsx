@@ -7,18 +7,7 @@ import { SectionTitle } from '../components/common/Indicators';
 import { GoogleService } from '../services/GoogleService';
 
 export const MaterialGallery = ({ addToast }) => {
-    const [categories, setCategories] = useState([
-        {
-            id: 1, name: "大理石", driveFolder: null, materials: [
-                { id: 101, title: "義大利白大理石", type: "image", url: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=400", source: "Unsplash" },
-            ]
-        },
-        {
-            id: 2, name: "木紋", driveFolder: null, materials: [
-                { id: 201, title: "日本檜木", type: "link", url: "https://example.com", source: "Official Site" }
-            ]
-        }
-    ]);
+    const [categories, setCategories] = useState([]);
 
     const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false);
     const [isAddMaterialOpen, setIsAddMaterialOpen] = useState(false);

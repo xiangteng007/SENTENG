@@ -59,16 +59,7 @@ const DocumentCard = ({ doc, onView }) => {
 
 // 勞檢自評表組件
 const SelfAssessmentChecklist = () => {
-  const [items, setItems] = useState([
-    { id: 1, category: '安全衛生管理', item: '職業安全衛生管理計畫', checked: true },
-    { id: 2, category: '安全衛生管理', item: '安全衛生工作守則', checked: true },
-    { id: 3, category: '教育訓練', item: '新進人員安全衛生教育訓練紀錄', checked: false },
-    { id: 4, category: '教育訓練', item: '在職人員定期訓練紀錄', checked: true },
-    { id: 5, category: '作業環境', item: '作業環境監測報告', checked: false },
-    { id: 6, category: '作業環境', item: '個人防護具配發紀錄', checked: true },
-    { id: 7, category: '健康管理', item: '勞工健康檢查紀錄', checked: true },
-    { id: 8, category: '健康管理', item: '健康管理分級紀錄', checked: false },
-  ]);
+  const [items, setItems] = useState([]);
 
   const toggleItem = (id) => {
     setItems(items.map(item => 
@@ -132,12 +123,7 @@ const SelfAssessmentChecklist = () => {
 
 // 教育訓練時數追蹤
 const TrainingHoursTracker = () => {
-  const employees = [
-    { name: '王小明', hours: 12, required: 12, status: 'complete' },
-    { name: '李大華', hours: 8, required: 12, status: 'pending' },
-    { name: '張美玲', hours: 12, required: 12, status: 'complete' },
-    { name: '陳志偉', hours: 4, required: 12, status: 'pending' },
-  ];
+  const [employees, setEmployees] = useState([]);
 
   return (
     <div className="bg-white rounded-2xl border border-zinc-100 p-6">
