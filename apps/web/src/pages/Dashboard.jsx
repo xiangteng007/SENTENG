@@ -1,6 +1,6 @@
 /**
  * Dashboard - Premium Edition
- * Design System v4.0: Modern Dark Gold
+ * Design System v5.0: Carbon Copper Industrial
  * Enhanced with real-time stats, charts, and premium UI
  */
 
@@ -28,6 +28,7 @@ import {
   Zap
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { StatCardPro, AlertCard, ProgressRing } from '../components/common/ModuleComponents';
 
 // Greeting based on time
 const getGreeting = () => {
@@ -262,39 +263,41 @@ const Dashboard = ({ events = [], finance = {}, projects = [], clients = [] }) =
         </div>
       </div>
 
-      {/* Stats Grid */}
+      {/* Stats Grid - Using StatCardPro */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard 
+        <StatCardPro 
           title="本月營收" 
           value={formatCurrency(stats.revenue)}
-          change="+12.5% 較上月"
+          change="+12.5%"
+          changeLabel="較上月"
           icon={DollarSign}
-          color="from-green-600 to-green-700"
+          accentColor="success"
           trend="up"
         />
-        <StatCard 
+        <StatCardPro 
           title="進行中專案" 
           value={stats.activeProjects}
           change={`${projects?.length || 0} 個總專案`}
           icon={Briefcase}
-          color="from-zinc-700 to-zinc-800"
+          accentColor="carbon"
           trend="up"
         />
-        <StatCard 
+        <StatCardPro 
           title="客戶總數" 
           value={stats.totalClients}
-          change="+3 本月新增"
+          change="+3"
+          changeLabel="本月新增"
           icon={Users}
-          color="from-[#D4AF37] to-[#B8960C]"
+          accentColor="gold"
           trend="up"
         />
-        <StatCard 
+        <StatCardPro 
           title="本月淨利" 
           value={formatCurrency(stats.profit)}
           change={stats.profit >= 0 ? '+8.2%' : '-5.3%'}
           icon={TrendingUp}
-          color={stats.profit >= 0 ? "from-green-500 to-teal-600" : "from-red-500 to-orange-600"}
-          trend={stats.profit >= 0 ? "up" : "down"}
+          accentColor={stats.profit >= 0 ? 'copper' : 'danger'}
+          trend={stats.profit >= 0 ? 'up' : 'down'}
         />
       </div>
 
