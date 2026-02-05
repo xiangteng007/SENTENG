@@ -98,7 +98,7 @@ const DiaryCard = ({ diary, onEdit, onDelete }) => {
   );
 };
 
-// 新增/編輯日誌 Modal
+// 新增/編輯日誌 Modal - Enhanced Design
 const DiaryModal = ({ diary, projects, onSave, onClose }) => {
   const [form, setForm] = useState({
     projectId: diary?.projectId || '',
@@ -124,23 +124,37 @@ const DiaryModal = ({ diary, projects, onSave, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-lg font-semibold">{diary ? '編輯日誌' : '新增日誌'}</h2>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
-            <X size={20} />
-          </button>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-hidden">
+        {/* Gradient Header */}
+        <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-white/20 rounded-xl">
+                <ClipboardList size={20} className="text-white" />
+              </div>
+              <h2 className="text-lg font-bold text-white">
+                {diary ? '編輯日誌' : '新增工地日誌'}
+              </h2>
+            </div>
+            <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-xl transition-colors">
+              <X size={20} className="text-white" />
+            </button>
+          </div>
         </div>
         
-        <form onSubmit={handleSubmit} className="p-4 space-y-4">
+        <form onSubmit={handleSubmit} className="p-6 space-y-5 overflow-y-auto max-h-[calc(90vh-140px)]">
+          {/* Project & Date */}
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">專案</label>
+            <div className="space-y-1.5">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                <MapPin size={14} className="text-gray-400" />
+                所屬專案
+              </label>
               <select
                 value={form.projectId}
                 onChange={(e) => setForm({ ...form, projectId: e.target.value })}
-                className="input w-full"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="">選擇專案</option>
                 {projects?.map(p => (
@@ -148,102 +162,149 @@ const DiaryModal = ({ diary, projects, onSave, onClose }) => {
                 ))}
               </select>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">日期 *</label>
+            <div className="space-y-1.5">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                <Calendar size={14} className="text-gray-400" />
+                日期 <span className="text-red-500">*</span>
+              </label>
               <input
                 type="date"
                 value={form.diaryDate}
                 onChange={(e) => setForm({ ...form, diaryDate: e.target.value })}
-                className="input w-full"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 required
               />
             </div>
           </div>
           
+          {/* Weather - Visual Pills */}
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">天氣狀況</label>
+            <div className="grid grid-cols-4 gap-2">
+              {WEATHER_OPTIONS.map((w) => {
+                const WeatherIcon = w.icon;
+                return (
+                  <button
+                    key={w.value}
+                    type="button"
+                    onClick={() => setForm({ ...form, weather: w.value })}
+                    className={`px-3 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-2 ${
+                      form.weather === w.value
+                        ? 'ring-2 ring-offset-2 ring-blue-500 bg-blue-50 text-blue-700'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    <WeatherIcon size={16} className={form.weather === w.value ? w.color : ''} />
+                    {w.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          
+          {/* Temperature & Workers */}
           <div className="grid grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">天氣</label>
-              <select
-                value={form.weather}
-                onChange={(e) => setForm({ ...form, weather: e.target.value })}
-                className="input w-full"
-              >
-                {WEATHER_OPTIONS.map(w => (
-                  <option key={w.value} value={w.value}>{w.label}</option>
-                ))}
-              </select>
+            <div className="space-y-1.5">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                <Thermometer size={14} className="text-gray-400" />
+                最高溫
+              </label>
+              <div className="relative">
+                <input
+                  type="number"
+                  value={form.temperatureHigh}
+                  onChange={(e) => setForm({ ...form, temperatureHigh: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10"
+                  placeholder="32"
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">°C</span>
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">最高溫 (°C)</label>
-              <input
-                type="number"
-                value={form.temperatureHigh}
-                onChange={(e) => setForm({ ...form, temperatureHigh: e.target.value })}
-                className="input w-full"
-                placeholder="32"
-              />
+            <div className="space-y-1.5">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                <Thermometer size={14} className="text-gray-400" />
+                最低溫
+              </label>
+              <div className="relative">
+                <input
+                  type="number"
+                  value={form.temperatureLow}
+                  onChange={(e) => setForm({ ...form, temperatureLow: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10"
+                  placeholder="25"
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">°C</span>
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">最低溫 (°C)</label>
-              <input
-                type="number"
-                value={form.temperatureLow}
-                onChange={(e) => setForm({ ...form, temperatureLow: e.target.value })}
-                className="input w-full"
-                placeholder="25"
-              />
+            <div className="space-y-1.5">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                <Users size={14} className="text-gray-400" />
+                出工人數
+              </label>
+              <div className="relative">
+                <input
+                  type="number"
+                  value={form.workersCount}
+                  onChange={(e) => setForm({ ...form, workersCount: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10"
+                  placeholder="0"
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">人</span>
+              </div>
             </div>
           </div>
           
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">出工人數</label>
-            <input
-              type="number"
-              value={form.workersCount}
-              onChange={(e) => setForm({ ...form, workersCount: e.target.value })}
-              className="input w-full"
-              placeholder="0"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">施工內容 *</label>
+          {/* Work Summary */}
+          <div className="space-y-1.5">
+            <label className="block text-sm font-medium text-gray-700">
+              施工內容 <span className="text-red-500">*</span>
+            </label>
             <textarea
               value={form.workSummary}
               onChange={(e) => setForm({ ...form, workSummary: e.target.value })}
-              className="input w-full h-24 resize-none"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none h-24"
               placeholder="今日施工項目與進度..."
               required
             />
           </div>
           
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">待解決問題</label>
+          {/* Issues */}
+          <div className="space-y-1.5">
+            <label className="block text-sm font-medium text-gray-700">待解決問題</label>
             <textarea
               value={form.issues}
               onChange={(e) => setForm({ ...form, issues: e.target.value })}
-              className="input w-full h-16 resize-none"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-400 focus:border-transparent resize-none h-16 bg-red-50/50"
               placeholder="施工過程中遇到的問題..."
             />
           </div>
           
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">安全注意事項</label>
+          {/* Safety Notes */}
+          <div className="space-y-1.5">
+            <label className="block text-sm font-medium text-gray-700">安全注意事項</label>
             <textarea
               value={form.safetyNotes}
               onChange={(e) => setForm({ ...form, safetyNotes: e.target.value })}
-              className="input w-full h-16 resize-none"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-yellow-400 focus:border-transparent resize-none h-16 bg-yellow-50/50"
               placeholder="安全相關提醒..."
             />
           </div>
           
-          <div className="flex justify-end gap-3 pt-4 border-t">
-            <button type="button" onClick={onClose} className="btn-secondary">
+          {/* Buttons */}
+          <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-5 py-2.5 text-gray-600 hover:bg-gray-100 rounded-xl transition-colors font-medium"
+            >
               取消
             </button>
-            <button type="submit" className="btn-primary flex items-center gap-2">
-              <Check size={16} />
-              儲存
+            <button
+              type="submit"
+              className="px-6 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all font-medium flex items-center gap-2 shadow-lg shadow-blue-500/25"
+            >
+              <Check size={18} />
+              儲存日誌
             </button>
           </div>
         </form>
@@ -269,35 +330,8 @@ export const SiteLogs = ({ addToast, allProjects = [] }) => {
       setDiaries(res.data?.items || res.data || []);
     } catch (error) {
       console.error('Failed to fetch site logs:', error);
-      // Fallback to mock data if API not available
-      setDiaries([
-        {
-          id: '1',
-          projectId: 'P001',
-          projectName: '信義區住宅案',
-          diaryDate: '2026-02-01',
-          weather: 'SUNNY',
-          temperatureHigh: 28,
-          temperatureLow: 22,
-          workersCount: 15,
-          workSummary: '完成 3F 牆面粉光作業，開始進行水電預埋管線。',
-          issues: '部分材料延遲到貨',
-          safetyNotes: '高空作業需確實繫好安全帶',
-          photos: [{ url: '1' }, { url: '2' }],
-        },
-        {
-          id: '2',
-          projectId: 'P002',
-          projectName: '中山區辦公大樓',
-          diaryDate: '2026-02-01',
-          weather: 'CLOUDY',
-          temperatureHigh: 26,
-          temperatureLow: 20,
-          workersCount: 8,
-          workSummary: '進行外牆清潔作業，完成 80%。',
-          photos: [],
-        },
-      ]);
+      // No fallback to mock data - show empty state instead
+      setDiaries([]);
     } finally {
       setLoading(false);
     }

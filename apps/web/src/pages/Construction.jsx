@@ -373,7 +373,7 @@ export const Construction = ({ addToast }) => {
   );
 };
 
-// Modal Component
+// Modal Component - Enhanced Design
 const ConstructionModal = ({ item, constructionTypes, statusTypes, onSave, onClose }) => {
   const [formData, setFormData] = useState({
     name: item?.name || '',
@@ -399,121 +399,230 @@ const ConstructionModal = ({ item, constructionTypes, statusTypes, onSave, onClo
     onSave(formData);
   };
 
+  const getTypeColor = (type) => {
+    const colors = {
+      STRUCTURE: 'bg-blue-100 text-blue-700 ring-blue-500',
+      MEP: 'bg-orange-100 text-orange-700 ring-orange-500',
+      INTERIOR: 'bg-purple-100 text-purple-700 ring-purple-500',
+      EXTERIOR: 'bg-green-100 text-green-700 ring-green-500',
+      LANDSCAPE: 'bg-emerald-100 text-emerald-700 ring-emerald-500',
+      OTHER: 'bg-gray-100 text-gray-700 ring-gray-500',
+    };
+    return colors[type] || colors.OTHER;
+  };
+
+  const getStatusColor = (status) => {
+    const colors = {
+      NOT_STARTED: 'bg-gray-100 text-gray-700 ring-gray-500',
+      IN_PROGRESS: 'bg-blue-100 text-blue-700 ring-blue-500',
+      ON_HOLD: 'bg-orange-100 text-orange-700 ring-orange-500',
+      COMPLETED: 'bg-green-100 text-green-700 ring-green-500',
+      DELAYED: 'bg-red-100 text-red-700 ring-red-500',
+    };
+    return colors[status] || colors.NOT_STARTED;
+  };
+
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div className="p-6 border-b flex items-center justify-between">
-          <h2 className="text-xl font-bold">{item ? '編輯施工項目' : '新增施工項目'}</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-            <X size={24} />
-          </button>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
+        {/* Gradient Header */}
+        <div className="bg-gradient-to-r from-orange-500 to-amber-600 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-white/20 rounded-xl">
+                <ConstructionIcon size={20} className="text-white" />
+              </div>
+              <h2 className="text-lg font-bold text-white">
+                {item ? '編輯施工項目' : '新增施工項目'}
+              </h2>
+            </div>
+            <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-xl transition-colors">
+              <X size={20} className="text-white" />
+            </button>
+          </div>
         </div>
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">項目名稱 *</label>
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-5 overflow-y-auto max-h-[calc(90vh-140px)]">
+          {/* Project Name */}
+          <div className="space-y-1.5">
+            <label className="block text-sm font-medium text-gray-700">
+              項目名稱 <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+              placeholder="輸入施工項目名稱"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              required
+            />
+          </div>
+
+          {/* Type - Visual Pills */}
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">工程類型</label>
+            <div className="grid grid-cols-3 gap-2">
+              {constructionTypes.map((t) => (
+                <button
+                  key={t.value}
+                  type="button"
+                  onClick={() => setFormData({ ...formData, type: t.value })}
+                  className={`px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                    formData.type === t.value
+                      ? 'ring-2 ring-offset-2 ' + getTypeColor(t.value)
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Status - Visual Pills */}
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">進度狀態</label>
+            <div className="grid grid-cols-5 gap-2">
+              {statusTypes.map((s) => (
+                <button
+                  key={s.value}
+                  type="button"
+                  onClick={() => setFormData({ ...formData, status: s.value })}
+                  className={`px-2 py-2 rounded-xl text-xs font-medium transition-all ${
+                    formData.status === s.value
+                      ? 'ring-2 ring-offset-1 ' + getStatusColor(s.value)
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Project & Location */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                <FileText size={14} className="text-gray-400" />
+                所屬專案 <span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
-                className="input w-full"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">類型</label>
-              <select
-                className="input w-full"
-                value={formData.type}
-                onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-              >
-                {constructionTypes.map(t => (
-                  <option key={t.value} value={t.value}>{t.label}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">狀態</label>
-              <select
-                className="input w-full"
-                value={formData.status}
-                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-              >
-                {statusTypes.map(s => (
-                  <option key={s.value} value={s.value}>{s.label}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">專案名稱 *</label>
-              <input
-                type="text"
-                className="input w-full"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                placeholder="專案名稱"
                 value={formData.projectName}
                 onChange={(e) => setFormData({ ...formData, projectName: e.target.value })}
                 required
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">施工位置</label>
+            <div className="space-y-1.5">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                <MapPin size={14} className="text-gray-400" />
+                施工位置
+              </label>
               <input
                 type="text"
-                className="input w-full"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                placeholder="例：1F 大廳、B2 機房"
                 value={formData.location}
                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">計劃開始</label>
+          </div>
+
+          {/* Dates */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                <Calendar size={14} className="text-gray-400" />
+                計劃開始
+              </label>
               <input
                 type="date"
-                className="input w-full"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 value={formData.plannedStart}
                 onChange={(e) => setFormData({ ...formData, plannedStart: e.target.value })}
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">計劃完成</label>
+            <div className="space-y-1.5">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                <Calendar size={14} className="text-gray-400" />
+                計劃完成
+              </label>
               <input
                 type="date"
-                className="input w-full"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 value={formData.plannedEnd}
                 onChange={(e) => setFormData({ ...formData, plannedEnd: e.target.value })}
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">施工團隊</label>
+          </div>
+
+          {/* Team & Progress */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                <Users size={14} className="text-gray-400" />
+                施工團隊
+              </label>
               <input
                 type="text"
-                className="input w-full"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                placeholder="例：A班組、王師傅團隊"
                 value={formData.assignedTeam}
                 onChange={(e) => setFormData({ ...formData, assignedTeam: e.target.value })}
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">完成進度 (%)</label>
+            <div className="space-y-1.5">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                <BarChart3 size={14} className="text-gray-400" />
+                完成進度
+                <span className="ml-auto text-orange-600 font-bold">{formData.percentComplete}%</span>
+              </label>
               <input
-                type="number"
-                className="input w-full"
+                type="range"
                 min="0"
                 max="100"
+                className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-orange-500"
                 value={formData.percentComplete}
                 onChange={(e) => setFormData({ ...formData, percentComplete: parseInt(e.target.value) || 0 })}
               />
-            </div>
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">備註</label>
-              <textarea
-                className="input w-full"
-                rows={3}
-                value={formData.notes}
-                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-              />
+              <div className="flex justify-between text-xs text-gray-400">
+                <span>0%</span>
+                <span>50%</span>
+                <span>100%</span>
+              </div>
             </div>
           </div>
-          <div className="flex justify-end gap-3 pt-4 border-t">
-            <button type="button" onClick={onClose} className="btn-secondary">取消</button>
-            <button type="submit" className="btn-primary">儲存</button>
+
+          {/* Notes */}
+          <div className="space-y-1.5">
+            <label className="block text-sm font-medium text-gray-700">備註說明</label>
+            <textarea
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none h-24"
+              placeholder="施工注意事項、材料需求等..."
+              value={formData.notes}
+              onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+            />
+          </div>
+
+          {/* Button Area */}
+          <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-5 py-2.5 text-gray-600 hover:bg-gray-100 rounded-xl transition-colors font-medium"
+            >
+              取消
+            </button>
+            <button
+              type="submit"
+              className="px-6 py-2.5 bg-gradient-to-r from-orange-500 to-amber-600 text-white rounded-xl hover:from-orange-600 hover:to-amber-700 transition-all font-medium flex items-center gap-2 shadow-lg shadow-orange-500/25"
+            >
+              <CheckCircle size={18} />
+              儲存項目
+            </button>
           </div>
         </form>
       </div>
