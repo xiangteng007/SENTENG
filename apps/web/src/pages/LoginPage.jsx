@@ -1,10 +1,24 @@
 // Login Page Component
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const LoginPage = () => {
+    const navigate = useNavigate();
     const { signInWithGoogle, loading, error, clearError } = useAuth();
     const [isHovered, setIsHovered] = useState(null);
+
+    // Handle Google login with redirect to dashboard
+    const handleGoogleLogin = async () => {
+        try {
+            await signInWithGoogle();
+            // Redirect to dashboard after successful login
+            navigate('/', { replace: true });
+        } catch (err) {
+            // Error is already handled by AuthContext
+            console.error('Login failed:', err);
+        }
+    };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 flex items-center justify-center p-4">
@@ -53,7 +67,7 @@ const LoginPage = () => {
                     <div className="space-y-4">
                         {/* Google Login Button */}
                         <button
-                            onClick={signInWithGoogle}
+                            onClick={handleGoogleLogin}
                             disabled={loading}
                             onMouseEnter={() => setIsHovered('google')}
                             onMouseLeave={() => setIsHovered(null)}
