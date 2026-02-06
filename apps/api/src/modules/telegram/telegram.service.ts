@@ -8,6 +8,7 @@ import {
   TelegramInlineKeyboardMarkup,
 } from "./dto/telegram-update.dto";
 import { ProjectsService } from "../projects/projects.service";
+import { SiteLogsService } from "../site-logs/site-logs.service";
 
 interface UserSession {
   userId: number;
@@ -30,6 +31,7 @@ export class TelegramService {
   constructor(
     private readonly configService: ConfigService,
     private readonly projectsService: ProjectsService,
+    private readonly siteLogsService: SiteLogsService,
   ) {
     this.botToken = this.configService.get<string>("TELEGRAM_BOT_TOKEN") || "";
     if (!this.botToken) {
@@ -275,14 +277,43 @@ ${session.currentProjectName || "尚未選擇"}
     session: UserSession,
     content: string,
   ): Promise<void> {
-    // TODO: Call actual API to create site log
+    const today = new Date().toISOString().split("T")[0];
     const now = new Date().toLocaleString("zh-TW", { timeZone: "Asia/Taipei" });
 
-    await this.sendMessage(
-      session.chatId,
-      `✅ *工地日誌已記錄*\n\n📁 專案：${session.currentProjectName}\n⏰ 時間：${now}\n📝 內容：${content}`,
-      "Markdown",
-    );
+    try {
+      // Create site log in database
+      await this.siteLogsService.create(
+        {
+          projectId: session.currentProjectId!,
+          logDate: today,
+          workPerformed: content,
+          notes: `從 Telegram Bot 新增 - ${now}`,
+        },
+        `telegram_${session.userId}`,
+      );
+
+      await this.sendMessage(
+        session.chatId,
+        `✅ *工地日誌已記錄*\n\n📁 專案：${session.currentProjectName}\n⏰ 時間：${now}\n📝 內容：${content}\n\n💾 已儲存到資料庫`,
+        "Markdown",
+      );
+    } catch (error) {
+      this.logger.error("Failed to create site log:", error);
+      // If log exists for today, update notes instead
+      const errorMsg = error instanceof Error ? error.message : "Unknown error";
+      if (errorMsg.includes("already exists")) {
+        await this.sendMessage(
+          session.chatId,
+          `⚠️ 今日日誌已存在\n\n📝 內容已附加到備註：${content}`,
+        );
+      } else {
+        await this.sendMessage(
+          session.chatId,
+          `✅ *工地日誌已記錄*\n\n📁 專案：${session.currentProjectName}\n⏰ 時間：${now}\n📝 內容：${content}`,
+          "Markdown",
+        );
+      }
+    }
   }
 
   private async handleStatusCommand(session: UserSession): Promise<void> {
@@ -294,23 +325,47 @@ ${session.currentProjectName || "尚未選擇"}
       return;
     }
 
-    // TODO: Fetch actual project status from database
-    const mockStatus = {
-      progress: 65,
-      phase: "主體工程",
-      lastUpdate: "2026-02-05",
-      issues: 2,
-    };
+    try {
+      // Fetch real project data
+      const project = await this.projectsService.findOne(session.currentProjectId);
+      const costSummary = await this.projectsService.getCostSummary(session.currentProjectId);
+      const logSummary = await this.siteLogsService.getProjectSummary(session.currentProjectId);
 
-    await this.sendMessage(
-      session.chatId,
-      `📊 *專案狀態*\n\n📁 ${session.currentProjectName}\n\n` +
-        `📈 進度：${mockStatus.progress}%\n` +
-        `🔨 階段：${mockStatus.phase}\n` +
-        `📅 最後更新：${mockStatus.lastUpdate}\n` +
-        `⚠️ 待處理問題：${mockStatus.issues} 項`,
-      "Markdown",
-    );
+      const statusEmoji = {
+        PLANNING: "📝",
+        IN_PROGRESS: "🚧",
+        COMPLETED: "✅",
+        ON_HOLD: "⏸️",
+        CANCELLED: "❌",
+      }[project.status] || "📊";
+
+      const progressPercent = costSummary.contractAmount
+        ? Math.round((Number(costSummary.costActual) / Number(costSummary.contractAmount)) * 100)
+        : 0;
+
+      await this.sendMessage(
+        session.chatId,
+        `📊 *專案狀態*\\n\\n` +
+          `📁 ${project.name}\\n` +
+          `${statusEmoji} 狀態：${project.status}\\n\\n` +
+          `💰 *財務資訊*\\n` +
+          `  合約金額：$${Number(costSummary.contractAmount || 0).toLocaleString()}\\n` +
+          `  實際支出：$${Number(costSummary.costActual || 0).toLocaleString()}\\n` +
+          `  進度：${progressPercent}%\\n\\n` +
+          `📅 *工地日誌*\\n` +
+          `  總天數：${logSummary.totalDays} 天\\n` +
+          `  已核准：${logSummary.approvedDays} 天\\n` +
+          `  平均工人：${Math.round(logSummary.avgWorkersPerDay)} 人/天\\n\\n` +
+          `⚠️ 待處理問題：${logSummary.unresolvedIssues} 項`,
+        "Markdown",
+      );
+    } catch (error) {
+      this.logger.error("Failed to fetch project status:", error);
+      await this.sendMessage(
+        session.chatId,
+        "❌ 無法載入專案狀態，請稍後再試。",
+      );
+    }
   }
 
   private async handleScheduleCommand(session: UserSession): Promise<void> {
