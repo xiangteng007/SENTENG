@@ -31,6 +31,9 @@ import { SitesService } from "../platform/sites/sites.service";
 import { AgingAnalysisService } from "../finance/aging-analysis.service";
 import { ClientsService } from "../crm/clients/clients.service";
 import { WorkOrdersService } from "../drone/work-orders/work-orders.service";
+import { WeatherService } from "../integrations/taiwan/weather.service";
+import { RbacService } from "../platform/rbac/rbac.service";
+import { TenantsService } from "../platform/tenants/tenants.service";
 
 interface UserSession {
   userId: number;
@@ -76,6 +79,9 @@ export class TelegramService {
     private readonly agingAnalysisService: AgingAnalysisService,
     private readonly clientsService: ClientsService,
     private readonly workOrdersService: WorkOrdersService,
+    private readonly weatherService: WeatherService,
+    private readonly rbacService: RbacService,
+    private readonly tenantsService: TenantsService,
   ) {
     this.botToken = this.configService.get<string>("TELEGRAM_BOT_TOKEN") || "";
     if (!this.botToken) {
@@ -239,6 +245,14 @@ export class TelegramService {
         case "/workorder":
         case "/派工":
           await this.handleWorkOrderCommand(session);
+          break;
+        case "/role":
+        case "/角色":
+          await this.handleRoleCommand(session);
+          break;
+        case "/tenant":
+        case "/公司":
+          await this.handleTenantCommand(session);
           break;
         default:
           await this.sendMessage(
@@ -1351,6 +1365,51 @@ ${session.currentProjectName || "尚未選擇"}
     } catch (error) {
       this.logger.error("Failed to fetch work orders:", error);
       await this.sendMessage(session.chatId, "❌ 無法載入派工單。");
+    }
+  }
+
+  private async handleRoleCommand(session: UserSession): Promise<void> {
+    try {
+      const roles = await this.rbacService.findAllRoles();
+      if (!roles || roles.length === 0) {
+        await this.sendMessage(
+          session.chatId,
+          `👥 *角色權限*\n\n✅ 無角色設定`,
+          "Markdown",
+        );
+        return;
+      }
+      let message = `👥 *角色權限* (${roles.length} 個)\n\n`;
+      roles.slice(0, 5).forEach((r) => {
+        message += `• ${r.name}${r.description ? ` - ${r.description}` : ""}\n`;
+      });
+      await this.sendMessage(session.chatId, message, "Markdown");
+    } catch (error) {
+      this.logger.error("Failed to fetch roles:", error);
+      await this.sendMessage(session.chatId, "❌ 無法載入角色權限。");
+    }
+  }
+
+  private async handleTenantCommand(session: UserSession): Promise<void> {
+    try {
+      const units = await this.tenantsService.findAllBusinessUnits();
+      if (!units || units.length === 0) {
+        await this.sendMessage(
+          session.chatId,
+          `🏢 *事業單位*\n\n✅ 無事業單位`,
+          "Markdown",
+        );
+        return;
+      }
+      let message = `🏢 *事業單位* (${units.length} 個)\n\n`;
+      units.slice(0, 5).forEach((bu) => {
+        const statusIcon = bu.isActive ? "🟢" : "🔴";
+        message += `${statusIcon} ${bu.name} (${bu.code})\n`;
+      });
+      await this.sendMessage(session.chatId, message, "Markdown");
+    } catch (error) {
+      this.logger.error("Failed to fetch tenants:", error);
+      await this.sendMessage(session.chatId, "❌ 無法載入事業單位。");
     }
   }
 
