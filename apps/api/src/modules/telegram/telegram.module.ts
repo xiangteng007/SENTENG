@@ -22,6 +22,7 @@ import { PlatformModule } from "../platform/platform.module";
 import { ContactsModule } from "../contacts/contacts.module";
 import { CrmModule } from "../crm/crm.module";
 import { DroneModule } from "../drone/drone.module";
+import { IntegrationsModule } from "../integrations/integrations.module";
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { DroneModule } from "../drone/drone.module";
     ContactsModule,
     CrmModule,
     DroneModule,
+    IntegrationsModule,
   ],
   controllers: [TelegramController],
   providers: [TelegramService],

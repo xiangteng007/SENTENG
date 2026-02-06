@@ -27,7 +27,11 @@ import {
 } from "./google";
 
 // Taiwan Services
-import { TaiwanGovDataService } from "./taiwan";
+import {
+  TaiwanGovDataService,
+  NhiApiService,
+  LineApiService,
+} from "./taiwan";
 
 // Banking Services
 import {
@@ -65,6 +69,8 @@ import { AuditModule } from "../platform/audit/audit.module";
     ContactsSyncService,
     // Taiwan
     TaiwanGovDataService,
+    NhiApiService,
+    LineApiService,
     // Banking
     AccountingExportService,
     BankingIntegrationService,
@@ -78,6 +84,8 @@ import { AuditModule } from "../platform/audit/audit.module";
     ContactsSyncService,
     // Taiwan
     TaiwanGovDataService,
+    NhiApiService,
+    LineApiService,
     // Banking
     AccountingExportService,
     BankingIntegrationService,
