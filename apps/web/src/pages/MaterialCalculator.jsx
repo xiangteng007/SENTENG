@@ -4176,6 +4176,51 @@ export const MaterialCalculator = ({ addToast, vendors = [] }) => {
                         </div>
                     )}
 
+                    {/* BOM 預覽表格 */}
+                    {calcRecords.length > 0 && calcRecords.some(r => r.subtotal > 0) && (
+                        <div className="bg-white border border-gray-200 rounded-2xl p-4">
+                            <div className="flex items-center gap-2 mb-3">
+                                <FileSpreadsheet size={18} className="text-gray-600" />
+                                <span className="font-medium text-gray-800">📋 BOM 物料清單預覽</span>
+                            </div>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-xs">
+                                    <thead>
+                                        <tr className="border-b bg-gray-50">
+                                            <th className="text-left py-2 px-2">工程類別</th>
+                                            <th className="text-left py-2 px-2">品項</th>
+                                            <th className="text-right py-2 px-2">數量</th>
+                                            <th className="text-right py-2 px-2">單價</th>
+                                            <th className="text-right py-2 px-2">小計</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {calcRecords.filter(r => r.subtotal > 0).map(record => (
+                                            <tr key={record.id} className="border-b border-gray-100 hover:bg-gray-50">
+                                                <td className="py-1.5 px-2 text-gray-500">{record.category}</td>
+                                                <td className="py-1.5 px-2">{record.label}</td>
+                                                <td className="py-1.5 px-2 text-right">{formatNumber(record.wastageValue)} {record.unit}</td>
+                                                <td className="py-1.5 px-2 text-right">${formatNumber(record.price)}</td>
+                                                <td className="py-1.5 px-2 text-right font-medium">${formatNumber(record.subtotal, 0)}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                    <tfoot>
+                                        <tr className="bg-orange-50 font-bold">
+                                            <td colSpan={4} className="py-2 px-2 text-right text-gray-700">總計</td>
+                                            <td className="py-2 px-2 text-right text-orange-700">
+                                                ${formatNumber(calcRecords.filter(r => r.subtotal > 0).reduce((sum, r) => sum + (r.subtotal || 0), 0), 0)}
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <div className="text-xs text-gray-400 mt-2">
+                                * 僅顯示已輸入單價的項目
+                            </div>
+                        </div>
+                    )}
+
                     {/* 使用提示 */}
                     <div className="bg-orange-50 border border-orange-200 rounded-xl p-4">
                         <div className="flex gap-2">
