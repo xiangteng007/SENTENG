@@ -36,6 +36,9 @@ import { RbacService } from "../platform/rbac/rbac.service";
 import { TenantsService } from "../platform/tenants/tenants.service";
 import { EInvoiceService } from "../invoices/e-invoice.service";
 import { BuildingCodeService } from "../regulations/building-code.service";
+import { FireSafetyService } from "../regulations/fire-safety.service";
+import { CnsStandardsService } from "../regulations/cns-standards.service";
+import { LineNotifyService } from "../notifications/line-notify.service";
 
 interface UserSession {
   userId: number;
@@ -86,6 +89,9 @@ export class TelegramService {
     private readonly tenantsService: TenantsService,
     private readonly eInvoiceService: EInvoiceService,
     private readonly buildingCodeService: BuildingCodeService,
+    private readonly fireSafetyService: FireSafetyService,
+    private readonly cnsStandardsService: CnsStandardsService,
+    private readonly lineNotifyService: LineNotifyService,
   ) {
     this.botToken = this.configService.get<string>("TELEGRAM_BOT_TOKEN") || "";
     if (!this.botToken) {
@@ -265,6 +271,18 @@ export class TelegramService {
         case "/building":
         case "/建規":
           await this.handleBuildingCodeCommand(session);
+          break;
+        case "/firesafety":
+        case "/消防":
+          await this.handleFireSafetyCommand(session);
+          break;
+        case "/cns":
+        case "/標準":
+          await this.handleCnsCommand(session);
+          break;
+        case "/line":
+        case "/推播":
+          await this.handleLineNotifyCommand(session);
           break;
         default:
           await this.sendMessage(
@@ -1450,6 +1468,50 @@ ${session.currentProjectName || "尚未選擇"}
         `• 停車位需求\n` +
         `• 無障礙設施\n\n` +
         `ℹ️ 使用網頁版進行完整檢核`,
+      "Markdown",
+    );
+  }
+
+  private async handleFireSafetyCommand(session: UserSession): Promise<void> {
+    await this.sendMessage(
+      session.chatId,
+      `🔥 *消防法規檢核*\n\n` +
+        `📋 可計算項目：\n` +
+        `• 滅火器數量/配置\n` +
+        `• 逃生距離\n` +
+        `• 出口寬度\n` +
+        `• 煙霧偵測器\n` +
+        `• 緊急照明\n\n` +
+        `ℹ️ 使用網頁版進行完整消防法規檢核`,
+      "Markdown",
+    );
+  }
+
+  private async handleCnsCommand(session: UserSession): Promise<void> {
+    try {
+      const categories = this.cnsStandardsService.getCategories();
+      let message = `📐 *CNS 國家標準*\n\n📋 可查詢類別：\n`;
+      categories.slice(0, 6).forEach((cat) => {
+        message += `• ${cat.label} (${cat.count} 項)\n`;
+      });
+      message += `\nℹ️ 使用網頁版查詢完整標準資料`;
+      await this.sendMessage(session.chatId, message, "Markdown");
+    } catch (error) {
+      this.logger.error("Failed to fetch CNS standards:", error);
+      await this.sendMessage(session.chatId, "❌ 無法載入國家標準。");
+    }
+  }
+
+  private async handleLineNotifyCommand(session: UserSession): Promise<void> {
+    await this.sendMessage(
+      session.chatId,
+      `📱 *LINE 通知服務*\n\n` +
+        `📋 支援功能：\n` +
+        `• 專案進度通知\n` +
+        `• 里程碑提醒\n` +
+        `• 延遲警報\n` +
+        `• 完工通知\n\n` +
+        `ℹ️ 請透過網頁版設定 LINE 推播`,
       "Markdown",
     );
   }
