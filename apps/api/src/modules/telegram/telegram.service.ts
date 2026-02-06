@@ -45,6 +45,9 @@ import { AccountingExportService } from "../integrations/banking/accounting-expo
 import { EmailService } from "../notifications/email.service";
 import { PushNotificationService } from "../notifications/push-notification.service";
 import { GoogleSheetsService } from "../integrations/google/google-sheets.service";
+import { BankingIntegrationService } from "../integrations/banking/banking-integration.service";
+import { ContactsSyncService } from "../integrations/google/contacts-sync.service";
+import { LineApiService } from "../integrations/taiwan/line-api.service";
 
 interface UserSession {
   userId: number;
@@ -104,6 +107,9 @@ export class TelegramService {
     private readonly emailService: EmailService,
     private readonly pushNotificationService: PushNotificationService,
     private readonly googleSheetsService: GoogleSheetsService,
+    private readonly bankingIntegrationService: BankingIntegrationService,
+    private readonly contactsSyncService: ContactsSyncService,
+    private readonly lineApiService: LineApiService,
   ) {
     this.botToken = this.configService.get<string>("TELEGRAM_BOT_TOKEN") || "";
     if (!this.botToken) {
@@ -319,6 +325,18 @@ export class TelegramService {
         case "/sheets":
         case "/試算表":
           await this.handleSheetsCommand(session);
+          break;
+        case "/banking":
+        case "/銀行":
+          await this.handleBankingCommand(session);
+          break;
+        case "/contacts":
+        case "/同步聯絡人":
+          await this.handleContactsCommand(session);
+          break;
+        case "/lineapi":
+        case "/LINE推播":
+          await this.handleLineApiCommand(session);
           break;
         default:
           await this.sendMessage(
@@ -1628,6 +1646,49 @@ ${session.currentProjectName || "尚未選擇"}
         `• 自動格式化\n` +
         `• 分類統計\n\n` +
         `ℹ️ 使用網頁版匯出估價單`,
+      "Markdown",
+    );
+  }
+
+  private async handleBankingCommand(session: UserSession): Promise<void> {
+    await this.sendMessage(
+      session.chatId,
+      `🏦 *銀行整合服務*\n\n` +
+        `📋 支援功能：\n` +
+        `• 虛擬帳號產生\n` +
+        `• 批次轉帳 (ACH)\n` +
+        `• 帳戶餘額查詢\n` +
+        `• 超商代收條碼\n\n` +
+        `ℹ️ 使用網頁版管理銀行整合`,
+      "Markdown",
+    );
+  }
+
+  private async handleContactsCommand(session: UserSession): Promise<void> {
+    await this.sendMessage(
+      session.chatId,
+      `📇 *Google Contacts 同步*\n\n` +
+        `📋 支援功能：\n` +
+        `• 客戶聯絡人同步\n` +
+        `• 廠商聯絡人同步\n` +
+        `• 更新同步/新增同步\n\n` +
+        `ℹ️ 使用網頁版管理通訊錄同步`,
+      "Markdown",
+    );
+  }
+
+  private async handleLineApiCommand(session: UserSession): Promise<void> {
+    const isConfigured = this.lineApiService.isMessagingConfigured();
+    await this.sendMessage(
+      session.chatId,
+      `📲 *LINE Messaging API*\n\n` +
+        `📋 支援功能：\n` +
+        `• 推播訊息\n` +
+        `• 報價通知\n` +
+        `• 簽核提醒\n` +
+        `• 工期預警\n\n` +
+        `🔌 狀態：${isConfigured ? "✅ 已設定" : "⚠️ 尚未設定"}\n\n` +
+        `ℹ️ 使用網頁版設定 LINE API`,
       "Markdown",
     );
   }
