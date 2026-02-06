@@ -441,6 +441,24 @@ const UNIT_CONVERSIONS = {
     sqftToSqm: 0.0929,       // 1 sq ft = 0.0929 m²
 };
 
+// 常用開口尺寸預設 (用於牆體/磁磚扣除)
+const COMMON_OPENINGS = {
+    doors: [
+        { label: '標準單門', width: 0.9, height: 2.1, area: 1.89 },
+        { label: '雙開門', width: 1.5, height: 2.1, area: 3.15 },
+        { label: '大門', width: 1.8, height: 2.4, area: 4.32 },
+        { label: '浴室門', width: 0.7, height: 2.0, area: 1.40 },
+        { label: '落地門', width: 0.9, height: 2.4, area: 2.16 },
+    ],
+    windows: [
+        { label: '標準窗', width: 1.2, height: 1.2, area: 1.44 },
+        { label: '大窗', width: 1.8, height: 1.5, area: 2.70 },
+        { label: '落地窗', width: 1.2, height: 2.1, area: 2.52 },
+        { label: '氣窗', width: 0.6, height: 0.4, area: 0.24 },
+        { label: '觀景窗', width: 2.4, height: 1.5, area: 3.60 },
+    ],
+};
+
 // ============================================
 // 工具函數
 // ============================================
@@ -903,8 +921,8 @@ const ComponentCalculator = ({ onAddRecord, vendors = [] }) => {
     const [beamRows, setBeamRows] = useState([{ id: 1, name: '', width: '', height: '', length: '', count: '1', rebarType: 0 }]);
     // 樓板狀態
     const [slabRows, setSlabRows] = useState([{ id: 1, name: '', length: '', width: '', thickness: '15', rebarType: 1 }]);
-    // 牆體狀態
-    const [wallRows, setWallRows] = useState([{ id: 1, name: '', length: '', height: '', thickness: '20', rebarType: 2 }]);
+    // 牆體狀態 (含開口扣除)
+    const [wallRows, setWallRows] = useState([{ id: 1, name: '', length: '', height: '', thickness: '20', rebarType: 2, openings: '' }]);
     // 樓梯狀態
     const [stairRows, setStairRows] = useState([{ id: 1, name: '', width: '', length: '', riseHeight: '', steps: '10', stairType: 0 }]);
     // 女兒牆狀態
@@ -962,13 +980,15 @@ const ComponentCalculator = ({ onAddRecord, vendors = [] }) => {
         const l = parseFloat(row.length) || 0;
         const h = parseFloat(row.height) || 0;
         const t = parseFloat(row.thickness) / 100 || 0.2;
+        const openingsArea = parseFloat(row.openings) || 0; // 開口扣除面積
         const rebarRate = COMPONENT_REBAR_RATES.wall[row.rebarType]?.value || 34;
 
-        const area = l * h;
-        const formwork = 2 * area; // 雙面
-        const concrete = area * t;
-        const rebar = area * rebarRate;
-        return { formwork, concrete, rebar };
+        const grossArea = l * h;
+        const netArea = Math.max(0, grossArea - openingsArea); // 淨面積 = 總面積 - 開口
+        const formwork = 2 * netArea; // 雙面
+        const concrete = netArea * t;
+        const rebar = netArea * rebarRate;
+        return { formwork, concrete, rebar, openingsDeducted: openingsArea };
     };
 
     const calculateStair = (row) => {
@@ -1198,7 +1218,10 @@ const ComponentCalculator = ({ onAddRecord, vendors = [] }) => {
                                     {COMPONENT_REBAR_RATES.wall.map((r, i) => <option key={i} value={i}>{r.label}</option>)}
                                 </select>
                             </div>
-                            <div className="col-span-9 sm:col-span-2"></div>
+                            <div className="col-span-4 sm:col-span-2">
+                                <label className="block text-xs text-gray-500 mb-1">開口扣除 (m²)</label>
+                                <input type="number" value={row.openings} onChange={e => updateRow(wallRows, setWallRows, row.id, 'openings', e.target.value)} placeholder="0" className={commonInputClass} title="門窗開口總面積" />
+                            </div>
                             <div className="col-span-3 sm:col-span-1 flex justify-end">
                                 <button onClick={() => removeRow(wallRows, setWallRows, row.id)} disabled={wallRows.length <= 1} className="p-1.5 text-red-400 hover:text-red-600 rounded-lg disabled:opacity-30"><Trash2 size={14} /></button>
                             </div>
@@ -1357,7 +1380,7 @@ const ComponentCalculator = ({ onAddRecord, vendors = [] }) => {
             column: { name: '', width: '', depth: '', height: '', count: '1', rebarType: 0 },
             beam: { name: '', width: '', height: '', length: '', count: '1', rebarType: 0 },
             slab: { name: '', length: '', width: '', thickness: '15', rebarType: 1 },
-            wall: { name: '', length: '', height: '', thickness: '20', rebarType: 2 },
+            wall: { name: '', length: '', height: '', thickness: '20', rebarType: 2, openings: '' },
             stair: { name: '', width: '', length: '', riseHeight: '', steps: '10', stairType: 0 },
             parapet: { name: '', perimeter: '', height: '0.9', thickness: '15', rebarType: 1 },
             groundBeam: { name: '', width: '', depth: '', length: '', count: '1', rebarType: 0 },
