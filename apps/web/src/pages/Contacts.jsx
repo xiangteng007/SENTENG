@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect, useMemo } from 'react';
 import api from '../services/api';
-import { PhoneCall, Plus, Filter, Search, Edit2, Trash2, Mail, Building2, User, X, Check, Tag } from 'lucide-react';
+import { syncContactToGoogle } from '../services/contactsSyncApi';
+import { PhoneCall, Plus, Filter, Search, Edit2, Trash2, Mail, Building2, User, X, Check, Tag, Cloud, CloudOff, RefreshCw, Loader2 } from 'lucide-react';
 import { EmptyState } from '../components/common/EmptyState';
 
 // 聯絡人分類
@@ -14,8 +15,29 @@ const CONTACT_CATEGORIES = {
 };
 
 // 聯絡人卡片
-const ContactCard = ({ contact, onEdit, onDelete }) => {
+const ContactCard = ({ contact, onEdit, onDelete, onSync }) => {
   const categoryInfo = CONTACT_CATEGORIES[contact.category] || CONTACT_CATEGORIES.OTHER;
+  const [syncing, setSyncing] = useState(false);
+  
+  // 同步狀態顯示
+  const getSyncStatus = () => {
+    switch(contact.syncStatus) {
+      case 'SYNCED': return { icon: Cloud, color: 'text-green-500', label: '已同步' };
+      case 'PENDING': return { icon: RefreshCw, color: 'text-yellow-500', label: '待同步' };
+      case 'FAILED': return { icon: CloudOff, color: 'text-red-500', label: '同步失敗' };
+      default: return { icon: CloudOff, color: 'text-gray-400', label: '未同步' };
+    }
+  };
+  const syncStatus = getSyncStatus();
+  
+  const handleSync = async () => {
+    setSyncing(true);
+    try {
+      await onSync?.(contact.id);
+    } finally {
+      setSyncing(false);
+    }
+  };
   
   return (
     <div className="card p-4 hover:shadow-lg transition-shadow">
@@ -67,6 +89,18 @@ const ContactCard = ({ contact, onEdit, onDelete }) => {
         </div>
         
         <div className="flex gap-1">
+          <button 
+            onClick={handleSync} 
+            disabled={syncing}
+            className="p-2 hover:bg-blue-50 rounded group relative"
+            title={syncStatus.label}
+          >
+            {syncing ? (
+              <Loader2 size={16} className="text-blue-500 animate-spin" />
+            ) : (
+              <syncStatus.icon size={16} className={syncStatus.color} />
+            )}
+          </button>
           <button onClick={() => onEdit(contact)} className="p-2 hover:bg-gray-100 rounded">
             <Edit2 size={16} className="text-gray-500" />
           </button>
@@ -345,6 +379,24 @@ export const Contacts = ({ addToast }) => {
     setShowModal(true);
   };
 
+  // 同步聯絡人到 Google Contacts
+  const handleSync = async (contactId) => {
+    try {
+      await syncContactToGoogle(contactId);
+      // 更新本地狀態
+      setContacts(prev => prev.map(c => 
+        c.id === contactId ? { ...c, syncStatus: 'SYNCED' } : c
+      ));
+      addToast?.('已同步到 Google 通訊錄', 'success');
+    } catch (error) {
+      console.error('Sync failed:', error);
+      setContacts(prev => prev.map(c => 
+        c.id === contactId ? { ...c, syncStatus: 'FAILED' } : c
+      ));
+      addToast?.('同步失敗: ' + (error.response?.data?.message || error.message), 'error');
+    }
+  };
+
   // 依分類統計
   const stats = useMemo(() => {
     const result = {};
@@ -431,6 +483,7 @@ export const Contacts = ({ addToast }) => {
               contact={contact}
               onEdit={handleEdit}
               onDelete={handleDelete}
+              onSync={handleSync}
             />
           ))}
         </div>
