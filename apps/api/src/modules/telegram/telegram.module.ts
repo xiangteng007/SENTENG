@@ -20,6 +20,8 @@ import { InsuranceModule } from "../insurance/insurance.module";
 import { ProfitAnalysisModule } from "../profit-analysis/profit-analysis.module";
 import { PlatformModule } from "../platform/platform.module";
 import { ContactsModule } from "../contacts/contacts.module";
+import { CrmModule } from "../crm/crm.module";
+import { DroneModule } from "../drone/drone.module";
 
 @Module({
   imports: [
@@ -42,6 +44,8 @@ import { ContactsModule } from "../contacts/contacts.module";
     ProfitAnalysisModule,
     PlatformModule,
     ContactsModule,
+    CrmModule,
+    DroneModule,
   ],
   controllers: [TelegramController],
   providers: [TelegramService],

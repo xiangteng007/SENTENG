@@ -28,6 +28,9 @@ import { ProfitAnalysisService } from "../profit-analysis/profit-analysis.servic
 import { AuditService } from "../platform/audit/audit.service";
 import { ContactsService } from "../contacts/contacts.service";
 import { SitesService } from "../platform/sites/sites.service";
+import { AgingAnalysisService } from "../finance/aging-analysis.service";
+import { ClientsService } from "../crm/clients/clients.service";
+import { WorkOrdersService } from "../drone/work-orders/work-orders.service";
 
 interface UserSession {
   userId: number;
@@ -70,6 +73,9 @@ export class TelegramService {
     private readonly auditService: AuditService,
     private readonly contactsService: ContactsService,
     private readonly sitesService: SitesService,
+    private readonly agingAnalysisService: AgingAnalysisService,
+    private readonly clientsService: ClientsService,
+    private readonly workOrdersService: WorkOrdersService,
   ) {
     this.botToken = this.configService.get<string>("TELEGRAM_BOT_TOKEN") || "";
     if (!this.botToken) {
@@ -221,6 +227,18 @@ export class TelegramService {
         case "/site":
         case "/工地":
           await this.handleSiteCommand(session);
+          break;
+        case "/aging":
+        case "/帳齡":
+          await this.handleAgingCommand(session);
+          break;
+        case "/client":
+        case "/委託":
+          await this.handleClientCommand(session);
+          break;
+        case "/workorder":
+        case "/派工":
+          await this.handleWorkOrderCommand(session);
           break;
         default:
           await this.sendMessage(
@@ -1269,6 +1287,70 @@ ${session.currentProjectName || "尚未選擇"}
     } catch (error) {
       this.logger.error("Failed to fetch sites:", error);
       await this.sendMessage(session.chatId, "❌ 無法載入工地清單。");
+    }
+  }
+
+  private async handleAgingCommand(session: UserSession): Promise<void> {
+    try {
+      const summary = await this.agingAnalysisService.getOverdueSummary();
+      await this.sendMessage(
+        session.chatId,
+        `📊 *帳齡分析*\n\n` +
+          `💰 逾期總額：$${Number(summary.totalOverdue || 0).toLocaleString()}\n` +
+          `📝 逾期筆數：${summary.overdueCount}\n` +
+          `⏱️ 平均逾期：${summary.averageOverdueDays} 天\n` +
+          `⚠️ 最長逾期：${summary.oldestOverdueDays} 天`,
+        "Markdown",
+      );
+    } catch (error) {
+      this.logger.error("Failed to fetch aging analysis:", error);
+      await this.sendMessage(session.chatId, "❌ 無法載入帳齡分析。");
+    }
+  }
+
+  private async handleClientCommand(session: UserSession): Promise<void> {
+    try {
+      const result = await this.clientsService.findAll({});
+      if (!result.items || result.items.length === 0) {
+        await this.sendMessage(
+          session.chatId,
+          `🏢 *委託客戶*\n\n✅ 無客戶資料`,
+          "Markdown",
+        );
+        return;
+      }
+      let message = `🏢 *委託客戶* (${result.total} 筆)\n\n`;
+      result.items.slice(0, 5).forEach((c) => {
+        const statusIcon = c.status === "ACTIVE" ? "🟢" : "🔴";
+        message += `${statusIcon} ${c.name}${c.phone ? ` 📞 ${c.phone}` : ""}\n`;
+      });
+      await this.sendMessage(session.chatId, message, "Markdown");
+    } catch (error) {
+      this.logger.error("Failed to fetch clients:", error);
+      await this.sendMessage(session.chatId, "❌ 無法載入委託客戶。");
+    }
+  }
+
+  private async handleWorkOrderCommand(session: UserSession): Promise<void> {
+    try {
+      const workOrders = await this.workOrdersService.findAll();
+      if (!workOrders || workOrders.length === 0) {
+        await this.sendMessage(
+          session.chatId,
+          `📋 *派工單*\n\n✅ 無派工資料`,
+          "Markdown",
+        );
+        return;
+      }
+      let message = `📋 *派工單* (${workOrders.length} 張)\n\n`;
+      workOrders.slice(0, 5).forEach((wo) => {
+        const statusIcon = wo.status === "WO_COMPLETED" ? "✅" : wo.status === "WO_IN_PROGRESS" ? "🔄" : "📝";
+        message += `${statusIcon} ${wo.woNumber || wo.id} - ${wo.project?.name || "無專案"}\n`;
+      });
+      await this.sendMessage(session.chatId, message, "Markdown");
+    } catch (error) {
+      this.logger.error("Failed to fetch work orders:", error);
+      await this.sendMessage(session.chatId, "❌ 無法載入派工單。");
     }
   }
 
