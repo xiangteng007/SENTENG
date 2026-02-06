@@ -227,6 +227,24 @@ try {
 | GitHub Actions | https://github.com/xiangteng007/SENTENG/actions |
 | Vercel Dashboard | https://vercel.com/dashboard |
 
+### Telegram Bot (Phase 6)
+
+| 項目 | 值 |
+|------|-----|
+| Bot 名稱 | SENTENGMAIN_BOT |
+| Bot URL | https://t.me/SENTENGMAIN_BOT |
+| 環境變數 | `TELEGRAM_BOT_TOKEN` |
+| Webhook URL | `https://erp-api-xxx.run.app/api/v1/telegram/webhook` |
+| 建立日期 | 2026-02-06 |
+
+**功能指令**:
+- `/start` - 歡迎訊息
+- `/project` - 選擇專案
+- `/log` - 新增工地日誌
+- `/status` - 查詢專案狀態
+- `/schedule` - 今日行程
+- 直接傳送照片 → 上傳到專案 Google Drive
+
 ---
 
 *此憲法為 SENTENG ERP 系統開發與維運的最高指導原則，所有開發活動必須遵循此規範。*
