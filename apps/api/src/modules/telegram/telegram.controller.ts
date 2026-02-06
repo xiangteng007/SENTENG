@@ -18,22 +18,24 @@ export class TelegramController {
   /**
    * Telegram Webhook Endpoint
    * Receives updates from Telegram Bot API
+   * Uses async processing for faster response times
    */
   @Post("webhook")
   @HttpCode(HttpStatus.OK)
-  async handleWebhook(
-    @Body() update: TelegramUpdate,
-  ): Promise<{ ok: boolean }> {
+  handleWebhook(@Body() update: TelegramUpdate): { ok: boolean } {
     this.logger.log(`Received Telegram update: ${update.update_id}`);
 
-    try {
-      await this.telegramService.handleUpdate(update);
-      return { ok: true };
-    } catch (error) {
-      this.logger.error("Error handling Telegram update:", error);
-      // Always return OK to Telegram to prevent retry spam
-      return { ok: true };
-    }
+    // Process update asynchronously - respond to Telegram immediately
+    setImmediate(async () => {
+      try {
+        await this.telegramService.handleUpdate(update);
+      } catch (error) {
+        this.logger.error("Error handling Telegram update:", error);
+      }
+    });
+
+    // Return immediately to Telegram (< 100ms)
+    return { ok: true };
   }
 
   /**

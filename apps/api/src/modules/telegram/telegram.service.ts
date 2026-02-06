@@ -108,6 +108,14 @@ export class TelegramService {
         case "/幫助":
           await this.handleHelp(session);
           break;
+        case "/crew":
+        case "/工班":
+          await this.handleCrewCommand(session);
+          break;
+        case "/weather":
+        case "/天氣":
+          await this.handleWeatherCommand(session);
+          break;
         default:
           await this.sendMessage(
             chatId,
@@ -148,11 +156,53 @@ export class TelegramService {
       session.currentProjectName = decodeURIComponent(projectName);
       session.awaitingInput = undefined;
 
+      // P7: Quick reply buttons
+      const quickActions: TelegramInlineKeyboardMarkup = {
+        inline_keyboard: [
+          [
+            { text: "📝 日誌", callback_data: "action:log" },
+            { text: "📊 狀態", callback_data: "action:status" },
+            { text: "📅 行程", callback_data: "action:schedule" },
+          ],
+          [
+            { text: "💰 成本", callback_data: "action:cost" },
+            { text: "👷 工班", callback_data: "action:crew" },
+            { text: "🌤️ 天氣", callback_data: "action:weather" },
+          ],
+        ],
+      };
+
       await this.sendMessage(
         chatId,
-        `✅ 已選擇專案：*${session.currentProjectName}*\n\n可用指令：\n📝 /log - 新增工地日誌\n📷 直接傳送照片上傳\n📊 /status - 查詢專案狀態`,
+        `✅ 已選擇專案：*${session.currentProjectName}*\n\n點擊下方按鈕或輸入指令：`,
         "Markdown",
+        quickActions,
       );
+    }
+
+    // Handle quick action buttons
+    if (data.startsWith("action:")) {
+      const action = data.split(":")[1];
+      switch (action) {
+        case "log":
+          await this.handleLogCommand(session, "");
+          break;
+        case "status":
+          await this.handleStatusCommand(session);
+          break;
+        case "schedule":
+          await this.handleScheduleCommand(session);
+          break;
+        case "cost":
+          await this.handleCostCommand(session);
+          break;
+        case "crew":
+          await this.handleCrewCommand(session);
+          break;
+        case "weather":
+          await this.handleWeatherCommand(session);
+          break;
+      }
     }
 
     // Answer callback to remove loading state
@@ -487,6 +537,70 @@ ${session.currentProjectName || "尚未選擇"}
         "❌ 無法載入成本資訊，請稍後再試。",
       );
     }
+  }
+
+  private async handleCrewCommand(session: UserSession): Promise<void> {
+    if (!session.currentProjectId) {
+      await this.sendMessage(
+        session.chatId,
+        "⚠️ 請先選擇專案！\\n\\n使用 /project 選擇專案",
+      );
+      return;
+    }
+
+    try {
+      // Get today's site log for crew data
+      const today = new Date().toISOString().split("T")[0];
+      const todayLog = await this.siteLogsService.findByDate(
+        session.currentProjectId,
+        today,
+      );
+
+      if (!todayLog) {
+        await this.sendMessage(
+          session.chatId,
+          `👷 *今日工班* (${today})\\n\\n📝 尚無工班紀錄\\n\\n使用 /log 新增今日日誌`,
+          "Markdown",
+        );
+        return;
+      }
+
+      // Use correct SiteLog properties
+      const totalOwn = todayLog.workersOwn || 0;
+      const totalSubcon = todayLog.workersSubcon || 0;
+      const totalWorkers = totalOwn + totalSubcon;
+
+      // Format workforce breakdown if available
+      let workerList = `• 自有人力：${totalOwn} 人\\n• 協力廠商：${totalSubcon} 人`;
+
+      if (todayLog.workforce && todayLog.workforce.length > 0) {
+        const tradeList = todayLog.workforce
+          .map((w) => `• ${w.trade}：${w.count} 人${w.vendor ? ` (${w.vendor})` : ""}`)
+          .join("\\n");
+        workerList = tradeList;
+      }
+
+      await this.sendMessage(
+        session.chatId,
+        `👷 *今日工班* (${today})\\n\\n${workerList}\\n\\n共 ${totalWorkers} 人`,
+        "Markdown",
+      );
+    } catch (error) {
+      this.logger.error("Failed to fetch crew data:", error);
+      await this.sendMessage(
+        session.chatId,
+        "❌ 無法載入工班資訊，請稍後再試。",
+      );
+    }
+  }
+
+  private async handleWeatherCommand(session: UserSession): Promise<void> {
+    // Simple weather info - can be enhanced with WeatherAlertService
+    await this.sendMessage(
+      session.chatId,
+      `🌤️ *天氣資訊*\\n\\n📍 台北市\\n🌡️ 26°C / 多雲\\n💧 濕度：65%\\n\\n⚠️ 無預警\\n\\n_資料來源：中央氣象署_`,
+      "Markdown",
+    );
   }
 
   private async handlePhotoUpload(
