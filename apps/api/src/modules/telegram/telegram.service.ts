@@ -20,16 +20,14 @@ import { InvoicesService } from "../invoices/invoices.service";
 import { GeminiAiService } from "../regulations/gemini-ai.service";
 import { PunchListService } from "../construction/punch-list/punch-list.service";
 import { QuotationsService } from "../quotations/quotations.service";
-import { CustomersService } from "../customers/customers.service";
+import { PartnersService } from "../partners/partners.service";
 import { CostEntriesService } from "../cost-entries/cost-entries.service";
 import { FinanceService } from "../finance/finance.service";
 import { InsuranceService } from "../insurance/insurance.service";
 import { ProfitAnalysisService } from "../profit-analysis/profit-analysis.service";
 import { AuditService } from "../platform/audit/audit.service";
-import { ContactsService } from "../contacts/contacts.service";
 import { SitesService } from "../platform/sites/sites.service";
 import { AgingAnalysisService } from "../finance/aging-analysis.service";
-import { ClientsService } from "../crm/clients/clients.service";
 import { WorkOrdersService } from "../drone/work-orders/work-orders.service";
 import { WeatherService } from "../integrations/taiwan/weather.service";
 import { RbacService } from "../platform/rbac/rbac.service";
@@ -84,16 +82,14 @@ export class TelegramService {
     private readonly geminiAiService: GeminiAiService,
     private readonly punchListService: PunchListService,
     private readonly quotationsService: QuotationsService,
-    private readonly customersService: CustomersService,
+    private readonly partnersService: PartnersService,
     private readonly costEntriesService: CostEntriesService,
     private readonly financeService: FinanceService,
     private readonly insuranceService: InsuranceService,
     private readonly profitAnalysisService: ProfitAnalysisService,
     private readonly auditService: AuditService,
-    private readonly contactsService: ContactsService,
     private readonly sitesService: SitesService,
     private readonly agingAnalysisService: AgingAnalysisService,
-    private readonly clientsService: ClientsService,
     private readonly workOrdersService: WorkOrdersService,
     private readonly weatherService: WeatherService,
     private readonly rbacService: RbacService,
@@ -1250,9 +1246,9 @@ ${session.currentProjectName || "尚未選擇"}
 
   private async handleCustomerCommand(session: UserSession): Promise<void> {
     try {
-      const result = await this.customersService.findAll({ limit: 5 });
+      const result = await this.partnersService.getClients();
 
-      if (!result.items || result.items.length === 0) {
+      if (!result || result.length === 0) {
         await this.sendMessage(
           session.chatId,
           `👥 *客戶清單*\\n\\n✅ 目前無客戶資料`,
@@ -1261,8 +1257,8 @@ ${session.currentProjectName || "尚未選擇"}
         return;
       }
 
-      let message = `👥 *客戶清單* (${result.total} 筆)\\n\\n`;
-      result.items.slice(0, 5).forEach((c) => {
+      let message = `👥 *客戶清單* (${result.length} 筆)\\n\\n`;
+      result.slice(0, 5).forEach((c) => {
         message += `• ${c.name}${c.phone ? ` 📞 ${c.phone}` : ""}\\n`;
       });
 
@@ -1365,13 +1361,13 @@ ${session.currentProjectName || "尚未選擇"}
 
   private async handleContactCommand(session: UserSession): Promise<void> {
     try {
-      const result = await this.contactsService.findAll({});
-      if (!result.items || result.items.length === 0) {
+      const result = await this.partnersService.findAll({});
+      if (!result || result.length === 0) {
         await this.sendMessage(session.chatId, `📇 *聯絡人*\n\n✅ 無聯絡人資料`, "Markdown");
         return;
       }
-      let message = `📇 *聯絡人* (${result.total} 筆)\n\n`;
-      result.items.slice(0, 5).forEach((c) => {
+      let message = `📇 *聯絡人* (${result.length} 筆)\n\n`;
+      result.slice(0, 5).forEach((c) => {
         message += `• ${c.name}${c.phone ? ` 📞 ${c.phone}` : ""}\n`;
       });
       await this.sendMessage(session.chatId, message, "Markdown");
@@ -1420,8 +1416,8 @@ ${session.currentProjectName || "尚未選擇"}
 
   private async handleClientCommand(session: UserSession): Promise<void> {
     try {
-      const result = await this.clientsService.findAll({});
-      if (!result.items || result.items.length === 0) {
+      const result = await this.partnersService.getClients();
+      if (!result || result.length === 0) {
         await this.sendMessage(
           session.chatId,
           `🏢 *委託客戶*\n\n✅ 無客戶資料`,
@@ -1429,9 +1425,9 @@ ${session.currentProjectName || "尚未選擇"}
         );
         return;
       }
-      let message = `🏢 *委託客戶* (${result.total} 筆)\n\n`;
-      result.items.slice(0, 5).forEach((c) => {
-        const statusIcon = c.status === "ACTIVE" ? "🟢" : "🔴";
+      let message = `🏢 *委託客戶* (${result.length} 筆)\n\n`;
+      result.slice(0, 5).forEach((c) => {
+        const statusIcon = c.syncStatus === "SYNCED" ? "🟢" : "🟡";
         message += `${statusIcon} ${c.name}${c.phone ? ` 📞 ${c.phone}` : ""}\n`;
       });
       await this.sendMessage(session.chatId, message, "Markdown");

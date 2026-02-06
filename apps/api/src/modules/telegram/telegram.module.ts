@@ -13,14 +13,12 @@ import { InvoicesModule } from "../invoices/invoices.module";
 import { RegulationsModule } from "../regulations/regulations.module";
 import { ConstructionModule } from "../construction/construction.module";
 import { QuotationsModule } from "../quotations/quotations.module";
-import { CustomersModule } from "../customers/customers.module";
+import { PartnersModule } from "../partners/partners.module";
 import { CostEntriesModule } from "../cost-entries/cost-entries.module";
 import { FinanceModule } from "../finance/finance.module";
 import { InsuranceModule } from "../insurance/insurance.module";
 import { ProfitAnalysisModule } from "../profit-analysis/profit-analysis.module";
 import { PlatformModule } from "../platform/platform.module";
-import { ContactsModule } from "../contacts/contacts.module";
-import { CrmModule } from "../crm/crm.module";
 import { DroneModule } from "../drone/drone.module";
 import { IntegrationsModule } from "../integrations/integrations.module";
 
@@ -38,14 +36,12 @@ import { IntegrationsModule } from "../integrations/integrations.module";
     RegulationsModule,
     ConstructionModule,
     QuotationsModule,
-    CustomersModule,
+    PartnersModule, // Replaces CustomersModule, ContactsModule, CrmModule
     CostEntriesModule,
     FinanceModule,
     InsuranceModule,
     ProfitAnalysisModule,
     PlatformModule,
-    ContactsModule,
-    CrmModule,
     DroneModule,
     IntegrationsModule,
   ],
@@ -54,3 +50,4 @@ import { IntegrationsModule } from "../integrations/integrations.module";
   exports: [TelegramService],
 })
 export class TelegramModule {}
+

@@ -7,8 +7,7 @@ import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { CommonModule } from "./common/common.module";
 import { CoreModule } from "./core";
-import { CustomersModule } from "./modules/customers/customers.module";
-// ClientsModule removed - deprecated, merged into CrmModule
+// Legacy modules removed - now using PartnersModule
 import { ProjectsModule } from "./modules/projects/projects.module";
 import { UsersModule } from "./modules/users/users.module";
 import { AuthModule } from "./modules/auth/auth.module";
@@ -18,7 +17,6 @@ import { PaymentsModule } from "./modules/payments/payments.module";
 import { ChangeOrdersModule } from "./modules/change-orders/change-orders.module";
 import { CostEntriesModule } from "./modules/cost-entries/cost-entries.module";
 import { InvoicesModule } from "./modules/invoices/invoices.module";
-import { SupplyChainModule } from "./modules/supply-chain";
 import { InventoryModule } from "./modules/inventory/inventory.module";
 import { FinanceModule } from "./modules/finance/finance.module";
 import { ProfitAnalysisModule } from "./modules/profit-analysis/profit-analysis.module";
@@ -38,8 +36,6 @@ import { CmmModule } from "./modules/cmm/cmm.module";
 import { RegulationsModule } from "./modules/regulations/regulations.module";
 // Smart Home (v3.1)
 import { SmartHomeModule } from "./modules/smart-home/smart-home.module";
-// Unified Contacts (Phase 1.2)
-import { ContactsModule } from "./modules/contacts/contacts.module";
 // Insurance (Phase 2.2)
 import { InsuranceModule } from "./modules/insurance/insurance.module";
 // Schedules (Phase 2.3)
@@ -47,11 +43,9 @@ import { SchedulesModule } from "./modules/schedules/schedules.module";
 // Waste (Phase 2.4)
 import { WasteModule } from "./modules/waste/waste.module";
 import { ScheduleModule } from "@nestjs/schedule";
-// CRM Domain (Phase 2 consolidation)
-import { CrmModule } from "./modules/crm/crm.module";
 // Telegram Bot (Phase 6)
 import { TelegramModule } from "./modules/telegram/telegram.module";
-// Simplified Partners CRM (Phase 7)
+// Unified Partners CRM (Phase 7 - replaces Customers, Clients, Vendors, Contacts)
 import { PartnersModule } from "./modules/partners/partners.module";
 
 const logger = new Logger("TypeORM");
@@ -111,7 +105,6 @@ const logger = new Logger("TypeORM");
     }),
     AuthModule,
     UsersModule,
-    CustomersModule,
     ProjectsModule,
     QuotationsModule,
     ContractsModule,
@@ -119,7 +112,6 @@ const logger = new Logger("TypeORM");
     ChangeOrdersModule,
     CostEntriesModule,
     InvoicesModule,
-    SupplyChainModule, // Phase 2: Consolidated vendors + procurements
     InventoryModule,
     FinanceModule,
     ProfitAnalysisModule,
@@ -140,19 +132,15 @@ const logger = new Logger("TypeORM");
     // Smart Home (v3.1)
     ScheduleModule.forRoot(),
     SmartHomeModule,
-    // Unified Contacts (Phase 1.2)
-    ContactsModule,
     // Insurance (Phase 2.2)
     InsuranceModule,
     // Schedules (Phase 2.3)
     SchedulesModule,
     // Waste (Phase 2.4)
     WasteModule,
-    // CRM Domain (Phase 2 consolidation)
-    CrmModule,
     // Telegram Bot (Phase 6)
     TelegramModule,
-    // Simplified Partners CRM (Phase 7)
+    // Unified Partners CRM (Phase 7 - replaces Customers, Clients, Vendors, Contacts)
     PartnersModule,
   ],
   controllers: [AppController],
