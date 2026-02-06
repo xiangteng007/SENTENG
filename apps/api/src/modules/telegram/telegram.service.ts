@@ -17,6 +17,7 @@ import { ContractsService } from "../contracts/contracts.service";
 import { ChangeOrdersService } from "../change-orders/change-orders.service";
 import { WeatherAlertService } from "../notifications/weather-alert.service";
 import { InvoicesService } from "../invoices/invoices.service";
+import { GeminiAiService } from "../regulations/gemini-ai.service";
 
 interface UserSession {
   userId: number;
@@ -48,6 +49,7 @@ export class TelegramService {
     private readonly changeOrdersService: ChangeOrdersService,
     private readonly weatherAlertService: WeatherAlertService,
     private readonly invoicesService: InvoicesService,
+    private readonly geminiAiService: GeminiAiService,
   ) {
     this.botToken = this.configService.get<string>("TELEGRAM_BOT_TOKEN") || "";
     if (!this.botToken) {
@@ -155,6 +157,10 @@ export class TelegramService {
         case "/invoice":
         case "/發票":
           await this.handleInvoiceCommand(session);
+          break;
+        case "/ask":
+        case "/問":
+          await this.handleAskCommand(session, text);
           break;
         default:
           await this.sendMessage(
@@ -944,6 +950,54 @@ ${session.currentProjectName || "尚未選擇"}
       await this.sendMessage(
         session.chatId,
         "❌ 無法載入發票資訊，請稍後再試。",
+      );
+    }
+  }
+
+  private async handleAskCommand(
+    session: UserSession,
+    text: string,
+  ): Promise<void> {
+    // Extract question from command: /ask <question>
+    const question = text.replace(/^\/(ask|問)\s*/i, "").trim();
+
+    if (!question) {
+      await this.sendMessage(
+        session.chatId,
+        `🤖 *AI 法規助手*\\n\\n使用方式：\\n/ask <問題>\\n\\n範例：\\n/ask 消防安全設備有哪些規定？\\n/問 建築技術規則第407條是什麼？`,
+        "Markdown",
+      );
+      return;
+    }
+
+    if (!this.geminiAiService.isEnabled()) {
+      await this.sendMessage(
+        session.chatId,
+        "⚠️ AI 服務未啟用，請聯繫管理員設定 GEMINI_API_KEY。",
+      );
+      return;
+    }
+
+    await this.sendMessage(
+      session.chatId,
+      "🤖 正在查詢中，請稍候...",
+    );
+
+    try {
+      const response = await this.geminiAiService.generateRegulationSummary(
+        `使用者問題：${question}`,
+      );
+
+      await this.sendMessage(
+        session.chatId,
+        `🤖 *AI 法規助手*\\n\\n❓ *問題：* ${question}\\n\\n💡 *回答：*\\n${response}`,
+        "Markdown",
+      );
+    } catch (error) {
+      this.logger.error("AI query failed:", error);
+      await this.sendMessage(
+        session.chatId,
+        "❌ AI 查詢失敗，請稍後再試。",
       );
     }
   }

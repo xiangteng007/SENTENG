@@ -10,6 +10,7 @@ import { ContractsModule } from "../contracts/contracts.module";
 import { ChangeOrdersModule } from "../change-orders/change-orders.module";
 import { NotificationsModule } from "../notifications/notifications.module";
 import { InvoicesModule } from "../invoices/invoices.module";
+import { RegulationsModule } from "../regulations/regulations.module";
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { InvoicesModule } from "../invoices/invoices.module";
     ChangeOrdersModule,
     NotificationsModule,
     InvoicesModule,
+    RegulationsModule,
   ],
   controllers: [TelegramController],
   providers: [TelegramService],
