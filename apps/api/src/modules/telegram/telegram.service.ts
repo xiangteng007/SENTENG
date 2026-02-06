@@ -18,6 +18,9 @@ import { ChangeOrdersService } from "../change-orders/change-orders.service";
 import { WeatherAlertService } from "../notifications/weather-alert.service";
 import { InvoicesService } from "../invoices/invoices.service";
 import { GeminiAiService } from "../regulations/gemini-ai.service";
+import { PunchListService } from "../construction/punch-list/punch-list.service";
+import { QuotationsService } from "../quotations/quotations.service";
+import { CustomersService } from "../customers/customers.service";
 
 interface UserSession {
   userId: number;
@@ -50,6 +53,9 @@ export class TelegramService {
     private readonly weatherAlertService: WeatherAlertService,
     private readonly invoicesService: InvoicesService,
     private readonly geminiAiService: GeminiAiService,
+    private readonly punchListService: PunchListService,
+    private readonly quotationsService: QuotationsService,
+    private readonly customersService: CustomersService,
   ) {
     this.botToken = this.configService.get<string>("TELEGRAM_BOT_TOKEN") || "";
     if (!this.botToken) {
@@ -161,6 +167,18 @@ export class TelegramService {
         case "/ask":
         case "/問":
           await this.handleAskCommand(session, text);
+          break;
+        case "/punch":
+        case "/缺失":
+          await this.handlePunchCommand(session);
+          break;
+        case "/quote":
+        case "/報價":
+          await this.handleQuoteCommand(session);
+          break;
+        case "/customer":
+        case "/客戶":
+          await this.handleCustomerCommand(session);
           break;
         default:
           await this.sendMessage(
@@ -999,6 +1017,89 @@ ${session.currentProjectName || "尚未選擇"}
         session.chatId,
         "❌ AI 查詢失敗，請稍後再試。",
       );
+    }
+  }
+
+  private async handlePunchCommand(session: UserSession): Promise<void> {
+    if (!session.currentProjectId) {
+      await this.sendMessage(session.chatId, "⚠️ 請先選擇專案 /project");
+      return;
+    }
+
+    try {
+      const stats = await this.punchListService.getStats(session.currentProjectId);
+
+      await this.sendMessage(
+        session.chatId,
+        `🔧 *缺失清單* (${session.currentProjectName})\\n\\n` +
+          `📊 總數：${stats.total}\\n` +
+          `🔴 待處理：${stats.open}\\n` +
+          `🟡 處理中：${stats.inProgress}\\n` +
+          `🟢 已覆驗：${stats.verified}\\n` +
+          `⏰ 逾期：${stats.overdueCount}`,
+        "Markdown",
+      );
+    } catch (error) {
+      this.logger.error("Failed to fetch punch list stats:", error);
+      await this.sendMessage(session.chatId, "❌ 無法載入缺失資訊。");
+    }
+  }
+
+  private async handleQuoteCommand(session: UserSession): Promise<void> {
+    if (!session.currentProjectId) {
+      await this.sendMessage(session.chatId, "⚠️ 請先選擇專案 /project");
+      return;
+    }
+
+    try {
+      const quotes = await this.quotationsService.findAll({
+        projectId: session.currentProjectId,
+      });
+
+      if (!quotes || quotes.length === 0) {
+        await this.sendMessage(
+          session.chatId,
+          `📝 *報價單* (${session.currentProjectName})\\n\\n✅ 目前無報價單`,
+          "Markdown",
+        );
+        return;
+      }
+
+      let message = `📝 *報價單* (${session.currentProjectName})\\n\\n`;
+      quotes.slice(0, 5).forEach((q) => {
+        const statusIcon = q.status === "APPROVED" ? "✅" : q.status === "PENDING" ? "⏳" : "📋";
+        message += `${statusIcon} ${q.id} ${q.title || ""}: $${Number(q.totalAmount || 0).toLocaleString()}\\n`;
+      });
+
+      await this.sendMessage(session.chatId, message, "Markdown");
+    } catch (error) {
+      this.logger.error("Failed to fetch quotations:", error);
+      await this.sendMessage(session.chatId, "❌ 無法載入報價單資訊。");
+    }
+  }
+
+  private async handleCustomerCommand(session: UserSession): Promise<void> {
+    try {
+      const result = await this.customersService.findAll({ limit: 5 });
+
+      if (!result.items || result.items.length === 0) {
+        await this.sendMessage(
+          session.chatId,
+          `👥 *客戶清單*\\n\\n✅ 目前無客戶資料`,
+          "Markdown",
+        );
+        return;
+      }
+
+      let message = `👥 *客戶清單* (${result.total} 筆)\\n\\n`;
+      result.items.slice(0, 5).forEach((c) => {
+        message += `• ${c.name}${c.phone ? ` 📞 ${c.phone}` : ""}\\n`;
+      });
+
+      await this.sendMessage(session.chatId, message, "Markdown");
+    } catch (error) {
+      this.logger.error("Failed to fetch customers:", error);
+      await this.sendMessage(session.chatId, "❌ 無法載入客戶資訊。");
     }
   }
 

@@ -11,6 +11,9 @@ import { ChangeOrdersModule } from "../change-orders/change-orders.module";
 import { NotificationsModule } from "../notifications/notifications.module";
 import { InvoicesModule } from "../invoices/invoices.module";
 import { RegulationsModule } from "../regulations/regulations.module";
+import { ConstructionModule } from "../construction/construction.module";
+import { QuotationsModule } from "../quotations/quotations.module";
+import { CustomersModule } from "../customers/customers.module";
 
 @Module({
   imports: [
@@ -24,6 +27,9 @@ import { RegulationsModule } from "../regulations/regulations.module";
     NotificationsModule,
     InvoicesModule,
     RegulationsModule,
+    ConstructionModule,
+    QuotationsModule,
+    CustomersModule,
   ],
   controllers: [TelegramController],
   providers: [TelegramService],
