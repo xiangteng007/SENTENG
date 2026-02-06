@@ -14,6 +14,7 @@ import { Client } from "../crm/clients/client.entity";
 import { ProjectPhase } from "./project-phase.entity";
 import { ProjectVendor } from "./project-vendor.entity";
 import { ProjectTask } from "./project-task.entity";
+import { ProjectContact } from "./project-contact.entity";
 
 export enum ProjectType {
   INTERIOR = "INTERIOR", // 室內設計
@@ -167,6 +168,9 @@ export class Project {
 
   @OneToMany(() => ProjectTask, (task) => task.project, { cascade: true })
   tasks: ProjectTask[];
+
+  @OneToMany(() => ProjectContact, (pc) => pc.project, { cascade: true })
+  projectContacts: ProjectContact[];
 
   // Audit
   @CreateDateColumn({ name: "created_at" })
