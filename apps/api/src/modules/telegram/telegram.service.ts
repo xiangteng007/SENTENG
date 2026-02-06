@@ -9,6 +9,8 @@ import {
 } from "./dto/telegram-update.dto";
 import { ProjectsService } from "../projects/projects.service";
 import { SiteLogsService } from "../site-logs/site-logs.service";
+import { EventsService } from "../events/events.service";
+import { StorageService } from "../storage/storage.service";
 
 interface UserSession {
   userId: number;
@@ -32,6 +34,8 @@ export class TelegramService {
     private readonly configService: ConfigService,
     private readonly projectsService: ProjectsService,
     private readonly siteLogsService: SiteLogsService,
+    private readonly eventsService: EventsService,
+    private readonly storageService: StorageService,
   ) {
     this.botToken = this.configService.get<string>("TELEGRAM_BOT_TOKEN") || "";
     if (!this.botToken) {
@@ -95,6 +99,10 @@ export class TelegramService {
         case "/schedule":
         case "/行程":
           await this.handleScheduleCommand(session);
+          break;
+        case "/cost":
+        case "/成本":
+          await this.handleCostCommand(session);
           break;
         case "/help":
         case "/幫助":
@@ -164,6 +172,7 @@ export class TelegramService {
 /log - 新增工地日誌
 /status - 查詢專案狀態
 /schedule - 今日行程
+/cost - 成本摘要
 /help - 查看幫助
 
 💡 *小提示：*
@@ -369,18 +378,115 @@ ${session.currentProjectName || "尚未選擇"}
   }
 
   private async handleScheduleCommand(session: UserSession): Promise<void> {
-    // TODO: Fetch actual schedule from database
     const today = new Date().toLocaleDateString("zh-TW");
 
-    await this.sendMessage(
-      session.chatId,
-      `📅 *今日行程* (${today})\n\n` +
-        `09:00 - 工地例會\n` +
-        `10:30 - 材料驗收\n` +
-        `14:00 - 業主會議\n\n` +
-        `使用網頁版查看完整行程`,
-      "Markdown",
-    );
+    try {
+      // Fetch today's events from database
+      const todayEvents = await this.eventsService.findToday();
+
+      // Filter by project if selected
+      const events = session.currentProjectId
+        ? todayEvents.filter((e) => e.projectId === session.currentProjectId)
+        : todayEvents;
+
+      if (events.length === 0) {
+        const upcomingEvents = await this.eventsService.findUpcoming(3);
+        if (upcomingEvents.length > 0) {
+          const upcomingList = upcomingEvents
+            .slice(0, 5)
+            .map((e) => {
+              const date = new Date(e.startTime).toLocaleDateString("zh-TW");
+              const time = new Date(e.startTime).toLocaleTimeString("zh-TW", {
+                hour: "2-digit",
+                minute: "2-digit",
+              });
+              return `${date} ${time} - ${e.title}`;
+            })
+            .join("\n");
+
+          await this.sendMessage(
+            session.chatId,
+            `📅 *今日行程* (${today})\n\n📝 今日無排定行程\n\n🔜 *即將到來*\n${upcomingList}`,
+            "Markdown",
+          );
+        } else {
+          await this.sendMessage(
+            session.chatId,
+            `📅 *今日行程* (${today})\n\n📝 今日無排定行程`,
+          );
+        }
+        return;
+      }
+
+      const eventList = events
+        .map((e) => {
+          const time = new Date(e.startTime).toLocaleTimeString("zh-TW", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          const location = e.location ? ` @ ${e.location}` : "";
+          return `${time} - ${e.title}${location}`;
+        })
+        .join("\n");
+
+      await this.sendMessage(
+        session.chatId,
+        `📅 *今日行程* (${today})\n\n${eventList}\n\n共 ${events.length} 個活動`,
+        "Markdown",
+      );
+    } catch (error) {
+      this.logger.error("Failed to fetch schedule:", error);
+      await this.sendMessage(
+        session.chatId,
+        "❌ 無法載入行程，請稍後再試。",
+      );
+    }
+  }
+
+  private async handleCostCommand(session: UserSession): Promise<void> {
+    if (!session.currentProjectId) {
+      await this.sendMessage(
+        session.chatId,
+        "⚠️ 請先選擇專案！\\n\\n使用 /project 選擇專案",
+      );
+      return;
+    }
+
+    try {
+      const costSummary = await this.projectsService.getCostSummary(
+        session.currentProjectId,
+      );
+
+      const contractAmount = Number(costSummary.contractAmount || 0);
+      const costActual = Number(costSummary.costActual || 0);
+      const costBudget = Number(costSummary.costBudget || 0);
+      const changeAmount = Number(costSummary.changeAmount || 0);
+
+      const usedPercent = costBudget
+        ? Math.round((costActual / costBudget) * 100)
+        : 0;
+      const profitMargin = contractAmount
+        ? Math.round(((contractAmount - costActual) / contractAmount) * 100)
+        : 0;
+
+      await this.sendMessage(
+        session.chatId,
+        `💰 *成本摘要*\\n\\n` +
+          `📁 ${session.currentProjectName}\\n\\n` +
+          `💵 合約金額：$${contractAmount.toLocaleString()}\\n` +
+          `📊 成本預算：$${costBudget.toLocaleString()}\\n` +
+          `📤 實際支出：$${costActual.toLocaleString()} (${usedPercent}%)\\n` +
+          `📝 變更金額：$${changeAmount.toLocaleString()}\\n` +
+          `📈 毛利率：${profitMargin}%`,
+        "Markdown",
+      );
+    } catch (error) {
+      this.logger.error("Failed to fetch cost summary:", error);
+      await this.sendMessage(
+        session.chatId,
+        "❌ 無法載入成本資訊，請稍後再試。",
+      );
+    }
   }
 
   private async handlePhotoUpload(
@@ -395,15 +501,67 @@ ${session.currentProjectName || "尚未選擇"}
       return;
     }
 
-    const photo = message.photo![message.photo!.length - 1]; // Get largest photo
+    const photo = message.photo![message.photo!.length - 1];
     const caption = message.caption || "工地照片";
 
-    // TODO: Download photo and upload to Google Drive
-    await this.sendMessage(
-      session.chatId,
-      `📷 *照片已上傳*\n\n📁 專案：${session.currentProjectName}\n📝 說明：${caption}\n\n照片已同步到 Google Drive`,
-      "Markdown",
-    );
+    try {
+      // Check if storage is enabled
+      if (!this.storageService.enabled) {
+        await this.sendMessage(
+          session.chatId,
+          `📷 *照片已接收*\n\n📁 專案：${session.currentProjectName}\n📝 說明：${caption}\n\n⚠️ 雲端儲存未啟用，照片尚未上傳`,
+          "Markdown",
+        );
+        return;
+      }
+
+      // Get file URL from Telegram
+      const fileUrl = await this.getFileUrl(photo.file_id);
+      if (!fileUrl) {
+        throw new Error("Failed to get file URL from Telegram");
+      }
+
+      // Download file from Telegram
+      const response = await fetch(fileUrl);
+      const buffer = Buffer.from(await response.arrayBuffer());
+
+      // Create file object for StorageService
+      const timestamp = Date.now();
+      const fileName = `${session.currentProjectId}_${timestamp}.jpg`;
+      const multerFile = {
+        fieldname: "photo",
+        originalname: fileName,
+        encoding: "7bit",
+        mimetype: "image/jpeg",
+        buffer,
+        size: buffer.length,
+        destination: "",
+        filename: fileName,
+        path: "",
+        stream: undefined,
+      } as unknown as Express.Multer.File;
+
+      // Upload to GCS
+      const gcsUrl = await this.storageService.uploadFile(
+        multerFile,
+        `projects/${session.currentProjectId}/telegram-photos`,
+      );
+
+      await this.sendMessage(
+        session.chatId,
+        `📷 *照片已上傳*\n\n📁 專案：${session.currentProjectName}\n📝 說明：${caption}\n☁️ 雲端儲存：已同步`,
+        "Markdown",
+      );
+
+      this.logger.log(`Photo uploaded to GCS: ${gcsUrl}`);
+    } catch (error) {
+      this.logger.error("Failed to upload photo:", error);
+      await this.sendMessage(
+        session.chatId,
+        `📷 *照片已接收*\n\n📁 專案：${session.currentProjectName}\n📝 說明：${caption}\n\n⚠️ 上傳失敗，請稍後重試`,
+        "Markdown",
+      );
+    }
   }
 
   // === Telegram API Methods ===
