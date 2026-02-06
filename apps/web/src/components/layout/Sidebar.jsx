@@ -29,6 +29,7 @@ const ALL_MENU_ITEMS = {
   'projects': { id: 'projects', icon: Building2, label: '專案管理', path: '/projects' },
   'clients': { id: 'clients', icon: Users, label: '客戶管理', path: '/clients' },
   'contacts': { id: 'contacts', icon: Users, label: '聯絡人', path: '/contacts' },
+  'partners': { id: 'partners', icon: Building2, label: '合作夥伴', path: '/partners' },
   'contracts': { id: 'contracts', icon: FileText, label: '合約管理', path: '/contracts' },
   'quotations': { id: 'quotations', icon: FileText, label: '報價管理', path: '/quotations' },
   'change-orders': { id: 'change-orders', icon: FileText, label: '變更單', path: '/change-orders' },
@@ -79,7 +80,7 @@ const ALL_MENU_ITEMS = {
 
 const MENU_GROUPS = [
   { id: 'overview', label: '總覽', icon: LayoutDashboard, items: ['dashboard', 'schedule', 'events'], defaultExpanded: true },
-  { id: 'project', label: '專案業務', icon: Briefcase, items: ['projects', 'clients', 'contacts', 'contracts', 'quotations', 'change-orders', 'milestones', 'contract-alerts'] },
+  { id: 'project', label: '專案業務', icon: Briefcase, items: ['projects', 'clients', 'contacts', 'partners', 'contracts', 'quotations', 'change-orders', 'milestones', 'contract-alerts'] },
   { id: 'government', label: '政府標案', icon: Landmark, items: ['government-projects'] },
   { id: 'hr', label: '人資管理', icon: UserCheck, items: ['labor-contracts', 'labor-disputes'] },
   { id: 'supply', label: '供應鏈', icon: Package, items: ['vendors', 'procurements', 'inventory'] },
