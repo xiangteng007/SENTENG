@@ -22,9 +22,6 @@ import { PartnerType, SyncStatus, PartnerCategory } from "./partner-enums";
 // Re-export enums for backward compatibility
 export { PartnerType, SyncStatus, PartnerCategory };
 
-// Forward reference for PartnerContact (prevents circular import issue)
-import type { PartnerContact as PartnerContactType } from "./partner-contact.entity";
-
 @Entity("partners")
 @Index(["type"])
 @Index(["name"])
@@ -86,9 +83,10 @@ export class Partner {
   @Column({ name: "last_synced_at", type: "timestamp", nullable: true })
   lastSyncedAt: Date;
 
-  // 聯絡人關聯 - use require() to break circular dependency at runtime
-  @OneToMany("PartnerContact", "partner", { cascade: true })
-  contacts: PartnerContactType[];
+  // 聯絡人關聯 - use lazy import to break circular dependency
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  @OneToMany(() => require("./partner-contact.entity").PartnerContact, (contact: { partner: Partner }) => contact.partner, { cascade: true })
+  contacts: import("./partner-contact.entity").PartnerContact[];
 
   // 審計欄位
   @CreateDateColumn({ name: "created_at" })
