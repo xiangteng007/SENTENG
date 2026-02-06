@@ -3,5 +3,8 @@
   "buildCommand": "cd apps/web && npm install --legacy-peer-deps && npm run build",
   "outputDirectory": "apps/web/dist",
   "installCommand": "echo 'Skipping root install'",
-  "framework": null
+  "framework": null,
+  "rewrites": [
+    { "source": "/((?!api|_next|static|favicon.ico|assets/).*)", "destination": "/index.html" }
+  ]
 }
