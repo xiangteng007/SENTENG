@@ -4,13 +4,19 @@ import { MigrationInterface, QueryRunner } from "typeorm";
  * MigrateLegacyToPartners Migration
  *
  * 將舊的 clients/vendors/customers 資料遷移到統一的 partners 表
- * 並添加 partner_id 欄位到 invoices 和 projects 表
+ * 處理 ID 格式轉換：legacy varchar(20) → partner UUID
+ * 使用臨時映射表維護 old_id → new_uuid 關係
  */
-export class MigrateLegacyToPartners1770404000000 implements MigrationInterface {
+export class MigrateLegacyToPartners1770404000000
+  implements MigrationInterface
+{
   name = "MigrateLegacyToPartners1770404000000";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // 1. 添加 partner_id 欄位到 invoices（如果不存在）
+    // ==========================================
+    // Step 1: 確保 partner_id 欄位存在
+    // ==========================================
+
     await queryRunner.query(`
       DO $$
       BEGIN
@@ -23,7 +29,6 @@ export class MigrateLegacyToPartners1770404000000 implements MigrationInterface 
       END $$;
     `);
 
-    // 2. 添加 partner_id 欄位到 projects（如果不存在）
     await queryRunner.query(`
       DO $$
       BEGIN
@@ -36,97 +41,194 @@ export class MigrateLegacyToPartners1770404000000 implements MigrationInterface 
       END $$;
     `);
 
-    // 3. 從 clients 遷移資料到 partners
+    // ==========================================
+    // Step 2: 建立臨時映射表
+    // ==========================================
+
     await queryRunner.query(`
-      INSERT INTO partners (id, type, name, tax_id, phone, email, address, notes, created_at, created_by, sync_status)
-      SELECT 
-        id::uuid, 
-        'CLIENT', 
-        name, 
-        tax_id, 
-        phone, 
-        email, 
-        address, 
-        notes, 
-        created_at, 
-        created_by,
-        'PENDING'
-      FROM clients 
-      WHERE id IS NOT NULL
-      ON CONFLICT (id) DO NOTHING;
+      CREATE TABLE IF NOT EXISTS _legacy_partner_mapping (
+        legacy_id VARCHAR(20) PRIMARY KEY,
+        legacy_table VARCHAR(20) NOT NULL,
+        partner_id UUID NOT NULL
+      );
     `);
 
-    // 4. 從 vendors 遷移資料到 partners
-    await queryRunner.query(`
-      INSERT INTO partners (id, type, name, tax_id, category, phone, email, address, rating, notes, created_at, sync_status)
-      SELECT 
-        id::uuid, 
-        'VENDOR', 
-        name, 
-        tax_id, 
-        category, 
-        phone, 
-        email, 
-        address, 
-        COALESCE(rating, 0), 
-        notes, 
-        created_at,
-        'PENDING'
-      FROM vendors 
-      WHERE id IS NOT NULL
-      ON CONFLICT (id) DO NOTHING;
+    // ==========================================
+    // Step 3: 遷移 clients → partners
+    // ==========================================
+
+    // 檢查 clients 表是否存在
+    const clientsTableExists = await queryRunner.query(`
+      SELECT EXISTS (
+        SELECT 1 FROM information_schema.tables 
+        WHERE table_name = 'clients'
+      ) AS exists;
     `);
 
-    // 5. 從 customers 遷移資料到 partners（如果有 UUID 格式的 id）
-    await queryRunner.query(`
-      INSERT INTO partners (id, type, name, phone, email, address, notes, created_at, sync_status)
-      SELECT 
-        CASE 
-          WHEN id ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' 
-          THEN id::uuid 
-          ELSE gen_random_uuid() 
-        END,
-        'CLIENT', 
-        name, 
-        phone, 
-        email, 
-        address, 
-        notes, 
-        created_at,
-        'PENDING'
-      FROM customers 
-      WHERE name IS NOT NULL
-      ON CONFLICT (id) DO NOTHING;
+    if (clientsTableExists[0]?.exists) {
+      await queryRunner.query(`
+        INSERT INTO partners (id, type, name, tax_id, phone, email, address, notes, created_at, created_by, sync_status)
+        SELECT 
+          gen_random_uuid(),
+          'CLIENT',
+          name,
+          tax_id,
+          phone,
+          email,
+          address,
+          notes,
+          created_at,
+          created_by,
+          'PENDING'
+        FROM clients c
+        WHERE NOT EXISTS (
+          SELECT 1 FROM _legacy_partner_mapping m WHERE m.legacy_id = c.id
+        )
+        ON CONFLICT DO NOTHING;
+      `);
+
+      // 建立映射
+      await queryRunner.query(`
+        INSERT INTO _legacy_partner_mapping (legacy_id, legacy_table, partner_id)
+        SELECT c.id, 'clients', p.id
+        FROM clients c
+        INNER JOIN partners p ON p.name = c.name AND p.type = 'CLIENT'
+        WHERE NOT EXISTS (
+          SELECT 1 FROM _legacy_partner_mapping m WHERE m.legacy_id = c.id
+        );
+      `);
+    }
+
+    // ==========================================
+    // Step 4: 遷移 vendors → partners
+    // ==========================================
+
+    const vendorsTableExists = await queryRunner.query(`
+      SELECT EXISTS (
+        SELECT 1 FROM information_schema.tables 
+        WHERE table_name = 'vendors'
+      ) AS exists;
     `);
 
-    // 6. 更新 invoices.partner_id 從 client_id
-    await queryRunner.query(`
-      UPDATE invoices 
-      SET partner_id = client_id::uuid 
-      WHERE client_id IS NOT NULL 
-        AND partner_id IS NULL
-        AND EXISTS (SELECT 1 FROM partners WHERE id = client_id::uuid);
+    if (vendorsTableExists[0]?.exists) {
+      await queryRunner.query(`
+        INSERT INTO partners (id, type, name, tax_id, category, phone, email, address, rating, notes, created_at, sync_status)
+        SELECT 
+          gen_random_uuid(),
+          'VENDOR',
+          name,
+          tax_id,
+          category,
+          phone,
+          email,
+          address,
+          COALESCE(rating, 0),
+          notes,
+          created_at,
+          'PENDING'
+        FROM vendors v
+        WHERE NOT EXISTS (
+          SELECT 1 FROM _legacy_partner_mapping m WHERE m.legacy_id = v.id
+        )
+        ON CONFLICT DO NOTHING;
+      `);
+
+      await queryRunner.query(`
+        INSERT INTO _legacy_partner_mapping (legacy_id, legacy_table, partner_id)
+        SELECT v.id, 'vendors', p.id
+        FROM vendors v
+        INNER JOIN partners p ON p.name = v.name AND p.type = 'VENDOR'
+        WHERE NOT EXISTS (
+          SELECT 1 FROM _legacy_partner_mapping m WHERE m.legacy_id = v.id
+        );
+      `);
+    }
+
+    // ==========================================
+    // Step 5: 遷移 customers → partners
+    // ==========================================
+
+    const customersTableExists = await queryRunner.query(`
+      SELECT EXISTS (
+        SELECT 1 FROM information_schema.tables 
+        WHERE table_name = 'customers'
+      ) AS exists;
     `);
 
-    // 7. 更新 invoices.partner_id 從 vendor_id（如果還沒有 partner_id）
+    if (customersTableExists[0]?.exists) {
+      await queryRunner.query(`
+        INSERT INTO partners (id, type, name, phone, email, address, notes, created_at, sync_status)
+        SELECT 
+          gen_random_uuid(),
+          'CLIENT',
+          name,
+          phone,
+          email,
+          address,
+          notes,
+          created_at,
+          'PENDING'
+        FROM customers cu
+        WHERE NOT EXISTS (
+          SELECT 1 FROM _legacy_partner_mapping m WHERE m.legacy_id = cu.id
+        )
+        ON CONFLICT DO NOTHING;
+      `);
+
+      await queryRunner.query(`
+        INSERT INTO _legacy_partner_mapping (legacy_id, legacy_table, partner_id)
+        SELECT cu.id, 'customers', p.id
+        FROM customers cu
+        INNER JOIN partners p ON p.name = cu.name AND p.type = 'CLIENT'
+        WHERE NOT EXISTS (
+          SELECT 1 FROM _legacy_partner_mapping m WHERE m.legacy_id = cu.id
+        );
+      `);
+    }
+
+    // ==========================================
+    // Step 6: 使用映射表更新 FK
+    // ==========================================
+
+    // 更新 invoices.partner_id 從 client_id
     await queryRunner.query(`
-      UPDATE invoices 
-      SET partner_id = vendor_id::uuid 
-      WHERE vendor_id IS NOT NULL 
-        AND partner_id IS NULL
-        AND EXISTS (SELECT 1 FROM partners WHERE id = vendor_id::uuid);
+      UPDATE invoices i
+      SET partner_id = m.partner_id
+      FROM _legacy_partner_mapping m
+      WHERE i.client_id = m.legacy_id
+        AND i.partner_id IS NULL;
     `);
 
-    // 8. 更新 projects.partner_id 從 customer_id
+    // 更新 invoices.partner_id 從 vendor_id
     await queryRunner.query(`
-      UPDATE projects 
-      SET partner_id = customer_id::uuid 
-      WHERE customer_id IS NOT NULL 
-        AND partner_id IS NULL
-        AND EXISTS (SELECT 1 FROM partners WHERE id = customer_id::uuid);
+      UPDATE invoices i
+      SET partner_id = m.partner_id
+      FROM _legacy_partner_mapping m
+      WHERE i.vendor_id = m.legacy_id
+        AND i.partner_id IS NULL;
     `);
 
-    // 9. 添加外鍵約束
+    // 更新 projects.partner_id 從 customer_id
+    await queryRunner.query(`
+      UPDATE projects p
+      SET partner_id = m.partner_id
+      FROM _legacy_partner_mapping m
+      WHERE p.customer_id = m.legacy_id
+        AND p.partner_id IS NULL;
+    `);
+
+    // ==========================================
+    // Step 7: 建立索引和 FK
+    // ==========================================
+
+    await queryRunner.query(`
+      CREATE INDEX IF NOT EXISTS idx_invoices_partner_id ON invoices(partner_id);
+    `);
+
+    await queryRunner.query(`
+      CREATE INDEX IF NOT EXISTS idx_projects_partner_id ON projects(partner_id);
+    `);
+
     await queryRunner.query(`
       DO $$
       BEGIN
@@ -154,49 +256,26 @@ export class MigrateLegacyToPartners1770404000000 implements MigrationInterface 
         END IF;
       END $$;
     `);
-
-    // 10. 創建索引
-    await queryRunner.query(`
-      CREATE INDEX IF NOT EXISTS idx_invoices_partner_id ON invoices(partner_id);
-      CREATE INDEX IF NOT EXISTS idx_projects_partner_id ON projects(partner_id);
-    `);
-
-    // Log migration stats
-    await queryRunner.query(`
-      DO $$
-      DECLARE
-        partner_count INTEGER;
-        invoice_updated INTEGER;
-        project_updated INTEGER;
-      BEGIN
-        SELECT COUNT(*) INTO partner_count FROM partners;
-        SELECT COUNT(*) INTO invoice_updated FROM invoices WHERE partner_id IS NOT NULL;
-        SELECT COUNT(*) INTO project_updated FROM projects WHERE partner_id IS NOT NULL;
-        RAISE NOTICE 'Migration complete: % partners, % invoices updated, % projects updated',
-          partner_count, invoice_updated, project_updated;
-      END $$;
-    `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // 移除外鍵約束
     await queryRunner.query(`
       ALTER TABLE invoices DROP CONSTRAINT IF EXISTS fk_invoices_partner;
       ALTER TABLE projects DROP CONSTRAINT IF EXISTS fk_projects_partner;
     `);
 
-    // 移除索引
     await queryRunner.query(`
       DROP INDEX IF EXISTS idx_invoices_partner_id;
       DROP INDEX IF EXISTS idx_projects_partner_id;
     `);
 
-    // 移除欄位
     await queryRunner.query(`
       ALTER TABLE invoices DROP COLUMN IF EXISTS partner_id;
       ALTER TABLE projects DROP COLUMN IF EXISTS partner_id;
     `);
 
-    // 注意：不刪除 partners 表中的資料，避免資料遺失
+    await queryRunner.query(`
+      DROP TABLE IF EXISTS _legacy_partner_mapping;
+    `);
   }
 }
