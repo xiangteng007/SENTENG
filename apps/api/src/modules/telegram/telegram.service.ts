@@ -7,6 +7,7 @@ import {
   TelegramSendMessageParams,
   TelegramInlineKeyboardMarkup,
 } from "./dto/telegram-update.dto";
+import { ProjectsService } from "../projects/projects.service";
 
 interface UserSession {
   userId: number;
@@ -26,7 +27,10 @@ export class TelegramService {
   // In-memory session store (should use Redis in production)
   private sessions: Map<number, UserSession> = new Map();
 
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly projectsService: ProjectsService,
+  ) {
     this.botToken = this.configService.get<string>("TELEGRAM_BOT_TOKEN") || "";
     if (!this.botToken) {
       this.logger.warn("TELEGRAM_BOT_TOKEN not configured");
@@ -193,23 +197,44 @@ ${session.currentProjectName || "尚未選擇"}
   }
 
   private async handleProjectSelect(session: UserSession): Promise<void> {
-    // TODO: Fetch actual projects from database
-    const mockProjects = [
-      { id: "1", name: "台北信義區住宅案" },
-      { id: "2", name: "新竹科技園區辦公大樓" },
-      { id: "3", name: "台中七期豪宅案" },
-    ];
+    try {
+      // Fetch active projects from database
+      const { items: projects } = await this.projectsService.findAll(
+        { limit: 10 },
+        undefined,
+        "admin",
+      );
 
-    const keyboard: TelegramInlineKeyboardMarkup = {
-      inline_keyboard: mockProjects.map((p) => [
-        {
-          text: p.name,
-          callback_data: `project:${p.id}:${encodeURIComponent(p.name)}`,
-        },
-      ]),
-    };
+      if (projects.length === 0) {
+        await this.sendMessage(
+          session.chatId,
+          "📭 目前沒有進行中的專案。\n\n請先在網頁版建立專案。",
+        );
+        return;
+      }
 
-    await this.sendMessage(session.chatId, "📂 請選擇專案：", undefined, keyboard);
+      const keyboard: TelegramInlineKeyboardMarkup = {
+        inline_keyboard: projects.slice(0, 8).map((p) => [
+          {
+            text: `${p.name} ${p.client?.name ? `(${p.client.name})` : ""}`,
+            callback_data: `project:${p.id}:${encodeURIComponent(p.name)}`,
+          },
+        ]),
+      };
+
+      await this.sendMessage(
+        session.chatId,
+        `📂 請選擇專案 (共 ${projects.length} 個)：`,
+        undefined,
+        keyboard,
+      );
+    } catch (error) {
+      this.logger.error("Failed to fetch projects:", error);
+      await this.sendMessage(
+        session.chatId,
+        "❌ 無法載入專案列表，請稍後再試。",
+      );
+    }
   }
 
   private async handleLogCommand(
