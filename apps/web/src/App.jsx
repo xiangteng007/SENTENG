@@ -69,6 +69,8 @@ const ContractAlerts = lazy(() => import('./pages/ContractAlerts').then(m => ({ 
 const VisualEnhancements = lazy(() => import('./pages/VisualEnhancements').then(m => ({ default: m.VisualEnhancements })));
 const MilestoneTracker = lazy(() => import('./pages/MilestoneTracker').then(m => ({ default: m.MilestoneTracker })));
 const LaborDisputes = lazy(() => import('./pages/LaborDisputes').then(m => ({ default: m.LaborDisputes })));
+// Simplified Partners CRM (Phase 7)
+const Partners = lazy(() => import('./pages/Partners'));
 
 // Loading Screen Component
 const LoadingScreen = () => (
@@ -343,6 +345,11 @@ const AppContent = () => {
         <Route path="/contacts" element={
           <ProtectedRoute pageId="contacts">
             <Contacts addToast={addToast} />
+          </ProtectedRoute>
+        } />
+        <Route path="/partners" element={
+          <ProtectedRoute pageId="partners">
+            <Partners addToast={addToast} />
           </ProtectedRoute>
         } />
         <Route path="/reports" element={

@@ -51,6 +51,8 @@ import { ScheduleModule } from "@nestjs/schedule";
 import { CrmModule } from "./modules/crm/crm.module";
 // Telegram Bot (Phase 6)
 import { TelegramModule } from "./modules/telegram/telegram.module";
+// Simplified Partners CRM (Phase 7)
+import { PartnersModule } from "./modules/partners/partners.module";
 
 const logger = new Logger("TypeORM");
 
@@ -150,6 +152,8 @@ const logger = new Logger("TypeORM");
     CrmModule,
     // Telegram Bot (Phase 6)
     TelegramModule,
+    // Simplified Partners CRM (Phase 7)
+    PartnersModule,
   ],
   controllers: [AppController],
   providers: [
