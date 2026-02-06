@@ -39,6 +39,9 @@ import { BuildingCodeService } from "../regulations/building-code.service";
 import { FireSafetyService } from "../regulations/fire-safety.service";
 import { CnsStandardsService } from "../regulations/cns-standards.service";
 import { LineNotifyService } from "../notifications/line-notify.service";
+import { CalendarSyncService } from "../integrations/google/calendar-sync.service";
+import { GoogleDriveService } from "../integrations/google/google-drive.service";
+import { AccountingExportService } from "../integrations/banking/accounting-export.service";
 
 interface UserSession {
   userId: number;
@@ -92,6 +95,9 @@ export class TelegramService {
     private readonly fireSafetyService: FireSafetyService,
     private readonly cnsStandardsService: CnsStandardsService,
     private readonly lineNotifyService: LineNotifyService,
+    private readonly calendarSyncService: CalendarSyncService,
+    private readonly googleDriveService: GoogleDriveService,
+    private readonly accountingExportService: AccountingExportService,
   ) {
     this.botToken = this.configService.get<string>("TELEGRAM_BOT_TOKEN") || "";
     if (!this.botToken) {
@@ -283,6 +289,18 @@ export class TelegramService {
         case "/line":
         case "/推播":
           await this.handleLineNotifyCommand(session);
+          break;
+        case "/calendar":
+        case "/日曆":
+          await this.handleCalendarCommand(session);
+          break;
+        case "/drive":
+        case "/雲端":
+          await this.handleDriveCommand(session);
+          break;
+        case "/export":
+        case "/匯出":
+          await this.handleExportCommand(session);
           break;
         default:
           await this.sendMessage(
@@ -1512,6 +1530,46 @@ ${session.currentProjectName || "尚未選擇"}
         `• 延遲警報\n` +
         `• 完工通知\n\n` +
         `ℹ️ 請透過網頁版設定 LINE 推播`,
+      "Markdown",
+    );
+  }
+
+  private async handleCalendarCommand(session: UserSession): Promise<void> {
+    await this.sendMessage(
+      session.chatId,
+      `📅 *Google Calendar 同步*\n\n` +
+        `📋 支援功能：\n` +
+        `• ERP 事件 → Calendar\n` +
+        `• 批量同步\n` +
+        `• 失敗重試\n\n` +
+        `ℹ️ 使用網頁版管理日曆同步`,
+      "Markdown",
+    );
+  }
+
+  private async handleDriveCommand(session: UserSession): Promise<void> {
+    await this.sendMessage(
+      session.chatId,
+      `☁️ *Google Drive 整合*\n\n` +
+        `📋 支援功能：\n` +
+        `• 專案資料夾管理\n` +
+        `• 工地照片上傳\n` +
+        `• 檔案縮圖預覽\n\n` +
+        `ℹ️ 使用網頁版管理雲端檔案`,
+      "Markdown",
+    );
+  }
+
+  private async handleExportCommand(session: UserSession): Promise<void> {
+    await this.sendMessage(
+      session.chatId,
+      `📤 *會計匯出*\n\n` +
+        `📋 支援格式：\n` +
+        `• 鼎新 ERP 傳票格式\n` +
+        `• CSV/XML 通用格式\n` +
+        `• 專案成本明細\n` +
+        `• 發票明細\n\n` +
+        `ℹ️ 使用網頁版匯出會計資料`,
       "Markdown",
     );
   }
