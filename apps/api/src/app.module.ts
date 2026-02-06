@@ -49,6 +49,8 @@ import { WasteModule } from "./modules/waste/waste.module";
 import { ScheduleModule } from "@nestjs/schedule";
 // CRM Domain (Phase 2 consolidation)
 import { CrmModule } from "./modules/crm/crm.module";
+// Telegram Bot (Phase 6)
+import { TelegramModule } from "./modules/telegram/telegram.module";
 
 const logger = new Logger("TypeORM");
 
@@ -146,6 +148,8 @@ const logger = new Logger("TypeORM");
     WasteModule,
     // CRM Domain (Phase 2 consolidation)
     CrmModule,
+    // Telegram Bot (Phase 6)
+    TelegramModule,
   ],
   controllers: [AppController],
   providers: [
