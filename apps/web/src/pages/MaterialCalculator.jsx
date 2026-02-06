@@ -479,6 +479,50 @@ const COMMON_OPENINGS = {
     ],
 };
 
+// 專案範本 (常見建築類型快速設定)
+const PROJECT_TEMPLATES = [
+    {
+        id: 'townhouse',
+        label: '透天住宅 (3F)',
+        icon: '🏠',
+        area: 100,
+        floors: 3,
+        perimeter: 40,
+        openings: { doors: 3, windows: 12 },
+        materials: { concrete: 120, rebar: 12000, formwork: 400, tile: 200, paint: 600 }
+    },
+    {
+        id: 'apartment',
+        label: '公寓大樓 (5F)',
+        icon: '🏢',
+        area: 500,
+        floors: 5,
+        perimeter: 80,
+        openings: { doors: 20, windows: 40 },
+        materials: { concrete: 350, rebar: 35000, formwork: 1200, tile: 800, paint: 2000 }
+    },
+    {
+        id: 'factory',
+        label: '鋼構廠房',
+        icon: '🏭',
+        area: 1000,
+        floors: 1,
+        perimeter: 150,
+        openings: { doors: 4, windows: 20 },
+        materials: { concrete: 200, rebar: 8000, formwork: 300, steelStructure: 50000 }
+    },
+    {
+        id: 'renovation',
+        label: '老屋翻新',
+        icon: '🔧',
+        area: 80,
+        floors: 2,
+        perimeter: 36,
+        openings: { doors: 4, windows: 8 },
+        materials: { tile: 160, paint: 400, waterproof: 40, plaster: 200 }
+    },
+];
+
 // ============================================
 // 工具函數
 // ============================================
