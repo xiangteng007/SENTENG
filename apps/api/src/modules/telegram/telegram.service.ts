@@ -34,6 +34,8 @@ import { WorkOrdersService } from "../drone/work-orders/work-orders.service";
 import { WeatherService } from "../integrations/taiwan/weather.service";
 import { RbacService } from "../platform/rbac/rbac.service";
 import { TenantsService } from "../platform/tenants/tenants.service";
+import { EInvoiceService } from "../invoices/e-invoice.service";
+import { BuildingCodeService } from "../regulations/building-code.service";
 
 interface UserSession {
   userId: number;
@@ -82,6 +84,8 @@ export class TelegramService {
     private readonly weatherService: WeatherService,
     private readonly rbacService: RbacService,
     private readonly tenantsService: TenantsService,
+    private readonly eInvoiceService: EInvoiceService,
+    private readonly buildingCodeService: BuildingCodeService,
   ) {
     this.botToken = this.configService.get<string>("TELEGRAM_BOT_TOKEN") || "";
     if (!this.botToken) {
@@ -253,6 +257,14 @@ export class TelegramService {
         case "/tenant":
         case "/公司":
           await this.handleTenantCommand(session);
+          break;
+        case "/einvoice":
+        case "/電子發票":
+          await this.handleEInvoiceCommand(session);
+          break;
+        case "/building":
+        case "/建規":
+          await this.handleBuildingCodeCommand(session);
           break;
         default:
           await this.sendMessage(
@@ -1411,6 +1423,35 @@ ${session.currentProjectName || "尚未選擇"}
       this.logger.error("Failed to fetch tenants:", error);
       await this.sendMessage(session.chatId, "❌ 無法載入事業單位。");
     }
+  }
+
+  private async handleEInvoiceCommand(session: UserSession): Promise<void> {
+    await this.sendMessage(
+      session.chatId,
+      `🧾 *電子發票服務*\n\n` +
+        `📋 支援功能：\n` +
+        `• ECPay (綠界) 電子發票\n` +
+        `• ezPay (藍新) 電子發票\n` +
+        `• 開立/作廢發票\n\n` +
+        `ℹ️ 請透過網頁版管理電子發票`,
+      "Markdown",
+    );
+  }
+
+  private async handleBuildingCodeCommand(session: UserSession): Promise<void> {
+    await this.sendMessage(
+      session.chatId,
+      `🏛️ *建築技術規則檢核*\n\n` +
+        `📋 可檢核項目：\n` +
+        `• 建蔽率 (BCR)\n` +
+        `• 容積率 (FAR)\n` +
+        `• 建築高度限制\n` +
+        `• 退縮距離\n` +
+        `• 停車位需求\n` +
+        `• 無障礙設施\n\n` +
+        `ℹ️ 使用網頁版進行完整檢核`,
+      "Markdown",
+    );
   }
 
   private async handlePhotoUpload(
