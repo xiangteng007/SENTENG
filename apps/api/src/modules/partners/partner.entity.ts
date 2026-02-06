@@ -15,36 +15,15 @@ import {
   DeleteDateColumn,
   Index,
 } from "typeorm";
-import { PartnerContact } from "./partner-contact.entity";
 
-/**
- * Partner 類型
- */
-export enum PartnerType {
-  CLIENT = "CLIENT",   // 客戶（業主）
-  VENDOR = "VENDOR",   // 廠商
-  PERSON = "PERSON",   // 個人
-}
+// Import enums from separate file to avoid circular dependency
+import { PartnerType, SyncStatus, PartnerCategory } from "./partner-enums";
 
-/**
- * 同步狀態
- */
-export enum SyncStatus {
-  PENDING = "PENDING",
-  SYNCED = "SYNCED",
-  FAILED = "FAILED",
-}
+// Re-export enums for backward compatibility
+export { PartnerType, SyncStatus, PartnerCategory };
 
-/**
- * 廠商分類
- */
-export enum PartnerCategory {
-  CONSTRUCTION = "工程工班",
-  MATERIALS = "建材供應",
-  EQUIPMENT = "設備廠商",
-  DESIGN = "設計規劃",
-  OTHER = "其他",
-}
+// Forward reference for PartnerContact (prevents circular import issue)
+import type { PartnerContact as PartnerContactType } from "./partner-contact.entity";
 
 @Entity("partners")
 @Index(["type"])
@@ -107,9 +86,9 @@ export class Partner {
   @Column({ name: "last_synced_at", type: "timestamp", nullable: true })
   lastSyncedAt: Date;
 
-  // 聯絡人關聯
-  @OneToMany(() => PartnerContact, (contact) => contact.partner, { cascade: true })
-  contacts: PartnerContact[];
+  // 聯絡人關聯 - use require() to break circular dependency at runtime
+  @OneToMany("PartnerContact", "partner", { cascade: true })
+  contacts: PartnerContactType[];
 
   // 審計欄位
   @CreateDateColumn({ name: "created_at" })

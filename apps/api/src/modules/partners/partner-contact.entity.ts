@@ -14,7 +14,10 @@ import {
   UpdateDateColumn,
   Index,
 } from "typeorm";
-import { Partner, SyncStatus } from "./partner.entity";
+import { SyncStatus } from "./partner-enums";
+
+// Forward reference for Partner (prevents circular import issue)
+import type { Partner as PartnerType } from "./partner.entity";
 
 @Entity("partner_contacts")
 @Index(["partnerId"])
@@ -26,11 +29,11 @@ export class PartnerContact {
   @Column({ name: "partner_id", type: "uuid" })
   partnerId: string;
 
-  @ManyToOne(() => Partner, (partner) => partner.contacts, {
+  @ManyToOne("Partner", "contacts", {
     onDelete: "CASCADE",
   })
   @JoinColumn({ name: "partner_id" })
-  partner: Partner;
+  partner: PartnerType;
 
   @Column({ length: 100 })
   name: string;
