@@ -100,7 +100,8 @@ export class CreatePartnersModule1770389400000 implements MigrationInterface {
     `);
 
     // 6. Migrate existing vendor contacts (with new partner_id from mapping)
-    // This is optional - if schema differs, we skip contact migration
+    // Use SAVEPOINT to handle schema mismatches gracefully - PostgreSQL aborts transactions on error
+    await queryRunner.query(`SAVEPOINT vendor_contacts_migration`);
     try {
       await queryRunner.query(`
         INSERT INTO "partner_contacts" ("id", "partner_id", "name", "title", "phone", "mobile", "email", "line_id", "is_primary", "notes", "google_contact_id", "sync_status", "created_at", "updated_at", "created_by")
@@ -124,9 +125,12 @@ export class CreatePartnersModule1770389400000 implements MigrationInterface {
         JOIN vendor_partner_map m ON vc.vendor_id = m.vendor_id
         ON CONFLICT DO NOTHING
       `);
-      console.log('Vendor contacts migrated successfully');
+      await queryRunner.query(`RELEASE SAVEPOINT vendor_contacts_migration`);
+      console.log("Vendor contacts migrated successfully");
     } catch (error) {
-      console.log('Vendor contacts migration skipped (schema mismatch):', error.message);
+      // Rollback to savepoint and continue - contacts table will be empty but usable
+      await queryRunner.query(`ROLLBACK TO SAVEPOINT vendor_contacts_migration`);
+      console.log("Vendor contacts migration skipped (schema mismatch):", error.message);
     }
 
     // Clean up temp table
