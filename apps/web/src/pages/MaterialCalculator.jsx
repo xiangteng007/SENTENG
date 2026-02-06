@@ -13,15 +13,17 @@ import StructuralMaterialCalculator from '../components/StructuralMaterialCalcul
 // 計算公式與常數定義
 // ============================================
 
-// 預設損耗率 (%)
+// 預設損耗率 (%) - 依專家審計調整
+// 混凝土: 5% (適用一般專案，大型泵送可降至3%)
+// 磁磚: 10% (考慮切割與損耗，複雜區域可調高至15%)
 const DEFAULT_WASTAGE = {
-    concrete: 3,
+    concrete: 5,  // 專家建議：小型專案需要更高損耗率
     rebar: 5,
     formwork: 10,
     cement: 10,
     sand: 10,
     brick: 5,
-    tile: 5,
+    tile: 10,     // 專家建議：考慮切割、圖案對花、複雜區域
     grout: 15,
     adhesive: 10,
     paint: 10,
@@ -355,6 +357,35 @@ const COMPONENT_REBAR_RATES = {
             application: '軟弱地盤（地耐力<5tf/m²）、高地下水位、高層建築、整體基礎需求',
             regulations: '【筏基規範】需進行沉陷與差異沉陷分析，最小配筋率0.18%雙向，需設置適當分區澆置計畫控制水化熱。'
         }
+    ],
+    stair: [
+        {
+            label: '直跑樓梯',
+            value: 40,
+            thickness: 15,
+            specs: '斜板厚15cm，踏步高18cm寬27cm，#4@15cm雙向',
+            method: '斜板式樓梯最常用，踏板與斜板一體澆置。主筋配置於斜板底面，分布筋垂直主筋。踏面可用1:2水泥砂漿收邊。',
+            application: '一般住宅、辦公室、商業空間（淨寬≥75cm）',
+            regulations: '【建築技術規則§33】樓梯寬度≥75cm，踏步高≤18cm踏深≥26cm。扶手高≥85cm。'
+        },
+        {
+            label: '迴轉樓梯',
+            value: 50,
+            thickness: 18,
+            specs: '斜板厚18cm，含中間平台，#4@12cm雙向',
+            method: '含90°或180°轉折平台，平台處需加強配筋。平台厚度≥斜板厚度，平台與斜板交接處需設加強筋。',
+            application: '透天住宅、公寓大樓、受限空間需迴轉處',
+            regulations: '【建築規則】轉折平台深度≥踏深，寬度≥樓梯淨寬。平台處需設結構計算。'
+        },
+        {
+            label: '懸臂樓梯',
+            value: 62,
+            thickness: 20,
+            specs: '踏板厚20cm，#5@10cm懸挑配筋，錨入牆體≥40d',
+            method: '踏板單邊固定於牆體，另一端懸挑。需高配筋且錨入支撐牆體深度足夠。混凝土強度建議≥280kgf/cm²。',
+            application: '高級住宅、設計感空間、展示樓梯',
+            regulations: '【結構設計】懸挑長度≤1.2m，錨定長度≥40倍鋼筋直徑，支撐牆需為RC牆或柱。'
+        }
     ]
 };
 
@@ -371,10 +402,44 @@ const COMPONENT_TYPES = [
     { id: 'beam', label: '樑', icon: '📏' },
     { id: 'slab', label: '樓板', icon: '⬜' },
     { id: 'wall', label: '牆體', icon: '🧱' },
+    { id: 'stair', label: '樓梯', icon: '🪜' },
     { id: 'parapet', label: '女兒牆', icon: '🏚️' },
     { id: 'groundBeam', label: '地樑', icon: '⛏️' },
     { id: 'foundation', label: '基礎', icon: '🏗️' },
 ];
+
+// 台灣營建參考價格 (NT$) - 整合 construction-estimator skill
+const TAIWAN_REFERENCE_PRICES = {
+    // 結構材料
+    concrete: { min: 3500, max: 5000, unit: 'm³', label: '混凝土（含澆置）' },
+    rebar: { min: 30, max: 45, unit: 'kg', label: '鋼筋（含綁紮）' },
+    formwork: { min: 400, max: 800, unit: 'm²', label: '模板（含支撐）' },
+    steelStructure: { min: 60, max: 90, unit: 'kg', label: '結構鋼' },
+    // 裝修材料
+    tile: { min: 2000, max: 4500, unit: 'm²', label: '磁磚（含施工）' },
+    paint: { min: 300, max: 600, unit: 'm²', label: '油漆（含底漆）' },
+    brick: { min: 8, max: 12, unit: '塊', label: '紅磚' },
+    cement: { min: 180, max: 250, unit: '包', label: '水泥（50kg）' },
+    sand: { min: 800, max: 1200, unit: 'm³', label: '砂' },
+    // 裝修工程
+    plaster: { min: 400, max: 700, unit: 'm²', label: '粉光（含打底）' },
+    waterproof: { min: 500, max: 1000, unit: 'm²', label: '防水材料' },
+};
+
+// 單位轉換常數
+const UNIT_CONVERSIONS = {
+    // 面積
+    pingToSqm: 3.3058,       // 1坪 = 3.3058 m²
+    sqmToPing: 0.3025,       // 1m² = 0.3025 坪
+    caiToSqm: 0.0929,        // 1才 = 0.0929 m² (30.3cm × 30.3cm)
+    sqmToCai: 10.764,        // 1m² = 10.764 才
+    // 長度
+    taiwanFootToM: 0.30303,  // 1台尺 = 30.303 cm
+    mToTaiwanFoot: 3.3,      // 1m = 3.3 台尺
+    // 常用換算
+    pingToTsubo: 1.0,        // 1坪 = 1 坪 (台日同)
+    sqftToSqm: 0.0929,       // 1 sq ft = 0.0929 m²
+};
 
 // ============================================
 // 工具函數
@@ -530,6 +595,173 @@ const WastageControl = ({ wastage, setWastage, defaultValue, useCustom, setUseCu
     </div>
 );
 
+// 🧮 單位轉換工具組件
+const UnitConverter = () => {
+    const [converterOpen, setConverterOpen] = useState(false);
+    const [areaValue, setAreaValue] = useState('');
+    const [areaUnit, setAreaUnit] = useState('sqm');
+    const [lengthValue, setLengthValue] = useState('');
+    const [lengthUnit, setLengthUnit] = useState('m');
+    const [rebarDiameter, setRebarDiameter] = useState('');
+    const [rebarLength, setRebarLength] = useState('');
+
+    // 面積轉換
+    const convertArea = (value, fromUnit) => {
+        const v = parseFloat(value) || 0;
+        const sqm = fromUnit === 'sqm' ? v : fromUnit === 'ping' ? v * UNIT_CONVERSIONS.pingToSqm : v * UNIT_CONVERSIONS.caiToSqm;
+        return {
+            sqm: sqm.toFixed(3),
+            ping: (sqm * UNIT_CONVERSIONS.sqmToPing).toFixed(3),
+            cai: (sqm * UNIT_CONVERSIONS.sqmToCai).toFixed(2),
+        };
+    };
+
+    // 長度轉換
+    const convertLength = (value, fromUnit) => {
+        const v = parseFloat(value) || 0;
+        const m = fromUnit === 'm' ? v : v * UNIT_CONVERSIONS.taiwanFootToM;
+        return {
+            m: m.toFixed(3),
+            cm: (m * 100).toFixed(1),
+            taiwanFoot: (m * UNIT_CONVERSIONS.mToTaiwanFoot).toFixed(2),
+        };
+    };
+
+    // 鋼筋重量計算
+    const calculateRebarWeight = () => {
+        const d = parseFloat(rebarDiameter) || 0; // mm
+        const l = parseFloat(rebarLength) || 0;   // m
+        const weight = 0.00617 * (d / 10) * (d / 10) * l; // kg
+        return weight.toFixed(2);
+    };
+
+    const areaResults = convertArea(areaValue, areaUnit);
+    const lengthResults = convertLength(lengthValue, lengthUnit);
+    const rebarWeight = calculateRebarWeight();
+
+    if (!converterOpen) {
+        return (
+            <button
+                onClick={() => setConverterOpen(true)}
+                className="flex items-center gap-2 px-3 py-2 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors"
+            >
+                <Calculator size={16} />
+                <span className="text-sm font-medium">單位換算工具</span>
+            </button>
+        );
+    }
+
+    return (
+        <div className="bg-purple-50 border border-purple-200 rounded-xl p-4 space-y-4">
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-purple-700">
+                    <Calculator size={18} />
+                    <span className="font-medium">單位換算工具</span>
+                </div>
+                <button onClick={() => setConverterOpen(false)} className="text-purple-400 hover:text-purple-600">
+                    <ChevronUp size={18} />
+                </button>
+            </div>
+
+            {/* 面積轉換 */}
+            <div className="bg-white rounded-lg p-3 space-y-2">
+                <div className="text-xs font-medium text-purple-600">📐 面積單位</div>
+                <div className="flex gap-2 items-center">
+                    <input
+                        type="number"
+                        value={areaValue}
+                        onChange={e => setAreaValue(e.target.value)}
+                        placeholder="輸入數值"
+                        className="flex-1 px-2 py-1.5 border rounded text-sm"
+                    />
+                    <select value={areaUnit} onChange={e => setAreaUnit(e.target.value)} className="px-2 py-1.5 border rounded text-sm bg-white">
+                        <option value="sqm">m²</option>
+                        <option value="ping">坪</option>
+                        <option value="cai">才</option>
+                    </select>
+                </div>
+                {areaValue && (
+                    <div className="grid grid-cols-3 gap-2 text-xs">
+                        <div className="bg-purple-50 p-2 rounded text-center">
+                            <div className="font-bold text-purple-700">{areaResults.sqm}</div>
+                            <div className="text-purple-500">m²</div>
+                        </div>
+                        <div className="bg-purple-50 p-2 rounded text-center">
+                            <div className="font-bold text-purple-700">{areaResults.ping}</div>
+                            <div className="text-purple-500">坪</div>
+                        </div>
+                        <div className="bg-purple-50 p-2 rounded text-center">
+                            <div className="font-bold text-purple-700">{areaResults.cai}</div>
+                            <div className="text-purple-500">才</div>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            {/* 長度轉換 */}
+            <div className="bg-white rounded-lg p-3 space-y-2">
+                <div className="text-xs font-medium text-purple-600">📏 長度單位</div>
+                <div className="flex gap-2 items-center">
+                    <input
+                        type="number"
+                        value={lengthValue}
+                        onChange={e => setLengthValue(e.target.value)}
+                        placeholder="輸入數值"
+                        className="flex-1 px-2 py-1.5 border rounded text-sm"
+                    />
+                    <select value={lengthUnit} onChange={e => setLengthUnit(e.target.value)} className="px-2 py-1.5 border rounded text-sm bg-white">
+                        <option value="m">公尺</option>
+                        <option value="taiwanFoot">台尺</option>
+                    </select>
+                </div>
+                {lengthValue && (
+                    <div className="grid grid-cols-3 gap-2 text-xs">
+                        <div className="bg-purple-50 p-2 rounded text-center">
+                            <div className="font-bold text-purple-700">{lengthResults.m}</div>
+                            <div className="text-purple-500">公尺</div>
+                        </div>
+                        <div className="bg-purple-50 p-2 rounded text-center">
+                            <div className="font-bold text-purple-700">{lengthResults.cm}</div>
+                            <div className="text-purple-500">公分</div>
+                        </div>
+                        <div className="bg-purple-50 p-2 rounded text-center">
+                            <div className="font-bold text-purple-700">{lengthResults.taiwanFoot}</div>
+                            <div className="text-purple-500">台尺</div>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            {/* 鋼筋重量計算 */}
+            <div className="bg-white rounded-lg p-3 space-y-2">
+                <div className="text-xs font-medium text-purple-600">🧱 鋼筋重量 (每米重 = 0.00617 × d²)</div>
+                <div className="flex gap-2 items-center">
+                    <input
+                        type="number"
+                        value={rebarDiameter}
+                        onChange={e => setRebarDiameter(e.target.value)}
+                        placeholder="直徑 (mm)"
+                        className="flex-1 px-2 py-1.5 border rounded text-sm"
+                    />
+                    <span className="text-xs text-gray-500">×</span>
+                    <input
+                        type="number"
+                        value={rebarLength}
+                        onChange={e => setRebarLength(e.target.value)}
+                        placeholder="長度 (m)"
+                        className="flex-1 px-2 py-1.5 border rounded text-sm"
+                    />
+                </div>
+                {rebarDiameter && rebarLength && (
+                    <div className="bg-purple-100 p-2 rounded text-center">
+                        <span className="font-bold text-purple-800">{rebarWeight} kg</span>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
+
 // 結果顯示組件
 const ResultDisplay = ({ label, value, unit, wastageValue, showWastage = true, onAddRecord, subType = '' }) => {
     const [copied, setCopied] = useState(false);
@@ -673,6 +905,8 @@ const ComponentCalculator = ({ onAddRecord, vendors = [] }) => {
     const [slabRows, setSlabRows] = useState([{ id: 1, name: '', length: '', width: '', thickness: '15', rebarType: 1 }]);
     // 牆體狀態
     const [wallRows, setWallRows] = useState([{ id: 1, name: '', length: '', height: '', thickness: '20', rebarType: 2 }]);
+    // 樓梯狀態
+    const [stairRows, setStairRows] = useState([{ id: 1, name: '', width: '', length: '', riseHeight: '', steps: '10', stairType: 0 }]);
     // 女兒牆狀態
     const [parapetRows, setParapetRows] = useState([{ id: 1, name: '', perimeter: '', height: '0.9', thickness: '15', rebarType: 1 }]);
     // 地樑狀態
@@ -737,6 +971,28 @@ const ComponentCalculator = ({ onAddRecord, vendors = [] }) => {
         return { formwork, concrete, rebar };
     };
 
+    const calculateStair = (row) => {
+        const w = parseFloat(row.width) || 0;  // 梯寬 m
+        const l = parseFloat(row.length) || 0; // 水平長度 m
+        const rh = parseFloat(row.riseHeight) || 0; // 垂直高度 m
+        const steps = parseFloat(row.steps) || 10;
+        const stairConfig = COMPONENT_REBAR_RATES.stair[row.stairType] || COMPONENT_REBAR_RATES.stair[0];
+        const t = (stairConfig.thickness || 15) / 100; // 斜板厚度
+        const rebarRate = stairConfig.value || 40;
+
+        // 斜長計算 (梯段斜向長度)
+        const diagonalLength = Math.sqrt(l * l + rh * rh);
+        // 斜面面積 = 斜長 × 寬
+        const slopeArea = diagonalLength * w;
+        // 踏步面積 = 踏步數 × 踏深 × 梯寬 (約增加30%)
+        const stepArea = steps * (l / steps) * w * 0.3;
+        
+        const formwork = slopeArea + stepArea; // 斜板模 + 踏步模
+        const concrete = slopeArea * t + (steps * 0.5 * (rh / steps) * (l / steps) * w); // 斜板 + 踏步
+        const rebar = slopeArea * rebarRate;
+        return { formwork, concrete, rebar };
+    };
+
     const calculateParapet = (row) => {
         const p = parseFloat(row.perimeter) || 0;
         const h = parseFloat(row.height) || 0.9;
@@ -798,6 +1054,7 @@ const ComponentCalculator = ({ onAddRecord, vendors = [] }) => {
             case 'beam': rows = beamRows; calcFn = calculateBeam; break;
             case 'slab': rows = slabRows; calcFn = calculateSlab; break;
             case 'wall': rows = wallRows; calcFn = calculateWall; break;
+            case 'stair': rows = stairRows; calcFn = calculateStair; break;
             case 'parapet': rows = parapetRows; calcFn = calculateParapet; break;
             case 'groundBeam': rows = groundBeamRows; calcFn = calculateGroundBeam; break;
             case 'foundation': rows = foundationRows; calcFn = calculateFoundation; break;
@@ -948,6 +1205,42 @@ const ComponentCalculator = ({ onAddRecord, vendors = [] }) => {
                         </div>
                     </div>
                 ));
+            case 'stair':
+                return stairRows.map((row, idx) => (
+                    <div key={row.id} className="bg-gray-50 rounded-lg p-3 border border-gray-100">
+                        <div className="grid grid-cols-12 gap-2 items-end">
+                            <div className="col-span-12 sm:col-span-2">
+                                <label className="block text-xs text-gray-500 mb-1">名稱</label>
+                                <input type="text" value={row.name} onChange={e => updateRow(stairRows, setStairRows, row.id, 'name', e.target.value)} placeholder={`樓梯 ${idx + 1}`} className={commonInputClass} />
+                            </div>
+                            <div className="col-span-4 sm:col-span-2">
+                                <label className="block text-xs text-gray-500 mb-1">梯寬 (m)</label>
+                                <input type="number" value={row.width} onChange={e => updateRow(stairRows, setStairRows, row.id, 'width', e.target.value)} placeholder="1.2" className={commonInputClass} />
+                            </div>
+                            <div className="col-span-4 sm:col-span-2">
+                                <label className="block text-xs text-gray-500 mb-1">水平長 (m)</label>
+                                <input type="number" value={row.length} onChange={e => updateRow(stairRows, setStairRows, row.id, 'length', e.target.value)} placeholder="3" className={commonInputClass} />
+                            </div>
+                            <div className="col-span-4 sm:col-span-2">
+                                <label className="block text-xs text-gray-500 mb-1">垂直高 (m)</label>
+                                <input type="number" value={row.riseHeight} onChange={e => updateRow(stairRows, setStairRows, row.id, 'riseHeight', e.target.value)} placeholder="3" className={commonInputClass} />
+                            </div>
+                            <div className="col-span-4 sm:col-span-2">
+                                <label className="block text-xs text-gray-500 mb-1">踏步數</label>
+                                <input type="number" value={row.steps} onChange={e => updateRow(stairRows, setStairRows, row.id, 'steps', e.target.value)} placeholder="18" className={commonInputClass} />
+                            </div>
+                            <div className="col-span-6 sm:col-span-1">
+                                <label className="block text-xs text-gray-500 mb-1">類型</label>
+                                <select value={row.stairType} onChange={e => updateRow(stairRows, setStairRows, row.id, 'stairType', parseInt(e.target.value))} className={commonInputClass + " bg-white"}>
+                                    {COMPONENT_REBAR_RATES.stair.map((r, i) => <option key={i} value={i}>{r.label}</option>)}
+                                </select>
+                            </div>
+                            <div className="col-span-2 sm:col-span-1 flex justify-end">
+                                <button onClick={() => removeRow(stairRows, setStairRows, row.id)} disabled={stairRows.length <= 1} className="p-1.5 text-red-400 hover:text-red-600 rounded-lg disabled:opacity-30"><Trash2 size={14} /></button>
+                            </div>
+                        </div>
+                    </div>
+                ));
             case 'parapet':
                 return parapetRows.map((row, idx) => (
                     <div key={row.id} className="bg-gray-50 rounded-lg p-3 border border-gray-100">
@@ -1065,11 +1358,12 @@ const ComponentCalculator = ({ onAddRecord, vendors = [] }) => {
             beam: { name: '', width: '', height: '', length: '', count: '1', rebarType: 0 },
             slab: { name: '', length: '', width: '', thickness: '15', rebarType: 1 },
             wall: { name: '', length: '', height: '', thickness: '20', rebarType: 2 },
+            stair: { name: '', width: '', length: '', riseHeight: '', steps: '10', stairType: 0 },
             parapet: { name: '', perimeter: '', height: '0.9', thickness: '15', rebarType: 1 },
             groundBeam: { name: '', width: '', depth: '', length: '', count: '1', rebarType: 0 },
             foundation: { name: '', length: '', width: '', depth: '', count: '1', foundationType: 0 },
         };
-        const setters = { column: [columnRows, setColumnRows], beam: [beamRows, setBeamRows], slab: [slabRows, setSlabRows], wall: [wallRows, setWallRows], parapet: [parapetRows, setParapetRows], groundBeam: [groundBeamRows, setGroundBeamRows], foundation: [foundationRows, setFoundationRows] };
+        const setters = { column: [columnRows, setColumnRows], beam: [beamRows, setBeamRows], slab: [slabRows, setSlabRows], wall: [wallRows, setWallRows], stair: [stairRows, setStairRows], parapet: [parapetRows, setParapetRows], groundBeam: [groundBeamRows, setGroundBeamRows], foundation: [foundationRows, setFoundationRows] };
         return () => addRow(setters[componentType][0], setters[componentType][1], templates[componentType]);
     };
 
@@ -1097,6 +1391,7 @@ const ComponentCalculator = ({ onAddRecord, vendors = [] }) => {
                 {componentType === 'beam' && '公式: 模板 = (底寬+2×梁高)×長度, 鋼筋 = 體積×配筋率'}
                 {componentType === 'slab' && '公式: 模板 = 底面積+側邊(周長×厚度), 鋼筋 = 面積×配筋率'}
                 {componentType === 'wall' && '公式: 模板 = 2×面積 (雙面), 鋼筋 = 面積×配筋率'}
+                {componentType === 'stair' && '公式: 模板 = 斜長×梯寬+踏步, 混凝土 = 斜板+踏步體積, 鋼筋 = 面積×配筋率'}
                 {componentType === 'parapet' && '公式: 模板 = 2×周長×高度, 鋼筋 = 面積×配筋率'}
                 {componentType === 'groundBeam' && '公式: 模板 = (底寬+2×深)×長度, 鋼筋 = 體積×配筋率'}
                 {componentType === 'foundation' && '公式: 模板 = 周長×深度, 鋼筋 = 體積×配筋率'}
@@ -3612,6 +3907,9 @@ export const MaterialCalculator = ({ addToast, vendors = [] }) => {
 
                 {/* 右側：計算記錄與匯出 */}
                 <div className="space-y-4">
+                    {/* 單位換算工具 */}
+                    <UnitConverter />
+
                     {/* 計算記錄 */}
                     <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl p-4 text-white">
                         <div className="flex items-center justify-between mb-3">
