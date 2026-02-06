@@ -172,42 +172,190 @@ const REBAR_USAGE_BY_COMPONENT = {
     ],
 };
 
-// 構件鋼筋配筋率參考值 (kg/m³ 或 kg/m²)
+// 構件鋼筋配筋率參考值 (kg/m³ 或 kg/m²) - 含詳細工程說明
 const COMPONENT_REBAR_RATES = {
     column: [
-        { label: '一般柱', value: 120, desc: '主筋+箍筋' },
-        { label: '框架柱', value: 150, desc: '高配筋' },
+        {
+            label: '一般柱',
+            value: 120,
+            specs: '40×40cm，主筋8-#6，箍筋#3@15cm',
+            method: '適用於3-5層透天住宅，採用較小斷面配置。主筋8根#6對稱配置於四角及中間，箍筋#3@15cm，柱頂柱底加密區箍筋@10cm。混凝土強度建議210-280 kgf/cm²。',
+            application: '透天厝、農舍、低矮住宅（1-5樓）、簡易倉庫',
+            regulations: '【建築技術規則§401】柱最小尺寸25cm，短邊≥長邊1/4。主筋比ρ=1%~6%，最少4根主筋。'
+        },
+        {
+            label: '框架柱',
+            value: 150,
+            specs: '50×50cm，主筋12-#7，箍筋#3@12cm+繫筋',
+            method: '適用於5-8層公寓大樓，主筋12根#7三面對稱配置，箍筋#3@12cm並設置繫筋。混凝土強度建議280-350 kgf/cm²。耐震設計需符合中度韌性要求。',
+            application: '電梯大樓、商業建築、辦公大樓、學校、公共設施',
+            regulations: '【耐震規範】中度韌性：軸壓比≤0.3fc\'Ag，箍筋需設繫筋，每隔一根主筋設置。'
+        }
     ],
     beam: [
-        { label: '一般大梁', value: 85, desc: '主筋+箍筋' },
-        { label: '框架梁', value: 100, desc: '高配筋' },
+        {
+            label: '一般大梁',
+            value: 85,
+            specs: '30×60cm，上3-#6下4-#6，箍筋#3@15cm',
+            method: '承載樓板與次樑傳來之載重，上筋3根#6於支撐處抵抗負彎矩，下筋4根#6於跨中抵抗正彎矩。標準跨距4-6m適用。',
+            application: '一般住宅主樑、標準框架結構、跨距6m以內',
+            regulations: '【建築技術規則】樑最小寬度20cm，最小深度25cm。最小配筋率ρmin=14.1/fy。'
+        },
+        {
+            label: '框架梁',
+            value: 100,
+            specs: '40×70cm，上4-#7下5-#7，箍筋#4@12cm',
+            method: '大跨距樑用於無柱空間，需較大斷面與配筋抵抗撓度，上筋4根#7，下筋5根#7可雙排配置。塑鉸區需加密箍筋。',
+            application: '大跨距空間（6-10m）、商業空間、會議廳、無柱大廳',
+            regulations: '【耐震規範】梁端塑鉸區箍筋需加密至2倍梁深範圍。撓度控制δ≤L/240。'
+        }
     ],
     slab: [
-        { label: '12cm 樓板', thickness: 12, value: 13, desc: '單層雙向' },
-        { label: '15cm 樓板', thickness: 15, value: 17, desc: '單層雙向' },
-        { label: '18cm 加厚板', thickness: 18, value: 25, desc: '雙層雙向' },
+        {
+            label: '12cm 樓板',
+            thickness: 12,
+            value: 13,
+            specs: '主筋#3@20cm雙向配置，保護層2cm',
+            method: '單層配筋適用於短跨距小載重樓板，底筋於跨中承受正彎矩。適合小房間、陽台、走廊等區域。',
+            application: '小房間（跨距<4m）、陽台、走廊、儲藏室',
+            regulations: '【建築技術規則】RC樓板最小厚度10cm，鋼筋間距≤板厚3倍且≤45cm。'
+        },
+        {
+            label: '15cm 樓板',
+            thickness: 15,
+            value: 17,
+            specs: '主筋#3@15cm雙向配置，保護層2cm',
+            method: '標準單層配筋適用於一般住宅樓板，底筋於跨中承受正彎矩，跨距4-6m適用。',
+            application: '一般住宅客廳、臥室、辦公空間（跨距4-6m）',
+            regulations: '【建築技術規則】住宅活載重200kgf/m²，辦公室300kgf/m²。'
+        },
+        {
+            label: '18cm 加厚板',
+            thickness: 18,
+            value: 25,
+            specs: '上下層#4@15cm雙向配置，保護層2.5cm',
+            method: '雙層配筋適用於連續板或較大載重，上層筋於支撐處承受負彎矩。適合商業空間或跨距較大區域。',
+            application: '商業空間（活載重≥300kgf/m²）、餐廳、大跨距樓板（6-8m）',
+            regulations: '【ACI規範】跨深比限制：簡支L/h≤16，連續L/h≤21。'
+        }
     ],
     wall: [
-        { label: '15cm 牆', thickness: 15, value: 23, desc: '主筋@20' },
-        { label: '18cm 牆', thickness: 18, value: 29, desc: '主筋@15' },
-        { label: '20cm 牆', thickness: 20, value: 34, desc: '雙層主筋' },
-        { label: '25cm 牆', thickness: 25, value: 47, desc: '雙層+加強' },
-        { label: '30cm 牆', thickness: 30, value: 58, desc: '雙層+密箍' },
+        {
+            label: '15cm 牆',
+            thickness: 15,
+            value: 23,
+            specs: '單側#3@20cm垂直+水平配筋，保護層3cm',
+            method: '單層配筋適用於一般隔間牆或非承重牆體，鋼筋單側配置即可。需注意與梁柱之錨定。',
+            application: '隔間牆、非承重分隔牆、低樓層輕載牆',
+            regulations: '【建築技術規則】RC牆最小厚度10cm，豎向筋間距≤牆厚3倍且≤45cm。'
+        },
+        {
+            label: '18cm 牆',
+            thickness: 18,
+            value: 29,
+            specs: '單側#4@20cm垂直+水平配筋，保護層3cm',
+            method: '單層較密配筋適用於低樓層承重牆，豎筋#4間距20cm可承受較大載重。',
+            application: '低樓層承重牆（1-3F）、輕型剪力牆',
+            regulations: '【耐震規範】承重牆需滿足軸力與彎矩需求，牆端需設置邊緣構件。'
+        },
+        {
+            label: '20cm 牆',
+            thickness: 20,
+            value: 34,
+            specs: '雙側#4@15cm垂直+水平配筋，保護層3cm',
+            method: '雙層配筋適用於剪力牆或中高樓層承重牆體，雙側對稱配置可承受往復水平力。搭接長度40d。',
+            application: '剪力牆、耐震牆、中高樓層承重牆（4-8F）',
+            regulations: '【耐震規範】剪力牆配筋率≥0.25%，邊界構件需設繫筋#3@10cm。'
+        },
+        {
+            label: '25cm 牆',
+            thickness: 25,
+            value: 47,
+            specs: '雙側#4@12cm垂直+水平配筋，保護層3cm',
+            method: '較厚雙層配筋適用於高樓層剪力牆系統，配筋加密抵抗較大水平力。邊界區需設置加密箍筋。',
+            application: '高層建築剪力牆（8F以上）、核心筒、電梯間',
+            regulations: '【耐震規範】特殊剪力牆ρ≥0.25%，繫筋間距≤min(6db, 150mm)。'
+        },
+        {
+            label: '30cm 牆',
+            thickness: 30,
+            value: 58,
+            specs: '雙側#5@12cm垂直+水平配筋，保護層4cm',
+            method: '重型剪力牆適用於高層建築或核心筒，採用#5較大直徑鋼筋並加密配置，搭接長度50d。',
+            application: '超高層建築核心筒、地下室外牆、水池壁',
+            regulations: '【高層建築規範】剪力牆需進行非線性分析，邊界區箍筋需加密配置。'
+        }
     ],
     parapet: [
-        { label: '輕量配筋', value: 18, desc: '單層' },
-        { label: '標準配筋', value: 22, desc: '雙層' },
-        { label: '加強配筋', value: 25, desc: '密配' },
+        {
+            label: '輕量配筋',
+            value: 18,
+            specs: '厚15cm，高80-100cm，#3@25cm雙向單層',
+            method: '輕型女兒牆用於低矮簡易建築，採單層配筋#3@25cm雙向，需與樓板鋼筋錨固。適合低風壓區域。',
+            application: '低矮透天（高度<100cm）、陽台欄杆、一般住宅屋頂',
+            regulations: '【建築技術規則§38】欄杆扶手高度≥110cm（屋頂），錨筋伸入樓板≥40d。'
+        },
+        {
+            label: '標準配筋',
+            value: 22,
+            specs: '厚15cm，高100-120cm，#3@20cm雙向單層',
+            method: '標準女兒牆適用於一般建築，採單層配筋#3@20cm雙向，豎筋錨入樓板，橫筋環繞。需設壓頂收邊。',
+            application: '一般公寓屋頂（高度100-120cm）、商業建築女兒牆',
+            regulations: '【建築技術規則§38】屋頂周邊女兒牆高度≥110cm，需檢核風力穩定性。'
+        },
+        {
+            label: '加強配筋',
+            value: 28,
+            specs: '厚20cm，高120-150cm，#4@15cm雙向',
+            method: '加強型女兒牆用於高風壓區或較高女兒牆，採雙層配筋或加大號數#4@15cm，建議每2-3m增設扶壁柱。',
+            application: '高層建築女兒牆、強風區（沿海、山區）、高度>120cm',
+            regulations: '【耐風設計規範】基本風速V10≥30m/s區域需加強，高度>120cm需設扶壁柱@2-3m。'
+        }
     ],
     groundBeam: [
-        { label: '一般地樑', value: 90, desc: '標準' },
-        { label: '加強地樑', value: 110, desc: '框架' },
+        {
+            label: '一般地樑',
+            value: 90,
+            specs: '30×60cm，上下各3-#5，箍筋#3@20cm',
+            method: '輕型地樑連接獨立基腳，傳遞水平力並防止基礎不均勻沉陷，主筋#5上下對稱配置。保護層5cm（接觸土壤）。',
+            application: '透天住宅基礎連接、獨棟建築、輕載結構',
+            regulations: '【建築技術規則】基礎間應以地樑連接，地樑最小寬度≥柱寬，深度≥40cm，保護層≥5cm。'
+        },
+        {
+            label: '加強地樑',
+            value: 110,
+            specs: '40×80cm，上下各4-#6，箍筋#3@15cm',
+            method: '標準地樑適用於一般公寓大樓基礎連接，較大斷面承載上部結構傳來之軸力與彎矩。需與柱筋及基腳筋妥善錨定。',
+            application: '公寓大樓基礎、商業建築、學校、中型結構',
+            regulations: '【耐震規定】地樑需能傳遞水平力至各基腳，鋼筋需與柱筋及基腳筋妥善錨定，底層需鋪設PC層≥5cm。'
+        }
     ],
     foundation: [
-        { label: '獨立基腳', value: 80, desc: '單柱基礎' },
-        { label: '聯合基腳', value: 85, desc: '多柱基礎' },
-        { label: '筏式基礎', value: 100, desc: '全面基礎' },
-    ],
+        {
+            label: '獨立基腳',
+            value: 80,
+            specs: '150×150×60cm，#4@20cm雙向底筋',
+            method: '傳遞單根柱載重至地盤，底筋雙向配置抵抗底部彎矩，柱筋錨入基腳並設彎鉤。適用於承載力良好地盤。',
+            application: '透天住宅、獨棟建築、輕載單柱結構、地耐力≥10tf/m²',
+            regulations: '【建築技術規則】基礎需坐落於承載層，qa≤容許承載力，柱主筋伸入基腳≥40d需設彎鉤。'
+        },
+        {
+            label: '聯合基腳',
+            value: 85,
+            specs: '300×150×80cm，#5@15cm雙向上下層',
+            method: '連接相鄰兩柱承載偏心載重，上下雙層配筋抵抗正負彎矩。適用於柱距較近或地界限制情況。',
+            application: '雙柱共用基礎、緊鄰地界情況、偏心載重柱',
+            regulations: '【基礎規範】需檢核偏心與傾覆，上層筋抵抗柱間負彎矩，建議設地樑連接增加整體性。'
+        },
+        {
+            label: '筏式基礎',
+            value: 100,
+            specs: '整體板厚60-100cm，#5@10cm上下雙向',
+            method: '將所有柱載重分散至整個底板，適用於軟弱地盤或高地下水位，雙層雙向配筋。需設加勁梁增加剛度。',
+            application: '軟弱地盤（地耐力<5tf/m²）、高地下水位、高層建築、整體基礎需求',
+            regulations: '【筏基規範】需進行沉陷與差異沉陷分析，最小配筋率0.18%雙向，需設置適當分區澆置計畫控制水化熱。'
+        }
+    ]
 };
 
 // 女兒牆預設高度選項
@@ -286,6 +434,71 @@ const SelectField = ({ label, value, onChange, options }) => (
         </select>
     </div>
 );
+
+// 選項詳細說明卡片組件
+const OptionDetailCard = ({ selectedOption, configRate }) => {
+    const [isExpanded, setIsExpanded] = useState(false);
+    
+    // 合併兩種格式的資料來源
+    const option = selectedOption || {};
+    const hasDetails = option.specs || option.method || option.application || option.regulations;
+    
+    if (!hasDetails) return null;
+    
+    return (
+        <div className="mt-2 bg-blue-50 rounded-lg border border-blue-200 overflow-hidden">
+            <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="w-full px-3 py-2 flex items-center justify-between text-left hover:bg-blue-100 transition-colors"
+            >
+                <div className="flex items-center gap-2">
+                    <Info size={14} className="text-blue-600" />
+                    <span className="text-sm font-medium text-blue-800">
+                        {option.label} - 工程說明
+                    </span>
+                    {configRate && (
+                        <span className="text-xs bg-blue-200 text-blue-700 px-2 py-0.5 rounded-full">
+                            {configRate} kg/m{option.thickness ? '²' : '³'}
+                        </span>
+                    )}
+                </div>
+                {isExpanded ? <ChevronUp size={16} className="text-blue-600" /> : <ChevronDown size={16} className="text-blue-600" />}
+            </button>
+            
+            {isExpanded && (
+                <div className="px-3 pb-3 space-y-2 text-sm">
+                    {option.specs && (
+                        <div className="flex items-start gap-2">
+                            <span className="text-blue-700 font-medium whitespace-nowrap">📐 規格：</span>
+                            <span className="text-gray-700">{option.specs}</span>
+                        </div>
+                    )}
+                    
+                    {option.method && (
+                        <div className="flex items-start gap-2">
+                            <span className="text-blue-700 font-medium whitespace-nowrap">🔧 工法：</span>
+                            <span className="text-gray-700">{option.method}</span>
+                        </div>
+                    )}
+                    
+                    {option.application && (
+                        <div className="flex items-start gap-2">
+                            <span className="text-blue-700 font-medium whitespace-nowrap">🏗️ 適用：</span>
+                            <span className="text-gray-700">{option.application}</span>
+                        </div>
+                    )}
+                    
+                    {option.regulations && (
+                        <div className="flex items-start gap-2 pt-2 border-t border-blue-200 mt-2">
+                            <span className="text-blue-600 font-medium whitespace-nowrap">📜 法規：</span>
+                            <span className="text-gray-600 text-xs">{option.regulations}</span>
+                        </div>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+};
 
 // 損耗率控制組件
 const WastageControl = ({ wastage, setWastage, defaultValue, useCustom, setUseCustom }) => (
@@ -893,6 +1106,27 @@ const ComponentCalculator = ({ onAddRecord, vendors = [] }) => {
             <div className="space-y-2 max-h-[400px] overflow-y-auto">
                 {renderInputForm()}
             </div>
+
+            {/* 選項工程說明 - 顯示當前構件類型的配置說明 */}
+            {(() => {
+                // 取得當前構件對應的第一筆資料中的選項
+                const currentRows = {
+                    column: columnRows, beam: beamRows, slab: slabRows,
+                    wall: wallRows, parapet: parapetRows, groundBeam: groundBeamRows, foundation: foundationRows
+                };
+                const rows = currentRows[componentType];
+                if (rows && rows.length > 0) {
+                    // 取得第一筆資料的選中配筋/類型
+                    const firstRow = rows[0];
+                    const rateKey = componentType === 'foundation' ? 'foundationType' : 'rebarType';
+                    const selectedIdx = firstRow[rateKey] || 0;
+                    const selectedOption = COMPONENT_REBAR_RATES[componentType]?.[selectedIdx];
+                    if (selectedOption) {
+                        return <OptionDetailCard selectedOption={selectedOption} configRate={selectedOption.value} />;
+                    }
+                }
+                return null;
+            })()}
 
             {/* 新增按鈕 */}
             <button onClick={getAddRowHandler()} className="w-full py-2 border-2 border-dashed border-gray-200 rounded-xl text-gray-400 hover:border-orange-300 hover:text-orange-500 transition-colors flex items-center justify-center gap-2 text-sm">
