@@ -31,6 +31,7 @@ import {
   TaiwanGovDataService,
   NhiApiService,
   LineApiService,
+  WeatherService,
 } from "./taiwan";
 
 // Banking Services
@@ -71,6 +72,7 @@ import { AuditModule } from "../platform/audit/audit.module";
     TaiwanGovDataService,
     NhiApiService,
     LineApiService,
+    WeatherService,
     // Banking
     AccountingExportService,
     BankingIntegrationService,
@@ -86,6 +88,7 @@ import { AuditModule } from "../platform/audit/audit.module";
     TaiwanGovDataService,
     NhiApiService,
     LineApiService,
+    WeatherService,
     // Banking
     AccountingExportService,
     BankingIntegrationService,
