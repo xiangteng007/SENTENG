@@ -48,6 +48,8 @@ import { GoogleSheetsService } from "../integrations/google/google-sheets.servic
 import { BankingIntegrationService } from "../integrations/banking/banking-integration.service";
 import { ContactsSyncService } from "../integrations/google/contacts-sync.service";
 import { LineApiService } from "../integrations/taiwan/line-api.service";
+import { NhiApiService } from "../integrations/taiwan/nhi-api.service";
+import { TaiwanGovDataService } from "../integrations/taiwan/taiwan-gov-data.service";
 
 interface UserSession {
   userId: number;
@@ -110,6 +112,8 @@ export class TelegramService {
     private readonly bankingIntegrationService: BankingIntegrationService,
     private readonly contactsSyncService: ContactsSyncService,
     private readonly lineApiService: LineApiService,
+    private readonly nhiApiService: NhiApiService,
+    private readonly taiwanGovDataService: TaiwanGovDataService,
   ) {
     this.botToken = this.configService.get<string>("TELEGRAM_BOT_TOKEN") || "";
     if (!this.botToken) {
@@ -337,6 +341,14 @@ export class TelegramService {
         case "/lineapi":
         case "/LINE推播":
           await this.handleLineApiCommand(session);
+          break;
+        case "/nhi":
+        case "/勞健保":
+          await this.handleNhiCommand(session);
+          break;
+        case "/govdata":
+        case "/公開資料":
+          await this.handleGovDataCommand(session);
           break;
         default:
           await this.sendMessage(
@@ -1689,6 +1701,42 @@ ${session.currentProjectName || "尚未選擇"}
         `• 工期預警\n\n` +
         `🔌 狀態：${isConfigured ? "✅ 已設定" : "⚠️ 尚未設定"}\n\n` +
         `ℹ️ 使用網頁版設定 LINE API`,
+      "Markdown",
+    );
+  }
+
+  private async handleNhiCommand(session: UserSession): Promise<void> {
+    const rates = this.nhiApiService.getRates();
+    await this.sendMessage(
+      session.chatId,
+      `🏥 *勞健保計算服務*\n\n` +
+        `📋 支援功能：\n` +
+        `• 勞保/健保費用計算\n` +
+        `• 投保級距查詢\n` +
+        `• 批次保費計算\n\n` +
+        `📊 2024 費率：\n` +
+        `• 勞保：${(rates.laborInsurance * 100).toFixed(0)}%\n` +
+        `• 健保：${(rates.healthInsurance * 100).toFixed(2)}%\n` +
+        `• 勞退：${(rates.laborPension * 100).toFixed(0)}%\n\n` +
+        `ℹ️ 使用網頁版計算保費`,
+      "Markdown",
+    );
+  }
+
+  private async handleGovDataCommand(session: UserSession): Promise<void> {
+    await this.sendMessage(
+      session.chatId,
+      `🏛️ *政府公開資料查詢*\n\n` +
+        `📋 支援功能：\n` +
+        `• 公共工程標案查詢\n` +
+        `• 建照執照查詢\n` +
+        `• 公司登記查詢 (GCIS)\n` +
+        `• 統一編號驗證\n\n` +
+        `📡 資料來源：\n` +
+        `• 公共工程委員會\n` +
+        `• 內政部營建署\n` +
+        `• 經濟部商業司\n\n` +
+        `ℹ️ 使用網頁版查詢公開資料`,
       "Markdown",
     );
   }
