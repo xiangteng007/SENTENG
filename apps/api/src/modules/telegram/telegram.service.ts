@@ -11,6 +11,7 @@ import { ProjectsService } from "../projects/projects.service";
 import { SiteLogsService } from "../site-logs/site-logs.service";
 import { EventsService } from "../events/events.service";
 import { StorageService } from "../storage/storage.service";
+import { InventoryService } from "../inventory/inventory.service";
 
 interface UserSession {
   userId: number;
@@ -36,6 +37,7 @@ export class TelegramService {
     private readonly siteLogsService: SiteLogsService,
     private readonly eventsService: EventsService,
     private readonly storageService: StorageService,
+    private readonly inventoryService: InventoryService,
   ) {
     this.botToken = this.configService.get<string>("TELEGRAM_BOT_TOKEN") || "";
     if (!this.botToken) {
@@ -115,6 +117,18 @@ export class TelegramService {
         case "/weather":
         case "/天氣":
           await this.handleWeatherCommand(session);
+          break;
+        case "/material":
+        case "/材料":
+          await this.handleMaterialCommand(session);
+          break;
+        case "/safety":
+        case "/安全":
+          await this.handleSafetyCommand(session);
+          break;
+        case "/report":
+        case "/報表":
+          await this.handleReportCommand(session);
           break;
         default:
           await this.sendMessage(
@@ -600,6 +614,113 @@ ${session.currentProjectName || "尚未選擇"}
       session.chatId,
       `🌤️ *天氣資訊*\\n\\n📍 台北市\\n🌡️ 26°C / 多雲\\n💧 濕度：65%\\n\\n⚠️ 無預警\\n\\n_資料來源：中央氣象署_`,
       "Markdown",
+    );
+  }
+
+  private async handleMaterialCommand(session: UserSession): Promise<void> {
+    if (!session.currentProjectId) {
+      await this.sendMessage(
+        session.chatId,
+        "⚠️ 請先選擇專案！\\n\\n使用 /project 選擇專案",
+      );
+      return;
+    }
+
+    try {
+      const materialCost = await this.inventoryService.getProjectMaterialCost(
+        session.currentProjectId,
+      );
+
+      await this.sendMessage(
+        session.chatId,
+        `📦 *材料領用* (${session.currentProjectName})\\n\\n` +
+          `📋 領料次數：${materialCost.count} 次\\n` +
+          `💰 領料成本：$${materialCost.totalCost.toLocaleString()}\\n\\n` +
+          `_查看詳細請至網頁版庫存管理_`,
+        "Markdown",
+      );
+    } catch (error) {
+      this.logger.error("Failed to fetch material cost:", error);
+      await this.sendMessage(
+        session.chatId,
+        "❌ 無法載入材料資訊，請稍後再試。",
+      );
+    }
+  }
+
+  private async handleSafetyCommand(session: UserSession): Promise<void> {
+    if (!session.currentProjectId) {
+      await this.sendMessage(
+        session.chatId,
+        "⚠️ 請先選擇專案！\\n\\n使用 /project 選擇專案",
+      );
+      return;
+    }
+
+    try {
+      // Get today's site log for safety data
+      const today = new Date().toISOString().split("T")[0];
+      const todayLog = await this.siteLogsService.findByDate(
+        session.currentProjectId,
+        today,
+      );
+
+      if (!todayLog || !todayLog.safety) {
+        await this.sendMessage(
+          session.chatId,
+          `🦺 *安全報告* (${today})\\n\\n✅ 今日無安全事件記錄\\n\\n_保持安全施工！_`,
+          "Markdown",
+        );
+        return;
+      }
+
+      const safety = todayLog.safety;
+      await this.sendMessage(
+        session.chatId,
+        `🦺 *安全報告* (${today})\\n\\n` +
+          `⚠️ 事故：${safety.incidents || 0} 件\\n` +
+          `⚡ 虛驚事件：${safety.nearMisses || 0} 件\\n` +
+          `${safety.notes ? `📝 備註：${safety.notes}` : ""}\\n\\n` +
+          `_安全第一！_`,
+        "Markdown",
+      );
+    } catch (error) {
+      this.logger.error("Failed to fetch safety data:", error);
+      await this.sendMessage(
+        session.chatId,
+        "❌ 無法載入安全資訊，請稍後再試。",
+      );
+    }
+  }
+
+  private async handleReportCommand(session: UserSession): Promise<void> {
+    if (!session.currentProjectId) {
+      await this.sendMessage(
+        session.chatId,
+        "⚠️ 請先選擇專案！\\n\\n使用 /project 選擇專案",
+      );
+      return;
+    }
+
+    // Show available reports
+    const reportButtons: TelegramInlineKeyboardMarkup = {
+      inline_keyboard: [
+        [
+          { text: "📊 進度報表", callback_data: "report:progress" },
+          { text: "💰 成本報表", callback_data: "report:cost" },
+        ],
+        [
+          { text: "👷 人力報表", callback_data: "report:workforce" },
+          { text: "📅 週報", callback_data: "report:weekly" },
+        ],
+      ],
+    };
+
+    await this.sendMessage(
+      session.chatId,
+      `📈 *報表中心*\\n\\n選擇要查看的報表類型：`,
+      "Markdown",
+      reportButtons,
     );
   }
 
