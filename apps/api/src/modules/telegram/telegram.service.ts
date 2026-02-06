@@ -12,6 +12,9 @@ import { SiteLogsService } from "../site-logs/site-logs.service";
 import { EventsService } from "../events/events.service";
 import { StorageService } from "../storage/storage.service";
 import { InventoryService } from "../inventory/inventory.service";
+import { PaymentsService } from "../payments/payments.service";
+import { ContractsService } from "../contracts/contracts.service";
+import { ChangeOrdersService } from "../change-orders/change-orders.service";
 
 interface UserSession {
   userId: number;
@@ -38,6 +41,9 @@ export class TelegramService {
     private readonly eventsService: EventsService,
     private readonly storageService: StorageService,
     private readonly inventoryService: InventoryService,
+    private readonly paymentsService: PaymentsService,
+    private readonly contractsService: ContractsService,
+    private readonly changeOrdersService: ChangeOrdersService,
   ) {
     this.botToken = this.configService.get<string>("TELEGRAM_BOT_TOKEN") || "";
     if (!this.botToken) {
@@ -129,6 +135,18 @@ export class TelegramService {
         case "/report":
         case "/報表":
           await this.handleReportCommand(session);
+          break;
+        case "/payment":
+        case "/請款":
+          await this.handlePaymentCommand(session);
+          break;
+        case "/contract":
+        case "/合約":
+          await this.handleContractCommand(session);
+          break;
+        case "/change":
+        case "/變更":
+          await this.handleChangeOrderCommand(session);
           break;
         default:
           await this.sendMessage(
@@ -722,6 +740,143 @@ ${session.currentProjectName || "尚未選擇"}
       "Markdown",
       reportButtons,
     );
+  }
+
+  private async handlePaymentCommand(session: UserSession): Promise<void> {
+    if (!session.currentProjectId) {
+      await this.sendMessage(
+        session.chatId,
+        "⚠️ 請先選擇專案！\\n\\n使用 /project 選擇專案",
+      );
+      return;
+    }
+
+    try {
+      const payments = await this.paymentsService.findAll({
+        projectId: session.currentProjectId,
+      });
+
+      if (!payments || payments.length === 0) {
+        await this.sendMessage(
+          session.chatId,
+          `💰 *請款狀態* (${session.currentProjectName})\\n\\n📝 目前無請款記錄`,
+          "Markdown",
+        );
+        return;
+      }
+
+      const pending = payments.filter((p) => p.status === "PAY_PENDING");
+      const approved = payments.filter((p) => p.status === "PAY_APPROVED");
+      const pendingTotal = pending.reduce((sum, p) => sum + Number(p.requestAmount || 0), 0);
+      const approvedTotal = approved.reduce((sum, p) => sum + Number(p.requestAmount || 0), 0);
+
+      let message = `💰 *請款狀態* (${session.currentProjectName})\\n\\n`;
+      message += `⏳ 待審核：${pending.length} 筆 ($${pendingTotal.toLocaleString()})\\n`;
+      message += `✅ 已核准：${approved.length} 筆 ($${approvedTotal.toLocaleString()})\\n\\n`;
+
+      // Show latest 3 pending
+      if (pending.length > 0) {
+        message += `*待審請款單：*\\n`;
+        pending.slice(0, 3).forEach((p) => {
+          message += `• ${p.id}: $${Number(p.requestAmount || 0).toLocaleString()}\\n`;
+        });
+      }
+
+      await this.sendMessage(session.chatId, message, "Markdown");
+    } catch (error) {
+      this.logger.error("Failed to fetch payments:", error);
+      await this.sendMessage(session.chatId, "❌ 無法載入請款資訊，請稍後再試。");
+    }
+  }
+
+  private async handleContractCommand(session: UserSession): Promise<void> {
+    if (!session.currentProjectId) {
+      await this.sendMessage(
+        session.chatId,
+        "⚠️ 請先選擇專案！\\n\\n使用 /project 選擇專案",
+      );
+      return;
+    }
+
+    try {
+      const contracts = await this.contractsService.findAll({
+        projectId: session.currentProjectId,
+      });
+
+      if (!contracts || contracts.length === 0) {
+        await this.sendMessage(
+          session.chatId,
+          `📜 *合約資訊* (${session.currentProjectName})\\n\\n📝 目前無合約記錄`,
+          "Markdown",
+        );
+        return;
+      }
+
+      const contract = contracts[0]; // Primary contract
+      const originalAmount = Number(contract.originalAmount || 0);
+      const changeAmount = Number(contract.changeAmount || 0);
+      const currentAmount = Number(contract.currentAmount || originalAmount + changeAmount);
+      const retentionAmount = Number(contract.retentionAmount || 0);
+
+      await this.sendMessage(
+        session.chatId,
+        `📜 *合約資訊* (${session.currentProjectName})\\n\\n` +
+          `📋 合約編號：${contract.contractNo || contract.id}\\n` +
+          `💰 原始金額：$${originalAmount.toLocaleString()}\\n` +
+          `📝 變更金額：$${changeAmount.toLocaleString()}\\n` +
+          `📊 現行金額：$${currentAmount.toLocaleString()}\\n` +
+          `🔒 保留款：$${retentionAmount.toLocaleString()}`,
+        "Markdown",
+      );
+    } catch (error) {
+      this.logger.error("Failed to fetch contract:", error);
+      await this.sendMessage(session.chatId, "❌ 無法載入合約資訊，請稍後再試。");
+    }
+  }
+
+  private async handleChangeOrderCommand(session: UserSession): Promise<void> {
+    if (!session.currentProjectId) {
+      await this.sendMessage(
+        session.chatId,
+        "⚠️ 請先選擇專案！\\n\\n使用 /project 選擇專案",
+      );
+      return;
+    }
+
+    try {
+      const changeOrders = await this.changeOrdersService.findAll({
+        projectId: session.currentProjectId,
+      });
+
+      if (!changeOrders || changeOrders.length === 0) {
+        await this.sendMessage(
+          session.chatId,
+          `📝 *變更單* (${session.currentProjectName})\\n\\n✅ 目前無變更單`,
+          "Markdown",
+        );
+        return;
+      }
+
+      const approved = changeOrders.filter((c) => c.status === "CO_APPROVED");
+      const pending = changeOrders.filter((c) => c.status === "CO_PENDING");
+      const approvedTotal = approved.reduce((sum, c) => sum + Number(c.amount || 0), 0);
+      const pendingTotal = pending.reduce((sum, c) => sum + Number(c.amount || 0), 0);
+
+      let message = `📝 *變更單* (${session.currentProjectName})\\n\\n`;
+      message += `✅ 已核准：${approved.length} 件 ($${approvedTotal.toLocaleString()})\\n`;
+      message += `⏳ 審核中：${pending.length} 件 ($${pendingTotal.toLocaleString()})\\n\\n`;
+
+      // List recent change orders
+      changeOrders.slice(0, 5).forEach((co) => {
+        const statusIcon = co.status === "CO_APPROVED" ? "✅" : co.status === "CO_PENDING" ? "⏳" : "📋";
+        message += `${statusIcon} ${co.coNumber || co.id}: $${Number(co.amount || 0).toLocaleString()}\\n`;
+      });
+
+      await this.sendMessage(session.chatId, message, "Markdown");
+    } catch (error) {
+      this.logger.error("Failed to fetch change orders:", error);
+      await this.sendMessage(session.chatId, "❌ 無法載入變更單資訊，請稍後再試。");
+    }
   }
 
   private async handlePhotoUpload(
