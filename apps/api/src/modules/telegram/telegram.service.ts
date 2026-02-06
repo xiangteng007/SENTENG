@@ -42,6 +42,9 @@ import { LineNotifyService } from "../notifications/line-notify.service";
 import { CalendarSyncService } from "../integrations/google/calendar-sync.service";
 import { GoogleDriveService } from "../integrations/google/google-drive.service";
 import { AccountingExportService } from "../integrations/banking/accounting-export.service";
+import { EmailService } from "../notifications/email.service";
+import { PushNotificationService } from "../notifications/push-notification.service";
+import { GoogleSheetsService } from "../integrations/google/google-sheets.service";
 
 interface UserSession {
   userId: number;
@@ -98,6 +101,9 @@ export class TelegramService {
     private readonly calendarSyncService: CalendarSyncService,
     private readonly googleDriveService: GoogleDriveService,
     private readonly accountingExportService: AccountingExportService,
+    private readonly emailService: EmailService,
+    private readonly pushNotificationService: PushNotificationService,
+    private readonly googleSheetsService: GoogleSheetsService,
   ) {
     this.botToken = this.configService.get<string>("TELEGRAM_BOT_TOKEN") || "";
     if (!this.botToken) {
@@ -301,6 +307,18 @@ export class TelegramService {
         case "/export":
         case "/匯出":
           await this.handleExportCommand(session);
+          break;
+        case "/email":
+        case "/郵件":
+          await this.handleEmailCommand(session);
+          break;
+        case "/push":
+        case "/推送":
+          await this.handlePushCommand(session);
+          break;
+        case "/sheets":
+        case "/試算表":
+          await this.handleSheetsCommand(session);
           break;
         default:
           await this.sendMessage(
@@ -1570,6 +1588,46 @@ ${session.currentProjectName || "尚未選擇"}
         `• 專案成本明細\n` +
         `• 發票明細\n\n` +
         `ℹ️ 使用網頁版匯出會計資料`,
+      "Markdown",
+    );
+  }
+
+  private async handleEmailCommand(session: UserSession): Promise<void> {
+    await this.sendMessage(
+      session.chatId,
+      `📧 *Email 通知服務*\n\n` +
+        `📋 支援功能：\n` +
+        `• 專案建立通知\n` +
+        `• 付款提醒\n` +
+        `• 歡迎郵件\n` +
+        `• 模板化郵件\n\n` +
+        `ℹ️ 使用網頁版設定 Email 通知`,
+      "Markdown",
+    );
+  }
+
+  private async handlePushCommand(session: UserSession): Promise<void> {
+    await this.sendMessage(
+      session.chatId,
+      `🔔 *Web Push 通知*\n\n` +
+        `📋 支援功能：\n` +
+        `• 天氣警報推送\n` +
+        `• 專案進度提醒\n` +
+        `• 廣播通知\n\n` +
+        `ℹ️ 使用網頁版啟用瀏覽器推送`,
+      "Markdown",
+    );
+  }
+
+  private async handleSheetsCommand(session: UserSession): Promise<void> {
+    await this.sendMessage(
+      session.chatId,
+      `📊 *Google Sheets 匯出*\n\n` +
+        `📋 支援功能：\n` +
+        `• 估價單匯出為試算表\n` +
+        `• 自動格式化\n` +
+        `• 分類統計\n\n` +
+        `ℹ️ 使用網頁版匯出估價單`,
       "Markdown",
     );
   }
