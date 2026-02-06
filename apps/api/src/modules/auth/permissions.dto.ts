@@ -110,6 +110,7 @@ export const ROLE_PAGES: Record<number, string[]> = {
     "clients",
     "vendors",
     "contacts",
+    "partners",
     // 供應鏈
     "procurements",
     "inventory",
@@ -159,6 +160,7 @@ export const ROLE_PAGES: Record<number, string[]> = {
     "clients",
     "vendors",
     "contacts",
+    "partners",
     // 供應鏈
     "procurements",
     "inventory",
@@ -211,6 +213,7 @@ export const ROLE_PAGES: Record<number, string[]> = {
     "clients",
     "vendors",
     "contacts",
+    "partners",
     // 供應鏈
     "procurements",
     "inventory",
@@ -276,6 +279,7 @@ export const ROLE_ACTIONS: Record<number, Record<string, string[]>> = {
     dashboard: ["read"],
     clients: ["create", "read", "update"],
     vendors: ["create", "read", "update"],
+    partners: ["create", "read", "update"],
     projects: ["create", "read", "update"],
     quotations: [
       "create",
@@ -315,6 +319,7 @@ export const ROLE_ACTIONS: Record<number, Record<string, string[]>> = {
   5: {
     clients: ["create", "read", "update", "delete"],
     vendors: ["create", "read", "update", "delete"],
+    partners: ["create", "read", "update", "delete"],
     projects: ["create", "read", "update", "delete"],
     quotations: [
       "create",
@@ -356,6 +361,7 @@ export const ROLE_ACTIONS: Record<number, Record<string, string[]>> = {
   6: {
     clients: ["create", "read", "update", "delete"],
     vendors: ["create", "read", "update", "delete"],
+    partners: ["create", "read", "update", "delete"],
     projects: ["create", "read", "update", "delete"],
     quotations: [
       "create",
