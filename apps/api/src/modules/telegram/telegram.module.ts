@@ -8,6 +8,8 @@ import { InventoryModule } from "../inventory/inventory.module";
 import { PaymentsModule } from "../payments/payments.module";
 import { ContractsModule } from "../contracts/contracts.module";
 import { ChangeOrdersModule } from "../change-orders/change-orders.module";
+import { NotificationsModule } from "../notifications/notifications.module";
+import { InvoicesModule } from "../invoices/invoices.module";
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { ChangeOrdersModule } from "../change-orders/change-orders.module";
     PaymentsModule,
     ContractsModule,
     ChangeOrdersModule,
+    NotificationsModule,
+    InvoicesModule,
   ],
   controllers: [TelegramController],
   providers: [TelegramService],

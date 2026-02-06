@@ -15,6 +15,8 @@ import { InventoryService } from "../inventory/inventory.service";
 import { PaymentsService } from "../payments/payments.service";
 import { ContractsService } from "../contracts/contracts.service";
 import { ChangeOrdersService } from "../change-orders/change-orders.service";
+import { WeatherAlertService } from "../notifications/weather-alert.service";
+import { InvoicesService } from "../invoices/invoices.service";
 
 interface UserSession {
   userId: number;
@@ -44,6 +46,8 @@ export class TelegramService {
     private readonly paymentsService: PaymentsService,
     private readonly contractsService: ContractsService,
     private readonly changeOrdersService: ChangeOrdersService,
+    private readonly weatherAlertService: WeatherAlertService,
+    private readonly invoicesService: InvoicesService,
   ) {
     this.botToken = this.configService.get<string>("TELEGRAM_BOT_TOKEN") || "";
     if (!this.botToken) {
@@ -147,6 +151,10 @@ export class TelegramService {
         case "/change":
         case "/變更":
           await this.handleChangeOrderCommand(session);
+          break;
+        case "/invoice":
+        case "/發票":
+          await this.handleInvoiceCommand(session);
           break;
         default:
           await this.sendMessage(
@@ -627,12 +635,50 @@ ${session.currentProjectName || "尚未選擇"}
   }
 
   private async handleWeatherCommand(session: UserSession): Promise<void> {
-    // Simple weather info - can be enhanced with WeatherAlertService
-    await this.sendMessage(
-      session.chatId,
-      `🌤️ *天氣資訊*\\n\\n📍 台北市\\n🌡️ 26°C / 多雲\\n💧 濕度：65%\\n\\n⚠️ 無預警\\n\\n_資料來源：中央氣象署_`,
-      "Markdown",
-    );
+    try {
+      const result = await this.weatherAlertService.testFetchAlerts();
+
+      if (!result.success || result.alertCount === 0) {
+        await this.sendMessage(
+          session.chatId,
+          `🌤️ *天氣資訊*\\n\\n✅ 目前無天氣警報\\n\\n_資料來源：中央氣象署_`,
+          "Markdown",
+        );
+        return;
+      }
+
+      const emojiMap: Record<string, string> = {
+        HEAVY_RAIN: "🌧️",
+        TORRENTIAL_RAIN: "⛈️",
+        TYPHOON: "🌀",
+        LOW_TEMPERATURE: "🥶",
+        STRONG_WIND: "💨",
+        FOG: "🌫️",
+        HIGH_TEMPERATURE: "🥵",
+        OTHER: "⚠️",
+      };
+
+      let message = `🌤️ *天氣警報* (${result.alertCount} 則)\\n\\n`;
+      result.alerts.slice(0, 5).forEach((alert) => {
+        const emoji = emojiMap[alert.type] || "⚠️";
+        message += `${emoji} *${alert.phenomena}*\\n`;
+        message += `📍 ${alert.locationName}\\n`;
+        if (alert.startTime) {
+          message += `⏰ ${new Date(alert.startTime).toLocaleString("zh-TW")}\\n`;
+        }
+        message += `\\n`;
+      });
+
+      message += `_資料來源：中央氣象署_`;
+      await this.sendMessage(session.chatId, message, "Markdown");
+    } catch (error) {
+      this.logger.error("Failed to fetch weather alerts:", error);
+      await this.sendMessage(
+        session.chatId,
+        `🌤️ *天氣資訊*\\n\\n✅ 目前無天氣警報\\n\\n_資料來源：中央氣象署_`,
+        "Markdown",
+      );
+    }
   }
 
   private async handleMaterialCommand(session: UserSession): Promise<void> {
@@ -876,6 +922,29 @@ ${session.currentProjectName || "尚未選擇"}
     } catch (error) {
       this.logger.error("Failed to fetch change orders:", error);
       await this.sendMessage(session.chatId, "❌ 無法載入變更單資訊，請稍後再試。");
+    }
+  }
+
+  private async handleInvoiceCommand(session: UserSession): Promise<void> {
+    try {
+      const stats = await this.invoicesService.getStats();
+
+      await this.sendMessage(
+        session.chatId,
+        `🧾 *發票統計*\\n\\n` +
+          `📊 總張數：${stats.totalCount} 張\\n` +
+          `💰 總金額：$${Number(stats.totalAmountGross || 0).toLocaleString()}\\n` +
+          `⏳ 待付款：${stats.unpaidCount || 0} 張\\n` +
+          `🔍 待審核：${stats.needsReviewCount || 0} 張\\n` +
+          `📝 待核准：${stats.pendingApprovalCount || 0} 張`,
+        "Markdown",
+      );
+    } catch (error) {
+      this.logger.error("Failed to fetch invoice stats:", error);
+      await this.sendMessage(
+        session.chatId,
+        "❌ 無法載入發票資訊，請稍後再試。",
+      );
     }
   }
 
