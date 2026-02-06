@@ -14,6 +14,12 @@ import { RegulationsModule } from "../regulations/regulations.module";
 import { ConstructionModule } from "../construction/construction.module";
 import { QuotationsModule } from "../quotations/quotations.module";
 import { CustomersModule } from "../customers/customers.module";
+import { CostEntriesModule } from "../cost-entries/cost-entries.module";
+import { FinanceModule } from "../finance/finance.module";
+import { InsuranceModule } from "../insurance/insurance.module";
+import { ProfitAnalysisModule } from "../profit-analysis/profit-analysis.module";
+import { PlatformModule } from "../platform/platform.module";
+import { ContactsModule } from "../contacts/contacts.module";
 
 @Module({
   imports: [
@@ -30,6 +36,12 @@ import { CustomersModule } from "../customers/customers.module";
     ConstructionModule,
     QuotationsModule,
     CustomersModule,
+    CostEntriesModule,
+    FinanceModule,
+    InsuranceModule,
+    ProfitAnalysisModule,
+    PlatformModule,
+    ContactsModule,
   ],
   controllers: [TelegramController],
   providers: [TelegramService],

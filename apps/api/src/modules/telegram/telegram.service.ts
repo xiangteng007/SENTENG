@@ -21,6 +21,13 @@ import { GeminiAiService } from "../regulations/gemini-ai.service";
 import { PunchListService } from "../construction/punch-list/punch-list.service";
 import { QuotationsService } from "../quotations/quotations.service";
 import { CustomersService } from "../customers/customers.service";
+import { CostEntriesService } from "../cost-entries/cost-entries.service";
+import { FinanceService } from "../finance/finance.service";
+import { InsuranceService } from "../insurance/insurance.service";
+import { ProfitAnalysisService } from "../profit-analysis/profit-analysis.service";
+import { AuditService } from "../platform/audit/audit.service";
+import { ContactsService } from "../contacts/contacts.service";
+import { SitesService } from "../platform/sites/sites.service";
 
 interface UserSession {
   userId: number;
@@ -56,6 +63,13 @@ export class TelegramService {
     private readonly punchListService: PunchListService,
     private readonly quotationsService: QuotationsService,
     private readonly customersService: CustomersService,
+    private readonly costEntriesService: CostEntriesService,
+    private readonly financeService: FinanceService,
+    private readonly insuranceService: InsuranceService,
+    private readonly profitAnalysisService: ProfitAnalysisService,
+    private readonly auditService: AuditService,
+    private readonly contactsService: ContactsService,
+    private readonly sitesService: SitesService,
   ) {
     this.botToken = this.configService.get<string>("TELEGRAM_BOT_TOKEN") || "";
     if (!this.botToken) {
@@ -179,6 +193,34 @@ export class TelegramService {
         case "/customer":
         case "/客戶":
           await this.handleCustomerCommand(session);
+          break;
+        case "/expense":
+        case "/支出":
+          await this.handleExpenseCommand(session);
+          break;
+        case "/finance":
+        case "/財務":
+          await this.handleFinanceCommand(session);
+          break;
+        case "/insurance":
+        case "/保險":
+          await this.handleInsuranceCommand(session);
+          break;
+        case "/profit":
+        case "/利潤":
+          await this.handleProfitCommand(session);
+          break;
+        case "/audit":
+        case "/稽核":
+          await this.handleAuditCommand(session);
+          break;
+        case "/contact":
+        case "/聯絡人":
+          await this.handleContactCommand(session);
+          break;
+        case "/site":
+        case "/工地":
+          await this.handleSiteCommand(session);
           break;
         default:
           await this.sendMessage(
@@ -1100,6 +1142,133 @@ ${session.currentProjectName || "尚未選擇"}
     } catch (error) {
       this.logger.error("Failed to fetch customers:", error);
       await this.sendMessage(session.chatId, "❌ 無法載入客戶資訊。");
+    }
+  }
+
+  private async handleExpenseCommand(session: UserSession): Promise<void> {
+    if (!session.currentProjectId) {
+      await this.sendMessage(session.chatId, "⚠️ 請先選擇專案 /project");
+      return;
+    }
+    try {
+      const summary = await this.costEntriesService.getSummary(session.currentProjectId);
+      await this.sendMessage(
+        session.chatId,
+        `💰 *支出摘要* (${session.currentProjectName})\\n\\n` +
+          `📊 總支出：$${Number(summary.totalCost || 0).toLocaleString()}\\n` +
+          `✅ 已付款：$${Number(summary.paidCost || 0).toLocaleString()}\\n` +
+          `⏳ 未付款：$${Number(summary.unpaidCost || 0).toLocaleString()}\\n` +
+          `📝 筆數：${summary.entryCount || 0}`,
+        "Markdown",
+      );
+    } catch (error) {
+      this.logger.error("Failed to fetch expense summary:", error);
+      await this.sendMessage(session.chatId, "❌ 無法載入支出摘要。");
+    }
+  }
+
+  private async handleFinanceCommand(session: UserSession): Promise<void> {
+    try {
+      const transactions = await this.financeService.findAllTransactions();
+      const income = transactions.filter((t) => t.type === "收入").reduce((s, t) => s + Number(t.amount || 0), 0);
+      const expense = transactions.filter((t) => t.type === "支出").reduce((s, t) => s + Number(t.amount || 0), 0);
+      await this.sendMessage(
+        session.chatId,
+        `📊 *財務總覽*\\n\\n` +
+          `💵 總收入：$${income.toLocaleString()}\\n` +
+          `💸 總支出：$${expense.toLocaleString()}\\n` +
+          `📈 淨收入：$${(income - expense).toLocaleString()}\\n` +
+          `📝 交易筆數：${transactions.length}`,
+        "Markdown",
+      );
+    } catch (error) {
+      this.logger.error("Failed to fetch finance summary:", error);
+      await this.sendMessage(session.chatId, "❌ 無法載入財務摘要。");
+    }
+  }
+
+  private async handleInsuranceCommand(session: UserSession): Promise<void> {
+    try {
+      const expiring = await this.insuranceService.getExpiringInsurance(30);
+      if (expiring.length === 0) {
+        await this.sendMessage(session.chatId, `🛡️ *保險提醒*\\n\\n✅ 30 天內無到期保單`, "Markdown");
+        return;
+      }
+      let message = `🛡️ *保險提醒* (${expiring.length} 張即將到期)\\n\\n`;
+      expiring.slice(0, 5).forEach((ins) => {
+        const days = Math.ceil((new Date(ins.expiryDate).getTime() - Date.now()) / 86400000);
+        message += `⚠️ ${ins.type}: ${days} 天後到期\\n`;
+      });
+      await this.sendMessage(session.chatId, message, "Markdown");
+    } catch (error) {
+      this.logger.error("Failed to fetch insurance:", error);
+      await this.sendMessage(session.chatId, "❌ 無法載入保險資訊。");
+    }
+  }
+
+  private async handleProfitCommand(session: UserSession): Promise<void> {
+    try {
+      const dashboard = await this.profitAnalysisService.getDashboard();
+      await this.sendMessage(
+        session.chatId,
+        `📈 *利潤分析*\\n\\n` +
+          `📊 進行中專案：${dashboard.totalContracts}\\n` +
+          `💰 總營收：$${Number(dashboard.totalRevenue || 0).toLocaleString()}\\n` +
+          `💸 總成本：$${Number(dashboard.totalCost || 0).toLocaleString()}\\n` +
+          `📈 總利潤：$${Number(dashboard.totalProfit || 0).toLocaleString()}\\n` +
+          `📊 平均毛利率：${dashboard.avgMarginRate}%`,
+        "Markdown",
+      );
+    } catch (error) {
+      this.logger.error("Failed to fetch profit analysis:", error);
+      await this.sendMessage(session.chatId, "❌ 無法載入利潤分析。");
+    }
+  }
+
+  private async handleAuditCommand(session: UserSession): Promise<void> {
+    await this.sendMessage(
+      session.chatId,
+      `📋 *稽核紀錄*\n\n` +
+        `ℹ️ 稽核功能可查詢特定實體或用戶的操作記錄\n` +
+        `請使用網頁版管理後台查看完整稽核日誌`,
+      "Markdown",
+    );
+  }
+
+  private async handleContactCommand(session: UserSession): Promise<void> {
+    try {
+      const result = await this.contactsService.findAll({});
+      if (!result.items || result.items.length === 0) {
+        await this.sendMessage(session.chatId, `📇 *聯絡人*\n\n✅ 無聯絡人資料`, "Markdown");
+        return;
+      }
+      let message = `📇 *聯絡人* (${result.total} 筆)\n\n`;
+      result.items.slice(0, 5).forEach((c) => {
+        message += `• ${c.name}${c.phone ? ` 📞 ${c.phone}` : ""}\n`;
+      });
+      await this.sendMessage(session.chatId, message, "Markdown");
+    } catch (error) {
+      this.logger.error("Failed to fetch contacts:", error);
+      await this.sendMessage(session.chatId, "❌ 無法載入聯絡人。");
+    }
+  }
+
+  private async handleSiteCommand(session: UserSession): Promise<void> {
+    try {
+      const sites = await this.sitesService.findAll();
+      if (!sites || sites.length === 0) {
+        await this.sendMessage(session.chatId, `🏗️ *工地清單*\n\n✅ 無工地資料`, "Markdown");
+        return;
+      }
+      let message = `🏗️ *工地清單* (${sites.length} 座)\n\n`;
+      sites.slice(0, 5).forEach((s) => {
+        const statusIcon = s.isActive ? "🟢" : "🔴";
+        message += `${statusIcon} ${s.name} (${s.address || "無地址"})\n`;
+      });
+      await this.sendMessage(session.chatId, message, "Markdown");
+    } catch (error) {
+      this.logger.error("Failed to fetch sites:", error);
+      await this.sendMessage(session.chatId, "❌ 無法載入工地清單。");
     }
   }
 
