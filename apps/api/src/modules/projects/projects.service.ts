@@ -84,7 +84,7 @@ export class ProjectsService {
   }
 
   async findVendors(projectId: string) {
-    return this.pvRepo.find({ where: { projectId }, relations: ["vendor"] });
+    return this.pvRepo.find({ where: { projectId }, relations: ["partner"] });
   }
 
   async findPhases(projectId: string) {

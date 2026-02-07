@@ -145,7 +145,7 @@ export class InvoicesService {
   ): Promise<Invoice> {
     const invoice = await this.invoicesRepository.findOne({
       where: { id, deletedAt: IsNull() },
-      relations: ["project", "contract", "client", "vendor"],
+      relations: ["project", "contract", "partner"],
     });
     if (!invoice) {
       throw new NotFoundException(`Invoice ${id} not found`);
