@@ -94,7 +94,7 @@ export class InvoiceExportService {
         paymentStatus: inv.paymentStatus,
         vatDeductibleStatus: inv.vatDeductibleStatus,
         projectName: inv.project?.name || "",
-        vendorName: inv.vendor?.name || "",
+        vendorName: inv.partner?.name || "",
         description: inv.description,
       });
     }

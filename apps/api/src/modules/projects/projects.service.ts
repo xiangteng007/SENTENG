@@ -116,7 +116,7 @@ export class ProjectsService {
         actual: p.actualAmount,
       })),
       vendorBreakdown: vendors.map((v) => ({
-        vendor: v.vendor?.name,
+        vendor: v.partner?.name,
         amount: v.contractAmount,
         paid: v.paidAmount,
       })),

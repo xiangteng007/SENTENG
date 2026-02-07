@@ -145,7 +145,7 @@ export class ContactsSyncService {
       // 決定組織名稱和群組標籤
       const orgName =
         type === "client"
-          ? (contact as ClientContact).client?.name || "Unknown Client"
+          ? (contact as ClientContact).partner?.name || "Unknown Client"
           : (contact as VendorContact).vendor?.name || "Unknown Vendor";
       const groupLabel = account.contactsLabel || "Senteng ERP";
 

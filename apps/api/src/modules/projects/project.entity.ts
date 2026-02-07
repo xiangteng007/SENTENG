@@ -11,8 +11,6 @@ import {
   Index,
 } from "typeorm";
 import { Partner } from "../partners/partner.entity";
-// Legacy import - deprecated, use Partner instead
-import { Client } from "../crm/clients/client.entity";
 import { ProjectPhase } from "./project-phase.entity";
 import { ProjectVendor } from "./project-vendor.entity";
 import { ProjectTask } from "./project-task.entity";
@@ -46,11 +44,6 @@ export class Project {
   @Column({ name: "customer_id", length: 20 })
   /** @deprecated Use partnerId instead */
   customerId: string;
-
-  @ManyToOne(() => Client)
-  @JoinColumn({ name: "customer_id" })
-  /** @deprecated Use partner instead */
-  client: Client;
 
   // Unified Partner relation (replaces client)
   @Column({ name: "partner_id", type: "uuid", nullable: true })

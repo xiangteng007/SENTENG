@@ -8,8 +8,6 @@ import {
   JoinColumn,
 } from "typeorm";
 import { Partner } from "../../../partners/partner.entity";
-// Legacy import - deprecated, use Partner instead
-import { Vendor } from "../../../supply-chain/vendors/vendor.entity";
 import { Project } from "../../../projects/project.entity";
 
 /**
@@ -23,11 +21,6 @@ export class Subcontractor {
   @Column({ name: "vendor_id", length: 20, nullable: true })
   /** @deprecated Use partnerId instead */
   vendorId: string;
-
-  @ManyToOne(() => Vendor)
-  @JoinColumn({ name: "vendor_id" })
-  /** @deprecated Use partner instead */
-  vendor: Vendor;
 
   // Unified Partner relation (replaces vendor)
   @Column({ name: "partner_id", type: "uuid", nullable: true })

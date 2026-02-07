@@ -10,7 +10,7 @@ import {
   Index,
 } from "typeorm";
 import { Project } from "../../projects/project.entity";
-import { Vendor } from "../vendors/vendor.entity";
+import { Partner } from "../../partners/partner.entity";
 
 export enum ProcurementStatus {
   DRAFT = "DRAFT",
@@ -77,11 +77,12 @@ export class Procurement {
   attachments: { name: string; url: string; uploadedAt: string }[];
 
   @Column({ name: "awarded_vendor_id", length: 20, nullable: true })
+  /** @deprecated Use awardedPartnerId instead */
   awardedVendorId: string;
 
-  @ManyToOne(() => Vendor, { nullable: true })
+  @ManyToOne(() => Partner, { nullable: true })
   @JoinColumn({ name: "awarded_vendor_id" })
-  awardedVendor: Vendor;
+  awardedPartner: Partner;
 
   @Column({
     name: "awarded_amount",
@@ -123,11 +124,12 @@ export class ProcurementBid {
   procurement: Procurement;
 
   @Column({ name: "vendor_id", length: 20 })
+  /** @deprecated Use partnerId instead */
   vendorId: string;
 
-  @ManyToOne(() => Vendor)
+  @ManyToOne(() => Partner)
   @JoinColumn({ name: "vendor_id" })
-  vendor: Vendor;
+  partner: Partner;
 
   @Column({ name: "bid_amount", type: "decimal", precision: 15, scale: 2 })
   bidAmount: number;

@@ -14,7 +14,7 @@ import {
   JoinColumn,
   Index,
 } from "typeorm";
-import { Client } from "../../crm/clients/client.entity";
+import { Partner } from "../../partners/partner.entity";
 
 @Entity("client_contacts")
 export class ClientContact {
@@ -23,11 +23,16 @@ export class ClientContact {
 
   @Column({ name: "client_id", length: 20 })
   @Index()
+  /** @deprecated Use partnerId instead */
   clientId: string;
 
-  @ManyToOne(() => Client, { onDelete: "CASCADE" })
-  @JoinColumn({ name: "client_id" })
-  client: Client;
+  // Unified Partner relation (replaces client)
+  @Column({ name: "partner_id", type: "uuid", nullable: true })
+  partnerId: string;
+
+  @ManyToOne(() => Partner, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "partner_id" })
+  partner: Partner;
 
   @Column({ name: "full_name", length: 100 })
   fullName: string;

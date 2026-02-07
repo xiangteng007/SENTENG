@@ -4,5 +4,5 @@
 
 export * from "./google-oauth-account.entity";
 export * from "./client-contact.entity";
-// VendorContact is now in supply-chain module
-export { VendorContact } from "../../supply-chain/vendors/vendor-contact.entity";
+// PartnerContact replaces VendorContact (unified partners module)
+export { PartnerContact } from "../../partners/partner-contact.entity";

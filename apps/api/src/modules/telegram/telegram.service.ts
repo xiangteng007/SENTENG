@@ -507,7 +507,7 @@ ${session.currentProjectName || "尚未選擇"}
       const keyboard: TelegramInlineKeyboardMarkup = {
         inline_keyboard: projects.slice(0, 8).map((p) => [
           {
-            text: `${p.name} ${p.client?.name ? `(${p.client.name})` : ""}`,
+            text: `${p.name} ${p.partner?.name ? `(${p.partner.name})` : ""}`,
             callback_data: `project:${p.id}:${encodeURIComponent(p.name)}`,
           },
         ]),

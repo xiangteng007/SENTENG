@@ -11,9 +11,6 @@ import {
 import { Project } from "../projects/project.entity";
 import { Contract } from "../contracts/contract.entity";
 import { Partner } from "../partners/partner.entity";
-// Legacy imports - deprecated, use Partner instead
-import { Client } from "../crm/clients/client.entity";
-import { Vendor } from "../supply-chain/vendors/vendor.entity";
 
 /**
  * 台灣發票管理實體
@@ -265,19 +262,9 @@ export class Invoice {
   /** @deprecated Use partnerId instead */
   clientId: string;
 
-  @ManyToOne(() => Client)
-  @JoinColumn({ name: "client_id" })
-  /** @deprecated Use partner instead */
-  client: Client;
-
   @Column({ name: "vendor_id", length: 36, nullable: true })
   /** @deprecated Use partnerId instead */
   vendorId: string;
-
-  @ManyToOne(() => Vendor)
-  @JoinColumn({ name: "vendor_id" })
-  /** @deprecated Use partner instead */
-  vendor: Vendor;
 
   // Unified Partner relation (replaces client/vendor)
   @Column({ name: "partner_id", type: "uuid", nullable: true })

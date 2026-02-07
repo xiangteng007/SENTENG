@@ -70,9 +70,7 @@ export class Client {
   @Column({ length: 20, default: "ACTIVE" })
   status: string;
 
-  // 聯絡人關聯 (1:N)
-  @OneToMany(() => ClientContact, (contact) => contact.client)
-  contacts: ClientContact[];
+  // Note: ClientContact relation removed — use Partner entity instead
 
   @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
