@@ -7,12 +7,25 @@ import { MigrationInterface, QueryRunner } from "typeorm";
  * 處理 ID 格式轉換：legacy varchar(20) → partner UUID
  * 使用臨時映射表維護 old_id → new_uuid 關係
  */
-export class MigrateLegacyToPartners1770404000000
+export class MigrateLegacyToPartners1770404100000
   implements MigrationInterface
 {
-  name = "MigrateLegacyToPartners1770404000000";
+  name = "MigrateLegacyToPartners1770404100000";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
+    // ==========================================
+    // Step 0: Cleanup from previous failed migration
+    // ==========================================
+
+    await queryRunner.query(`
+      DROP TABLE IF EXISTS _legacy_partner_mapping;
+    `);
+
+    // Remove old failed migration record if it exists
+    await queryRunner.query(`
+      DELETE FROM migrations WHERE name = 'MigrateLegacyToPartners1770404000000';
+    `);
+
     // ==========================================
     // Step 1: 確保 partner_id 欄位存在
     // ==========================================
