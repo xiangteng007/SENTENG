@@ -3,6 +3,7 @@ import {
   NotFoundException,
   BadRequestException,
   ForbiddenException,
+  Logger,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, Like, Between, In } from "typeorm";
@@ -28,6 +29,8 @@ import { isAdminRole } from "../../common/constants/roles";
 
 @Injectable()
 export class InvoicesService {
+  private readonly logger = new Logger(InvoicesService.name);
+
   constructor(
     @InjectRepository(Invoice)
     private invoicesRepository: Repository<Invoice>,
@@ -133,7 +136,7 @@ export class InvoicesService {
 
       return { data, total, page, limit };
     } catch (error) {
-      console.error("findAll error:", error);
+      this.logger.error("findAll error:", error);
       // Return empty result on error to prevent 500
       return { data: [], total: 0, page, limit };
     }
@@ -526,7 +529,7 @@ export class InvoicesService {
 
       return stats;
     } catch (error) {
-      console.error("getStats error:", error);
+      this.logger.error("getStats error:", error);
       // Return empty stats on error to prevent 500
       return {
         totalCount: 0,

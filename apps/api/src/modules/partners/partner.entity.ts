@@ -16,8 +16,8 @@ import {
   Index,
 } from "typeorm";
 
-// Import enums from separate file to avoid circular dependency
 import { PartnerType, SyncStatus, PartnerCategory } from "./partner-enums";
+import { PartnerContact } from "./partner-contact.entity";
 
 // Re-export enums for backward compatibility
 export { PartnerType, SyncStatus, PartnerCategory };
@@ -83,10 +83,9 @@ export class Partner {
   @Column({ name: "last_synced_at", type: "timestamp", nullable: true })
   lastSyncedAt: Date;
 
-  // 聯絡人關聯 - use lazy import to break circular dependency
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  @OneToMany(() => require("./partner-contact.entity").PartnerContact, (contact: { partner: Partner }) => contact.partner, { cascade: true })
-  contacts: import("./partner-contact.entity").PartnerContact[];
+  // 聯絡人關聯
+  @OneToMany(() => PartnerContact, (contact) => contact.partner, { cascade: true })
+  contacts: PartnerContact[];
 
   // 審計欄位
   @CreateDateColumn({ name: "created_at" })

@@ -9,6 +9,7 @@ import {
   HttpStatus,
   UseGuards,
   InternalServerErrorException,
+  Logger,
 } from "@nestjs/common";
 import {
   ApiTags,
@@ -31,6 +32,8 @@ import {
 @ApiTags("Authentication")
 @Controller("auth")
 export class AuthController {
+  private readonly logger = new Logger(AuthController.name);
+
   constructor(
     private authService: AuthService,
     @InjectDataSource() private dataSource: DataSource,
@@ -158,7 +161,7 @@ export class AuthController {
           (r: { permission_id: string }) => r.permission_id,
         );
       } catch (error) {
-        console.error("[AuthController] Error fetching permissions:", error);
+        this.logger.error("Error fetching permissions:", error);
       }
     }
 
@@ -216,7 +219,7 @@ export class AuthController {
         (r: { permission_id: string }) => r.permission_id,
       );
     } catch (error) {
-      console.error("[AuthController] Error fetching permissions:", error);
+      this.logger.error("Error fetching permissions:", error);
     }
 
     return {

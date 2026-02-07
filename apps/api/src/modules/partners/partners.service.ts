@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, Like, In } from "typeorm";
 import { Partner, PartnerType, SyncStatus } from "./partner.entity";
@@ -13,6 +13,8 @@ import {
 
 @Injectable()
 export class PartnersService {
+  private readonly logger = new Logger(PartnersService.name);
+
   constructor(
     @InjectRepository(Partner)
     private readonly partnerRepo: Repository<Partner>,
@@ -22,29 +24,37 @@ export class PartnersService {
 
   // ============ Partner CRUD ============
 
-  async findAll(query: PartnerQueryDto): Promise<Partner[]> {
+  async findAll(query: PartnerQueryDto): Promise<{
+    items: Partner[];
+    total: number;
+    page: number;
+    limit: number;
+  }> {
+    const { page = 1, limit = 50, search, type, category } = query;
     const where: Record<string, unknown> = {};
 
-    if (query.type) {
-      where.type = query.type;
+    if (type) {
+      where.type = type;
     }
-    if (query.category) {
-      where.category = query.category;
+    if (category) {
+      where.category = category;
     }
 
-    const partners = await this.partnerRepo.find({
-      where: query.search
+    const [items, total] = await this.partnerRepo.findAndCount({
+      where: search
         ? [
-            { ...where, name: Like(`%${query.search}%`) },
-            { ...where, phone: Like(`%${query.search}%`) },
-            { ...where, email: Like(`%${query.search}%`) },
+            { ...where, name: Like(`%${search}%`) },
+            { ...where, phone: Like(`%${search}%`) },
+            { ...where, email: Like(`%${search}%`) },
           ]
         : where,
       relations: ["contacts"],
       order: { createdAt: "DESC" },
+      skip: (page - 1) * limit,
+      take: limit,
     });
 
-    return partners;
+    return { items, total, page, limit };
   }
 
   async findOne(id: string): Promise<Partner> {
@@ -65,15 +75,13 @@ export class PartnersService {
       ...dto,
       contacts: dto.contacts?.map((c) => this.contactRepo.create(c)),
       createdBy: userId,
-      syncStatus: SyncStatus.PENDING,
+      syncStatus: SyncStatus.UNSYNCED,
     });
 
     const saved = await this.partnerRepo.save(partner);
 
-    // 觸發 Google 同步（異步）
-    this.triggerGoogleSync(saved.id).catch((err) =>
-      console.error("Google sync failed:", err),
-    );
+    // TODO: Integrate with ContactsSyncService for real Google sync
+    this.logger.log(`Partner created: ${saved.id} (${saved.name})`);
 
     return saved;
   }
@@ -85,10 +93,8 @@ export class PartnersService {
 
     const saved = await this.partnerRepo.save(partner);
 
-    // 觸發 Google 同步（異步）
-    this.triggerGoogleSync(saved.id).catch((err) =>
-      console.error("Google sync failed:", err),
-    );
+    // TODO: Integrate with ContactsSyncService for real Google sync
+    this.logger.log(`Partner updated: ${saved.id} (${saved.name})`);
 
     return saved;
   }
@@ -97,6 +103,7 @@ export class PartnersService {
     const partner = await this.findOne(id);
     await this.partnerRepo.softRemove(partner);
     // TODO: Remove from Google Contacts
+    this.logger.log(`Partner soft-deleted: ${id}`);
   }
 
   // ============ PartnerContact CRUD ============
@@ -112,15 +119,13 @@ export class PartnersService {
       ...dto,
       partnerId,
       createdBy: userId,
-      syncStatus: SyncStatus.PENDING,
+      syncStatus: SyncStatus.UNSYNCED,
     });
 
     const saved = await this.contactRepo.save(contact);
 
-    // 觸發 Google 同步
-    this.triggerContactGoogleSync(saved.id).catch((err) =>
-      console.error("Contact sync failed:", err),
-    );
+    // TODO: Integrate with ContactsSyncService for real Google sync
+    this.logger.log(`Contact added to partner ${partnerId}: ${saved.id}`);
 
     return saved;
   }
@@ -143,10 +148,8 @@ export class PartnersService {
 
     const saved = await this.contactRepo.save(contact);
 
-    // 觸發 Google 同步
-    this.triggerContactGoogleSync(saved.id).catch((err) =>
-      console.error("Contact sync failed:", err),
-    );
+    // TODO: Integrate with ContactsSyncService for real Google sync
+    this.logger.log(`Contact updated: ${saved.id}`);
 
     return saved;
   }
@@ -162,37 +165,7 @@ export class PartnersService {
 
     await this.contactRepo.remove(contact);
     // TODO: Remove from Google Contacts
-  }
-
-  // ============ Google Sync ============
-
-  private async triggerGoogleSync(partnerId: string): Promise<void> {
-    // TODO: Integrate with ContactsSyncService
-    // For now, just mark as synced after a delay (simulating async sync)
-    setTimeout(async () => {
-      try {
-        await this.partnerRepo.update(partnerId, {
-          syncStatus: SyncStatus.SYNCED,
-          lastSyncedAt: new Date(),
-        });
-      } catch (err) {
-        console.error("Failed to update sync status:", err);
-      }
-    }, 1000);
-  }
-
-  private async triggerContactGoogleSync(contactId: string): Promise<void> {
-    // TODO: Integrate with ContactsSyncService
-    setTimeout(async () => {
-      try {
-        await this.contactRepo.update(contactId, {
-          syncStatus: SyncStatus.SYNCED,
-          lastSyncedAt: new Date(),
-        });
-      } catch (err) {
-        console.error("Failed to update contact sync status:", err);
-      }
-    }, 1000);
+    this.logger.log(`Contact removed: ${contactId}`);
   }
 
   // ============ Helpers ============

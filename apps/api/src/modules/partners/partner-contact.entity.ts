@@ -15,6 +15,7 @@ import {
   Index,
 } from "typeorm";
 import { SyncStatus } from "./partner-enums";
+import { Partner } from "./partner.entity";
 
 @Entity("partner_contacts")
 @Index(["partnerId"])
@@ -26,13 +27,11 @@ export class PartnerContact {
   @Column({ name: "partner_id", type: "uuid" })
   partnerId: string;
 
-  // Use lazy import to break circular dependency
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  @ManyToOne(() => require("./partner.entity").Partner, (partner: { contacts: PartnerContact[] }) => partner.contacts, {
+  @ManyToOne(() => Partner, (partner) => partner.contacts, {
     onDelete: "CASCADE",
   })
   @JoinColumn({ name: "partner_id" })
-  partner: import("./partner.entity").Partner;
+  partner: Partner;
 
   @Column({ length: 100 })
   name: string;
