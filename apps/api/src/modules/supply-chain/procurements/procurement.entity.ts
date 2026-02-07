@@ -76,7 +76,7 @@ export class Procurement {
   @Column({ type: "jsonb", nullable: true })
   attachments: { name: string; url: string; uploadedAt: string }[];
 
-  @Column({ name: "awarded_vendor_id", length: 20, nullable: true })
+  @Column({ name: "awarded_vendor_id", nullable: true })
   /** @deprecated Use awardedPartnerId instead */
   awardedVendorId: string;
 
@@ -123,7 +123,7 @@ export class ProcurementBid {
   @JoinColumn({ name: "procurement_id" })
   procurement: Procurement;
 
-  @Column({ name: "vendor_id", length: 20 })
+  @Column({ name: "vendor_id" })
   /** @deprecated Use partnerId instead */
   vendorId: string;
 
