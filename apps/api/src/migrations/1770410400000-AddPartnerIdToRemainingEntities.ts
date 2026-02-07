@@ -20,6 +20,21 @@ export class AddPartnerIdToRemainingEntities1770410400000
     const tables = ["work_orders", "input_invoices", "subcontractors"];
 
     for (const table of tables) {
+      // Skip tables that don't exist yet (module not deployed)
+      const tableExists = await queryRunner.query(`
+        SELECT EXISTS (
+          SELECT 1 FROM information_schema.tables 
+          WHERE table_schema = 'public' AND table_name = '${table}'
+        ) AS exists;
+      `);
+
+      if (!tableExists[0]?.exists) {
+        console.log(
+          `[Migration] Skipping "${table}" — table does not exist yet`,
+        );
+        continue;
+      }
+
       // Check if column already exists
       const colExists = await queryRunner.query(`
         SELECT EXISTS (
