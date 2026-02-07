@@ -1361,13 +1361,13 @@ ${session.currentProjectName || "尚未選擇"}
 
   private async handleContactCommand(session: UserSession): Promise<void> {
     try {
-      const result = await this.partnersService.findAll({});
-      if (!result || result.length === 0) {
+      const { items, total } = await this.partnersService.findAll({});
+      if (!items || total === 0) {
         await this.sendMessage(session.chatId, `📇 *聯絡人*\n\n✅ 無聯絡人資料`, "Markdown");
         return;
       }
-      let message = `📇 *聯絡人* (${result.length} 筆)\n\n`;
-      result.slice(0, 5).forEach((c) => {
+      let message = `📇 *聯絡人* (${total} 筆)\n\n`;
+      items.slice(0, 5).forEach((c) => {
         message += `• ${c.name}${c.phone ? ` 📞 ${c.phone}` : ""}\n`;
       });
       await this.sendMessage(session.chatId, message, "Markdown");
