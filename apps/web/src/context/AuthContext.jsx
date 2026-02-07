@@ -99,12 +99,8 @@ export const AuthProvider = ({ children }) => {
         // Initialize default roles on first load
         initializeDefaultRoles().catch(console.error);
 
-        // Check for existing token on mount
-        const existingToken = localStorage.getItem('auth_token');
-        if (existingToken) {
-            api.setToken(existingToken);
-            setBackendAuthenticated(true);
-        }
+        // Token is now in-memory only — Firebase auth subscription
+        // handles re-authentication on page refresh via exchangeForBackendToken
 
         // Subscribe to auth state changes
         const unsubscribe = subscribeToAuthState(async (userData) => {

@@ -7,6 +7,7 @@
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { io } from 'socket.io-client';
+import { api } from '../services/api';
 
 const SOCKET_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -155,7 +156,7 @@ export function useRealtime(token, options = {}) {
 export function useSyncStatus(entityType, entityId) {
     const [syncStatus, setSyncStatus] = useState(null);
     const { isConnected, subscribe, unsubscribe, on } = useRealtime(
-        localStorage.getItem('token')
+        api.token
     );
 
     useEffect(() => {
