@@ -15,6 +15,7 @@ import { ApiTags, ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import type { Response } from "express";
 import type { AuthenticatedRequest } from "../../common/types";
 import { InvoicesService } from "./invoices.service";
+import { InvoiceExportService } from "./invoice-export.service";
 import {
   CreateInvoiceDto,
   UpdateInvoiceDto,
@@ -34,7 +35,10 @@ import {
 @Controller("invoices")
 @UseGuards(JwtAuthGuard)
 export class InvoicesController {
-  constructor(private readonly invoicesService: InvoicesService) {}
+  constructor(
+    private readonly invoicesService: InvoicesService,
+    private readonly invoiceExportService: InvoiceExportService,
+  ) {}
 
   /**
    * 查詢發票列表
@@ -97,7 +101,7 @@ export class InvoicesController {
   ) {
     const userId = req.user?.userId;
     const userRole = req.user?.role;
-    const buffer = await this.invoicesService.exportToExcel(
+    const buffer = await this.invoiceExportService.exportToExcel(
       query,
       userId,
       userRole,
@@ -130,7 +134,7 @@ export class InvoicesController {
   ) {
     const userId = req.user?.userId;
     const userRole = req.user?.role;
-    const content = await this.invoicesService.exportTo401(
+    const content = await this.invoiceExportService.exportTo401(
       query,
       userId,
       userRole,
@@ -155,7 +159,7 @@ export class InvoicesController {
   ) {
     const userId = req.user?.userId;
     const userRole = req.user?.role;
-    const buffer = await this.invoicesService.exportToPdf(
+    const buffer = await this.invoiceExportService.exportToPdf(
       query,
       userId,
       userRole,

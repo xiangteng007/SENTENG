@@ -29,6 +29,15 @@ import {
   ROLE_ACTIONS,
 } from "./permissions.dto";
 
+interface JwtPayload {
+  sub?: string;
+  id?: string;
+  userId?: string;
+  email?: string;
+  name?: string;
+  role?: string;
+}
+
 @ApiTags("Authentication")
 @Controller("auth")
 export class AuthController {
@@ -144,7 +153,7 @@ export class AuthController {
   })
   @ApiResponse({ status: 401, description: "Unauthorized" })
   async me(@Req() request: Request) {
-    const user = request["user"] as any;
+    const user = request["user"] as Record<string, unknown> | undefined;
     if (!user) return null;
 
     // Get database permissions for the user's role
@@ -192,7 +201,7 @@ export class AuthController {
   async getPermissions(
     @Req() request: Request,
   ): Promise<PermissionsResponseDto & { dbPermissions: string[] }> {
-    const user = request["user"] as any;
+    const user = request["user"] as JwtPayload | undefined;
     const role = user?.role || "user";
     const roleLevel = ROLE_LEVELS[role] || ROLE_LEVELS["user"] || 1;
 
