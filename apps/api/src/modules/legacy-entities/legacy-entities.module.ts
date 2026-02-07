@@ -17,7 +17,10 @@ import { Vendor } from "../supply-chain/vendors/vendor.entity";
 import { VendorContact } from "../supply-chain/vendors/vendor-contact.entity";
 import { VendorRating } from "../supply-chain/vendors/vendor-rating.entity";
 import { VendorTrade } from "../supply-chain/vendors/vendor-trade.entity";
-import { Procurement } from "../supply-chain/procurements/procurement.entity";
+import {
+  Procurement,
+  ProcurementBid,
+} from "../supply-chain/procurements/procurement.entity";
 
 // Integration entities that reference legacy entities
 import { ClientContact } from "../integrations/entities/client-contact.entity";
@@ -35,6 +38,7 @@ import { ClientContact } from "../integrations/entities/client-contact.entity";
       VendorRating,
       VendorTrade,
       Procurement,
+      ProcurementBid,
     ]),
   ],
   exports: [TypeOrmModule],
