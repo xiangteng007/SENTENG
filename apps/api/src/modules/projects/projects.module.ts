@@ -12,10 +12,10 @@ import { ProjectContactsService } from "./project-contacts.service";
 import { ProjectContactsController } from "./project-contacts.controller";
 import { ProjectPartnersService } from "./project-partners.service";
 import { ProjectPartnersController } from "./project-partners.controller";
-import { Contact } from "../contacts/contact.entity";
-import { CustomerContact } from "../customers/customer-contact.entity";
-import { VendorContact } from "../supply-chain/vendors/vendor-contact.entity";
-import { Partner } from "../partners/partner.entity";
+// Legacy entities via central module
+import { LegacyEntitiesModule } from "../legacy-entities/legacy-entities.module";
+// Unified Partners
+import { PartnersModule } from "../partners/partners.module";
 
 @Module({
   imports: [
@@ -26,11 +26,9 @@ import { Partner } from "../partners/partner.entity";
       ProjectTask,
       ProjectContact,
       ProjectPartner,
-      Contact,
-      CustomerContact,
-      VendorContact,
-      Partner,
     ]),
+    LegacyEntitiesModule, // Provides Contact, CustomerContact, VendorContact repos
+    PartnersModule, // Provides PartnerContact repo
   ],
   controllers: [
     ProjectsController,

@@ -10,6 +10,8 @@ import {
   Index,
 } from "typeorm";
 import { Project } from "../../../projects/project.entity";
+import { Partner } from "../../../partners/partner.entity";
+// Legacy import - deprecated, use Partner instead
 import { Client } from "../../../crm/clients/client.entity";
 import { BusinessUnit } from "../../../platform/tenants/entities/business-unit.entity";
 import { JobSite } from "../../../platform/sites/entities/job-site.entity";
@@ -42,11 +44,21 @@ export class WorkOrder {
   jobSite: JobSite;
 
   @Column({ name: "client_id", length: 20, nullable: true })
+  /** @deprecated Use partnerId instead */
   clientId: string;
 
   @ManyToOne(() => Client)
   @JoinColumn({ name: "client_id" })
+  /** @deprecated Use partner instead */
   client: Client;
+
+  // Unified Partner relation (replaces client)
+  @Column({ name: "partner_id", type: "uuid", nullable: true })
+  partnerId: string;
+
+  @ManyToOne(() => Partner)
+  @JoinColumn({ name: "partner_id" })
+  partner: Partner;
 
   @Column({ name: "business_unit_id", length: 20, nullable: true })
   businessUnitId: string;

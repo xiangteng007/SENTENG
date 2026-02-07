@@ -41,23 +41,20 @@ import {
 } from "./banking";
 
 // Entities
-import { GoogleOAuthAccount, ClientContact, VendorContact } from "./entities";
+import { GoogleOAuthAccount } from "./entities";
 import { Event } from "../events/event.entity";
-import { Client } from "../crm/clients/client.entity";
-import { Vendor } from "../supply-chain/vendors/vendor.entity";
 import { AuditModule } from "../platform/audit/audit.module";
+// Legacy entities via central module
+import { LegacyEntitiesModule } from "../legacy-entities/legacy-entities.module";
 
 @Module({
   imports: [
     ConfigModule,
     TypeOrmModule.forFeature([
       GoogleOAuthAccount,
-      ClientContact,
-      VendorContact,
       Event,
-      Client,
-      Vendor,
     ]),
+    LegacyEntitiesModule, // Provides Client, Vendor, ClientContact, VendorContact repos
     AuditModule,
   ],
   controllers: [IntegrationsController, ExportsController],

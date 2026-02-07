@@ -9,6 +9,6 @@ import { PartnersController } from "./partners.controller";
   imports: [TypeOrmModule.forFeature([Partner, PartnerContact])],
   controllers: [PartnersController],
   providers: [PartnersService],
-  exports: [PartnersService],
+  exports: [PartnersService, TypeOrmModule],
 })
 export class PartnersModule {}

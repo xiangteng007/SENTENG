@@ -9,6 +9,8 @@ import {
   Index,
 } from "typeorm";
 import { Project } from "../projects/project.entity";
+import { Partner } from "../partners/partner.entity";
+// Legacy import - deprecated, use Partner instead
 import { Vendor } from "../supply-chain/vendors/vendor.entity";
 
 /**
@@ -47,11 +49,21 @@ export class InputInvoice {
   sellerName: string;
 
   @Column({ name: "vendor_id", length: 36, nullable: true })
+  /** @deprecated Use partnerId instead */
   vendorId: string;
 
   @ManyToOne(() => Vendor)
   @JoinColumn({ name: "vendor_id" })
+  /** @deprecated Use partner instead */
   vendor: Vendor;
+
+  // Unified Partner relation (replaces vendor)
+  @Column({ name: "partner_id", type: "uuid", nullable: true })
+  partnerId: string;
+
+  @ManyToOne(() => Partner)
+  @JoinColumn({ name: "partner_id" })
+  partner: Partner;
 
   // 金額
   @Column({

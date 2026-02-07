@@ -2,7 +2,7 @@
  * project-contact.entity.ts
  *
  * 專案聯絡人關聯表
- * 支援從 Customer/Vendor 指派聯絡人到專案（參照模式）
+ * 支援從 Partner 或 legacy Customer/Vendor 指派聯絡人到專案（參照模式）
  */
 
 import {
@@ -21,9 +21,10 @@ import { Project } from "./project.entity";
  * 聯絡人來源類型
  */
 export enum ProjectContactSourceType {
-  UNIFIED = "UNIFIED",     // 統一聯絡人表 (contacts)
-  CUSTOMER = "CUSTOMER",   // 客戶聯絡人 (customer_contacts)
-  VENDOR = "VENDOR",       // 廠商聯絡人 (vendor_contacts)
+  PARTNER = "PARTNER", // 統一 Partner 聯絡人 (partner_contacts) — 新系統
+  UNIFIED = "UNIFIED", // 統一聯絡人表 (contacts) — legacy
+  CUSTOMER = "CUSTOMER", // 客戶聯絡人 (customer_contacts) — legacy
+  VENDOR = "VENDOR", // 廠商聯絡人 (vendor_contacts) — legacy
 }
 
 /**

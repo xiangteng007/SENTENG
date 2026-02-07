@@ -3,6 +3,9 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { ProjectContact, ProjectContactSourceType } from "./project-contact.entity";
 import { CreateProjectContactDto, UpdateProjectContactDto, ProjectContactResponseDto } from "./project-contact.dto";
+// Unified Partner contacts (new system)
+import { PartnerContact } from "../partners/partner-contact.entity";
+// Legacy contacts (deprecated - kept for backward compatibility)
 import { Contact } from "../contacts/contact.entity";
 import { CustomerContact } from "../customers/customer-contact.entity";
 import { VendorContact } from "../supply-chain/vendors/vendor-contact.entity";
@@ -12,6 +15,9 @@ export class ProjectContactsService {
   constructor(
     @InjectRepository(ProjectContact)
     private readonly projectContactRepo: Repository<ProjectContact>,
+    @InjectRepository(PartnerContact)
+    private readonly partnerContactRepo: Repository<PartnerContact>,
+    // Legacy repositories (deprecated)
     @InjectRepository(Contact)
     private readonly contactRepo: Repository<Contact>,
     @InjectRepository(CustomerContact)
@@ -120,6 +126,19 @@ export class ProjectContactsService {
     sourceType: ProjectContactSourceType,
   ): Promise<ProjectContactResponseDto["contact"] | undefined> {
     switch (sourceType) {
+      case ProjectContactSourceType.PARTNER: {
+        const contact = await this.partnerContactRepo.findOne({ where: { id: contactId } });
+        if (!contact) return undefined;
+        return {
+          name: contact.name,
+          phone: contact.phone,
+          mobile: contact.mobile,
+          email: contact.email,
+          title: contact.title,
+          lineId: contact.lineId,
+          syncStatus: contact.syncStatus,
+        };
+      }
       case ProjectContactSourceType.UNIFIED: {
         const contact = await this.contactRepo.findOne({ where: { id: contactId } });
         if (!contact) return undefined;
@@ -172,6 +191,8 @@ export class ProjectContactsService {
     sourceType: ProjectContactSourceType,
   ): Promise<boolean> {
     switch (sourceType) {
+      case ProjectContactSourceType.PARTNER:
+        return !!(await this.partnerContactRepo.findOne({ where: { id: contactId } }));
       case ProjectContactSourceType.UNIFIED:
         return !!(await this.contactRepo.findOne({ where: { id: contactId } }));
       case ProjectContactSourceType.CUSTOMER:
