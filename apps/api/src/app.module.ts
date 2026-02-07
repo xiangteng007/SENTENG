@@ -7,7 +7,12 @@ import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { CommonModule } from "./common/common.module";
 import { CoreModule } from "./core";
-// Legacy modules removed - now using PartnersModule
+// Legacy modules - DEPRECATED but kept while entities still referenced by other modules
+import { CustomersModule } from "./modules/customers/customers.module";
+import { SupplyChainModule } from "./modules/supply-chain";
+import { ContactsModule } from "./modules/contacts/contacts.module";
+import { CrmModule } from "./modules/crm/crm.module";
+// Active modules
 import { ProjectsModule } from "./modules/projects/projects.module";
 import { UsersModule } from "./modules/users/users.module";
 import { AuthModule } from "./modules/auth/auth.module";
@@ -45,7 +50,7 @@ import { WasteModule } from "./modules/waste/waste.module";
 import { ScheduleModule } from "@nestjs/schedule";
 // Telegram Bot (Phase 6)
 import { TelegramModule } from "./modules/telegram/telegram.module";
-// Unified Partners CRM (Phase 7 - replaces Customers, Clients, Vendors, Contacts)
+// Unified Partners CRM (Phase 7 - replaces legacy modules above)
 import { PartnersModule } from "./modules/partners/partners.module";
 
 const logger = new Logger("TypeORM");
@@ -105,6 +110,12 @@ const logger = new Logger("TypeORM");
     }),
     AuthModule,
     UsersModule,
+    // Legacy modules - DEPRECATED, kept for entity compatibility
+    CustomersModule,
+    SupplyChainModule,
+    ContactsModule,
+    CrmModule,
+    // Active modules
     ProjectsModule,
     QuotationsModule,
     ContractsModule,
@@ -140,7 +151,7 @@ const logger = new Logger("TypeORM");
     WasteModule,
     // Telegram Bot (Phase 6)
     TelegramModule,
-    // Unified Partners CRM (Phase 7 - replaces Customers, Clients, Vendors, Contacts)
+    // Unified Partners CRM (Phase 7)
     PartnersModule,
   ],
   controllers: [AppController],
