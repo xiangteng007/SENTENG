@@ -7,11 +7,8 @@ import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { CommonModule } from "./common/common.module";
 import { CoreModule } from "./core";
-// Legacy modules - DEPRECATED but kept while entities still referenced by other modules
-import { CustomersModule } from "./modules/customers/customers.module";
-import { SupplyChainModule } from "./modules/supply-chain";
-import { ContactsModule } from "./modules/contacts/contacts.module";
-import { CrmModule } from "./modules/crm/crm.module";
+// Legacy entity registration (no services/controllers - see LegacyEntitiesModule)
+import { LegacyEntitiesModule } from "./modules/legacy-entities/legacy-entities.module";
 // Active modules
 import { ProjectsModule } from "./modules/projects/projects.module";
 import { UsersModule } from "./modules/users/users.module";
@@ -110,12 +107,8 @@ const logger = new Logger("TypeORM");
     }),
     AuthModule,
     UsersModule,
-    // Legacy modules - DEPRECATED, kept for entity compatibility
-    CustomersModule,
-    SupplyChainModule,
-    ContactsModule,
-    CrmModule,
-    // Active modules
+    // Legacy entity registration only (services/controllers removed)
+    LegacyEntitiesModule,
     ProjectsModule,
     QuotationsModule,
     ContractsModule,
