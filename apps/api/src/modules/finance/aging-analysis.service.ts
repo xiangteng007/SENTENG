@@ -53,7 +53,7 @@ export interface AgingReport {
 
 export interface AgingFilter {
   projectId?: string;
-  clientId?: string;
+  partnerId?: string;
   asOfDate?: Date;
   includePartiallyPaid?: boolean;
 }
@@ -95,9 +95,9 @@ export class AgingAnalysisService {
       });
     }
 
-    if (filter.clientId) {
-      queryBuilder.andWhere("invoice.clientId = :clientId", {
-        clientId: filter.clientId,
+    if (filter.partnerId) {
+      queryBuilder.andWhere("invoice.partnerId = :partnerId", {
+        partnerId: filter.partnerId,
       });
     }
 

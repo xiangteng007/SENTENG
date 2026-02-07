@@ -89,14 +89,14 @@ export class BiExportService {
       FROM invoices
     `);
 
-    // Client metrics
+    // Partner metrics (replaces client metrics)
     const [clientData] = await this.dataSource.query(
       `
       SELECT
         COUNT(*) as total,
         COUNT(CASE WHEN is_active = true THEN 1 END) as active,
         COUNT(CASE WHEN created_at >= $1 THEN 1 END) as new_this_month
-      FROM clients
+      FROM partners
     `,
       [thisMonthStart],
     );
@@ -152,7 +152,7 @@ export class BiExportService {
         COALESCE(SUM(ce.amount), 0) as total_cost,
         p.contract_amount - COALESCE(SUM(ce.amount), 0) as profit
       FROM projects p
-      LEFT JOIN clients c ON p.client_id = c.id
+      LEFT JOIN partners c ON p.partner_id = c.id
       LEFT JOIN cost_entries ce ON ce.project_id = p.id
     `;
 
@@ -236,8 +236,8 @@ export class BiExportService {
         c.name,
         COUNT(DISTINCT p.id) as project_count,
         COALESCE(SUM(p.contract_amount), 0) as total_contract_value
-      FROM clients c
-      LEFT JOIN projects p ON p.client_id = c.id
+      FROM partners c
+      LEFT JOIN projects p ON p.partner_id = c.id
       GROUP BY c.id, c.name
       ORDER BY total_contract_value DESC
       LIMIT 10

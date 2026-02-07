@@ -81,8 +81,8 @@ export class InvoicesService {
         });
       }
       if (query.vendorId) {
-        qb.andWhere("invoice.vendorId = :vendorId", {
-          vendorId: query.vendorId,
+        qb.andWhere("invoice.partnerId = :partnerId", {
+          partnerId: query.vendorId,
         });
       }
       if (query.invoicePeriod) {

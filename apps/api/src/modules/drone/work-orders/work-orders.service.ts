@@ -28,14 +28,14 @@ export class WorkOrdersService {
   }): Promise<WorkOrder[]> {
     const where: FindOptionsWhere<WorkOrder> = {};
     if (filters?.projectId) where.projectId = filters.projectId;
-    if (filters?.clientId) where.clientId = filters.clientId;
+    if (filters?.clientId) where.partnerId = filters.clientId;
     if (filters?.businessUnitId) where.businessUnitId = filters.businessUnitId;
     if (filters?.status) where.status = filters.status;
     if (filters?.scheduledDate) where.scheduledDate = filters.scheduledDate;
 
     return this.workOrderRepo.find({
       where,
-      relations: ["project", "client", "service", "jobSite"],
+      relations: ["project", "partner", "service", "jobSite"],
       order: { scheduledDate: "DESC", createdAt: "DESC" },
     });
   }
@@ -43,7 +43,7 @@ export class WorkOrdersService {
   async findById(id: string): Promise<WorkOrder> {
     const wo = await this.workOrderRepo.findOne({
       where: { id },
-      relations: ["project", "client", "service", "jobSite", "businessUnit"],
+      relations: ["project", "partner", "service", "jobSite", "businessUnit"],
     });
     if (!wo) {
       throw new NotFoundException(`WorkOrder ${id} not found`);

@@ -39,7 +39,7 @@ export class ContactsSyncService {
   ): Promise<SyncResultDto> {
     const contact = await this.clientContactRepo.findOne({
       where: { id: contactId },
-      relations: ["client"],
+      relations: ["partner"],
     });
     if (!contact) {
       return {
@@ -85,7 +85,7 @@ export class ContactsSyncService {
   ): Promise<BulkSyncResultDto> {
     const contacts = await this.clientContactRepo.find({
       where: { clientId, isActive: true },
-      relations: ["client"],
+      relations: ["partner"],
     });
 
     return this.syncMultiple(contacts, "client", userId, context);

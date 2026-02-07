@@ -90,10 +90,10 @@ export class WorkOrderEventListeners {
     workOrder: any,
     completedAt: Date,
   ): Promise<void> {
-    // Check if client exists
-    if (!workOrder.clientId) {
+    // Check if partner exists
+    if (!workOrder.partnerId) {
       this.logger.warn(
-        `No client associated with WO: ${workOrder.woNumber}, skipping invoice creation`,
+        `No partner associated with WO: ${workOrder.woNumber}, skipping invoice creation`,
       );
       return;
     }
@@ -117,7 +117,7 @@ export class WorkOrderEventListeners {
       id: invoiceNo,
       invoiceNo: invoiceNo,
       projectId: workOrder.projectId,
-      clientId: workOrder.clientId,
+      partnerId: workOrder.partnerId,
       docType: "INVOICE_B2B", // Changed from invoiceType to docType
       invoiceDate: completedAt,
       dueDate: new Date(completedAt.getTime() + 30 * 24 * 60 * 60 * 1000), // 30 days
