@@ -27,7 +27,6 @@ import Projects from './pages/Projects';
 import Finance from './pages/Finance';
 import Notifications from './pages/Notifications';
 import Events from './pages/Events';
-import Contacts from './pages/Contacts';
 import Reports from './pages/Reports';
 import SiteLogs from './pages/SiteLogs';
 import Construction from './pages/Construction';
@@ -39,11 +38,11 @@ const MaterialGallery = lazy(() => import('./pages/MaterialGallery').then(m => (
 const InvoiceHelper = lazy(() => import('./pages/InvoiceHelper').then(m => ({ default: m.InvoiceHelper })));
 
 // PERF-002: Additional heavy pages (>25KB) moved to lazy loading
-const Vendors = lazy(() => import('./pages/Vendors'));
+const Vendors = null; // Legacy — redirected to /partners
 const Inventory = lazy(() => import('./pages/Inventory'));
 const Quotations = lazy(() => import('./pages/Quotations'));
 const QuotationEditor = lazy(() => import('./pages/QuotationEditor'));
-const Clients = lazy(() => import('./pages/Clients'));
+const Clients = null; // Legacy — redirected to /partners
 const Contracts = lazy(() => import('./pages/Contracts'));
 const CostEntries = lazy(() => import('./pages/CostEntries'));
 const Payments = lazy(() => import('./pages/Payments'));
@@ -260,9 +259,7 @@ const AppContent = () => {
           </ProtectedRoute>
         } />
         <Route path="/clients" element={
-          <ProtectedRoute pageId="clients">
-            <Clients data={data.clients} loading={loading} addToast={addToast} onUpdateClients={(d) => handleUpdate('clients', d)} allProjects={data.projects} />
-          </ProtectedRoute>
+          <Navigate to="/partners" replace />
         } />
         <Route path="/finance" element={
           <ProtectedRoute pageId="finance">
@@ -278,9 +275,7 @@ const AppContent = () => {
           </ProtectedRoute>
         } />
         <Route path="/vendors" element={
-          <ProtectedRoute pageId="vendors">
-            <Vendors data={data.vendors} loading={loading} addToast={addToast} onUpdateVendors={(d) => handleUpdate('vendors', d)} allProjects={data.projects} />
-          </ProtectedRoute>
+          <Navigate to="/partners" replace />
         } />
         <Route path="/inventory" element={
           <ProtectedRoute pageId="inventory">
@@ -343,9 +338,7 @@ const AppContent = () => {
           </ProtectedRoute>
         } />
         <Route path="/contacts" element={
-          <ProtectedRoute pageId="contacts">
-            <Contacts addToast={addToast} />
-          </ProtectedRoute>
+          <Navigate to="/partners" replace />
         } />
         <Route path="/partners" element={
           <ProtectedRoute pageId="partners">

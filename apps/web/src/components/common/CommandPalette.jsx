@@ -27,12 +27,12 @@ const ALL_PAGES = [
   
   // Projects
   { id: 'projects', name: '專案管理', path: '/projects', icon: Building2, group: '專案業務', keywords: ['project', '工程'] },
-  { id: 'clients', name: '客戶管理', path: '/clients', icon: Users, group: '專案業務', keywords: ['customer', 'client', '業主'] },
+  { id: 'partners', name: '合作夥伴', path: '/partners', icon: Users, group: '專案業務', keywords: ['partner', 'customer', 'client', 'vendor', '業主', '廠商', '合作'] },
   { id: 'contracts', name: '合約管理', path: '/contracts', icon: FileText, group: '專案業務', keywords: ['contract', '合約'] },
   { id: 'milestones', name: '里程碑', path: '/milestones', icon: Clock, group: '專案業務', keywords: ['milestone', '進度'] },
   
   // Supply Chain
-  { id: 'vendors', name: '廠商管理', path: '/vendors', icon: Building2, group: '供應鏈', keywords: ['vendor', 'supplier', '供應商'] },
+
   { id: 'inventory', name: '庫存管理', path: '/inventory', icon: Package, group: '供應鏈', keywords: ['inventory', 'stock', '物料'] },
   { id: 'procurements', name: '採購管理', path: '/procurements', icon: FileText, group: '供應鏈', keywords: ['procurement', 'purchase', '訂購'] },
   
@@ -63,7 +63,7 @@ const ALL_PAGES = [
 const QUICK_ACTIONS = [
   { id: 'new-project', name: '新增專案', action: 'navigate', path: '/projects?action=new', icon: Building2 },
   { id: 'new-invoice', name: '新增發票', action: 'navigate', path: '/invoices?action=new', icon: FileText },
-  { id: 'new-client', name: '新增客戶', action: 'navigate', path: '/clients?action=new', icon: Users },
+  { id: 'new-partner', name: '新增合作夥伴', action: 'navigate', path: '/partners?action=new', icon: Users },
 ];
 
 const CommandPalette = ({ isOpen, onClose }) => {

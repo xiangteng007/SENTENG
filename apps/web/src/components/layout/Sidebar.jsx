@@ -27,9 +27,7 @@ const ALL_MENU_ITEMS = {
   'events': { id: 'events', icon: CalendarIcon, label: '活動', path: '/events' },
   // 專案業務
   'projects': { id: 'projects', icon: Building2, label: '專案管理', path: '/projects' },
-  'clients': { id: 'clients', icon: Users, label: '客戶管理', path: '/clients' },
-  'contacts': { id: 'contacts', icon: Users, label: '聯絡人', path: '/contacts' },
-  'partners': { id: 'partners', icon: Building2, label: '合作夥伴', path: '/partners' },
+  'partners': { id: 'partners', icon: Users, label: '合作夥伴', path: '/partners' },
   'contracts': { id: 'contracts', icon: FileText, label: '合約管理', path: '/contracts' },
   'quotations': { id: 'quotations', icon: FileText, label: '報價管理', path: '/quotations' },
   'change-orders': { id: 'change-orders', icon: FileText, label: '變更單', path: '/change-orders' },
@@ -41,7 +39,6 @@ const ALL_MENU_ITEMS = {
   'labor-contracts': { id: 'labor-contracts', icon: FileText, label: '勞動契約', path: '/labor-contracts' },
   'labor-disputes': { id: 'labor-disputes', icon: Scale, label: '勞資爭議', path: '/labor-disputes' },
   // 供應鏈
-  'vendors': { id: 'vendors', icon: Building2, label: '廠商管理', path: '/vendors' },
   'procurements': { id: 'procurements', icon: Package, label: '採購管理', path: '/procurements' },
   'inventory': { id: 'inventory', icon: Package, label: '庫存管理', path: '/inventory' },
   // 財務會計
@@ -80,10 +77,10 @@ const ALL_MENU_ITEMS = {
 
 const MENU_GROUPS = [
   { id: 'overview', label: '總覽', icon: LayoutDashboard, items: ['dashboard', 'schedule', 'events'], defaultExpanded: true },
-  { id: 'project', label: '專案業務', icon: Briefcase, items: ['projects', 'clients', 'contacts', 'partners', 'contracts', 'quotations', 'change-orders', 'milestones', 'contract-alerts'] },
+  { id: 'project', label: '專案業務', icon: Briefcase, items: ['projects', 'partners', 'contracts', 'quotations', 'change-orders', 'milestones', 'contract-alerts'] },
   { id: 'government', label: '政府標案', icon: Landmark, items: ['government-projects'] },
   { id: 'hr', label: '人資管理', icon: UserCheck, items: ['labor-contracts', 'labor-disputes'] },
-  { id: 'supply', label: '供應鏈', icon: Package, items: ['vendors', 'procurements', 'inventory'] },
+  { id: 'supply', label: '供應鏈', icon: Package, items: ['procurements', 'inventory'] },
   { id: 'finance', label: '財務會計', icon: DollarSign, items: ['finance', 'invoice', 'payments'] },
   { id: 'analytics', label: '分析報表', icon: BarChart3, items: ['cost-entries', 'profit', 'reports'] },
   { id: 'site', label: '工地管理', icon: HardHat, items: ['site-logs', 'construction', 'schedules'] },

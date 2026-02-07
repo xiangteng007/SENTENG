@@ -9,11 +9,11 @@
  * - Error retry with exponential backoff
  */
 
-import useSWR, { SWRConfiguration } from 'swr';
+import useSWR from 'swr';
 import api from '../services/api';
 
 // Default SWR configuration for optimal caching
-const defaultConfig: SWRConfiguration = {
+const defaultConfig = {
   revalidateOnFocus: false,     // Don't refetch on window focus
   revalidateOnReconnect: true,  // Refetch on network reconnect
   dedupingInterval: 60000,      // Dedupe requests within 60s
@@ -64,10 +64,10 @@ export const useProjects = (config = {}) => {
 };
 
 /**
- * Cached Clients Hook
+ * Cached Clients Hook (via Partners API)
  */
 export const useClients = (config = {}) => {
-  return useApiCache('/clients', {
+  return useApiCache('/partners/clients', {
     dedupingInterval: 60000,
     ...config,
   });

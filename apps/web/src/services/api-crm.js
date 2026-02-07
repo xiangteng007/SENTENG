@@ -1,32 +1,34 @@
 /**
- * CRM Domain APIs — Clients, Vendors, Contacts
- * Extracted from api.js for maintainability
+ * CRM Domain APIs — Partners (backward-compatible shims)
+ * 
+ * These shim objects delegate to the unified Partners API
+ * while preserving the old `clientsApi` / `vendorsApi` export names
+ * so existing consumers keep working during migration.
+ * 
+ * New code should import directly from './partnersApi' instead.
  */
 import { api } from './api';
 
-// ===== Clients API =====
+// ===== Clients API (delegates to /partners) =====
 export const clientsApi = {
     getAll: (params = {}) => {
         const query = new URLSearchParams(params).toString();
-        return api.get(`/clients${query ? `?${query}` : ''}`);
+        return api.get(`/partners/clients${query ? `?${query}` : ''}`);
     },
-    getById: (id) => api.get(`/clients/${id}`),
-    create: (data) => api.post('/clients', data),
-    update: (id, data) => api.patch(`/clients/${id}`, data),
-    delete: (id) => api.delete(`/clients/${id}`),
+    getById: (id) => api.get(`/partners/${id}`),
+    create: (data) => api.post('/partners', { ...data, type: 'CLIENT' }),
+    update: (id, data) => api.patch(`/partners/${id}`, data),
+    delete: (id) => api.delete(`/partners/${id}`),
 };
 
-// ===== Vendors API =====
+// ===== Vendors API (delegates to /partners) =====
 export const vendorsApi = {
     getAll: (params = {}) => {
         const query = new URLSearchParams(params).toString();
-        return api.get(`/vendors${query ? `?${query}` : ''}`);
+        return api.get(`/partners/vendors${query ? `?${query}` : ''}`);
     },
-    getById: (id) => api.get(`/vendors/${id}`),
-    create: (data) => api.post('/vendors', data),
-    update: (id, data) => api.patch(`/vendors/${id}`, data),
-    updateRating: (id, rating) => api.patch(`/vendors/${id}/rating`, { rating }),
-    blacklist: (id, reason) => api.post(`/vendors/${id}/blacklist`, { reason }),
-    activate: (id) => api.post(`/vendors/${id}/activate`),
-    delete: (id) => api.delete(`/vendors/${id}`),
+    getById: (id) => api.get(`/partners/${id}`),
+    create: (data) => api.post('/partners', { ...data, type: 'VENDOR' }),
+    update: (id, data) => api.patch(`/partners/${id}`, data),
+    delete: (id) => api.delete(`/partners/${id}`),
 };

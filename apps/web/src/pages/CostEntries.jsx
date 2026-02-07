@@ -7,7 +7,8 @@ import {
 import { Modal } from '../components/common/Modal';
 import { InputField } from '../components/common/InputField';
 import { SectionTitle } from '../components/common/Indicators';
-import { costEntriesApi, projectsApi, vendorsApi } from '../services/api';
+import { costEntriesApi, projectsApi } from '../services/api';
+import { getVendors } from '../services/partnersApi';
 
 // 成本類別配置
 const CATEGORY_CONFIG = {
@@ -169,7 +170,7 @@ export default function CostEntries({ addToast }) {
             const [entriesRes, projectsRes, vendorsRes] = await Promise.all([
                 costEntriesApi.getAll(),
                 projectsApi.getAll(),
-                vendorsApi.getAll(),
+                getVendors(),
             ]);
 
             const entriesList = Array.isArray(entriesRes) ? entriesRes : (entriesRes.items || []);

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { clientsApi, projectsApi, vendorsApi, inventoryApi, financeApi } from './api';
+import { projectsApi, inventoryApi, financeApi } from './api';
+import { getClients, getVendors, createPartner, deletePartner } from './partnersApi';
 import { GoogleService } from './GoogleService';
 import { MOCK_DB } from './MockData';
 
@@ -24,9 +25,9 @@ export const useApiData = (isAuthenticated = false) => {
             // Only load from API if authenticated
             if (isAuthenticated) {
                 [clientsResult, projectsResult, vendorsResult] = await Promise.allSettled([
-                    clientsApi.getAll(),
+                    getClients(),
                     projectsApi.getAll(),
-                    vendorsApi.getAll(),
+                    getVendors(),
                 ]);
             } else {
                 // Not authenticated - use mock data
@@ -48,9 +49,12 @@ export const useApiData = (isAuthenticated = false) => {
                 const newData = { ...prev };
 
                 // Clients from API
-                if (clientsResult.status === 'fulfilled' && clientsResult.value?.items) {
-                    newData.clients = clientsResult.value.items.map(mapClientFromApi);
-                    console.log('✅ Clients loaded from API:', newData.clients.length);
+                if (clientsResult.status === 'fulfilled' && clientsResult.value) {
+                    const clients = Array.isArray(clientsResult.value)
+                        ? clientsResult.value
+                        : (clientsResult.value.items || []);
+                    newData.clients = clients.map(mapClientFromApi);
+                    console.log('✅ Clients loaded from Partners API:', newData.clients.length);
                 }
 
                 // Projects from API
@@ -66,7 +70,7 @@ export const useApiData = (isAuthenticated = false) => {
                         ? vendorsResult.value
                         : (vendorsResult.value.items || []);
                     newData.vendors = vendors.map(mapVendorFromApi);
-                    console.log('✅ Vendors loaded from API:', newData.vendors.length);
+                    console.log('✅ Vendors loaded from Partners API:', newData.vendors.length);
                 }
 
                 // Inventory from API
@@ -122,7 +126,7 @@ export const useApiData = (isAuthenticated = false) => {
 
     const createClient = async (clientData) => {
         try {
-            const result = await clientsApi.create(clientData);
+            const result = await createPartner({ ...clientData, type: 'CLIENT' });
             const mapped = mapClientFromApi(result);
             setData(prev => ({ ...prev, clients: [...prev.clients, mapped] }));
             return { success: true, data: mapped };
@@ -133,7 +137,7 @@ export const useApiData = (isAuthenticated = false) => {
 
     const deleteClient = async (id) => {
         try {
-            await clientsApi.delete(id);
+            await deletePartner(id);
             setData(prev => ({
                 ...prev,
                 clients: prev.clients.filter(c => c.id !== id)
