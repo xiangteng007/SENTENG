@@ -266,7 +266,9 @@ export class BiExportService {
             const value = row[header];
             if (value === null || value === undefined) return "";
             const stringValue =
-              typeof value === "object" ? JSON.stringify(value) : String(value);
+              typeof value === "object"
+                ? JSON.stringify(value)
+                : `${value as string | number | boolean}`;
             // Escape quotes and wrap in quotes if contains comma
             if (
               stringValue.includes(",") ||
