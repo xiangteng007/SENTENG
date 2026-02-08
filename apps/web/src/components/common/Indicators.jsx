@@ -1,5 +1,5 @@
 
-import React from 'react';
+// Indicator components
 
 export const LoadingSkeleton = ({ rows = 3 }) => (
     <div className="animate-pulse space-y-4">

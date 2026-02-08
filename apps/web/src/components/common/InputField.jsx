@@ -1,5 +1,5 @@
 
-import React from 'react';
+// InputField component
 import { Trash2, Plus } from 'lucide-react';
 
 const inputBaseStyles = `

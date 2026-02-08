@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertTriangle, RefreshCw, Home, Bug, Copy, Check } from 'lucide-react';
+import { AlertTriangle, RefreshCw, Home, Copy, Check } from 'lucide-react';
 
 /**
  * ErrorBoundary Component (UX-001 Enhanced)
