@@ -2,7 +2,7 @@
  * ConfirmModal - 確認對話框組件
  * 用於替代 window.confirm，提供更好的 UX 和統一的設計
  */
-import React from 'react';
+import { useState } from 'react';
 import { X, AlertTriangle, Trash2, CheckCircle, HelpCircle } from 'lucide-react';
 
 // Confirm types with different icons and colors
@@ -137,7 +137,7 @@ export const ConfirmModal = ({
  * );
  */
 export const useConfirm = () => {
-  const [state, setState] = React.useState({
+  const [state, setState] = useState({
     isOpen: false,
     title: '',
     message: '',

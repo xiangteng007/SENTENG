@@ -5,8 +5,8 @@
  * 含 Google Contacts 同步功能
  */
 
-import React, { useState } from 'react';
-import { Phone, Mail, User, Plus, RefreshCw, Users } from 'lucide-react';
+import { useState } from 'react';
+import { Phone, Mail, Plus, RefreshCw, Users } from 'lucide-react';
 import { SyncStatusBadge } from './SyncStatusBadge';
 import { useAuth } from '../../context/AuthContext';
 import { useGoogleIntegrationStatus } from '../../hooks/useGoogleIntegrationStatus';
