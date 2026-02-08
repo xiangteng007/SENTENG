@@ -147,7 +147,6 @@ export const CostInput = ({ label, quantity, unit, unitLabel, vendors = [], onCh
     const subtotal = (parseFloat(price) || 0) * (parseFloat(quantity) || 0);
 
     // 當數值變更時通知父組件
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         onChange?.({
             vendor: vendors.find(v => v.id === selectedVendor)?.name || '',

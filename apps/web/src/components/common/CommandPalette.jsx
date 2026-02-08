@@ -139,7 +139,7 @@ const CommandPalette = ({ isOpen, onClose }) => {
     }
   }, [isOpen]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // Keyboard navigation
   const handleKeyDown = useCallback((e) => {
     switch (e.key) {
       case 'ArrowDown':
