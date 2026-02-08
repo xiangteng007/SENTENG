@@ -6,7 +6,7 @@
  */
 
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { Search, ChevronDown, Building2, Factory, User, X, Plus, Check, Loader2 } from 'lucide-react';
+import { Search, ChevronDown, Building2, Factory, User, X, Check, Loader2 } from 'lucide-react';
 import { getPartners, getClients, getVendors, PARTNER_TYPES } from '../../services/partnersApi';
 
 const PartnerSelector = ({
@@ -186,7 +186,7 @@ const PartnerSelector = ({
           <div className="max-h-64 overflow-y-auto">
             {filteredPartners.length > 0 ? (
               filteredPartners.map(partner => {
-                const Icon = getTypeIcon(partner.type);
+                const _Icon = getTypeIcon(partner.type);
                 const isSelected = partner.id === value;
                 return (
                   <button
