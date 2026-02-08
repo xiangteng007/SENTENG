@@ -7,7 +7,7 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import {
     Save, ArrowLeft, Plus, Upload, Download,
-    AlertCircle, Layers, FilePlus2
+    AlertCircle, Layers, FilePlus2, Search
 } from 'lucide-react';
 import { SectionTitle } from '../components/common/Indicators';
 // PERF: Dynamic import for PDF (1.58MB) - loads only when user clicks PDF button

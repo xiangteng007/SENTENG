@@ -1,7 +1,7 @@
 ﻿
 import React, { useState, useEffect, useMemo } from 'react';
 import {
-    Package, Plus, Search, Filter, Edit2,
+    Package, Plus, Search, Filter, Edit2, Trash2,
     ArrowDownCircle, ArrowUpCircle, AlertTriangle,
     CheckCircle, XCircle, X, Save, History, MapPin,
     BarChart3, TrendingDown, TrendingUp, Box,

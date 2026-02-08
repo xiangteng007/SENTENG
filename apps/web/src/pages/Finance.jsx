@@ -317,7 +317,7 @@ const Finance = ({ data, loading, addToast, onAddTx, onUpdateAccounts, onUpdateL
                         />
                     </div>
                 );
-            case 'finance-loans':
+            case 'finance-loans': {
                 // 計算貸款總額
                 const totalLoanAmount = loans.reduce((sum, l) => sum + (l.remainingPrincipal || l.principalAmount || 0), 0);
                 return (
@@ -353,6 +353,7 @@ const Finance = ({ data, loading, addToast, onAddTx, onUpdateAccounts, onUpdateL
                         </div>
                     </div>
                 );
+            }
             case 'finance-trend': return <WidgetFinanceTrend size={w.size} />;
             case 'finance-tx': return <WidgetFinanceTransactions data={data.transactions} size={w.size} onAddTx={() => setIsTxModalOpen(true)} />;
             default: return null;
