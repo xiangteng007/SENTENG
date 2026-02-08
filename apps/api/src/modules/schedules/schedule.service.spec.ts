@@ -18,7 +18,7 @@ const mockTask = (overrides = {}): Partial<ScheduleTask> => ({
   progress: 0,
   type: "task",
   status: "pending",
-  parentId: null,
+  parentId: undefined,
   color: "#3B82F6",
   sortOrder: 0,
   ...overrides,
@@ -298,7 +298,7 @@ describe("ScheduleService", () => {
     it("should return structured gantt data with summary", async () => {
       const tasks = [
         mockTask({ id: "t1", progress: 100, status: "completed" }),
-        mockTask({ id: "t2", progress: 50, status: "in_progress", parentId: null }),
+        mockTask({ id: "t2", progress: 50, status: "in_progress", parentId: undefined }),
       ];
       taskRepo.find.mockResolvedValue(tasks);
       msRepo.find.mockResolvedValue([mockMilestone()]);
