@@ -7,7 +7,7 @@
 import React from 'react';
 
 // Base Skeleton with pulse animation
-const SkeletonBase = ({ className = '', style = {} }) => (
+export const SkeletonBase = ({ className = '', style = {} }) => (
   <div 
     className={`animate-pulse bg-zinc-200 rounded ${className}`}
     style={style}
@@ -179,18 +179,3 @@ export const SkeletonPage = ({ title = true }) => (
     </div>
   </div>
 );
-
-export {
-  SkeletonBase,
-  SkeletonText,
-  SkeletonAvatar,
-  SkeletonCard,
-  SkeletonStatCard,
-  SkeletonTable,
-  SkeletonTableRow,
-  SkeletonListItem,
-  SkeletonForm,
-  SkeletonChart,
-  SkeletonDashboard,
-  SkeletonPage,
-};
