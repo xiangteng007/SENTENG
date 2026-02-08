@@ -24,9 +24,13 @@ export class AddDatabaseIndexes1738080600000 implements MigrationInterface {
   ): Promise<void> {
     try {
       await queryRunner.query(sql);
-    } catch (e: any) {
+    } catch (e: unknown) {
       // 42P01: undefined_table, 42703: undefined_column
-      if (e.code === "42P01" || e.code === "42703") {
+      const code =
+        e instanceof Error && "code" in e
+          ? (e as { code: string }).code
+          : undefined;
+      if (code === "42P01" || code === "42703") {
         console.log(
           `Skipping index ${indexName} on ${tableName}: table or column does not exist`,
         );

@@ -59,10 +59,14 @@ export class AddUserRolePermissions1738280000000 implements MigrationInterface {
                 ('user', 'tenants:read')
                 ON CONFLICT DO NOTHING
             `);
-    } catch (e: any) {
+    } catch (e: unknown) {
       // 23503: foreign_key_violation - permissions not seeded yet
       // 42P01: undefined_table - table doesn't exist in E2E environment
-      if (e.code === "23503" || e.code === "42P01") {
+      const code =
+        e instanceof Error && "code" in e
+          ? (e as { code: string }).code
+          : undefined;
+      if (code === "23503" || code === "42P01") {
         console.log(
           "Skipping AddUserRolePermissions: permissions table may be empty or not exist",
         );

@@ -1,4 +1,5 @@
 import { Controller, Get } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { InjectConnection } from "@nestjs/typeorm";
 import { Connection } from "typeorm";
 
@@ -28,7 +29,10 @@ export interface HealthCheckResult {
 export class HealthController {
   private readonly startTime = Date.now();
 
-  constructor(@InjectConnection() private readonly connection: Connection) {}
+  constructor(
+    @InjectConnection() private readonly connection: Connection,
+    private readonly configService: ConfigService,
+  ) {}
 
   /**
    * Liveness probe - Quick check if the service is running
@@ -54,7 +58,7 @@ export class HealthController {
     return {
       status: allUp ? "healthy" : anyDown ? "unhealthy" : "degraded",
       timestamp: new Date().toISOString(),
-      version: process.env.npm_package_version || "1.0.0",
+      version: this.configService.get<string>("npm_package_version", "1.0.0"),
       uptime: Math.floor((Date.now() - this.startTime) / 1000),
       checks: {
         database: dbCheck,
@@ -97,12 +101,12 @@ export class HealthController {
           type: this.connection.options.type,
         },
       };
-    } catch (error) {
+    } catch (error: unknown) {
       return {
         status: "down",
         responseTime: Date.now() - startTime,
         details: {
-          error: error.message,
+          error: error instanceof Error ? error.message : String(error),
         },
       };
     }

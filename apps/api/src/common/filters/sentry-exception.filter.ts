@@ -10,14 +10,19 @@ import {
   HttpException,
   HttpStatus,
 } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { BaseExceptionFilter } from "@nestjs/core";
 import * as Sentry from "@sentry/nestjs";
 
 @Catch()
 export class SentryExceptionFilter extends BaseExceptionFilter {
+  constructor(private readonly configService: ConfigService) {
+    super();
+  }
+
   catch(exception: unknown, host: ArgumentsHost) {
     // 只在 Sentry 已初始化時發送
-    if (process.env.SENTRY_DSN) {
+    if (this.configService.get<string>("SENTRY_DSN")) {
       const ctx = host.switchToHttp();
       const request = ctx.getRequest();
 
