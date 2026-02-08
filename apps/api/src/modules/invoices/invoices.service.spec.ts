@@ -3,10 +3,11 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { InvoicesService } from './invoices.service';
 import { Invoice } from './invoice.entity';
 import { NotFoundException, ForbiddenException } from '@nestjs/common';
+import { createMockRepository } from '../../common/test-helpers/create-test-module';
 
 describe('InvoicesService', () => {
   let service: InvoicesService;
-  let mockRepository: any;
+  let mockRepository: ReturnType<typeof createMockRepository>;
 
   const mockInvoice: Partial<Invoice> = {
     id: 'inv-001',
@@ -23,27 +24,14 @@ describe('InvoicesService', () => {
   };
 
   beforeEach(async () => {
-    mockRepository = {
-      find: jest.fn(),
-      findOne: jest.fn(),
-      create: jest.fn(),
-      save: jest.fn(),
-      count: jest.fn(),
-      createQueryBuilder: jest.fn(() => ({
-        where: jest.fn().mockReturnThis(),
-        andWhere: jest.fn().mockReturnThis(),
-        orderBy: jest.fn().mockReturnThis(),
-        skip: jest.fn().mockReturnThis(),
-        take: jest.fn().mockReturnThis(),
-        leftJoinAndSelect: jest.fn().mockReturnThis(),
-        getManyAndCount: jest.fn().mockResolvedValue([[mockInvoice], 1]),
-        getMany: jest.fn().mockResolvedValue([mockInvoice]),
-        select: jest.fn().mockReturnThis(),
-        addSelect: jest.fn().mockReturnThis(),
-        getRawOne: jest.fn().mockResolvedValue({ totalCount: '10' }),
-        getCount: jest.fn().mockResolvedValue(10),
-      })),
-    };
+    mockRepository = createMockRepository({
+      queryBuilder: {
+        getManyAndCountResult: [[mockInvoice], 1],
+        getManyResult: [mockInvoice],
+        getRawOneResult: { totalCount: '10' },
+        getCountResult: 10,
+      },
+    });
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
