@@ -1,4 +1,4 @@
-import React from 'react';
+// Card component
 
 const variantStyles = {
     default: `

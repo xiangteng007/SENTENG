@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   Search, 
@@ -11,7 +11,6 @@ import {
   BarChart3,
   Building2,
   Wrench,
-  Shield,
   Bell,
   Clock,
   ArrowRight,
@@ -73,7 +72,7 @@ const CommandPalette = ({ isOpen, onClose }) => {
   const inputRef = useRef(null);
   const listRef = useRef(null);
   const navigate = useNavigate();
-  const location = useLocation();
+  const _location = useLocation();
 
   // Load recent pages from localStorage
   useEffect(() => {
@@ -140,7 +139,7 @@ const CommandPalette = ({ isOpen, onClose }) => {
     }
   }, [isOpen]);
 
-  // Keyboard navigation
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleKeyDown = useCallback((e) => {
     switch (e.key) {
       case 'ArrowDown':

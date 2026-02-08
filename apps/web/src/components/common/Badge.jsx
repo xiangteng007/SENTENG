@@ -1,4 +1,4 @@
-﻿import React from 'react';
+﻿// Badge component
 
 const colorStyles = {
     gray: "bg-zinc-100 text-zinc-600 border-zinc-200/50",

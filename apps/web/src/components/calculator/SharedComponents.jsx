@@ -3,7 +3,7 @@
  * 從 MaterialCalculator.jsx 提取 (FE-001)
  */
 
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Copy, Check, Plus, Calculator } from 'lucide-react';
 
 // ============================================
@@ -147,7 +147,8 @@ export const CostInput = ({ label, quantity, unit, unitLabel, vendors = [], onCh
     const subtotal = (parseFloat(price) || 0) * (parseFloat(quantity) || 0);
 
     // 當數值變更時通知父組件
-    React.useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => {
         onChange?.({
             vendor: vendors.find(v => v.id === selectedVendor)?.name || '',
             vendorId: selectedVendor,
