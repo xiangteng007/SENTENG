@@ -1,7 +1,7 @@
-import { useState } from 'react';
+
 import { Plus, X, Users, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 
-export const WidgetProjectVendors = ({ vendors = [], size, onAddVendor, onRemoveVendor }) => {
+export const WidgetProjectVendors = ({ vendors = [], size: _size, onAddVendor, onRemoveVendor }) => {
     const getStatusIcon = (status) => {
         switch (status) {
             case '進行中': return <Clock size={14} className="text-blue-500" />;

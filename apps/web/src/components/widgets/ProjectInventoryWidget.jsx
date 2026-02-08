@@ -1,7 +1,7 @@
 // React 17+ JSX transform
 import { Plus, Package, TrendingDown, TrendingUp, Clock } from 'lucide-react';
 
-export const WidgetProjectInventory = ({ inventory = [], size, onAddRecord }) => {
+export const WidgetProjectInventory = ({ inventory = [], size: _size, onAddRecord }) => {
     const getTypeIcon = (type) => {
         return type === '出'
             ? <TrendingDown size={14} className="text-red-500" />

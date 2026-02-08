@@ -4,7 +4,7 @@
  * Supports drag-drop, resize, and persistence
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -14,14 +14,13 @@ import {
   Minimize2, 
   X, 
   Plus,
-  Settings,
   RotateCcw
 } from 'lucide-react';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 // Widget size presets (columns x rows)
-export const WIDGET_SIZES = {
+const _WIDGET_SIZES = {
   '1x1': { w: 1, h: 1 },
   '2x1': { w: 2, h: 1 },
   '2x2': { w: 2, h: 2 },

@@ -1,6 +1,6 @@
 
 // React 17+ JSX transform
-import { Briefcase, Plus, FileText, Image as ImageIcon, Upload, Edit2, ChevronLeft } from 'lucide-react';
+import { Briefcase, Plus, FileText, Upload } from 'lucide-react';
 import { ProgressBar } from '../common/Indicators';
 
 // --- MAIN PROJECT LIST WIDGETS ---
@@ -59,7 +59,7 @@ export const WidgetProjectList = ({ data, size, onSelectProject, onAdd }) => {
 };
 
 // --- PROJECT DETAIL WIDGETS ---
-export const WidgetProjectInfo = ({ project, size }) => (
+export const WidgetProjectInfo = ({ project, size: _size }) => (
     <div className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
             <div className="bg-gray-50 p-3 rounded-xl"><span className="text-xs text-gray-500 block mb-1">業主</span><span className="font-bold text-gray-800">{project.clientName}</span></div>
