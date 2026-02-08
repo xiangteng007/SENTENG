@@ -2,7 +2,7 @@
  * 估價單卡片元件
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { MoreVertical, Eye, Edit2, Copy, Trash2, Users, Building2, Calendar } from 'lucide-react';
 import StatusBadge from './StatusBadge';
 

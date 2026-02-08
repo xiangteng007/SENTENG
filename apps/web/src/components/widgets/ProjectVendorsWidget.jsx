@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Plus, X, Users, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 
 export const WidgetProjectVendors = ({ vendors = [], size, onAddVendor, onRemoveVendor }) => {

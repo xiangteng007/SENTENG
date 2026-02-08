@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { FileText, Calculator, Building2, User, Copy, RotateCcw, Check, AlertCircle, Info } from 'lucide-react';
 import { SectionTitle } from '../components/common/Indicators';
 

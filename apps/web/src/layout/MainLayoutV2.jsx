@@ -4,7 +4,7 @@
  * Expert Panel Redesign with new Sidebar component
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Bell, Menu, X, ChevronDown, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { GoogleService } from '../services/GoogleService';

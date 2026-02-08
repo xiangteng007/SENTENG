@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Calendar, Clock, MapPin, ExternalLink } from 'lucide-react';
 import { GoogleService } from '../../services/GoogleService';
 

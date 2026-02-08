@@ -2,7 +2,7 @@
  * 費用設定面板
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Settings2, ChevronDown, ChevronUp } from 'lucide-react';
 import { TAX_TYPES, DEFAULT_SETTINGS } from '../../services/QuotationService';
 

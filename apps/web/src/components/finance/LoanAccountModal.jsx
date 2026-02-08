@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Modal } from '../common/Modal';
 import { InputField } from '../common/InputField';
 import { LoanCalculator, calculateEqualPayment, calculateEqualPrincipal } from './LoanCalculator';

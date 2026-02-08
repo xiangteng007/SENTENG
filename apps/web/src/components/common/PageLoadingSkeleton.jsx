@@ -1,4 +1,4 @@
-import React from 'react';
+// React 17+ JSX transform
 
 /**
  * PageLoadingSkeleton (PERF-003)

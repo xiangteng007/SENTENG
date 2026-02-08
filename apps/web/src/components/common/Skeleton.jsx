@@ -4,7 +4,7 @@
  * Expert Panel v4.9: UI/UX Designer 建議 - 增加更多 loading skeleton
  */
 
-import React from 'react';
+// React 17+ JSX transform
 
 // Base Skeleton with pulse animation
 export const SkeletonBase = ({ className = '', style = {} }) => (

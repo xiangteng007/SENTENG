@@ -3,7 +3,7 @@
  * 合約列表與詳情
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import ContractService from '../services/ContractService';
 import ContractDetail from '../components/contracts/ContractDetail';
 import ContractList from '../components/contracts/ContractList';

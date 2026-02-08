@@ -4,7 +4,7 @@
  * Expert Panel v4.9: Lawyer 建議 - 合約到期自動通知功能
  */
 
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { 
   Bell, FileText, Calendar, Clock,
   AlertTriangle, CheckCircle, ChevronRight,

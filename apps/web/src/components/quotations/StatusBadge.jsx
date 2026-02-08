@@ -2,7 +2,7 @@
  * 狀態標籤元件
  */
 
-import React from 'react';
+// React 17+ JSX transform
 import { QUOTATION_STATUS_LABELS, QUOTATION_STATUS_COLORS } from '../../services/QuotationService';
 
 const StatusBadge = ({ status }) => {

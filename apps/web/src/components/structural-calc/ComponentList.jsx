@@ -1,7 +1,7 @@
 /**
  * ComponentList — Displays the list of added structural components
  */
-import React from 'react';
+// React 17+ JSX transform
 import { Calculator, Plus, Edit3, Trash2, FileSpreadsheet } from 'lucide-react';
 import { formatNumber } from './utils';
 

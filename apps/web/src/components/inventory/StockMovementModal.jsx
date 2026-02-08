@@ -2,7 +2,7 @@
  * 出入庫 Modal
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import { Modal } from '../../components/common/Modal';
 import { InputField } from '../../components/common/InputField';

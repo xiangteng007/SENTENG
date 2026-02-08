@@ -1,5 +1,5 @@
 
-import React from 'react';
+// React 17+ JSX transform
 
 export const TrendChart = ({ color = "#7C90A0" }) => {
     const values = [40, 35, 60, 50, 80, 75, 90];

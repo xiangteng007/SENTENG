@@ -1,5 +1,5 @@
 
-import React from 'react';
+// React 17+ JSX transform
 import { X } from 'lucide-react';
 
 export const Modal = ({

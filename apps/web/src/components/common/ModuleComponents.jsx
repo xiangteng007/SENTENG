@@ -4,7 +4,7 @@
  * Carbon Copper Industrial Theme
  */
 
-import React from 'react';
+// React 17+ JSX transform
 import { 
   TrendingUp, 
   TrendingDown, 

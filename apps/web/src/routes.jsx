@@ -4,7 +4,7 @@
  * Extracted from App.jsx to improve maintainability.
  * All route definitions and their lazy-loaded components live here.
  */
-import React, { Suspense, lazy } from 'react';
+import { Suspense, lazy } from 'react';
 import { Route, Navigate } from 'react-router-dom';
 import { PageLoadingSkeleton } from './components/common/PageLoadingSkeleton';
 

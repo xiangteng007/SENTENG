@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useMemo } from 'react';
+﻿import { useState, useEffect, useMemo } from 'react';
 import api from '../services/api';
 import { Calendar, Plus, Filter, Search, Edit2, Trash2, Clock, MapPin, Users, X, Check, ChevronDown } from 'lucide-react';
 import { EmptyState } from '../components/common/EmptyState';

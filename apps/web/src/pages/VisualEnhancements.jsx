@@ -4,7 +4,7 @@
  * Expert Panel v4.9: Masonry, Carpentry, Painting Specialists 建議
  */
 
-import React, { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { 
   Grid3X3, Palette, Box, Ruler,
   RotateCcw, Download, Copy, ChevronRight

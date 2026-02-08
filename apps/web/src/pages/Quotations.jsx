@@ -3,7 +3,7 @@
  * Quotations.jsx
  */
 
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
     FileText, Plus, Search, Edit2, Eye, DollarSign
 } from 'lucide-react';

@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+﻿import { useState } from 'react';
 import {
     Calculator, Plus, ChevronDown, ChevronUp, Trash2, RefreshCw, Info, Settings2, Building2
 } from 'lucide-react';

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { X, TrendingUp, TrendingDown, Calendar, Filter, Download } from 'lucide-react';
 
 export const AccountDetailsModal = ({ isOpen, onClose, account, allTransactions = [] }) => {

@@ -1,4 +1,4 @@
-import React from 'react';
+// React 17+ JSX transform
 import { MapPin, ExternalLink } from 'lucide-react';
 
 export const LocationField = ({ label, value, onChange, placeholder }) => {

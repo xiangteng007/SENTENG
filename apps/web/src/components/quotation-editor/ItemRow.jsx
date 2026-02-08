@@ -3,7 +3,7 @@
  * 提供類 Excel 表格列編輯
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
     Plus, Copy, Trash2, ChevronDown, ChevronUp, GripVertical,
 } from 'lucide-react';

@@ -1,5 +1,5 @@
 
-import React from 'react';
+// React 17+ JSX transform
 import { Briefcase, Plus, FileText, Image as ImageIcon, Upload, Edit2, ChevronLeft } from 'lucide-react';
 import { ProgressBar } from '../common/Indicators';
 

@@ -4,7 +4,7 @@
  * Expert Panel v4.9: HVAC, Plumbing & Electrical Engineers 建議
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { 
   Calculator, Thermometer, Zap, Droplets,
   ChevronRight, RotateCcw, Download

@@ -2,7 +2,7 @@
  * 金額摘要
  */
 
-import React from 'react';
+// React 17+ JSX transform
 
 const TotalsSummary = ({ totals }) => {
     const formatCurrency = (amount) => {

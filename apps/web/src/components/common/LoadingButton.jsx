@@ -1,4 +1,4 @@
-import React from 'react';
+// React 17+ JSX transform
 import { Loader2 } from 'lucide-react';
 
 const variantStyles = {

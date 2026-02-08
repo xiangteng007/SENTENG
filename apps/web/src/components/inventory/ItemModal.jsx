@@ -2,7 +2,7 @@
  * 庫存品項新增/編輯 Modal
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Modal } from '../../components/common/Modal';
 import { InputField } from '../../components/common/InputField';
 

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Calendar as CalendarIcon, Wallet, StickyNote, Plus, Trash2, ArrowUpRight, ArrowDownRight, Briefcase, Users, Activity } from 'lucide-react';
 import { Badge } from '../common/Badge';
 

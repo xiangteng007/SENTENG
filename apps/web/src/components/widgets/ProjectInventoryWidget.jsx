@@ -1,4 +1,4 @@
-import React from 'react';
+// React 17+ JSX transform
 import { Plus, Package, TrendingDown, TrendingUp, Clock } from 'lucide-react';
 
 export const WidgetProjectInventory = ({ inventory = [], size, onAddRecord }) => {

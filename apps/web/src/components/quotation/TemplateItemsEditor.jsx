@@ -4,7 +4,7 @@
  * 提供工項的新增、編輯、刪除、拖曳排序功能
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Plus, Trash2, GripVertical, ChevronDown, ChevronRight } from 'lucide-react';
 import {
     DndContext,

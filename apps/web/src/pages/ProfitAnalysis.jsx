@@ -3,7 +3,7 @@
  * 專案利潤、成本、請款綜合分析
  */
 
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
     TrendingUp, TrendingDown, DollarSign, Percent, AlertTriangle,
     CheckCircle, XCircle, BarChart3, PieChart, ArrowUpRight,

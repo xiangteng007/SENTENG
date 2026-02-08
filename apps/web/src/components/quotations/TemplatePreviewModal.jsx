@@ -2,7 +2,7 @@
  * 模板預覽 Modal
  */
 
-import React from 'react';
+// React 17+ JSX transform
 import { Eye, X } from 'lucide-react';
 
 const TemplatePreviewModal = ({ isOpen, onClose, template }) => {

@@ -1,5 +1,5 @@
 
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { WidgetWrapper } from '../components/common/WidgetWrapper';
 import { WidgetFinanceAccounts, WidgetFinanceTrend, WidgetFinanceTransactions } from '../components/widgets/FinanceWidgets';
 import { AccountDetailsModal } from '../components/finance/AccountDetailsModal';

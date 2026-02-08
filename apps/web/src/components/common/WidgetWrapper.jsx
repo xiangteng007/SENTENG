@@ -1,4 +1,4 @@
-import React from 'react';
+// React 17+ JSX transform
 import { Maximize2, Minimize2, GripHorizontal } from 'lucide-react';
 
 export const WidgetWrapper = ({ widget, onResize, onDragStart, onDragEnter, onDragEnd, children }) => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { FileText, FileSignature, X } from 'lucide-react';
 import ContractService, {
     CONTRACT_TYPES,

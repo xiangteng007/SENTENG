@@ -1,4 +1,4 @@
-import React from 'react';
+// React 17+ JSX transform
 
 const StatCard = ({ icon: Icon, label, value, color = 'gray' }) => (
     <div className="bg-white rounded-xl p-4 border border-gray-100">

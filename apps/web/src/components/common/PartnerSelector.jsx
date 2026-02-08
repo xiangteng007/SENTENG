@@ -5,7 +5,7 @@
  * 支援篩選類型 (CLIENT/VENDOR/PERSON) 和搜尋
  */
 
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { Search, ChevronDown, Building2, Factory, User, X, Plus, Check, Loader2 } from 'lucide-react';
 import { getPartners, getClients, getVendors, PARTNER_TYPES } from '../../services/partnersApi';
 

@@ -4,7 +4,7 @@
  * 同步狀態 Badge 元件
  */
 
-import React from 'react';
+// React 17+ JSX transform
 
 /**
  * @param {Object} props

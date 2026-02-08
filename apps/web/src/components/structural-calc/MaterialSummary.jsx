@@ -1,7 +1,7 @@
 /**
  * MaterialSummary — Material totals, wastage control, and pricing table
  */
-import React from 'react';
+// React 17+ JSX transform
 import { DollarSign, Copy, Check } from 'lucide-react';
 import { formatNumber } from './utils';
 import { CONCRETE_GRADES } from './constants';

@@ -1,4 +1,4 @@
-import React from 'react';
+// React 17+ JSX transform
 import { CONTRACT_STATUS_COLORS, CONTRACT_STATUS_LABELS } from '../../services/ContractService';
 
 const StatusBadge = ({ status }) => (

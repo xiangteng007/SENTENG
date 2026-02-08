@@ -1,5 +1,5 @@
 ﻿
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { Calculator, TrendingDown, Calendar } from 'lucide-react';
 
 /**

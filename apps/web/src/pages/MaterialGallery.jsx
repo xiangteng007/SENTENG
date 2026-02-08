@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Plus, Image as ImageIcon, ExternalLink, Globe, FolderPlus, Edit2, Trash2, MoreVertical } from 'lucide-react';
 import { Modal } from '../components/common/Modal';
 import { InputField } from '../components/common/InputField';

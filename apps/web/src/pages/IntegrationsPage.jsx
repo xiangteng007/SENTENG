@@ -5,7 +5,7 @@
  * 路由：/settings/integrations
  */
 
-import React, { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { integrationsApi } from '../services/integrationsApi';
 import { SyncStatusBadge } from '../components/common/SyncStatusBadge';

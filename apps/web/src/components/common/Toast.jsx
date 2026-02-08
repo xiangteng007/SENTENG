@@ -1,5 +1,5 @@
 
-import React from 'react';
+// React 17+ JSX transform
 import { CheckCircle2, AlertCircle, Info, X, ExternalLink } from 'lucide-react';
 
 const toastStyles = {

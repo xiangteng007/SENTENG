@@ -4,7 +4,7 @@
  * Expert Panel v4.9: Fire Protection Engineer 建議
  */
 
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { 
   Flame, FileText, Calendar, AlertTriangle, 
   Plus, Search, CheckCircle, Clock, Settings,

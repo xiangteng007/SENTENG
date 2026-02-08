@@ -1,5 +1,5 @@
 ﻿
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Building2, Percent, Calendar, TrendingDown, ChevronDown, ChevronUp, AlertCircle } from 'lucide-react';
 
 /**

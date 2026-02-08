@@ -3,7 +3,7 @@
  * 變更單列表與編輯器
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useConfirm } from '../components/common/ConfirmModal';
 import {
     ChangeOrderService,

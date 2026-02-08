@@ -4,7 +4,7 @@
  * 使用 @react-pdf/renderer 生成 PDF，支援 Google Noto Sans TC 字體
  */
 
-import React from 'react';
+// React 17+ JSX transform
 import { Document, Page, Text, View, StyleSheet, Font, PDFDownloadLink } from '@react-pdf/renderer';
 import { Download } from 'lucide-react';
 

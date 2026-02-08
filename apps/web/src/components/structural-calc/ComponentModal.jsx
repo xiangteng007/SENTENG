@@ -1,7 +1,7 @@
 /**
  * ComponentModal — Add/Edit structural component modal dialog
  */
-import React from 'react';
+// React 17+ JSX transform
 import { Calculator, X, Save } from 'lucide-react';
 import { COMPONENT_TYPES, CONCRETE_GRADES, REBAR_GRADES, REBAR_RATES, COMPONENT_PRESETS } from './constants';
 

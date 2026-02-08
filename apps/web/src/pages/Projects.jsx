@@ -1,5 +1,5 @@
 ﻿
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { WidgetWrapper } from '../components/common/WidgetWrapper';
 import { WidgetProjectStats, WidgetProjectList, WidgetProjectInfo, WidgetProjectFiles } from '../components/widgets/ProjectWidgets';
 import { WidgetProjectVendors } from '../components/widgets/ProjectVendorsWidget';

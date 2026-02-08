@@ -1,4 +1,4 @@
-import React from 'react';
+// React 17+ JSX transform
 import { useConfirm } from '../common/ConfirmModal';
 import ContractService, {
     CONTRACT_STATUS,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import api from '../services/api';
 import { ClipboardList, Plus, Filter, Search, Calendar, Edit2, Trash2, Cloud, Sun, CloudRain, Thermometer, Users, X, Check, Camera, MapPin } from 'lucide-react';
 import { EmptyState } from '../components/common/EmptyState';

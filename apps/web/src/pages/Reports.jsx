@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo } from 'react';
+﻿import { useState, useMemo } from 'react';
 import { BarChart3, Download, Filter, Calendar, FileText, DollarSign, Briefcase, Users, TrendingUp, PieChart, Loader2, Check } from 'lucide-react';
 
 // 報表定義

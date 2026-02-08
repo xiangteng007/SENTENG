@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Users, HardHat, Plus, Search, Trash2, Edit2, Star, UserPlus } from 'lucide-react';
 import { Badge } from '../common/Badge';
 

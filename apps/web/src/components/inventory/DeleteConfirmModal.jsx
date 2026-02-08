@@ -2,7 +2,7 @@
  * 刪除確認 Modal
  */
 
-import React from 'react';
+// React 17+ JSX transform
 import { Trash2 } from 'lucide-react';
 import { Modal } from '../../components/common/Modal';
 

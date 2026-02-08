@@ -2,7 +2,7 @@
  * 工項庫搜尋 Modal
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, X, Plus } from 'lucide-react';
 import { CATALOG_CATEGORIES, DEFAULT_CATALOG_ITEMS } from '../../services/QuotationService';
 
