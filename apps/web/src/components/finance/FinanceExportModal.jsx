@@ -22,19 +22,21 @@ const getDateRange = (rangeType, customStart, customEnd) => {
                 startDate: today.toISOString().slice(0, 10),
                 endDate: today.toISOString().slice(0, 10)
             };
-        case 'week':
+        case 'week': {
             const weekStart = new Date(today);
             weekStart.setDate(today.getDate() - today.getDay());
             return {
                 startDate: weekStart.toISOString().slice(0, 10),
                 endDate: today.toISOString().slice(0, 10)
             };
-        case 'month':
+        }
+        case 'month': {
             const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
             return {
                 startDate: monthStart.toISOString().slice(0, 10),
                 endDate: today.toISOString().slice(0, 10)
             };
+        }
         case 'custom':
             return { startDate: customStart, endDate: customEnd };
         default:

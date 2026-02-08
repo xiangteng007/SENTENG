@@ -1,6 +1,6 @@
 ﻿import React, { useState } from 'react';
 import {
-    Calculator, Plus, ChevronDown, ChevronUp, Trash2, RefreshCw, Info, Settings2
+    Calculator, Plus, ChevronDown, ChevronUp, Trash2, RefreshCw, Info, Settings2, Building2
 } from 'lucide-react';
 import {
     COMPONENT_REBAR_RATES, COMPONENT_TYPES, REBAR_SPECS, REBAR_USAGE_BY_COMPONENT,
@@ -12,8 +12,9 @@ import {
 import {
     InputField, SelectField, OptionDetailCard, WastageControl, ResultDisplay, CostInput
 } from '../components/shared';
-export // 1️⃣ 結構工程計算器 (支援多列輸入)
-const StructureCalculator = ({ onAddRecord, vendors = [] }) => {
+import { ComponentCalculator } from './ComponentCalculator';
+// 1️⃣ 結構工程計算器 (支援多列輸入)
+export const StructureCalculator = ({ onAddRecord, vendors = [] }) => {
     const [calcType, setCalcType] = useState('concrete');
 
     // 混凝土計算 - 多列支援

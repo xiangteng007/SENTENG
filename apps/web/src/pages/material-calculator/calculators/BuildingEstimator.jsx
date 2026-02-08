@@ -7,13 +7,14 @@ import {
     WATERPROOF_MATERIALS, INSULATION_MATERIALS, TILE_SIZES, TILE_METHODS,
     BUILDING_TYPES, SLAB_THICKNESS_OPTIONS, TAIWAN_REFERENCE_PRICES,
     PARAPET_HEIGHTS, PROJECT_TEMPLATES, DEFAULT_WASTAGE, COMMON_OPENINGS,
+    WALL_THICKNESS_OPTIONS,
     formatNumber, applyWastage
 } from '../constants';
 import {
     InputField, SelectField, OptionDetailCard, WastageControl, ResultDisplay, CostInput
 } from '../components/shared';
-export // 5️⃣ 建築概估計算器
-const BuildingEstimator = ({ onAddRecord }) => {
+// 5️⃣ 建築概估計算器
+export const BuildingEstimator = ({ onAddRecord }) => {
     const [buildingType, setBuildingType] = useState(1);
     const [floorArea, setFloorArea] = useState('');
     const [wallThicknessFilter, setWallThicknessFilter] = useState('all');

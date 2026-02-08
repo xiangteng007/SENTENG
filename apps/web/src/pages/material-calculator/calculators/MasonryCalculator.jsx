@@ -7,13 +7,14 @@ import {
     WATERPROOF_MATERIALS, INSULATION_MATERIALS, TILE_SIZES, TILE_METHODS,
     BUILDING_TYPES, SLAB_THICKNESS_OPTIONS, TAIWAN_REFERENCE_PRICES,
     PARAPET_HEIGHTS, PROJECT_TEMPLATES, DEFAULT_WASTAGE, COMMON_OPENINGS,
+    BRICK_PER_SQM, PLASTER_RATIOS,
     formatNumber, applyWastage
 } from '../constants';
 import {
     InputField, SelectField, OptionDetailCard, WastageControl, ResultDisplay, CostInput
 } from '../components/shared';
-export // 2️⃣ 泥作工程計算器 (支援多列輸入)
-const MasonryCalculator = ({ onAddRecord, vendors = [] }) => {
+// 2️⃣ 泥作工程計算器 (支援多列輸入)
+export const MasonryCalculator = ({ onAddRecord, vendors = [] }) => {
     const [calcType, setCalcType] = useState('mortar');
 
     // 打底砂漿 - 多列支援

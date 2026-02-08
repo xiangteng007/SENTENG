@@ -47,7 +47,6 @@ jobs:
       - name: Lint Web
         run: npm run lint -- --max-warnings 700
         working-directory: apps/web
-        continue-on-error: true
 
       - name: Build Web
         run: npm run build
