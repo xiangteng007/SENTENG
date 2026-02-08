@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { Settings2, ChevronDown, ChevronUp } from 'lucide-react';
 import { TAX_TYPES, DEFAULT_SETTINGS } from '../../services/QuotationService';
 
-const SettingsPanel = ({ settings, onChange, totals }) => {
+const SettingsPanel = ({ settings, onChange, totals: _totals }) => {
     const [isExpanded, setIsExpanded] = useState(false);
 
     return (

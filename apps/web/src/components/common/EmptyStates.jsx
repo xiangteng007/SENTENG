@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 /**
  * Animated Empty State Components
  * Design System v4.0: Modern Dark Gold

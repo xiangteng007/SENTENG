@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Wallet, ChevronDown, ChevronUp, Plus, GripVertical } from 'lucide-react';
 import { TrendChart } from './TrendChart'; // Helper needed
 
@@ -99,7 +99,7 @@ export const WidgetFinanceAccounts = ({ data, size, onEdit, onViewDetails, ...dr
 };
 
 // ... Transaction and Trend Implementation
-export const WidgetFinanceTrend = ({ size, type = 'month' }) => {
+export const WidgetFinanceTrend = ({ size: _size, type = 'month' }) => {
     // Enhanced Trend Logic
     return (
         <div className="h-full flex flex-col">
@@ -118,7 +118,7 @@ export const WidgetFinanceTrend = ({ size, type = 'month' }) => {
     )
 }
 
-export const WidgetFinanceTransactions = ({ data, size, onAddTx }) => {
+export const WidgetFinanceTransactions = ({ data, size: _size, onAddTx }) => {
     // ... Reuse similar logic from react.txt but styled
     return (
         <div className="h-full flex flex-col">

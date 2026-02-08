@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Calendar as CalendarIcon, Wallet, StickyNote, Plus, Trash2, ArrowUpRight, ArrowDownRight, Briefcase, Users, Activity } from 'lucide-react';
+import { Calendar as CalendarIcon, Wallet, StickyNote, Trash2, Briefcase, Users, Activity } from 'lucide-react';
 import { Badge } from '../common/Badge';
 
 export const WidgetDailySchedule = ({ events, size }) => {
@@ -127,7 +127,7 @@ export const WidgetOverviewStats = ({ finance, projects, clients, size }) => {
     );
 };
 
-export const WidgetRecentActivity = ({ logs, size }) => {
+export const WidgetRecentActivity = ({ logs, size: _size }) => {
     // Use real logs if provided, otherwise show empty state
     const activities = logs || [];
 
