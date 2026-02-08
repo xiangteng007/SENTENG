@@ -1,4 +1,4 @@
-import React from 'react';
+// EmptyState component (UX-001)
 import { Inbox, Plus, Search, FileX, Database } from 'lucide-react';
 
 /**

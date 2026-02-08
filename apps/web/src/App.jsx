@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { MainLayoutV2 as MainLayout } from './layout/MainLayoutV2';
 import { GoogleService } from './services/GoogleService';
@@ -7,7 +7,6 @@ import { ToastContainer } from './components/common/Toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { useApiData } from './services/useApiData';
 import { OfflineIndicator } from './components/OfflineIndicator';
-import { ErrorBoundary } from './components/common/ErrorBoundary';
 import CommandPalette from './components/common/CommandPalette';
 import { initPerformanceMonitoring } from './utils/performanceMonitor';
 import LoginPage from './pages/LoginPage';
@@ -47,7 +46,7 @@ const ProtectedRoute = ({ children, pageId }) => {
 
 // Main App Content (wrapped by AuthProvider and Router)
 const AppContent = () => {
-  const { isAuthenticated, loading: authLoading, role, backendAuthenticated } = useAuth();
+  const { isAuthenticated, loading: authLoading, role: _role, backendAuthenticated } = useAuth();
   const { data, loading, handleUpdate, handleFinanceUpdate } = useApiData(backendAuthenticated);
   const [toasts, setToasts] = useState([]);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
