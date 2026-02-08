@@ -1,4 +1,4 @@
-﻿import React, { useMemo, useState } from "react";
+﻿import { useMemo, useState } from "react";
 import GoogleService from "../services/googleService";
 
 function pretty(obj) {
@@ -14,7 +14,6 @@ export default function HealthCheck() {
   const [busy, setBusy] = useState(false);
   const [log, setLog] = useState("");
   const [sheetName, setSheetName] = useState("clients");
-  const [allowWrite, setAllowWrite] = useState(false);
 
   const appendLog = (line) => setLog((p) => (p ? `${p}\n${line}` : line));
 

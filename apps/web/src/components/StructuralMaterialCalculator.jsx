@@ -10,12 +10,11 @@
  *  - ./structural-calc/ComponentModal.jsx — 新增/編輯對話框
  */
 
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { Calculator } from 'lucide-react';
 import {
-    REBAR_SPECS, REBAR_GRADES, CONCRETE_GRADES,
-    COMPONENT_TYPES, REBAR_RATES, STAIR_TYPES,
-    COMPONENT_PRESETS,
+    CONCRETE_GRADES,
+    COMPONENT_TYPES,
 } from './structural-calc/constants';
 import { formatNumber, generateId, calculateComponent } from './structural-calc/utils';
 import ComponentList from './structural-calc/ComponentList';
@@ -27,8 +26,8 @@ import ComponentModal from './structural-calc/ComponentModal';
 // ============================================
 const StructuralMaterialCalculator = () => {
     // 材料規格選擇
-    const [concreteGrade, setConcreteGrade] = useState('c280');
-    const [rebarGrade, setRebarGrade] = useState('SD420W');
+    const [concreteGrade, _setConcreteGrade] = useState('c280');
+    const [rebarGrade, _setRebarGrade] = useState('SD420W');
 
     // 構件清單
     const [components, setComponents] = useState([]);

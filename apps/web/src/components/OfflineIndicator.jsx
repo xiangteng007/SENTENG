@@ -5,7 +5,7 @@
  * Shows a banner when offline with pending queue count.
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Wifi, WifiOff, RefreshCw, AlertCircle } from 'lucide-react';
 import { useNetworkStatus } from '../hooks/useNetworkStatus';
 import { getQueueStats, processPendingRequests } from '../services/offlineQueue';

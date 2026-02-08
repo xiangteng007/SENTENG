@@ -5,8 +5,8 @@
  * Displays side-by-side comparison and lets user choose which version to keep.
  */
 
-import React, { useState } from 'react';
-import { AlertTriangle, Check, X, RefreshCw, Clock, Server, Smartphone } from 'lucide-react';
+import { useState } from 'react';
+import { AlertTriangle, Check, RefreshCw, Clock, Server, Smartphone } from 'lucide-react';
 
 /**
  * Conflict resolver modal component
