@@ -10,7 +10,7 @@ import {
 import { SectionTitle } from '../components/common/Indicators';
 
 import QuotationEditor from './QuotationEditor';
-import { useConfirm } from '../components/common/ConfirmModal';
+import { useConfirm } from '../components/common/useConfirm';
 import QuotationService, {
     QUOTATION_STATUS,
     QUOTATION_STATUS_LABELS,

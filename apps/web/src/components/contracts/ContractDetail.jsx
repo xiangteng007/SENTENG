@@ -1,5 +1,5 @@
 // React 17+ JSX transform
-import { useConfirm } from '../common/ConfirmModal';
+import { useConfirm } from '../common/useConfirm';
 import ContractService, {
     CONTRACT_STATUS,
     CONTRACT_TYPE_LABELS,

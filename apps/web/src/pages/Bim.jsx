@@ -17,7 +17,7 @@ import {
   Edit2,
   Trash2
 } from 'lucide-react';
-import { useConfirm } from '../components/common/ConfirmModal';
+import { useConfirm } from '../components/common/useConfirm';
 
 // Edit Model Modal Component
 const EditModelModal = ({ model, categories, onClose, onSuccess }) => {

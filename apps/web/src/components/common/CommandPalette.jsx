@@ -139,6 +139,19 @@ const CommandPalette = ({ isOpen, onClose }) => {
     }
   }, [isOpen]);
 
+  // Handle selection
+  const handleSelect = useCallback((item) => {
+    // Save to recent pages
+    if (item.path && !item.action) {
+      const newRecent = [item.id, ...recentPages.filter(id => id !== item.id)].slice(0, 10);
+      localStorage.setItem('senteng_recent_pages', JSON.stringify(newRecent));
+    }
+
+    // Navigate
+    navigate(item.path);
+    onClose();
+  }, [navigate, onClose, recentPages]);
+
   // Keyboard navigation
   const handleKeyDown = useCallback((e) => {
     switch (e.key) {
@@ -161,20 +174,7 @@ const CommandPalette = ({ isOpen, onClose }) => {
         onClose();
         break;
     }
-  }, [allResults, selectedIndex, onClose]);
-
-  // Handle selection
-  const handleSelect = useCallback((item) => {
-    // Save to recent pages
-    if (item.path && !item.action) {
-      const newRecent = [item.id, ...recentPages.filter(id => id !== item.id)].slice(0, 10);
-      localStorage.setItem('senteng_recent_pages', JSON.stringify(newRecent));
-    }
-
-    // Navigate
-    navigate(item.path);
-    onClose();
-  }, [navigate, onClose, recentPages]);
+  }, [allResults, selectedIndex, onClose, handleSelect]);
 
   // Global keyboard shortcut
   useEffect(() => {

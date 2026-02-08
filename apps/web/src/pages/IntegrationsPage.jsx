@@ -9,7 +9,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { integrationsApi } from '../services/integrationsApi';
 import { SyncStatusBadge } from '../components/common/SyncStatusBadge';
-import { useConfirm } from '../components/common/ConfirmModal';
+import { useConfirm } from '../components/common/useConfirm';
 
 // Card 元件
 const Card = ({ title, children }) => (

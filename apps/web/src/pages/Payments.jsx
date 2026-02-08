@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useMemo } from 'react';
-import { useConfirm } from '../components/common/ConfirmModal';
+import { useConfirm } from '../components/common/useConfirm';
 import {
     FileText, Plus, Search, Filter, Eye, Edit2, Trash2, Send,
     Check, X, DollarSign, Calendar, Building2, Users, Receipt,

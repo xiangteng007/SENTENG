@@ -20,7 +20,7 @@ import {
   CheckCircle
 } from 'lucide-react';
 import api from '../services/api';
-import { useConfirm } from '../components/common/ConfirmModal';
+import { useConfirm } from '../components/common/useConfirm';
 
 // Edit Device Modal Component - Enhanced Design
 const EditDeviceModal = ({ device, deviceTypes, onClose, onSuccess }) => {

@@ -5,22 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { Copy, Check, Plus, Calculator } from 'lucide-react';
-
-// ============================================
-// 工具函數
-// ============================================
-
-export const formatNumber = (num, decimals = 2) => {
-    if (isNaN(num) || num === null) return '-';
-    return Number(num).toLocaleString('zh-TW', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: decimals
-    });
-};
-
-export const applyWastage = (value, wastagePercent) => {
-    return value * (1 + wastagePercent / 100);
-};
+import { formatNumber } from './calculatorUtils';
 
 // ============================================
 // 共用輸入元件
@@ -156,6 +141,7 @@ export const CostInput = ({ label, quantity, unit, unitLabel, vendors = [], onCh
             subtotal,
             note
         });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedVendor, spec, price, note, quantity]);
 
     return (

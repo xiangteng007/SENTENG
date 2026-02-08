@@ -16,7 +16,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import api from '../services/api';
-import { useConfirm } from '../components/common/ConfirmModal';
+import { useConfirm } from '../components/common/useConfirm';
 
 // Edit Insurance Modal Component - Enhanced Design
 const EditInsuranceModal = ({ policy, insuranceTypes, onClose, onSuccess }) => {

@@ -1,6 +1,6 @@
 ﻿// User Management Page (Super Admin Only)
 import { useState, useEffect } from 'react';
-import { useConfirm } from '../components/common/ConfirmModal';
+import { useConfirm } from '../components/common/useConfirm';
 import {
     Users,
     Shield,

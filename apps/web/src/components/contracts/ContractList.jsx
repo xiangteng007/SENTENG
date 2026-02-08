@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useConfirm } from '../common/ConfirmModal';
+import { useConfirm } from '../common/useConfirm';
 import {
     FileText, Plus, Search, CheckCircle, Clock, DollarSign, FileSignature
 } from 'lucide-react';

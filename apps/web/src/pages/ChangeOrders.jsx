@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { useConfirm } from '../components/common/ConfirmModal';
+import { useConfirm } from '../components/common/useConfirm';
 import {
     ChangeOrderService,
     CHANGE_ORDER_STATUS,

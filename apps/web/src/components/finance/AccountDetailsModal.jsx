@@ -12,9 +12,9 @@ export const AccountDetailsModal = ({ isOpen, onClose, account, allTransactions 
     const accountNumber = account?.number || '';
     const accountBalance = account?.balance || 0;
 
-    // Safety check for allTransactions
-    const safeTransactions = Array.isArray(allTransactions) ? allTransactions : [];
-    const safeAccount = account || { id: accountId, name: accountName, bank: accountBank, number: accountNumber, balance: accountBalance };
+    // Safety check for allTransactions — memoized to avoid reference changes
+    const safeTransactions = useMemo(() => Array.isArray(allTransactions) ? allTransactions : [], [allTransactions]);
+    const _safeAccount = account || { id: accountId, name: accountName, bank: accountBank, number: accountNumber, balance: accountBalance };
 
     // Filter transactions for this account (must be called before any conditional return)
     const accountTransactions = useMemo(() => {

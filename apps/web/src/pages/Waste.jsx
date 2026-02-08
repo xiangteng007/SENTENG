@@ -18,7 +18,7 @@ import {
   CheckCircle
 } from 'lucide-react';
 import api from '../services/api';
-import { useConfirm } from '../components/common/ConfirmModal';
+import { useConfirm } from '../components/common/useConfirm';
 
 // Edit Waste Modal Component
 const EditWasteModal = ({ record, wasteTypes, onClose, onSuccess }) => {

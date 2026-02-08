@@ -1,7 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { Plus, Search, Package, Calendar, DollarSign, Building2, FileText, CheckCircle, Clock, AlertCircle, X, Truck, ChevronDown, ChevronUp, Edit2, Trash2 } from 'lucide-react';
 import api from '../services/api';
-import { useConfirm } from '../components/common/ConfirmModal';
+import { useConfirm } from '../components/common/useConfirm';
 
 const STATUS_CONFIG = {
   DRAFT: { label: '草稿', color: 'bg-gray-100 text-gray-700', icon: FileText },

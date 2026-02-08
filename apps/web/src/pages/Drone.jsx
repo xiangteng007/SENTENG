@@ -18,7 +18,7 @@ import {
   Trash2
 } from 'lucide-react';
 import api from '../services/api';
-import { useConfirm } from '../components/common/ConfirmModal';
+import { useConfirm } from '../components/common/useConfirm';
 
 // Edit Flight Modal Component - Enhanced Design
 const EditFlightModal = ({ flight, projects, onClose, onSuccess }) => {

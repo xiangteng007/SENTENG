@@ -16,7 +16,7 @@ import {
   Trash2
 } from 'lucide-react';
 import api from '../services/api';
-import { useConfirm } from '../components/common/ConfirmModal';
+import { useConfirm } from '../components/common/useConfirm';
 
 // Edit Checklist Modal Component
 const EditChecklistModal = ({ checklist, categories, onClose, onSuccess }) => {
