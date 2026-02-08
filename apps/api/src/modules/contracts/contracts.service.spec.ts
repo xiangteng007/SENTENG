@@ -24,12 +24,19 @@ describe('ContractsService', () => {
     createdBy: 'user-123',
   };
 
+  const mockQueryBuilder = {
+    where: jest.fn().mockReturnThis(),
+    orderBy: jest.fn().mockReturnThis(),
+    getOne: jest.fn().mockResolvedValue(null),
+  };
+
   const mockRepository = {
     find: jest.fn(),
     findOne: jest.fn(),
     create: jest.fn(),
     save: jest.fn(),
     count: jest.fn(),
+    createQueryBuilder: jest.fn().mockReturnValue(mockQueryBuilder),
   };
 
   const mockQuotationsService = {
@@ -38,9 +45,15 @@ describe('ContractsService', () => {
 
   const mockProjectsService = {
     findOne: jest.fn(),
+    update: jest.fn(),
   };
 
   beforeEach(async () => {
+    mockQueryBuilder.where.mockReturnThis();
+    mockQueryBuilder.orderBy.mockReturnThis();
+    mockQueryBuilder.getOne.mockResolvedValue(null);
+    mockRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ContractsService,
@@ -66,6 +79,12 @@ describe('ContractsService', () => {
 
     // Reset mocks
     jest.clearAllMocks();
+
+    // Re-setup createQueryBuilder after clearAllMocks
+    mockQueryBuilder.where.mockReturnThis();
+    mockQueryBuilder.orderBy.mockReturnThis();
+    mockQueryBuilder.getOne.mockResolvedValue(null);
+    mockRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
   });
 
   describe('findAll', () => {
@@ -117,7 +136,6 @@ describe('ContractsService', () => {
         originalAmount: 300000,
       };
       
-      mockRepository.count.mockResolvedValue(0);
       mockRepository.create.mockReturnValue({ ...mockContract, ...createDto });
       mockRepository.save.mockResolvedValue({ ...mockContract, ...createDto });
       
@@ -129,14 +147,15 @@ describe('ContractsService', () => {
   });
 
   describe('sign', () => {
-    it('should sign a contract', async () => {
-      const draftContract = { ...mockContract, status: 'CTR_PENDING' };
+    it('should sign a draft contract', async () => {
+      const draftContract = { ...mockContract, status: 'CTR_DRAFT' };
       mockRepository.findOne.mockResolvedValue(draftContract);
-      mockRepository.save.mockResolvedValue({ ...draftContract, status: 'CTR_SIGNED' });
+      mockRepository.save.mockResolvedValue({ ...draftContract, status: 'CTR_ACTIVE' });
+      mockProjectsService.update.mockResolvedValue({} as any);
       
       const result = await service.sign('CON-2026-001', '2026-02-01', 'user-123');
       
-      expect(result.status).toBe('CTR_SIGNED');
+      expect(result.status).toBe('CTR_ACTIVE');
     });
 
     it('should throw BadRequestException if contract already signed', async () => {
@@ -150,10 +169,10 @@ describe('ContractsService', () => {
   });
 
   describe('complete', () => {
-    it('should complete a signed contract', async () => {
-      const signedContract = { ...mockContract, status: 'CTR_SIGNED' };
-      mockRepository.findOne.mockResolvedValue(signedContract);
-      mockRepository.save.mockResolvedValue({ ...signedContract, status: 'CTR_COMPLETED' });
+    it('should complete an active contract', async () => {
+      const activeContract = { ...mockContract, status: 'CTR_ACTIVE' };
+      mockRepository.findOne.mockResolvedValue(activeContract);
+      mockRepository.save.mockResolvedValue({ ...activeContract, status: 'CTR_COMPLETED' });
       
       const result = await service.complete('CON-2026-001', 'user-123');
       

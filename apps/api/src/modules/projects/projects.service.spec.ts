@@ -7,6 +7,7 @@ import { ProjectPhase } from './project-phase.entity';
 import { ProjectVendor } from './project-vendor.entity';
 import { ProjectTask, TaskStatus } from './project-task.entity';
 import { NotFoundException } from '@nestjs/common';
+import { IdGeneratorService } from '../../core/id-generator/id-generator.service';
 
 describe('ProjectsService', () => {
   let service: ProjectsService;
@@ -67,6 +68,11 @@ describe('ProjectsService', () => {
     delete: jest.fn(),
   };
 
+  const mockIdGenerator = {
+    generate: jest.fn().mockResolvedValue('PRJ-202602-0001'),
+    generateForTable: jest.fn().mockResolvedValue('PRJ-202602-0001'),
+  };
+
   beforeEach(async () => {
     // Reset mock implementations
     mockQueryBuilder.leftJoinAndSelect.mockReturnThis();
@@ -98,6 +104,10 @@ describe('ProjectsService', () => {
         {
           provide: getRepositoryToken(ProjectTask),
           useValue: mockTaskRepo,
+        },
+        {
+          provide: IdGeneratorService,
+          useValue: mockIdGenerator,
         },
       ],
     }).compile();

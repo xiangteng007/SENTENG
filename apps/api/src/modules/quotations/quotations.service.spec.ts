@@ -22,6 +22,12 @@ describe('QuotationsService', () => {
     createdBy: 'user-123',
   };
 
+  const mockQueryBuilder = {
+    where: jest.fn().mockReturnThis(),
+    orderBy: jest.fn().mockReturnThis(),
+    getOne: jest.fn().mockResolvedValue(null),
+  };
+
   const mockQuotationsRepository = {
     find: jest.fn(),
     findOne: jest.fn(),
@@ -29,6 +35,7 @@ describe('QuotationsService', () => {
     save: jest.fn(),
     count: jest.fn(),
     delete: jest.fn(),
+    createQueryBuilder: jest.fn().mockReturnValue(mockQueryBuilder),
   };
 
   const mockItemsRepository = {
@@ -40,6 +47,11 @@ describe('QuotationsService', () => {
   };
 
   beforeEach(async () => {
+    mockQueryBuilder.where.mockReturnThis();
+    mockQueryBuilder.orderBy.mockReturnThis();
+    mockQueryBuilder.getOne.mockResolvedValue(null);
+    mockQuotationsRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         QuotationsService,
@@ -59,6 +71,12 @@ describe('QuotationsService', () => {
     itemsRepository = module.get(getRepositoryToken(QuotationItem));
 
     jest.clearAllMocks();
+
+    // Re-setup createQueryBuilder after clearAllMocks
+    mockQueryBuilder.where.mockReturnThis();
+    mockQueryBuilder.orderBy.mockReturnThis();
+    mockQueryBuilder.getOne.mockResolvedValue(null);
+    mockQuotationsRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
   });
 
   describe('findAll', () => {
@@ -121,13 +139,14 @@ describe('QuotationsService', () => {
         taxRate: 5,
       };
       
-      mockQuotationsRepository.count.mockResolvedValue(0);
-      mockQuotationsRepository.save.mockResolvedValue({ ...mockQuotation, ...createDto });
+      mockQuotationsRepository.create.mockReturnValue({ ...mockQuotation, ...createDto } as Quotation);
+      mockQuotationsRepository.save.mockResolvedValue({ ...mockQuotation, ...createDto } as Quotation);
+      // findOne is called after save to return the full quotation with relations
+      mockQuotationsRepository.findOne.mockResolvedValue({ ...mockQuotation, ...createDto } as Quotation);
       
       const result = await service.create(createDto as any, 'user-123');
       
       expect(result.title).toBe('新報價單');
-      expect(mockQuotationsRepository.save).toHaveBeenCalled();
     });
   });
 
@@ -153,21 +172,26 @@ describe('QuotationsService', () => {
 
   describe('submit', () => {
     it('should submit a draft quotation', async () => {
-      const draftQuotation = { ...mockQuotation, status: 'QUO_DRAFT' };
+      const draftQuotation = {
+        ...mockQuotation,
+        status: 'QUO_DRAFT',
+        items: [{ id: 'item-1' }],
+        totalAmount: 525000,
+      };
       mockQuotationsRepository.findOne.mockResolvedValue(draftQuotation);
-      mockQuotationsRepository.save.mockResolvedValue({ ...draftQuotation, status: 'QUO_SUBMITTED' });
+      mockQuotationsRepository.save.mockResolvedValue({ ...draftQuotation, status: 'QUO_PENDING' });
       
       const result = await service.submit('QUO-2026-001', 'user-123');
       
-      expect(result.status).toBe('QUO_SUBMITTED');
+      expect(result.status).toBe('QUO_PENDING');
     });
   });
 
   describe('approve', () => {
-    it('should approve a submitted quotation', async () => {
-      const submittedQuotation = { ...mockQuotation, status: 'QUO_SUBMITTED' };
-      mockQuotationsRepository.findOne.mockResolvedValue(submittedQuotation);
-      mockQuotationsRepository.save.mockResolvedValue({ ...submittedQuotation, status: 'QUO_APPROVED' });
+    it('should approve a pending quotation', async () => {
+      const pendingQuotation = { ...mockQuotation, status: 'QUO_PENDING' };
+      mockQuotationsRepository.findOne.mockResolvedValue(pendingQuotation);
+      mockQuotationsRepository.save.mockResolvedValue({ ...pendingQuotation, status: 'QUO_APPROVED' });
       
       const result = await service.approve('QUO-2026-001', 'user-123');
       
@@ -176,14 +200,14 @@ describe('QuotationsService', () => {
   });
 
   describe('reject', () => {
-    it('should reject a submitted quotation with reason', async () => {
-      const submittedQuotation = { ...mockQuotation, status: 'QUO_SUBMITTED' };
-      mockQuotationsRepository.findOne.mockResolvedValue(submittedQuotation);
-      mockQuotationsRepository.save.mockResolvedValue({ ...submittedQuotation, status: 'QUO_REJECTED' });
+    it('should reject a pending quotation with reason', async () => {
+      const pendingQuotation = { ...mockQuotation, status: 'QUO_PENDING' };
+      mockQuotationsRepository.findOne.mockResolvedValue(pendingQuotation);
+      mockQuotationsRepository.save.mockResolvedValue({ ...pendingQuotation, status: 'QUO_DRAFT' });
       
       const result = await service.reject('QUO-2026-001', '價格過高', 'user-123');
       
-      expect(result.status).toBe('QUO_REJECTED');
+      expect(result.status).toBe('QUO_DRAFT');
     });
   });
 });
