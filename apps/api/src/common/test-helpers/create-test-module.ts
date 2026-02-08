@@ -122,7 +122,7 @@ export function createMockRepository(options: MockRepositoryOptions = {}) {
  * ```
  */
 export function createMockRepoProvider(
-  entity: Function,
+  entity: new (...args: any[]) => any,
   options: MockRepositoryOptions = {},
 ) {
   const mockRepo = createMockRepository(options);
