@@ -59,7 +59,7 @@ export const initSentry = () => {
 };
 
 // Error Boundary HOC for React
-export const withSentryErrorBoundary = (Component, options = {}) => {
+export const withSentryErrorBoundary = (Component, _options = {}) => {
   // Uncomment when @sentry/react is installed:
   // return Sentry.withErrorBoundary(Component, {
   //   fallback: options.fallback || <ErrorFallback />,
@@ -69,14 +69,14 @@ export const withSentryErrorBoundary = (Component, options = {}) => {
 };
 
 // Manual error capture
-export const captureError = (error, context = {}) => {
+export const captureError = (error, _context = {}) => {
   console.error('[Sentry] Captured error:', error);
   // Uncomment when @sentry/react is installed:
   // Sentry.captureException(error, { extra: context });
 };
 
 // User identification
-export const setUser = (user) => {
+export const setUser = (_user) => {
   // Uncomment when @sentry/react is installed:
   // Sentry.setUser({
   //   id: user.id,
@@ -86,7 +86,7 @@ export const setUser = (user) => {
 };
 
 // Custom breadcrumb
-export const addBreadcrumb = (message, category = 'navigation', level = 'info') => {
+export const addBreadcrumb = (_message, _category = 'navigation', _level = 'info') => {
   // Uncomment when @sentry/react is installed:
   // Sentry.addBreadcrumb({
   //   message,

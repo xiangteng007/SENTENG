@@ -74,7 +74,7 @@ export const exportToPDF = async (data, filename, options = {}) => {
     orientation = 'portrait', // portrait or landscape
     fontSize = 10,
     headerColor = [26, 26, 26], // Zinc-900
-    accentColor = [212, 175, 55], // Gold #D4AF37
+    accentColor: _accentColor = [212, 175, 55], // Gold #D4AF37
   } = options;
 
   if (!data || data.length === 0) {

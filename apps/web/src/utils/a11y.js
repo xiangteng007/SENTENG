@@ -122,7 +122,7 @@ export const useLiveAnnouncer = () => {
 
 // Arrow key navigation for lists/grids
 export const useArrowNavigation = (itemRefs, options = {}) => {
-  const { loop = true, orientation = 'vertical' } = options;
+  const { loop = true, orientation: _orientation = 'vertical' } = options;
 
   const handleKeyDown = React.useCallback((e, currentIndex) => {
     const items = itemRefs.current.filter(Boolean);

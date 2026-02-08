@@ -6,7 +6,7 @@
  */
 
 import { changeOrdersApi } from './api';
-import { QuotationService, calculateLineAmount } from './QuotationService';
+import { calculateLineAmount } from './QuotationService';
 
 // ============================================
 // 常數定義

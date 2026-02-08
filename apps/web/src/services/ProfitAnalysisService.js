@@ -5,10 +5,8 @@
  * ⚠️ 已整合 Backend API - 資料儲存於 PostgreSQL
  */
 
-import { costEntriesApi, contractsApi } from './api';
+import { costEntriesApi } from './api';
 import ContractService, { CONTRACT_STATUS } from './ContractService';
-import PaymentService, { PAYMENT_STATUS } from './PaymentService';
-import ChangeOrderService from './ChangeOrderService';
 
 // ============================================
 // 常數定義

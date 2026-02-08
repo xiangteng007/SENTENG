@@ -308,7 +308,7 @@ export const deleteUser = async (uid) => {
 export const initializeDefaultRoles = async () => {
     try {
         // First check if roles collection is accessible
-        const testDoc = await getDoc(doc(db, 'roles', 'user'));
+        const _testDoc = await getDoc(doc(db, 'roles', 'user'));
 
         for (const [roleName, roleConfig] of Object.entries(DEFAULT_ROLES)) {
             const roleDoc = await getDoc(doc(db, 'roles', roleName));

@@ -7,7 +7,6 @@
  */
 
 import { quotationsApi } from './api';
-import { GoogleService } from './GoogleService';
 
 // Re-export constants for backward compatibility
 export {

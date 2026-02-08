@@ -5,7 +5,7 @@
  * ⚠️ 已整合 Backend API - 資料儲存於 PostgreSQL
  */
 
-import { contractsApi, quotationsApi } from './api';
+import { contractsApi } from './api';
 
 // ============================================
 // 常數定義

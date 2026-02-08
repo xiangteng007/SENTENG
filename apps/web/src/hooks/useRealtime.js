@@ -5,7 +5,7 @@
  * Connects to the /realtime namespace and handles sync status updates.
  */
 
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { io } from 'socket.io-client';
 import { api } from '../services/api';
 
@@ -102,6 +102,7 @@ export function useRealtime(token, options = {}) {
             socket.disconnect();
             socketRef.current = null;
         };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token]);
 
     /**

@@ -204,6 +204,10 @@ async function bootstrap() {
     .addTag("profit-analysis", "毛利分析")
     .addTag("storage", "檔案儲存")
     .addTag("realtime", "即時通訊")
+    .addTag("contacts", "聯絡人管理")
+    .addTag("notifications", "通知服務")
+    .addTag("reports", "報表匯出")
+    .addTag("supply-chain", "供應鏈管理")
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
