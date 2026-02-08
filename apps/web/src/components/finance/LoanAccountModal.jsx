@@ -2,8 +2,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Modal } from '../common/Modal';
 import { InputField } from '../common/InputField';
-import { LoanCalculator, calculateEqualPayment, calculateEqualPrincipal } from './LoanCalculator';
-import { Building2, Percent, Calendar, Calculator } from 'lucide-react';
+import { LoanCalculator } from './LoanCalculator';
+import { calculateEqualPayment, calculateEqualPrincipal } from './loanCalculations';
+import { Building2, Percent } from 'lucide-react';
 
 /**
  * 貸款帳戶新增/編輯 Modal

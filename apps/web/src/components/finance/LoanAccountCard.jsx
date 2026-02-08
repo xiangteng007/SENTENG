@@ -1,6 +1,6 @@
 ﻿
 import { useState } from 'react';
-import { Building2, Percent, Calendar, TrendingDown, ChevronDown, ChevronUp, AlertCircle } from 'lucide-react';
+import { Building2, Percent, Calendar, ChevronDown, ChevronUp, AlertCircle } from 'lucide-react';
 
 /**
  * 貸款帳戶卡片元件

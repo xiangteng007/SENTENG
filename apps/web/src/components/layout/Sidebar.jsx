@@ -5,7 +5,7 @@
  */
 
 import React, { useState, useMemo, useCallback } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Calendar as CalendarIcon, Users, Building2, 
   DollarSign, Package, FileText, CreditCard, Briefcase, BarChart3,
@@ -220,7 +220,6 @@ const SidebarGroup = ({ group, items, activeId, collapsed, expandedGroups, onTog
 
 const Sidebar = ({ activeTab, onNavigate, isMobileOpen, onMobileClose }) => {
   const navigate = useNavigate();
-  const location = useLocation();
   const { user, signOut, canAccessPage, role } = useAuth();
   
   const [collapsed, setCollapsed] = useState(false);

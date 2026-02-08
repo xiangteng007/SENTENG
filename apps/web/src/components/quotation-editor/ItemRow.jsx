@@ -11,7 +11,7 @@ import { ITEM_TYPES, calculateLineAmount } from '../../services/QuotationService
 
 const ItemRow = ({
     item,
-    index,
+    _index,
     level = 0,
     isEditing,
     onUpdate,
