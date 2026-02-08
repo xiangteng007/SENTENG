@@ -11,8 +11,8 @@ export interface StateTransition<S extends string, E extends string> {
   from: S | S[];
   event: E;
   to: S;
-  guard?: (context: any) => boolean;
-  action?: (context: any) => void;
+  guard?: (context: unknown) => boolean;
+  action?: (context: unknown) => void;
 }
 
 // ============================================
@@ -198,7 +198,7 @@ export class StateMachine<S extends string, E extends string> {
     );
   }
 
-  transition(event: E, context?: any): S {
+  transition(event: E, context?: unknown): S {
     const transition = this.transitions.find(
       (t) =>
         (Array.isArray(t.from)

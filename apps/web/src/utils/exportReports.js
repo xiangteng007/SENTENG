@@ -4,8 +4,7 @@
  * Support for CSV, Excel, and PDF export formats
  */
 
-import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
+// jspdf and jspdf-autotable are loaded dynamically to reduce initial bundle size (~400KB)
 
 // ==================== CSV Export ====================
 export const exportToCSV = (data, filename, headers = null) => {
@@ -67,8 +66,8 @@ export const exportToExcel = (data, filename, headers = null) => {
   downloadFile(content, `${filename}.xls`, 'application/vnd.ms-excel;charset=utf-8;');
 };
 
-// ==================== PDF Export ====================
-export const exportToPDF = (data, filename, options = {}) => {
+// ==================== PDF Export (Dynamic Import) ====================
+export const exportToPDF = async (data, filename, options = {}) => {
   const {
     title = '報表',
     headers = null,
@@ -82,6 +81,10 @@ export const exportToPDF = (data, filename, options = {}) => {
     console.warn('No data to export');
     return;
   }
+
+  // Dynamic import: only load jspdf when actually exporting PDF (~400KB saved)
+  const { jsPDF } = await import('jspdf');
+  await import('jspdf-autotable');
 
   const doc = new jsPDF(orientation, 'mm', 'a4');
   const keys = headers || Object.keys(data[0]);

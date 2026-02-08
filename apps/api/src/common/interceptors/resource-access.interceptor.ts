@@ -32,7 +32,7 @@ export class ResourceAccessInterceptor implements NestInterceptor {
 
   constructor(private reflector: Reflector) {}
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const config = this.reflector.get<ResourceAccessConfig>(
       RESOURCE_ACCESS_KEY,
       context.getHandler(),
@@ -90,7 +90,7 @@ export class ResourceAccessInterceptor implements NestInterceptor {
   }
 
   private checkOwnership(
-    item: any,
+    item: Record<string, unknown>,
     userId: string,
     ownerField: string,
   ): boolean {
@@ -98,10 +98,10 @@ export class ResourceAccessInterceptor implements NestInterceptor {
 
     // 支援巢狀欄位 (e.g., 'project.createdBy')
     const fields = ownerField.split(".");
-    let value = item;
+    let value: unknown = item;
 
     for (const field of fields) {
-      value = value?.[field];
+      value = (value as Record<string, unknown>)?.[field];
     }
 
     return value === userId;

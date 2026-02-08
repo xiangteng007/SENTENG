@@ -22,6 +22,7 @@ import {
   ApiOperation,
   ApiResponse,
 } from "@nestjs/swagger";
+import { ConfigService } from "@nestjs/config";
 import type { Response } from "express";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
 import { PermissionGuard } from "../../common/guards/permission.guard";
@@ -60,6 +61,7 @@ export class IntegrationsController {
     private readonly oauthService: GoogleOAuthService,
     private readonly calendarSyncService: CalendarSyncService,
     private readonly contactsSyncService: ContactsSyncService,
+    private readonly configService: ConfigService,
   ) {}
 
   // ========================================
@@ -118,7 +120,10 @@ export class IntegrationsController {
     const state = request.query.state as string | undefined;
     const error = request.query.error as string | undefined;
 
-    const frontendUrl = process.env.FRONTEND_URL || "https://senteng.co";
+    const frontendUrl = this.configService.get(
+      "FRONTEND_URL",
+      "https://senteng.co",
+    );
 
     if (error) {
       return res.redirect(

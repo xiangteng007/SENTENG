@@ -10,9 +10,9 @@ import { WorkOrder } from "../../work-orders/entities/work-order.entity";
 import { User } from "../../../users/user.entity";
 
 /**
- * FlightLog (飛行紀錄)
+ * FlightLog (飛行紀�?
  *
- * 記錄每次飛行的詳細資訊。
+ * 記錄每次飛行的詳細資訊�?
  */
 @Entity("flight_logs")
 export class FlightLog {
@@ -106,16 +106,16 @@ export class FlightLog {
   batteryEnd: number;
 
   /**
-   * 軌跡摘要 (簡化的航跡資料)
+   * 軌跡摘要 (簡化的航跡資�?
    */
   @Column({ name: "trajectory_summary", type: "jsonb", nullable: true })
-  trajectorySummary: any;
+  trajectorySummary: Record<string, unknown>;
 
   /**
    * 異常事件
    */
   @Column({ type: "jsonb", nullable: true })
-  anomalies: any;
+  anomalies: Record<string, unknown>;
 
   @Column({ length: 20, default: "COMPLETED" })
   status: string;
@@ -125,9 +125,9 @@ export class FlightLog {
 }
 
 /**
- * OperationLog (作業紀錄)
+ * OperationLog (作業紀�?
  *
- * 記錄具體的作業內容（噴灑、清洗等）。
+ * 記錄具體的作業內容（噴灑、清洗等）�?
  */
 @Entity("operation_logs")
 export class OperationLog {
@@ -169,7 +169,7 @@ export class OperationLog {
   volumeUsed: number;
 
   @Column({ type: "jsonb", nullable: true })
-  parameters: any;
+  parameters: Record<string, unknown>;
 
   @Column({ type: "text", nullable: true })
   notes: string;

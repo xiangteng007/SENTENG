@@ -443,7 +443,7 @@ export class CmmService {
     return this.buildCalculationResult(
       run,
       run.materialBreakdown || [],
-      run.errorLog || [],
+      (Array.isArray(run.errorLog) ? run.errorLog : []) as { itemCode: string; message: string }[],
     );
   }
 

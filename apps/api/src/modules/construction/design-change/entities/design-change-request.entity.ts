@@ -13,10 +13,10 @@ import { Contract } from "../../../contracts/contract.entity";
 
 /**
  * DesignChangeRequest (設計變更)
- * DCR-001: 區分一般變更設計與工程變更令(CO)
+ * DCR-001: 區分一般變更設計與工程變更�?CO)
  *
- * 變更設計 = 設計圖/規格變更
- * 工程變更令 = 合約金額變更
+ * 變更設計 = 設計�?規格變更
+ * 工程變更�?= 合約金額變更
  */
 @Entity("design_change_requests")
 @Index(["projectId", "requestDate"])
@@ -71,13 +71,13 @@ export class DesignChangeRequest {
   requestedBy: string;
 
   /**
-   * 狀態
+   * 狀�?
    */
   @Column({ length: 30, default: "DRAFT" })
   status: string; // DRAFT | SUBMITTED | UNDER_REVIEW | APPROVED | REJECTED | IMPLEMENTED
 
   /**
-   * 是否產生工程變更令 (CO)
+   * 是否產生工程變更�?(CO)
    */
   @Column({ name: "requires_change_order", default: false })
   requiresChangeOrder: boolean;
@@ -95,10 +95,10 @@ export class DesignChangeRequest {
   scheduleImpactDays: number; // 正數=延長, 負數=縮短
 
   @Column({ name: "affected_areas", type: "text", nullable: true })
-  affectedAreas: string; // 受影響區域
+  affectedAreas: string; // 受影響區�?
 
   @Column({ name: "affected_drawings", type: "jsonb", nullable: true })
-  affectedDrawings: any; // [{ drawingNo, revision, description }]
+  affectedDrawings: Record<string, unknown>; // [{ drawingNo, revision, description }]
 
   /**
    * 審核流程
@@ -122,16 +122,16 @@ export class DesignChangeRequest {
    * 圖說版本管理
    */
   @Column({ name: "before_revision", length: 20, nullable: true })
-  beforeRevision: string; // 變更前版本
+  beforeRevision: string; // 變更前版�?
 
   @Column({ name: "after_revision", length: 20, nullable: true })
-  afterRevision: string; // 變更後版本
+  afterRevision: string; // 變更後版�?
 
   /**
    * 附件
    */
   @Column({ type: "jsonb", nullable: true })
-  attachments: any; // [{ url, filename, type, uploadedAt }]
+  attachments: Record<string, unknown>; // [{ url, filename, type, uploadedAt }]
 
   @Column({ name: "created_by", length: 36, nullable: true })
   createdBy: string;

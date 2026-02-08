@@ -14,7 +14,9 @@ import {
   HttpException,
   HttpStatus,
   Logger,
+  Inject,
 } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -35,6 +37,8 @@ import {
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
   private readonly logger = new Logger(AllExceptionsFilter.name);
+
+  constructor(private readonly configService: ConfigService) {}
 
   catch(exception: unknown, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
@@ -122,7 +126,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
   private getMessage(exception: unknown, errorCode: string): string {
     // 生產環境隱藏內部錯誤訊息
     if (
-      process.env.NODE_ENV === "production" &&
+      this.configService.get("NODE_ENV") === "production" &&
       errorCode === "INTERNAL_ERROR"
     ) {
       return getErrorMessage("INTERNAL_ERROR", "zh");

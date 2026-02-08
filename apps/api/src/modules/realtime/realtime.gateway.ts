@@ -31,7 +31,7 @@ export interface RealtimePayload {
   event: RealtimeEvent;
   entityType: string;
   entityId: string;
-  data: any;
+  data: Record<string, unknown>;
   userId?: string;
   timestamp: string;
 }
@@ -164,7 +164,7 @@ export class RealtimeGateway
     entityType: string,
     entityId: string,
     action: "created" | "updated" | "deleted",
-    data: any,
+    data: Record<string, unknown>,
   ) {
     const payload: RealtimePayload = {
       event: RealtimeEvent.DATA_UPDATE,
@@ -187,7 +187,7 @@ export class RealtimeGateway
     userId: string,
     title: string,
     message: string,
-    metadata?: any,
+    metadata?: Record<string, unknown>,
   ) {
     const payload: RealtimePayload = {
       event: RealtimeEvent.NOTIFICATION,

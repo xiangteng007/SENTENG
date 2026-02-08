@@ -1,6 +1,5 @@
 name: CI
 
-
 on:
   push:
     branches:
@@ -10,11 +9,9 @@ on:
     branches:
       - main
 
-
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
-
 
     steps:
       - name: Checkout code
@@ -22,42 +19,34 @@ jobs:
         with:
           fetch-depth: 0
 
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "npm"
 
-
       - name: Install root dependencies
         run: npm install
-
 
       - name: Install API dependencies
         run: npm install
         working-directory: apps/api
 
-
       - name: Install Web dependencies
         run: npm install --legacy-peer-deps
         working-directory: apps/web
-
 
       - name: Lint API
         run: npm run lint
         working-directory: apps/api
 
-
       - name: Build API
         run: npm run build
         working-directory: apps/api
 
-
       - name: Lint Web
-        run: npm run lint || true
+        run: npm run lint
         working-directory: apps/web
-
 
       - name: Build Web
         run: npm run build
@@ -65,7 +54,16 @@ jobs:
         env:
           VITE_API_URL: https://example.com/api
 
-
       - name: Test API
-        run: npm run test || true
+        run: npm run test -- --coverage --coverageThreshold='{"global":{"lines":20}}'
         working-directory: apps/api
+
+      - name: Security Audit (API)
+        run: npm audit --audit-level=high || true
+        working-directory: apps/api
+        continue-on-error: true
+
+      - name: Security Audit (Web)
+        run: npm audit --audit-level=high || true
+        working-directory: apps/web
+        continue-on-error: true

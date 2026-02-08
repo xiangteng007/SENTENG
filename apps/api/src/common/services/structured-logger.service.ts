@@ -12,6 +12,7 @@
  */
 
 import { Injectable, LoggerService, ConsoleLogger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 
 interface LogContext {
   traceId?: string;
@@ -19,7 +20,7 @@ interface LogContext {
   projectId?: string;
   module?: string;
   action?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface StructuredLog {
@@ -33,9 +34,18 @@ interface StructuredLog {
 
 @Injectable()
 export class StructuredLoggerService implements LoggerService {
-  private readonly isProduction = process.env.NODE_ENV === "production";
-  private readonly serviceName = process.env.K_SERVICE || "senteng-api";
-  private readonly projectId = process.env.GCP_PROJECT_ID || "senteng-erp-pro";
+  private readonly isProduction: boolean;
+  private readonly serviceName: string;
+  private readonly projectId: string;
+
+  constructor(private readonly configService: ConfigService) {
+    this.isProduction = this.configService.get("NODE_ENV") === "production";
+    this.serviceName = this.configService.get("K_SERVICE", "senteng-api");
+    this.projectId = this.configService.get(
+      "GCP_PROJECT_ID",
+      "senteng-erp-pro",
+    );
+  }
 
   /**
    * 輸出 INFO 等級日誌
@@ -154,10 +164,19 @@ export class StructuredLoggerService implements LoggerService {
  * 請求追蹤日誌中間件
  * 自動附加 traceId 到每個請求
  */
+import { Request } from "express";
+
 export function createRequestLogger(logger: StructuredLoggerService) {
-  return (req: any, res: any, next: () => void) => {
+  return (
+    req: Request & Record<string, unknown>,
+    res: unknown,
+    next: () => void,
+  ) => {
+    const traceHeader = req.headers["x-cloud-trace-context"];
     const traceId =
-      req.headers["x-cloud-trace-context"]?.split("/")[0] ||
+      (typeof traceHeader === "string"
+        ? traceHeader.split("/")[0]
+        : undefined) ||
       `local-${Date.now()}`;
 
     req.traceId = traceId;

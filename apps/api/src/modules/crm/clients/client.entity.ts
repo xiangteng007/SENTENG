@@ -62,15 +62,15 @@ export class Client {
   driveFolder: string;
 
   @Column({ name: "custom_fields", type: "jsonb", nullable: true })
-  customFields: any[];
+  customFields: Record<string, unknown>[];
 
   @Column({ name: "contact_logs", type: "jsonb", nullable: true })
-  contactLogs: any[];
+  contactLogs: Record<string, unknown>[];
 
   @Column({ length: 20, default: "ACTIVE" })
   status: string;
 
-  // Note: ClientContact relation removed â€” use Partner entity instead
+  // Note: ClientContact relation removed â€?use Partner entity instead
 
   @CreateDateColumn({ name: "created_at" })
   createdAt: Date;

@@ -1,6 +1,6 @@
 
-import React, { useState, useEffect, Suspense, lazy } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { MainLayoutV2 as MainLayout } from './layout/MainLayoutV2';
 import { GoogleService } from './services/GoogleService';
 import { ToastContainer } from './components/common/Toast';
@@ -9,67 +9,14 @@ import { useApiData } from './services/useApiData';
 import { OfflineIndicator } from './components/OfflineIndicator';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import CommandPalette from './components/common/CommandPalette';
-import { PageLoadingSkeleton } from './components/common/PageLoadingSkeleton';
 import { initPerformanceMonitoring } from './utils/performanceMonitor';
 import LoginPage from './pages/LoginPage';
-import UserManagement from './pages/UserManagement';
+import { renderRoutes } from './routes';
 
 // Initialize performance monitoring in production
 if (typeof window !== 'undefined') {
   initPerformanceMonitoring();
 }
-
-
-// Eagerly loaded pages (critical path - keep bundle small)
-import Dashboard from './pages/Dashboard';
-import Schedule from './pages/Schedule';
-import Projects from './pages/Projects';
-import Finance from './pages/Finance';
-import Notifications from './pages/Notifications';
-import Events from './pages/Events';
-import Reports from './pages/Reports';
-import SiteLogs from './pages/SiteLogs';
-import Construction from './pages/Construction';
-
-// Lazy loaded pages (PERF-001: Code Splitting for heavy components)
-const MaterialCalculator = lazy(() => import('./pages/MaterialCalculator').then(m => ({ default: m.MaterialCalculator })));
-const CostEstimator = lazy(() => import('./pages/CostEstimator').then(m => ({ default: m.CostEstimator })));
-const MaterialGallery = lazy(() => import('./pages/MaterialGallery').then(m => ({ default: m.MaterialGallery })));
-const InvoiceHelper = lazy(() => import('./pages/InvoiceHelper').then(m => ({ default: m.InvoiceHelper })));
-
-// PERF-002: Additional heavy pages (>25KB) moved to lazy loading
-const Vendors = null; // Legacy — redirected to /partners
-const Inventory = lazy(() => import('./pages/Inventory'));
-const Quotations = lazy(() => import('./pages/Quotations'));
-const QuotationEditor = lazy(() => import('./pages/QuotationEditor'));
-const Clients = null; // Legacy — redirected to /partners
-const Contracts = lazy(() => import('./pages/Contracts'));
-const CostEntries = lazy(() => import('./pages/CostEntries'));
-const Payments = lazy(() => import('./pages/Payments'));
-const Procurements = lazy(() => import('./pages/Procurements'));
-const ChangeOrders = lazy(() => import('./pages/ChangeOrders'));
-const Insurance = lazy(() => import('./pages/Insurance'));
-const Waste = lazy(() => import('./pages/Waste'));
-const Bim = lazy(() => import('./pages/Bim'));
-const Drone = lazy(() => import('./pages/Drone'));
-const SmartHome = lazy(() => import('./pages/SmartHome'));
-const Regulations = lazy(() => import('./pages/Regulations'));
-const Schedules = lazy(() => import('./pages/Schedules'));
-const ProfitAnalysis = lazy(() => import('./pages/ProfitAnalysis'));
-const IntegrationsPage = lazy(() => import('./pages/IntegrationsPage'));
-
-// NEW: Expert Panel v4.9 P2 Modules
-const GovernmentProjects = lazy(() => import('./pages/GovernmentProjects').then(m => ({ default: m.GovernmentProjects })));
-const OccupationalSafety = lazy(() => import('./pages/OccupationalSafety').then(m => ({ default: m.OccupationalSafety })));
-const FireSafetyRecords = lazy(() => import('./pages/FireSafetyRecords').then(m => ({ default: m.FireSafetyRecords })));
-const ProfessionalCalculators = lazy(() => import('./pages/ProfessionalCalculators').then(m => ({ default: m.ProfessionalCalculators })));
-const LaborContracts = lazy(() => import('./pages/LaborContracts').then(m => ({ default: m.LaborContracts })));
-const ContractAlerts = lazy(() => import('./pages/ContractAlerts').then(m => ({ default: m.ContractAlerts })));
-const VisualEnhancements = lazy(() => import('./pages/VisualEnhancements').then(m => ({ default: m.VisualEnhancements })));
-const MilestoneTracker = lazy(() => import('./pages/MilestoneTracker').then(m => ({ default: m.MilestoneTracker })));
-const LaborDisputes = lazy(() => import('./pages/LaborDisputes').then(m => ({ default: m.LaborDisputes })));
-// Simplified Partners CRM (Phase 7)
-const Partners = lazy(() => import('./pages/Partners'));
 
 // Loading Screen Component
 const LoadingScreen = () => (
@@ -90,41 +37,12 @@ const LoadingScreen = () => (
 const ProtectedRoute = ({ children, pageId }) => {
   const { isAuthenticated, loading, canAccessPage, role } = useAuth();
 
-  if (loading) {
-    return <LoadingScreen />;
-  }
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  // Special case for user-management (only super_admin)
-  if (pageId === 'user-management' && role !== 'super_admin') {
-    return <Navigate to="/" replace />;
-  }
-
-  // Check page permission
-  if (pageId !== 'user-management' && !canAccessPage(pageId)) {
-    return <Navigate to="/" replace />;
-  }
+  if (loading) return <LoadingScreen />;
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  if (pageId === 'user-management' && role !== 'super_admin') return <Navigate to="/" replace />;
+  if (pageId !== 'user-management' && !canAccessPage(pageId)) return <Navigate to="/" replace />;
 
   return children;
-};
-
-// No Permission Component
-const NoPermission = () => {
-  const navigate = useNavigate();
-  return (
-    <div className="flex flex-col items-center justify-center h-64 text-gray-500">
-      <p className="text-lg font-medium">您沒有權限訪問此頁面</p>
-      <button
-        onClick={() => navigate('/')}
-        className="mt-4 px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors"
-      >
-        返回儀表板
-      </button>
-    </div>
-  );
 };
 
 // Main App Content (wrapped by AuthProvider and Router)
@@ -184,270 +102,24 @@ const AppContent = () => {
   };
 
   // Show loading screen while checking auth
-  if (authLoading) {
-    return <LoadingScreen />;
-  }
+  if (authLoading) return <LoadingScreen />;
 
   // Show login page if not authenticated
-  if (!isAuthenticated) {
-    return <LoginPage />;
-  }
+  if (!isAuthenticated) return <LoginPage />;
 
   return (
     <MainLayout activeTab={getActiveTab()} setActiveTab={handleNavigation} addToast={addToast}>
       <Routes>
-        <Route path="/" element={
-          <ProtectedRoute pageId="dashboard">
-            <Dashboard events={data.calendar} finance={data.finance} projects={data.projects} clients={data.clients} />
-          </ProtectedRoute>
-        } />
-        <Route path="/schedule" element={
-          <ProtectedRoute pageId="schedule">
-            <Schedule data={data.calendar} loans={data.finance.loans || []} addToast={addToast} onUpdateCalendar={(d) => handleUpdate('calendar', d)} />
-          </ProtectedRoute>
-        } />
-        <Route path="/projects" element={
-          <ProtectedRoute pageId="projects">
-            <Projects
-              data={data.projects}
-              loading={loading}
-              addToast={addToast}
-              activeProject={activeProject}
-              setActiveProject={setActiveProject}
-              onSelectProject={setActiveProject}
-              onUpdateProject={(p) => {
-                const exists = data.projects.find(proj => proj.id === p.id);
-                if (exists) {
-                  handleUpdate('projects', data.projects.map(proj => proj.id === p.id ? p : proj));
-                } else {
-                  handleUpdate('projects', [...data.projects, p]);
-                }
-              }}
-              onDeleteProject={(projectId) => {
-                handleUpdate('projects', data.projects.filter(proj => proj.id !== projectId));
-              }}
-              allTransactions={data.finance.transactions}
-              onAddGlobalTx={handleAddGlobalTx}
-              accounts={data.finance.accounts}
-              allClients={data.clients}
-            />
-          </ProtectedRoute>
-        } />
-        <Route path="/quotations" element={
-          <ProtectedRoute pageId="quotations">
-            <Quotations addToast={addToast} projects={data.projects} clients={data.clients} />
-          </ProtectedRoute>
-        } />
-        <Route path="/payments" element={
-          <ProtectedRoute pageId="payments">
-            <Payments addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/contracts" element={
-          <ProtectedRoute pageId="contracts">
-            <Contracts addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/profit" element={
-          <ProtectedRoute pageId="profit">
-            <ProfitAnalysis addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/cost-entries" element={
-          <ProtectedRoute pageId="cost-entries">
-            <CostEntries addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/clients" element={
-          <Navigate to="/partners" replace />
-        } />
-        <Route path="/finance" element={
-          <ProtectedRoute pageId="finance">
-            <Finance
-              data={data.finance}
-              loading={loading}
-              addToast={addToast}
-              onAddTx={handleAddGlobalTx}
-              onUpdateAccounts={(accs) => handleUpdate('finance', { ...data.finance, accounts: accs })}
-              onUpdateLoans={(loans) => handleUpdate('finance', { ...data.finance, loans: loans })}
-              allProjects={data.projects}
-            />
-          </ProtectedRoute>
-        } />
-        <Route path="/vendors" element={
-          <Navigate to="/partners" replace />
-        } />
-        <Route path="/inventory" element={
-          <ProtectedRoute pageId="inventory">
-            <Inventory data={data.inventory} loading={loading} addToast={addToast} onUpdateInventory={(d) => handleUpdate('inventory', d)} />
-          </ProtectedRoute>
-        } />
-        <Route path="/procurements" element={
-          <ProtectedRoute pageId="procurements">
-            <Procurements addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/materials-calc" element={
-          <ProtectedRoute pageId="materials-calc">
-            <MaterialCalculator addToast={addToast} vendors={data.vendors} />
-          </ProtectedRoute>
-        } />
-        <Route path="/materials" element={
-          <ProtectedRoute pageId="materials">
-            <MaterialGallery addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/invoice" element={
-          <ProtectedRoute pageId="invoice">
-            <InvoiceHelper addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/unit" element={
-          <ProtectedRoute pageId="unit">
-            <MaterialCalculator addToast={addToast} vendors={data.vendors} />
-          </ProtectedRoute>
-        } />
-        <Route path="/cost" element={
-          <ProtectedRoute pageId="cost">
-            <CostEstimator addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/calc" element={
-          <ProtectedRoute pageId="calc">
-            <MaterialCalculator addToast={addToast} vendors={data.vendors} />
-          </ProtectedRoute>
-        } />
-        <Route path="/user-management" element={
-          <ProtectedRoute pageId="user-management">
-            <UserManagement addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/settings/integrations" element={
-          <ProtectedRoute pageId="integrations">
-            <IntegrationsPage addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/events" element={
-          <ProtectedRoute pageId="events">
-            <Events addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/change-orders" element={
-          <ProtectedRoute pageId="change-orders">
-            <ChangeOrders addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/contacts" element={
-          <Navigate to="/partners" replace />
-        } />
-        <Route path="/partners" element={
-          <ProtectedRoute pageId="partners">
-            <Partners addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/reports" element={
-          <ProtectedRoute pageId="reports">
-            <Reports addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/site-logs" element={
-          <ProtectedRoute pageId="site-logs">
-            <SiteLogs addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/construction" element={
-          <ProtectedRoute pageId="construction">
-            <Construction addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/schedules" element={
-          <ProtectedRoute pageId="schedules">
-            <Schedules addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/bim" element={
-          <ProtectedRoute pageId="bim">
-            <Bim addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/drone" element={
-          <ProtectedRoute pageId="drone">
-            <Drone addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/smart-home" element={
-          <ProtectedRoute pageId="smart-home">
-            <SmartHome addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/regulations" element={
-          <ProtectedRoute pageId="regulations">
-            <Regulations addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/insurance" element={
-          <ProtectedRoute pageId="insurance">
-            <Insurance addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/waste" element={
-          <ProtectedRoute pageId="waste">
-            <Waste addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/notifications" element={
-          <ProtectedRoute pageId="notifications">
-            <Notifications addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        {/* NEW: Expert Panel v4.9 P2 Modules */}
-        <Route path="/government-projects" element={
-          <ProtectedRoute pageId="government-projects">
-            <GovernmentProjects addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/safety" element={
-          <ProtectedRoute pageId="safety">
-            <OccupationalSafety addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/fire-safety" element={
-          <ProtectedRoute pageId="fire-safety">
-            <FireSafetyRecords addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/calculators" element={
-          <ProtectedRoute pageId="calculators">
-            <ProfessionalCalculators addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/labor-contracts" element={
-          <ProtectedRoute pageId="labor-contracts">
-            <LaborContracts addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/contract-alerts" element={
-          <ProtectedRoute pageId="contract-alerts">
-            <ContractAlerts addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/visual-tools" element={
-          <ProtectedRoute pageId="visual-tools">
-            <VisualEnhancements addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/milestones" element={
-          <ProtectedRoute pageId="milestones">
-            <MilestoneTracker addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/labor-disputes" element={
-          <ProtectedRoute pageId="labor-disputes">
-            <LaborDisputes addToast={addToast} />
-          </ProtectedRoute>
-        } />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        {renderRoutes({
+          ProtectedRoute,
+          data,
+          loading,
+          addToast,
+          handleUpdate,
+          handleAddGlobalTx,
+          activeProject,
+          setActiveProject,
+        })}
       </Routes>
       <ToastContainer toasts={toasts} removeToast={removeToast} />
       <OfflineIndicator />

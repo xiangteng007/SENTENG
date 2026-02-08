@@ -13,7 +13,7 @@ import { Project } from "../../../projects/project.entity";
 /**
  * BimModel (BIM 模型)
  *
- * 代表一個 BIM 專案模型，可包含多個版本。
+ * 代表一�?BIM 專案模型，可包含多個版本�?
  */
 @Entity("bim_models")
 export class BimModel {
@@ -67,7 +67,7 @@ export class BimModel {
 /**
  * BimModelVersion (BIM 模型版本)
  *
- * 儲存模型的特定版本資訊。
+ * 儲存模型的特定版本資訊�?
  */
 @Entity("bim_model_versions")
 export class BimModelVersion {
@@ -120,7 +120,7 @@ export class BimModelVersion {
 /**
  * BimElement (BIM 構件)
  *
- * 代表模型中的一個構件/元素。
+ * 代表模型中的一個構�?元素�?
  */
 @Entity("bim_elements")
 export class BimElement {
@@ -150,7 +150,7 @@ export class BimElement {
   category: string;
 
   @Column({ type: "jsonb", nullable: true })
-  properties: any;
+  properties: Record<string, unknown>;
 
   @Column({ name: "geometry_hash", length: 64, nullable: true })
   geometryHash: string;
@@ -166,7 +166,7 @@ export class BimElement {
 /**
  * BimQuantity (BIM 算量)
  *
- * 儲存構件的數量資訊（長度、面積、體積等）。
+ * 儲存構件的數量資訊（長度、面積、體積等）�?
  */
 @Entity("bim_quantities")
 export class BimQuantity {

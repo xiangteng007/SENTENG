@@ -35,7 +35,7 @@ export interface CustomFieldDefinition {
   label: string;          // 顯示名稱
   type: CustomFieldType;
   required: boolean;
-  defaultValue?: any;
+  defaultValue?: unknown;
   placeholder?: string;
   helpText?: string;
   
@@ -76,7 +76,7 @@ export interface CustomFieldValue {
   fieldId: string;
   entityId: string;
   entityType: EntityType;
-  value: any;
+  value: unknown;
   updatedAt: Date;
   updatedBy: string;
 }
@@ -147,7 +147,7 @@ export class CustomFieldService {
   async getValues(
     entityType: EntityType,
     entityId: string,
-  ): Promise<Record<string, any>> {
+  ): Promise<Record<string, unknown>> {
     const values = await this.valueRepo.find({
       where: { entityType, entityId },
     });
@@ -155,14 +155,14 @@ export class CustomFieldService {
     return values.reduce((acc, v) => {
       acc[v.fieldId] = v.value;
       return acc;
-    }, {} as Record<string, any>);
+    }, {} as Record<string, unknown>);
   }
 
   // 儲存自訂欄位值
   async setValues(
     entityType: EntityType,
     entityId: string,
-    values: Record<string, any>,
+    values: Record<string, unknown>,
     userId: string,
   ): Promise<void> {
     const definitions = await this.getDefinitions(entityType);
@@ -201,39 +201,45 @@ export class CustomFieldService {
   }
 
   // 驗證欄位值
-  validateValue(definition: CustomFieldDefinition, value: any): string | null {
+  validateValue(definition: CustomFieldDefinition, value: unknown): string | null {
     if (definition.required && (value === null || value === undefined || value === '')) {
       return `${definition.label} 為必填`;
     }
 
     switch (definition.type) {
-      case 'number':
-        if (definition.min !== undefined && value < definition.min) {
+      case 'number': {
+        const numVal = value as number;
+        if (definition.min !== undefined && numVal < definition.min) {
           return `${definition.label} 最小值為 ${definition.min}`;
         }
-        if (definition.max !== undefined && value > definition.max) {
+        if (definition.max !== undefined && numVal > definition.max) {
           return `${definition.label} 最大值為 ${definition.max}`;
         }
         break;
+      }
 
       case 'text':
-      case 'textarea':
-        if (definition.minLength && value?.length < definition.minLength) {
+      case 'textarea': {
+        const strVal = value as string;
+        if (definition.minLength && strVal?.length < definition.minLength) {
           return `${definition.label} 至少需要 ${definition.minLength} 個字元`;
         }
-        if (definition.maxLength && value?.length > definition.maxLength) {
+        if (definition.maxLength && strVal?.length > definition.maxLength) {
           return `${definition.label} 最多 ${definition.maxLength} 個字元`;
         }
-        if (definition.pattern && !new RegExp(definition.pattern).test(value)) {
+        if (definition.pattern && !new RegExp(definition.pattern).test(strVal)) {
           return `${definition.label} 格式不正確`;
         }
         break;
+      }
 
-      case 'email':
-        if (value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      case 'email': {
+        const emailVal = value as string;
+        if (emailVal && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
           return `${definition.label} 必須是有效的電子郵件`;
         }
         break;
+      }
 
       case 'select':
         if (definition.options && !definition.options.some(o => o.value === value)) {

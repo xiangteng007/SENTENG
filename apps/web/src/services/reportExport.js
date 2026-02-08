@@ -5,7 +5,7 @@
  * Supports client data, quotations, contracts, payments/invoices.
  */
 
-import * as XLSX from 'xlsx';
+// xlsx is loaded dynamically to reduce initial bundle size (~200KB)
 import { saveAs } from 'file-saver';
 
 /**
@@ -14,12 +14,15 @@ import { saveAs } from 'file-saver';
  * @param {string} filename - Name of the file (without extension)
  * @param {Object} options - Export options
  */
-export function exportToExcel(data, filename, options = {}) {
+export async function exportToExcel(data, filename, options = {}) {
     const {
         sheetName = 'Sheet1',
         columnHeaders = null, // { fieldName: 'Display Header' }
         columnWidths = null,  // [{ wch: 20 }, { wch: 30 }]
     } = options;
+
+    // Dynamic import: only load xlsx when actually exporting (~200KB saved)
+    const XLSX = await import('xlsx');
 
     // Transform data with custom headers if provided
     let exportData = data;
@@ -88,7 +91,9 @@ export function exportClientsToExcel(clients) {
 /**
  * Export quotation to Excel
  */
-export function exportQuotationToExcel(quotation) {
+export async function exportQuotationToExcel(quotation) {
+    const XLSX = await import('xlsx');
+
     // Header info
     const headerData = [{
         '報價單號': quotation.quotationNo,

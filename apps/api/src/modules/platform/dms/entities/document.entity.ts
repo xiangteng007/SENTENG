@@ -14,7 +14,7 @@ import { BusinessUnit } from "../../tenants/entities/business-unit.entity";
 /**
  * Document (文件)
  *
- * 代表一個邏輯文件，可包含多個版本。
+ * 代表一個邏輯文件，可包含多個版本�?
  */
 @Entity("documents")
 export class Document {
@@ -71,7 +71,7 @@ export class Document {
 /**
  * DocumentVersion (文件版本)
  *
- * 儲存文件的實際檔案資訊與版本歷史。
+ * 儲存文件的實際檔案資訊與版本歷史�?
  */
 @Entity("document_versions")
 export class DocumentVersion {
@@ -110,7 +110,7 @@ export class DocumentVersion {
 /**
  * MediaAsset (媒體資產)
  *
- * 專門用於照片、影片等媒體檔案，支援標籤與元資料。
+ * 專門用於照片、影片等媒體檔案，支援標籤與元資料�?
  */
 @Entity("media_assets")
 export class MediaAsset {
@@ -152,7 +152,7 @@ export class MediaAsset {
   tags: string[];
 
   @Column({ type: "jsonb", nullable: true })
-  metadata: any; // EXIF, GPS, etc.
+  metadata: Record<string, unknown>; // EXIF, GPS, etc.
 
   @Column({ name: "captured_at", nullable: true })
   capturedAt: Date;

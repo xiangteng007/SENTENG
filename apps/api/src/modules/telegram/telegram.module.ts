@@ -1,6 +1,14 @@
 import { Module } from "@nestjs/common";
 import { TelegramController } from "./telegram.controller";
 import { TelegramService } from "./telegram.service";
+import { TelegramApiClient } from "./telegram-api.client";
+import { ProjectCommandHandler } from "./handlers/project.handler";
+import { FinancialCommandHandler } from "./handlers/financial.handler";
+import { ContractCommandHandler } from "./handlers/contract.handler";
+import { PartnerCommandHandler } from "./handlers/partner.handler";
+import { PlatformCommandHandler } from "./handlers/platform.handler";
+import { IntegrationCommandHandler } from "./handlers/integration.handler";
+import { RegulatoryCommandHandler } from "./handlers/regulatory.handler";
 import { ProjectsModule } from "../projects/projects.module";
 import { SiteLogsModule } from "../site-logs/site-logs.module";
 import { EventsModule } from "../events/events.module";
@@ -36,7 +44,7 @@ import { IntegrationsModule } from "../integrations/integrations.module";
     RegulationsModule,
     ConstructionModule,
     QuotationsModule,
-    PartnersModule, // Replaces CustomersModule, ContactsModule, CrmModule
+    PartnersModule,
     CostEntriesModule,
     FinanceModule,
     InsuranceModule,
@@ -46,8 +54,17 @@ import { IntegrationsModule } from "../integrations/integrations.module";
     IntegrationsModule,
   ],
   controllers: [TelegramController],
-  providers: [TelegramService],
+  providers: [
+    TelegramApiClient,
+    TelegramService,
+    ProjectCommandHandler,
+    FinancialCommandHandler,
+    ContractCommandHandler,
+    PartnerCommandHandler,
+    PlatformCommandHandler,
+    IntegrationCommandHandler,
+    RegulatoryCommandHandler,
+  ],
   exports: [TelegramService],
 })
 export class TelegramModule {}
-

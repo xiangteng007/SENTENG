@@ -33,7 +33,7 @@ export class Transaction {
 
   @ManyToOne("Account", "transactions")
   @JoinColumn({ name: "account_id" })
-  account: any;
+  account: Record<string, unknown>;
 
   @Column({ name: "project_id", type: "uuid", nullable: true })
   projectId: string;

@@ -28,7 +28,7 @@ export class Account {
   sortOrder: number;
 
   @OneToMany("Transaction", "account")
-  transactions: any[];
+  transactions: Record<string, unknown>[];
 
   @CreateDateColumn({ name: "created_at" })
   createdAt: Date;

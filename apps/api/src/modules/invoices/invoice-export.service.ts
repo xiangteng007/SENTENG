@@ -224,8 +224,8 @@ export class InvoiceExportService {
 
     const printer = new PdfPrinter(fonts);
 
-    // Create document definition
-    const docDefinition: any = {
+    // pdfmake TDocumentDefinitions is complex; use Record for simplicity
+    const docDefinition: Record<string, unknown> = {
       content: [
         { text: "發票清單報表", style: "header" },
         {

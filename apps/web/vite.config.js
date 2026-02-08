@@ -75,6 +75,8 @@ export default defineConfig({
   },
   build: {
     chunkSizeWarningLimit: 1500,
+    // Strip console.log and debugger in production builds (H2: console.log cleanup)
+    minify: 'esbuild',
     rollupOptions: {
       output: {
         manualChunks: (id) => {
@@ -98,8 +100,25 @@ export default defineConfig({
           if (id.includes('node_modules/react') || id.includes('node_modules/react-dom') || id.includes('node_modules/react-router')) {
             return 'vendor-react';
           }
+          // H3: Split xlsx into separate chunk (only loaded on export)
+          if (id.includes('node_modules/xlsx')) {
+            return 'vendor-xlsx';
+          }
+          // H3: Split socket.io into separate chunk (only for realtime features)
+          if (id.includes('node_modules/socket.io-client') || id.includes('node_modules/engine.io')) {
+            return 'vendor-socket';
+          }
+          // H3: Split drag-and-drop into separate chunk
+          if (id.includes('node_modules/@dnd-kit')) {
+            return 'vendor-dnd';
+          }
         }
       }
-    }
+    },
+    // Drop console.log in production (H2: ~18 files worth of debug logs removed)
+    esbuild: {
+      drop: ['debugger'],
+      pure: ['console.log', 'console.debug'],
+    },
   }
 })

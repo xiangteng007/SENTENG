@@ -12,7 +12,7 @@ import { User } from "../../../users/user.entity";
 /**
  * DispatchAssignment (派工指派)
  *
- * 記錄工單的人員與設備指派。
+ * 記錄工單的人員與設備指派�?
  */
 @Entity("dispatch_assignments")
 export class DispatchAssignment {
@@ -46,11 +46,11 @@ export class DispatchAssignment {
   timeWindowEnd: string;
 
   /**
-   * 狀態
-   * - ASSIGNED: 已指派
-   * - ACCEPTED: 已接受
-   * - DECLINED: 已拒絕
-   * - COMPLETED: 已完成
+   * 狀�?
+   * - ASSIGNED: 已指�?
+   * - ACCEPTED: 已接�?
+   * - DECLINED: 已拒�?
+   * - COMPLETED: 已完�?
    */
   @Column({ length: 20, default: "ASSIGNED" })
   status: string;
@@ -92,14 +92,14 @@ export class PreflightChecklist {
    * [{ item: string, checked: boolean, notes?: string }]
    */
   @Column({ type: "jsonb", nullable: true })
-  items: any;
+  items: Record<string, unknown>;
 
   /**
-   * 天氣狀況
+   * 天氣狀�?
    * { temperature, humidity, windSpeed, windDirection, visibility }
    */
   @Column({ name: "weather_conditions", type: "jsonb", nullable: true })
-  weatherConditions: any;
+  weatherConditions: Record<string, unknown>;
 
   @Column({ name: "is_passed", default: false })
   isPassed: boolean;

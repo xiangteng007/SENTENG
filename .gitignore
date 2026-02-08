@@ -46,6 +46,7 @@ Thumbs.db
 *.bak_*
 cloud_run_*.json
 error.log
+tsc-errors.txt
 
 # Cloud SQL Proxy (local development)
 cloud-sql-proxy.exe

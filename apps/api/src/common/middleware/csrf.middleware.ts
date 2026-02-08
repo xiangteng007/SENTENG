@@ -1,4 +1,5 @@
 import { Injectable, NestMiddleware } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { Request, Response, NextFunction } from "express";
 import * as crypto from "crypto";
 
@@ -19,12 +20,14 @@ export class CsrfMiddleware implements NestMiddleware {
   private readonly CSRF_HEADER_NAME = "x-csrf-token";
   private readonly SAFE_METHODS = ["GET", "HEAD", "OPTIONS"];
   private readonly TOKEN_LENGTH = 32;
-  
+
+  constructor(private readonly configService: ConfigService) {}
+
   // Paths that should skip CSRF validation (user can't have token yet)
   // Include both with and without /api/v1 prefix for compatibility
   private readonly SKIP_PATHS = [
     "/auth/login",
-    "/auth/register", 
+    "/auth/register",
     "/auth/forgot-password",
     "/auth/reset-password",
     "/auth/firebase",
@@ -45,7 +48,7 @@ export class CsrfMiddleware implements NestMiddleware {
       csrfToken = this.generateToken();
       res.cookie(this.CSRF_COOKIE_NAME, csrfToken, {
         httpOnly: false, // Must be readable by JavaScript
-        secure: process.env.NODE_ENV === "production",
+        secure: this.configService.get("NODE_ENV") === "production",
         sameSite: "lax",
         path: "/",
         maxAge: 24 * 60 * 60 * 1000, // 24 hours
@@ -59,7 +62,11 @@ export class CsrfMiddleware implements NestMiddleware {
 
     // Skip validation for auth endpoints (user can't have token before login)
     const requestPath = req.path;
-    if (this.SKIP_PATHS.some(path => requestPath === path || requestPath.startsWith(path + "/"))) {
+    if (
+      this.SKIP_PATHS.some(
+        (path) => requestPath === path || requestPath.startsWith(path + "/"),
+      )
+    ) {
       return next();
     }
 

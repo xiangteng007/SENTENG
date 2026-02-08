@@ -37,7 +37,10 @@ interface SendPushResult {
 export class PushNotificationService {
   private readonly logger = new Logger(PushNotificationService.name);
 
-  private webpush: any = null;
+  private webpush: {
+    sendNotification: (sub: PushSubscription, payload: string) => Promise<void>;
+    setVapidDetails: (...args: string[]) => void;
+  } | null = null;
 
   constructor(
     private readonly configService: ConfigService,

@@ -57,7 +57,7 @@ export interface InvoiceResult {
   /** 錯誤訊息 */
   errorMessage?: string;
   /** 原始回應 */
-  rawResponse?: any;
+  rawResponse?: Record<string, unknown>;
 }
 
 export interface InvoiceVoidDto {
@@ -168,7 +168,7 @@ export class EInvoiceService {
       ItemAmount: item.quantity * item.unitPrice,
     }));
 
-    const data: Record<string, any> = {
+    const data: Record<string, string | number | object[]> = {
       MerchantID: this.merchantId,
       RelateNumber: relateNumber,
       CustomerID: "",
@@ -316,7 +316,9 @@ export class EInvoiceService {
       Comment: dto.comment || "",
     };
 
-    const postDataStr = new URLSearchParams(postData as any).toString();
+    const postDataStr = new URLSearchParams(
+      postData as unknown as Record<string, string>,
+    ).toString();
     const encData = this.ezpayEncrypt(postDataStr);
 
     const response = await this.apiClient.post("/invoice_issue", {
@@ -353,7 +355,9 @@ export class EInvoiceService {
       InvalidReason: dto.voidReason,
     };
 
-    const postDataStr = new URLSearchParams(postData as any).toString();
+    const postDataStr = new URLSearchParams(
+      postData as unknown as Record<string, string>,
+    ).toString();
     const encData = this.ezpayEncrypt(postDataStr);
 
     const response = await this.apiClient.post("/invoice_invalid", {

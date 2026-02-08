@@ -14,8 +14,8 @@ import { Project } from '../../../projects/project.entity';
  * DrawingRevision (圖說版本)
  * DCR-002: 圖說版本管理機制
  * 
- * 追蹤工程圖說的版本歷程，支援：
- * - 版次管理 (A0 → A1 → A2...)
+ * 追蹤工程圖說的版本歷程，支援�?
+ * - 版次管理 (A0 �?A1 �?A2...)
  * - 變更歷史記錄
  * - 審核流程追蹤
  * - 與設計變更單 (DCR) 關聯
@@ -37,8 +37,8 @@ export class DrawingRevision {
 
   /**
    * 圖號
-   * 例: A-101, S-201, M-301, E-401
-   * A=建築, S=結構, M=機械, E=電氣, P=給排水
+   * �? A-101, S-201, M-301, E-401
+   * A=建築, S=結構, M=機械, E=電氣, P=給排�?
    */
   @Column({ name: 'drawing_number', length: 50 })
   drawingNumber: string;
@@ -60,7 +60,7 @@ export class DrawingRevision {
 
   /**
    * 當前版次
-   * 常見格式: "0" (發包圖), "A", "B", "C"... 或 "1", "2", "3"...
+   * 常見格式: "0" (發包�?, "A", "B", "C"... �?"1", "2", "3"...
    */
   @Column({ name: 'current_revision', length: 10, default: '0' })
   currentRevision: string;
@@ -73,19 +73,19 @@ export class DrawingRevision {
    *   description: "結構變更",
    *   changedBy: "王工程師",
    *   dcrNumber: "DCR-2026-0001",
-   *   cloudMarks: ["雲形標記區域描述"],
-   *   approvedBy: "李審核",
+   *   cloudMarks: ["雲形標記區域描�?],
+   *   approvedBy: "李審�?,
    *   approvedAt: "2026-01-16"
    * }]
    */
   @Column({ name: 'revision_history', type: 'jsonb', default: '[]' })
-  revisionHistory: any;
+  revisionHistory: Record<string, unknown>;
 
   @Column({ length: 20, default: 'CURRENT' })
   status: string; // DRAFT | PENDING_REVIEW | APPROVED | CURRENT | SUPERSEDED | VOID
 
   /**
-   * 比例尺
+   * 比例�?
    */
   @Column({ length: 20, nullable: true })
   scale: string; // 1:100, 1:50, NTS (Not to Scale)
@@ -97,7 +97,7 @@ export class DrawingRevision {
   sheetSize: string; // A0, A1, A2, A3, A4
 
   /**
-   * 關聯設計變更單
+   * 關聯設計變更�?
    */
   @Column({ name: 'latest_dcr_id', length: 36, nullable: true })
   latestDcrId: string;
@@ -130,19 +130,19 @@ export class DrawingRevision {
    * 審核資訊
    */
   @Column({ name: 'prepared_by', length: 100, nullable: true })
-  preparedBy: string; // 繪製人
+  preparedBy: string; // 繪製�?
 
   @Column({ name: 'checked_by', length: 100, nullable: true })
-  checkedBy: string; // 審核人
+  checkedBy: string; // 審核�?
 
   @Column({ name: 'approved_by', length: 100, nullable: true })
-  approvedBy: string; // 核定人
+  approvedBy: string; // 核定�?
 
   @Column({ name: 'issued_date', type: 'date', nullable: true })
   issuedDate: Date; // 發行日期
 
   /**
-   * 區域/樓層
+   * 區�?樓層
    */
   @Column({ length: 50, nullable: true })
   zone: string;
@@ -167,8 +167,8 @@ export class DrawingRevision {
 }
 
 /**
- * DrawingSet (圖說集)
- * 管理一組相關圖說 (例如: 發包圖集、竣工圖集)
+ * DrawingSet (圖說�?
+ * 管理一組相關圖�?(例如: 發包圖集、竣工圖�?
  */
 @Entity('drawing_sets')
 @Index(['projectId', 'setType'])
@@ -184,7 +184,7 @@ export class DrawingSet {
   project: Project;
 
   @Column({ length: 100 })
-  name: string; // 例: "發包圖 v1.0", "施工圖 Rev.A"
+  name: string; // �? "發包�?v1.0", "施工�?Rev.A"
 
   @Column({ name: 'set_type', length: 30 })
   setType: string; // BID | CONSTRUCTION | AS_BUILT | SHOP_DRAWING
@@ -203,7 +203,7 @@ export class DrawingSet {
    * [{ drawingId, drawingNumber, revision }]
    */
   @Column({ type: 'jsonb', default: '[]' })
-  drawings: any;
+  drawings: Record<string, unknown>;
 
   @Column({ name: 'total_sheets', default: 0 })
   totalSheets: number;

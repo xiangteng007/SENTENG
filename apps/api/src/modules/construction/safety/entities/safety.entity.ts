@@ -10,6 +10,27 @@ import {
 import { Project } from "../../../projects/project.entity";
 import { WbsItem } from "../../wbs/entities/wbs.entity";
 
+/** Typed JSONB interfaces for safety entities */
+export interface PhotoRecord {
+  url: string;
+  caption?: string;
+  timestamp?: string;
+}
+
+export interface InspectionItem {
+  category: string;
+  item: string;
+  compliant: boolean;
+  notes?: string;
+}
+
+export interface PersonInvolved {
+  name: string;
+  role?: string;
+  injuryType?: string;
+  notes?: string;
+}
+
 /**
  * QaqcIssue (品質議題)
  */
@@ -61,7 +82,7 @@ export class QaqcIssue {
   dueDate: Date;
 
   @Column({ type: "jsonb", nullable: true })
-  photos: any;
+  photos: PhotoRecord[];
 
   @Column({ name: "corrective_action", type: "text", nullable: true })
   correctiveAction: string;
@@ -111,7 +132,7 @@ export class SafetyInspection {
    * [{ category, item, compliant, notes }]
    */
   @Column({ type: "jsonb", nullable: true })
-  items: any;
+  items: InspectionItem[];
 
   @Column({
     name: "overall_score",
@@ -129,7 +150,7 @@ export class SafetyInspection {
   recommendations: string;
 
   @Column({ type: "jsonb", nullable: true })
-  photos: any;
+  photos: PhotoRecord[];
 
   @Column({ name: "created_by", length: 20, nullable: true })
   createdBy: string;
@@ -180,7 +201,7 @@ export class SafetyIncident {
   location: string;
 
   @Column({ name: "persons_involved", type: "jsonb", nullable: true })
-  personsInvolved: any;
+  personsInvolved: PersonInvolved[];
 
   @Column({ name: "root_cause", type: "text", nullable: true })
   rootCause: string;
@@ -189,7 +210,7 @@ export class SafetyIncident {
   correctiveActions: string;
 
   @Column({ type: "jsonb", nullable: true })
-  photos: any;
+  photos: PhotoRecord[];
 
   @Column({ length: 30, default: "REPORTED" })
   status: string;

@@ -48,13 +48,13 @@ export class AuditLog {
    * 變更前的值 (JSON snapshot)
    */
   @Column({ name: "old_values", type: "jsonb", nullable: true })
-  oldValues: any;
+  oldValues: Record<string, unknown>;
 
   /**
    * 變更後的值 (JSON snapshot)
    */
   @Column({ name: "new_values", type: "jsonb", nullable: true })
-  newValues: any;
+  newValues: Record<string, unknown>;
 
   /**
    * 變更欄位列表

@@ -1,4 +1,4 @@
-import {
+﻿import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
@@ -28,7 +28,7 @@ export class CmmCalculationRun {
   ruleSetVersion: string;
 
   @Column({ name: "input_snapshot", type: "jsonb" })
-  inputSnapshot: any;
+  inputSnapshot: Record<string, unknown>;
 
   @Column({ name: "input_hash", length: 64 })
   inputHash: string;
@@ -41,10 +41,10 @@ export class CmmCalculationRun {
   status: "PENDING" | "RUNNING" | "SUCCESS" | "PARTIAL" | "FAILED";
 
   @Column({ name: "result_summary", type: "jsonb", nullable: true })
-  resultSummary?: any;
+  resultSummary?: Record<string, unknown>;
 
   @Column({ name: "error_log", type: "jsonb", nullable: true })
-  errorLog?: any;
+  errorLog?: Record<string, unknown> | Record<string, unknown>[];
 
   @Column({ name: "duration_ms", type: "int", nullable: true })
   durationMs?: number;

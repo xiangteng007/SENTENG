@@ -17,8 +17,8 @@ import { User } from "../../../users/user.entity";
 /**
  * BcfIssue (BCF 議題/RFI)
  *
- * 用於 BIM 協作中的議題追蹤，支援 BCF 標準。
- * 可關聯到特定構件 (element_guid) 並觸發變更單。
+ * 用於 BIM 協作中的議題追蹤，支�?BCF 標準�?
+ * 可關聯到特定構件 (element_guid) 並觸發變更單�?
  */
 @Entity("bcf_issues")
 @Index(["projectId", "status"])
@@ -62,14 +62,14 @@ export class BcfIssue {
   issueType: string;
 
   /**
-   * 優先級
+   * 優先�?
    * - LOW, NORMAL, HIGH, CRITICAL
    */
   @Column({ length: 20, default: "NORMAL" })
   priority: string;
 
   /**
-   * 狀態
+   * 狀�?
    * - OPEN, IN_PROGRESS, RESOLVED, CLOSED, WONTFIX
    */
   @Column({ length: 30, default: "OPEN" })
@@ -96,7 +96,7 @@ export class BcfIssue {
    * BCF Viewpoint 資料 (相機位置、方向等)
    */
   @Column({ type: "jsonb", nullable: true })
-  viewpoint: any;
+  viewpoint: Record<string, unknown>;
 
   /**
    * 相關截圖 URLs

@@ -27,10 +27,10 @@ export class CustomFieldDefinitionEntity {
   required: boolean;
 
   @Column("jsonb", { nullable: true })
-  options: any;
+  options: unknown;
 
   @Column("jsonb", { nullable: true })
-  config: any;
+  config: unknown;
 
   @Column({ default: 0 })
   sortOrder: number;
@@ -72,7 +72,7 @@ export class CustomFieldValueEntity {
   entityId: string;
 
   @Column("jsonb")
-  value: any;
+  value: unknown;
 
   @Column()
   updatedAt: Date;

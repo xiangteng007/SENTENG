@@ -64,7 +64,7 @@ export class DesignChangeRequest {
    * [{ drawingNo, drawingName, currentVersion, newVersion }]
    */
   @Column({ name: "affected_drawings", type: "jsonb", nullable: true })
-  affectedDrawings: any;
+  affectedDrawings: Record<string, unknown>;
 
   @Column({ length: 30, default: "DRAFT" })
   status: string; // DRAFT | SUBMITTED | DESIGN_REVIEW | COST_REVIEW | APPROVED | REJECTED | CLOSED
@@ -139,7 +139,7 @@ export class DesignChangeRequest {
    * [{ fileId, fileName, fileType, uploadedAt }]
    */
   @Column({ type: "jsonb", nullable: true })
-  attachments: any;
+  attachments: Record<string, unknown>;
 
   @Column({ name: "created_by", length: 36, nullable: true })
   createdBy: string;

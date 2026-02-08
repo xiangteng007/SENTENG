@@ -14,10 +14,16 @@ interface AuditServiceInterface {
   logUpdate(
     entityType: string,
     entityId: string,
-    oldValues: any,
-    newValues: any,
-    context?: any,
-  ): Promise<any>;
+    oldValues: Record<string, unknown> | null,
+    newValues: Record<string, unknown> | null,
+    context?: {
+      userId?: string;
+      userEmail?: string;
+      userName?: string;
+      ipAddress?: string;
+      userAgent?: string;
+    },
+  ): Promise<unknown>;
 }
 
 /**

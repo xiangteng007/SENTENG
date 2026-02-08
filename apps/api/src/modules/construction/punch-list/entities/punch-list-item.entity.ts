@@ -12,8 +12,15 @@ import { Project } from "../../../projects/project.entity";
 
 /**
  * PunchListItem (驗收缺失項目)
- * 追蹤驗收發現的缺失與改善狀態
+ * 追蹤驗收發現的缺失與改善狀�?
  */
+/** Photo attachment for punch-list items */
+export interface PunchListPhotoInfo {
+  url: string;
+  caption?: string;
+  takenAt?: Date;
+}
+
 @Entity("punch_list_items")
 @Index(["projectId", "status"])
 @Index(["acceptanceRecordId"])
@@ -76,14 +83,14 @@ export class PunchListItem {
    * [{ url, caption, takenAt, location }]
    */
   @Column({ name: "defect_photos", type: "jsonb", nullable: true })
-  defectPhotos: any;
+  defectPhotos: PunchListPhotoInfo[] | null;
 
   /**
-   * 改善後照片
+   * 改善後照�?
    * [{ url, caption, takenAt }]
    */
   @Column({ name: "resolution_photos", type: "jsonb", nullable: true })
-  resolutionPhotos: any;
+  resolutionPhotos: PunchListPhotoInfo[] | null;
 
   @Column({ name: "created_by", length: 36, nullable: true })
   createdBy: string;

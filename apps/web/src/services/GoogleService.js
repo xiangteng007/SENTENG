@@ -1,6 +1,4 @@
 
-import { MOCK_DB } from './MockData';
-
 // GAS deployment URL (Redeployed on 2026-01-03)
 const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxlg_08fpYZNte11U_LawwNRoGThe4Mps5v__MfOib5kMZfFqs3jzvqBxa55CKHhDcepw/exec";
 
@@ -98,7 +96,7 @@ export const GoogleService = {
     }
   },
 
-  fetchCalendarEvents: () => new Promise(resolve => { setTimeout(() => resolve(MOCK_DB.calendar), 1000); }),
+  fetchCalendarEvents: () => new Promise(resolve => { setTimeout(() => resolve([]), 1000); }),
 
   addToCalendar: async (event) => {
     console.log(`📅 Adding calendar event: ${event.title}`);

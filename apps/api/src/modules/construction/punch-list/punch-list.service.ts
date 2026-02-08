@@ -8,7 +8,7 @@
 import { Injectable, NotFoundException, BadRequestException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, In } from "typeorm";
-import { PunchListItem } from "./entities/punch-list-item.entity";
+import { PunchListItem, PunchListPhotoInfo } from "./entities/punch-list-item.entity";
 
 // ============================================
 // Types
@@ -23,12 +23,12 @@ export interface CreatePunchListDto {
   severity?: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   responsibleParty?: string;
   dueDate?: Date;
-  defectPhotos?: PhotoInfo[];
+  defectPhotos?: PunchListPhotoInfo[];
 }
 
 export interface ResolvePunchListDto {
   resolutionNotes: string;
-  resolutionPhotos?: PhotoInfo[];
+  resolutionPhotos?: PunchListPhotoInfo[];
 }
 
 export interface VerifyPunchListDto {
@@ -36,11 +36,6 @@ export interface VerifyPunchListDto {
   notes?: string;
 }
 
-export interface PhotoInfo {
-  url: string;
-  caption?: string;
-  takenAt?: Date;
-}
 
 export interface PunchListStats {
   total: number;
@@ -97,7 +92,7 @@ export class PunchListService {
       acceptanceRecordId?: string;
     },
   ): Promise<PunchListItem[]> {
-    const where: any = { projectId };
+    const where: Record<string, string> = { projectId };
 
     if (filters?.status) where.status = filters.status;
     if (filters?.severity) where.severity = filters.severity;
@@ -148,7 +143,7 @@ export class PunchListService {
     item.resolvedAt = new Date();
     item.resolvedBy = userId;
     item.resolutionNotes = dto.resolutionNotes;
-    item.resolutionPhotos = dto.resolutionPhotos;
+    item.resolutionPhotos = dto.resolutionPhotos || null;
 
     return this.punchListRepo.save(item);
   }

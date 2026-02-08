@@ -12,7 +12,7 @@ import { Project } from "../../../projects/project.entity";
 import { Contract } from "../../../contracts/contract.entity";
 
 /**
- * AcceptanceRecord (驗收紀錄)
+ * AcceptanceRecord (驗收紀�?
  * 管理工程階段性驗收與竣工驗收
  */
 @Entity("acceptance_records")
@@ -81,18 +81,18 @@ export class AcceptanceRecord {
   punchItemResolved: number;
 
   /**
-   * 附件與照片
+   * 附件與照�?
    * [{ url, caption, type }]
    */
   @Column({ type: "jsonb", nullable: true })
-  attachments: any;
+  attachments: Record<string, unknown>;
 
   /**
-   * 簽核紀錄
+   * 簽核紀�?
    * [{ signedBy, signedAt, role, signature }]
    */
   @Column({ type: "jsonb", nullable: true })
-  signatures: any;
+  signatures: Record<string, unknown>;
 
   @Column({ name: "created_by", length: 36, nullable: true })
   createdBy: string;

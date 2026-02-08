@@ -9,6 +9,28 @@ import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import axios, { AxiosInstance } from "axios";
 
+/** LINE Messaging API types */
+interface LineFlexContent {
+  type: string;
+  [key: string]: unknown;
+}
+
+interface LineMessageObject {
+  type: string;
+  text?: string;
+  altText?: string;
+  contents?: LineFlexContent;
+  originalContentUrl?: string;
+  previewImageUrl?: string;
+}
+
+interface LineFlexBubble extends LineFlexContent {
+  type: "bubble";
+  hero: Record<string, unknown>;
+  body: Record<string, unknown>;
+  footer: Record<string, unknown>;
+}
+
 export interface LineMessageDto {
   /** 接收者 LINE User ID 或 Group ID */
   to: string;
@@ -17,7 +39,7 @@ export interface LineMessageDto {
   /** 文字內容 (type=text 時使用) */
   text?: string;
   /** Flex Message 內容 (type=flex 時使用) */
-  flexContent?: any;
+  flexContent?: LineFlexContent;
   /** 圖片網址 (type=image 時使用) */
   imageUrl?: string;
   /** 預覽圖網址 */
@@ -114,7 +136,7 @@ export class LineNotifyService {
     const failedCount = results.filter((r) => r.status === "rejected").length;
     const errors = results
       .filter((r) => r.status === "rejected")
-      .map((r: any) => r.reason?.message || "Unknown error");
+      .map((r: PromiseRejectedResult) => r.reason?.message || "Unknown error");
 
     return {
       success: failedCount === 0,
@@ -153,10 +175,7 @@ export class LineNotifyService {
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       const stack = error instanceof Error ? error.stack : undefined;
-      this.logger.error(
-        `Failed to send LINE message: ${message}`,
-        stack,
-      );
+      this.logger.error(`Failed to send LINE message: ${message}`, stack);
       throw error;
     }
   }
@@ -196,7 +215,7 @@ export class LineNotifyService {
     }
   }
 
-  private buildMessages(dto: LineMessageDto): any[] {
+  private buildMessages(dto: LineMessageDto): LineMessageObject[] {
     switch (dto.type) {
       case "text":
         return [{ type: "text", text: dto.text }];
@@ -224,7 +243,7 @@ export class LineNotifyService {
     }
   }
 
-  private buildProjectFlexMessage(dto: ProjectNotificationDto): any {
+  private buildProjectFlexMessage(dto: ProjectNotificationDto): LineFlexBubble {
     const statusColors: Record<string, string> = {
       progress_update: "#17C950",
       milestone: "#1DB446",

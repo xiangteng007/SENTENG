@@ -12,7 +12,7 @@ import { BusinessUnit } from "../../../platform/tenants/entities/business-unit.e
 /**
  * ServiceCatalog (服務目錄)
  *
- * 定義可提供的服務項目與計價規則。
+ * 定義可提供的服務項目與計價規則�?
  */
 @Entity("service_catalog")
 export class ServiceCatalog {
@@ -61,7 +61,7 @@ export class ServiceCatalog {
    * 例如: { "minCharge": 5000, "heightMultiplier": 1.2, "distanceRate": 50 }
    */
   @Column({ name: "pricing_rules", type: "jsonb", nullable: true })
-  pricingRules: any;
+  pricingRules: Record<string, unknown>;
 
   @Column({ name: "is_active", default: true })
   isActive: boolean;

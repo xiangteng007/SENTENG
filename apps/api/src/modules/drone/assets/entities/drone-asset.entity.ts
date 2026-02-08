@@ -11,7 +11,7 @@ import {
 import { BusinessUnit } from "../../../platform/tenants/entities/business-unit.entity";
 
 /**
- * DroneAsset (無人機資產)
+ * DroneAsset (無人機資�?
  */
 @Entity("drone_assets")
 export class DroneAsset {
@@ -27,9 +27,9 @@ export class DroneAsset {
 
   /**
    * 資產類型
-   * - DRONE: 無人機
+   * - DRONE: 無人�?
    * - BATTERY: 電池
-   * - SPRAYER: 噴灑器
+   * - SPRAYER: 噴灑�?
    * - CAMERA: 相機
    */
   @Column({ name: "asset_type", length: 30 })
@@ -57,11 +57,11 @@ export class DroneAsset {
   purchaseCost: number;
 
   /**
-   * 狀態
+   * 狀�?
    * - AVAILABLE: 可用
-   * - IN_USE: 使用中
-   * - MAINTENANCE: 維護中
-   * - RETIRED: 已報廢
+   * - IN_USE: 使用�?
+   * - MAINTENANCE: 維護�?
+   * - RETIRED: 已報�?
    */
   @Column({ length: 20, default: "AVAILABLE" })
   status: string;
@@ -99,7 +99,7 @@ export class DroneAsset {
 }
 
 /**
- * MaintenanceRecord (維護紀錄)
+ * MaintenanceRecord (維護紀�?
  */
 @Entity("maintenance_records")
 export class MaintenanceRecord {
@@ -133,11 +133,11 @@ export class MaintenanceRecord {
   performedAt: Date;
 
   /**
-   * 使用的零件
+   * 使用的零�?
    * [{ partName, partNo, quantity, cost }]
    */
   @Column({ name: "parts_used", type: "jsonb", nullable: true })
-  partsUsed: any;
+  partsUsed: Record<string, unknown>;
 
   @Column({
     name: "labor_hours",

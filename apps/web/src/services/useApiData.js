@@ -2,14 +2,25 @@ import { useState, useEffect, useCallback } from 'react';
 import { projectsApi, inventoryApi, financeApi } from './api';
 import { getClients, getVendors, createPartner, deletePartner } from './partnersApi';
 import { GoogleService } from './GoogleService';
-import { MOCK_DB } from './MockData';
+import { mapClientFromApi, mapProjectFromApi, mapVendorFromApi } from './mappers';
+
+// Default empty state (replaces deleted MockData.js)
+const INITIAL_DATA = {
+    clients: [],
+    projects: [],
+    finance: { accounts: [], transactions: [], loans: [] },
+    vendors: [],
+    inventory: [],
+    calendar: [],
+};
 
 /**
- * Custom hook for loading and managing data from API with Google Sheets fallback
+ * Custom hook for loading and managing data from API
+ * Mapping functions extracted to ./mappers.js
  * @param {boolean} isAuthenticated - Whether the user is authenticated
  */
 export const useApiData = (isAuthenticated = false) => {
-    const [data, setData] = useState(MOCK_DB);
+    const [data, setData] = useState(INITIAL_DATA);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -30,7 +41,6 @@ export const useApiData = (isAuthenticated = false) => {
                     getVendors(),
                 ]);
             } else {
-                // Not authenticated - use mock data
                 console.log('⚠️ Not authenticated, using mock data');
                 setLoading(false);
                 return;
@@ -203,108 +213,4 @@ export const useApiData = (isAuthenticated = false) => {
     };
 };
 
-// === Mapping Functions ===
-
-function mapClientFromApi(apiClient) {
-    return {
-        id: apiClient.id,
-        name: apiClient.name,
-        phone: apiClient.phone || '',
-        email: apiClient.email || '',
-        address: apiClient.address || '',
-        status: mapClientStatus(apiClient.status),
-        type: apiClient.type || 'INDIVIDUAL',
-        taxId: apiClient.taxId || '',
-        contactPerson: apiClient.contactPerson || '',
-        lineId: '', // Not in API
-        driveFolder: '', // Will be created separately
-        createdAt: apiClient.createdAt,
-        customFields: [],
-        contactLogs: [],
-    };
-}
-
-function mapClientStatus(apiStatus) {
-    const statusMap = {
-        'ACTIVE': '洽談中',
-        'VIP': '已簽約',
-        'NORMAL': '洽談中',
-        'INACTIVE': '暫緩',
-    };
-    return statusMap[apiStatus] || '洽談中';
-}
-
-function mapProjectFromApi(apiProject) {
-    return {
-        id: apiProject.id,
-        name: apiProject.name,
-        client: apiProject.client?.name || '',
-        clientId: apiProject.clientId,
-        status: mapProjectStatus(apiProject.status),
-        startDate: apiProject.startDate || '',
-        endDate: apiProject.endDate || '',
-        budget: Number(apiProject.contractAmount) || 0,
-        description: apiProject.description || '',
-        folderUrl: '', // Will be set separately
-        createdAt: apiProject.createdAt,
-        // Financial data
-        originalAmount: Number(apiProject.originalAmount) || 0,
-        currentAmount: Number(apiProject.currentAmount) || 0,
-        costBudget: Number(apiProject.costBudget) || 0,
-        costActual: Number(apiProject.costActual) || 0,
-    };
-}
-
-function mapProjectStatus(apiStatus) {
-    const statusMap = {
-        'PLANNING': '規劃中',
-        'QUOTED': '報價中',
-        'IN_PROGRESS': '進行中',
-        'COMPLETED': '已完工',
-        'ON_HOLD': '暫緩',
-        'CANCELLED': '已取消',
-    };
-    return statusMap[apiStatus] || '規劃中';
-}
-
-function mapVendorFromApi(apiVendor) {
-    return {
-        id: apiVendor.id,
-        name: apiVendor.name,
-        type: mapVendorType(apiVendor.type),
-        taxId: apiVendor.taxId || '',
-        contactPerson: apiVendor.contactPerson || '',
-        phone: apiVendor.phone || '',
-        email: apiVendor.email || '',
-        address: apiVendor.address || '',
-        bankName: apiVendor.bankName || '',
-        bankAccount: apiVendor.bankAccount || '',
-        paymentTerms: apiVendor.paymentTerms || 30,
-        status: mapVendorStatus(apiVendor.status),
-        rating: apiVendor.rating || 0,
-        notes: apiVendor.notes || '',
-        createdAt: apiVendor.createdAt,
-    };
-}
-
-function mapVendorType(apiType) {
-    const typeMap = {
-        'SUPPLIER': '材料商',
-        'SUBCONTRACTOR': '承包商',
-        'SERVICE': '服務商',
-        'OTHER': '其他',
-    };
-    return typeMap[apiType] || '其他';
-}
-
-function mapVendorStatus(apiStatus) {
-    const statusMap = {
-        'ACTIVE': '合作中',
-        'INACTIVE': '暫停',
-        'BLACKLISTED': '黑名單',
-    };
-    return statusMap[apiStatus] || '合作中';
-}
-
 export default useApiData;
-

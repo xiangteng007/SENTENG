@@ -78,7 +78,6 @@ export const authApi = {
 };
 
 // ===== Domain APIs (re-exported for backward compatibility) =====
-export { clientsApi, vendorsApi } from './api-crm';
 export { projectsApi, contractsApi, changeOrdersApi, paymentsApi } from './api-projects';
 export {
     financeApi, invoicesApi, quotationsApi, costEntriesApi,

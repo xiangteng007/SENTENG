@@ -30,7 +30,7 @@ export class CacheService {
   private readonly isProduction: boolean;
 
   constructor(private readonly configService: ConfigService) {
-    this.isProduction = process.env.NODE_ENV === "production";
+    this.isProduction = this.configService.get("NODE_ENV") === "production";
   }
 
   /**

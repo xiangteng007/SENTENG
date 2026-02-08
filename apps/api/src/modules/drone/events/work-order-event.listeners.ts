@@ -60,7 +60,13 @@ export class WorkOrderEventListeners {
   }
 
   private async createCostEntries(
-    workOrder: any,
+    workOrder: {
+      woNumber: string;
+      projectId: string;
+      estimatedDuration?: number;
+      title?: string;
+      woType?: string;
+    },
     completedAt: Date,
   ): Promise<void> {
     // Generate cost entry ID
@@ -87,7 +93,15 @@ export class WorkOrderEventListeners {
   }
 
   private async createInvoiceDraft(
-    workOrder: any,
+    workOrder: {
+      woNumber: string;
+      partnerId?: string;
+      projectId?: string;
+      estimatedDuration?: number;
+      estimatedArea?: number;
+      title?: string;
+      woType?: string;
+    },
     completedAt: Date,
   ): Promise<void> {
     // Check if partner exists

@@ -75,7 +75,7 @@ export class SiteDiary {
    * [{ url, caption, takenAt }]
    */
   @Column({ type: "jsonb", nullable: true })
-  photos: any;
+  photos: Record<string, unknown>;
 
   @Column({ name: "created_by", length: 20, nullable: true })
   createdBy: string;

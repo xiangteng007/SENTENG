@@ -80,7 +80,7 @@ export class CmmMaterialBreakdown {
   traceInfo?: {
     ruleApplied?: string;
     conversionFormula?: string;
-    [key: string]: any;
+    [key: string]: unknown;
   };
 
   @CreateDateColumn({ name: "created_at" })

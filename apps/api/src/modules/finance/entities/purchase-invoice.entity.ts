@@ -14,13 +14,13 @@ import { Project } from '../../projects/project.entity';
  * PurchaseInvoice (進項發票)
  * ACC-ADV-002: 進項發票管理，支援進項稅額抵扣
  * 
- * 進項發票 = 我方收到的發票 (由供應商開立給我方)
- * 銷項發票 = 我方開出的發票 (我方開立給客戶) - 使用 Invoice Entity
+ * 進項發票 = 我方收到的發�?(由供應商開立給我�?
+ * 銷項發票 = 我方開出的發�?(我方開立給客�? - 使用 Invoice Entity
  * 
  * 台灣營業稅制度：
  * - 進項稅額可以抵扣銷項稅額
- * - 每期 (單月或雙月) 申報
- * - 需保存發票正本 5 年
+ * - 每期 (單月或雙�? 申報
+ * - 需保存發票正本 5 �?
  */
 @Entity('purchase_invoices')
 @Index(['projectId', 'invoiceDate'])
@@ -39,7 +39,7 @@ export class PurchaseInvoice {
 
   /**
    * 發票號碼 (統一發票字軌)
-   * 格式: XX-12345678 (2碼字軌-8碼號碼)
+   * 格式: XX-12345678 (2碼字�?8碼號�?
    */
   @Column({ name: 'invoice_number', length: 20 })
   invoiceNumber: string;
@@ -57,7 +57,7 @@ export class PurchaseInvoice {
   invoiceDate: Date;
 
   /**
-   * 供應商資訊
+   * 供應商資�?
    */
   @Column({ name: 'vendor_id', length: 36, nullable: true })
   vendorId: string;
@@ -90,16 +90,16 @@ export class PurchaseInvoice {
    * 抵扣資訊
    */
   @Column({ name: 'is_deductible', default: true })
-  isDeductible: boolean; // 是否可抵扣
+  isDeductible: boolean; // 是否可抵�?
 
   @Column({ name: 'deduction_status', length: 20, default: 'PENDING' })
   deductionStatus: string; // PENDING | DEDUCTED | NOT_APPLICABLE
 
   @Column({ name: 'deduction_period', length: 10, nullable: true })
-  deductionPeriod: string; // 抵扣期別, e.g. "2026-01" (雙月期)
+  deductionPeriod: string; // 抵扣期別, e.g. "2026-01" (雙月�?
 
   /**
-   * 分類與成本歸屬
+   * 分類與成本歸�?
    */
   @Column({ name: 'expense_category', length: 50, nullable: true })
   expenseCategory: string; // MATERIAL | LABOR | EQUIPMENT | SUBCONTRACT | OVERHEAD | OTHER
@@ -139,13 +139,13 @@ export class PurchaseInvoice {
    * [{ description, quantity, unit, unitPrice, amount }]
    */
   @Column({ type: 'jsonb', nullable: true })
-  lineItems: any;
+  lineItems: Record<string, unknown>;
 
   /**
    * 附件 (發票影像)
    */
   @Column({ type: 'jsonb', nullable: true })
-  attachments: any;
+  attachments: Record<string, unknown>;
 
   @Column({ type: 'text', nullable: true })
   notes: string;

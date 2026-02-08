@@ -15,7 +15,7 @@ import { User } from "../../../users/user.entity";
 /**
  * ChemicalLot (藥劑批次)
  *
- * 農藥/清潔劑的進貨批次追溯。
+ * 農藥/清潔劑的進貨批次追溯�?
  */
 @Entity("chemical_lots")
 export class ChemicalLot {
@@ -82,11 +82,11 @@ export class ChemicalLot {
   msdsUrl: string;
 
   /**
-   * 狀態
-   * - IN_STOCK: 庫存中
-   * - LOW_STOCK: 低庫存
-   * - EXPIRED: 已過期
-   * - DEPLETED: 已用盡
+   * 狀�?
+   * - IN_STOCK: 庫存�?
+   * - LOW_STOCK: 低庫�?
+   * - EXPIRED: 已過�?
+   * - DEPLETED: 已用�?
    */
   @Column({ length: 20, default: "IN_STOCK" })
   status: string;
@@ -98,7 +98,7 @@ export class ChemicalLot {
 /**
  * MixtureBatch (調配批次)
  *
- * 記錄每次調配的藥劑配方。
+ * 記錄每次調配的藥劑配方�?
  */
 @Entity("mixture_batches")
 export class MixtureBatch {
@@ -130,7 +130,7 @@ export class MixtureBatch {
    * [{ lotId, productName, quantity, unit }]
    */
   @Column({ type: "jsonb" })
-  chemicals: any;
+  chemicals: Record<string, unknown>;
 
   @Column({
     name: "water_volume",
@@ -161,9 +161,9 @@ export class MixtureBatch {
 }
 
 /**
- * ApplicationRecord (施作紀錄)
+ * ApplicationRecord (施作紀�?
  *
- * 記錄實際的農藥/清潔劑施作情況，用於追溯。
+ * 記錄實際的農�?清潔劑施作情況，用於追溯�?
  */
 @Entity("application_records")
 export class ApplicationRecord {
@@ -222,7 +222,7 @@ export class ApplicationRecord {
    * 天氣條件
    */
   @Column({ name: "weather_conditions", type: "jsonb", nullable: true })
-  weatherConditions: any;
+  weatherConditions: Record<string, unknown>;
 
   @Column({ name: "gps_track_uri", type: "text", nullable: true })
   gpsTrackUri: string;

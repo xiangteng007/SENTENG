@@ -19,6 +19,7 @@ import {
 } from "@nestjs/swagger";
 import { InjectDataSource } from "@nestjs/typeorm";
 import { DataSource } from "typeorm";
+import { ConfigService } from "@nestjs/config";
 import type { Response, Request } from "express";
 import { AuthService } from "./auth.service";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
@@ -46,6 +47,7 @@ export class AuthController {
   constructor(
     private authService: AuthService,
     @InjectDataSource() private dataSource: DataSource,
+    private readonly configService: ConfigService,
   ) {}
 
   @Post("login")
@@ -74,7 +76,7 @@ export class AuthController {
     // Set JWT in HttpOnly cookie for enhanced security
     response.cookie("access_token", result.access_token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: this.configService.get("NODE_ENV") === "production",
       sameSite: "strict",
       maxAge: 3600000, // 1 hour
       path: "/",
@@ -95,7 +97,7 @@ export class AuthController {
     // Clear the access token cookie
     response.cookie("access_token", "", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: this.configService.get("NODE_ENV") === "production",
       sameSite: "strict",
       maxAge: 0,
       path: "/",

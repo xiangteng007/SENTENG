@@ -37,7 +37,11 @@ interface SendEmailResult {
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
 
-  private transporter: any = null;
+  private transporter: {
+    sendMail: (
+      options: Record<string, unknown>,
+    ) => Promise<{ messageId: string }>;
+  } | null = null;
 
   constructor(
     private readonly configService: ConfigService,

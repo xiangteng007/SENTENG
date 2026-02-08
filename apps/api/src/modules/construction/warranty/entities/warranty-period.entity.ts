@@ -12,7 +12,7 @@ import { Project } from "../../../projects/project.entity";
 import { Contract } from "../../../contracts/contract.entity";
 
 /**
- * WarrantyPeriod (保固期管理)
+ * WarrantyPeriod (保固期管�?
  * 追蹤工程保固期限、維修紀錄、保固金釋放
  */
 @Entity("warranty_periods")
@@ -89,11 +89,11 @@ export class WarrantyPeriod {
   notes: string;
 
   /**
-   * 維修紀錄
+   * 維修紀�?
    * [{ date, description, resolvedAt, cost }]
    */
   @Column({ name: "repair_logs", type: "jsonb", nullable: true })
-  repairLogs: any;
+  repairLogs: Record<string, unknown>;
 
   @Column({ name: "contractor_name", length: 100, nullable: true })
   contractorName: string;

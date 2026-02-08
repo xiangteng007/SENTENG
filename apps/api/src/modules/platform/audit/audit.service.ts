@@ -24,7 +24,7 @@ export class AuditService {
   async logCreate(
     entityType: string,
     entityId: string,
-    newValues: any,
+    newValues: Record<string, unknown>,
     context?: AuditContext,
   ): Promise<AuditLog> {
     return this.createLog(
@@ -43,8 +43,8 @@ export class AuditService {
   async logUpdate(
     entityType: string,
     entityId: string,
-    oldValues: any,
-    newValues: any,
+    oldValues: Record<string, unknown>,
+    newValues: Record<string, unknown>,
     context?: AuditContext,
   ): Promise<AuditLog> {
     const changedFields = this.detectChangedFields(oldValues, newValues);
@@ -65,7 +65,7 @@ export class AuditService {
   async logDelete(
     entityType: string,
     entityId: string,
-    oldValues: any,
+    oldValues: Record<string, unknown>,
     context?: AuditContext,
   ): Promise<AuditLog> {
     return this.createLog(
@@ -127,8 +127,8 @@ export class AuditService {
     action: string,
     entityType: string,
     entityId: string,
-    oldValues: any,
-    newValues: any,
+    oldValues: Record<string, unknown> | null,
+    newValues: Record<string, unknown> | null,
     context?: AuditContext,
     changedFields?: string[],
   ): Promise<AuditLog> {
@@ -144,11 +144,14 @@ export class AuditService {
       userName: context?.userName,
       ipAddress: context?.ipAddress,
       userAgent: context?.userAgent,
-    });
+    } as Partial<AuditLog>);
     return this.auditLogRepo.save(log);
   }
 
-  private detectChangedFields(oldValues: any, newValues: any): string[] {
+  private detectChangedFields(
+    oldValues: Record<string, unknown>,
+    newValues: Record<string, unknown>,
+  ): string[] {
     if (!oldValues || !newValues) return [];
 
     const changed: string[] = [];

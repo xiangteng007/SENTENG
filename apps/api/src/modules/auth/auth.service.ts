@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { UsersService } from "../users/users.service";
+import { User } from "../users/user.entity";
 
 @Injectable()
 export class AuthService {
@@ -9,12 +10,15 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(email: string): Promise<any> {
+  async validateUser(email: string): Promise<User | null> {
     const user = await this.usersService.findByEmail(email);
     return user;
   }
 
-  async login(user: any, role: string = "user") {
+  async login(
+    user: { id: string; email: string; name: string; role?: string },
+    role: string = "user",
+  ) {
     // Include role in JWT payload for RBAC
     const payload = {
       sub: user.id,

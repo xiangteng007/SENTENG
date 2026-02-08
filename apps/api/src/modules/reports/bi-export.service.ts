@@ -156,7 +156,7 @@ export class BiExportService {
       LEFT JOIN cost_entries ce ON ce.project_id = p.id
     `;
 
-    const params: any[] = [];
+    const params: (string | Date)[] = [];
     if (dateRange) {
       query += ` WHERE p.created_at BETWEEN $1 AND $2`;
       params.push(dateRange.startDate, dateRange.endDate);
@@ -247,7 +247,11 @@ export class BiExportService {
   /**
    * 匯出為 CSV 格式
    */
-  exportToCsv(data: any[], res: Response, filename: string): void {
+  exportToCsv(
+    data: Record<string, unknown>[],
+    res: Response,
+    filename: string,
+  ): void {
     if (!data || data.length === 0) {
       res.status(200).send("");
       return;
@@ -261,7 +265,8 @@ export class BiExportService {
           .map((header) => {
             const value = row[header];
             if (value === null || value === undefined) return "";
-            const stringValue = String(value);
+            const stringValue =
+              typeof value === "object" ? JSON.stringify(value) : String(value);
             // Escape quotes and wrap in quotes if contains comma
             if (
               stringValue.includes(",") ||

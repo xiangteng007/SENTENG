@@ -1,15 +1,14 @@
 ﻿
 import React, { useState, useEffect, useMemo } from 'react';
 import {
-    Package, Plus, Search, Filter, Edit2, Trash2,
+    Package, Plus, Search, Filter, Edit2,
     ArrowDownCircle, ArrowUpCircle, AlertTriangle,
     CheckCircle, XCircle, X, Save, History, MapPin,
     BarChart3, TrendingDown, TrendingUp, Box,
     FileSpreadsheet, ExternalLink, RefreshCw
 } from 'lucide-react';
 import { Badge } from '../components/common/Badge';
-import { Modal } from '../components/common/Modal';
-import { InputField } from '../components/common/InputField';
+
 import { SectionTitle } from '../components/common/Indicators';
 import { GoogleService } from '../services/GoogleService';
 import { StatCardPro, InventoryLevel } from '../components/common/ModuleComponents';
@@ -70,216 +69,9 @@ const formatDate = (dateStr) => {
     return new Date(dateStr).toLocaleDateString('zh-TW');
 };
 
-// 統計卡片組件
-const StatCard = ({ icon: Icon, label, value, color = 'gray', onClick }) => (
-    <div
-        onClick={onClick}
-        className={`bg-white rounded-xl p-4 border border-gray-100 shadow-sm cursor-pointer hover:shadow-md transition-all ${onClick ? 'cursor-pointer' : ''}`}
-    >
-        <div className="flex items-center justify-between">
-            <div className={`w-10 h-10 rounded-lg bg-${color}-100 flex items-center justify-center`}>
-                <Icon size={20} className={`text-${color}-600`} />
-            </div>
-            <div className="text-right">
-                <div className={`text-2xl font-bold text-${color}-600`}>{value}</div>
-                <div className="text-xs text-gray-500">{label}</div>
-            </div>
-        </div>
-    </div>
-);
-
-// 新增/編輯品項 Modal
-const ItemModal = ({ isOpen, onClose, item, onSave, isEdit }) => {
-    const [form, setForm] = useState({
-        name: '', spec: '', mainCategory: '消耗品', category: '黏著劑', quantity: 0,
-        unit: '個', safeStock: 10, location: '', status: '充足'
-    });
-
-    useEffect(() => {
-        if (item) {
-            // 若舊資料沒有 mainCategory，根據 category 推算
-            const mainCat = item.mainCategory || getMainCategory(item.category);
-            setForm({ ...item, mainCategory: mainCat });
-        } else {
-            setForm({
-                name: '', spec: '', mainCategory: '消耗品', category: '黏著劑', quantity: 0,
-                unit: '個', safeStock: 10, location: '', status: '充足'
-            });
-        }
-    }, [item, isOpen]);
-
-    const handleMainCategoryChange = (newMain) => {
-        const subCats = CATEGORY_TREE[newMain] || [];
-        setForm({
-            ...form,
-            mainCategory: newMain,
-            category: subCats[0] || '' // 預設選第一個子類別
-        });
-    };
-
-    const handleSave = () => {
-        const status = calculateStatus(parseInt(form.quantity), parseInt(form.safeStock));
-        onSave({ ...form, quantity: parseInt(form.quantity), safeStock: parseInt(form.safeStock), status });
-    };
-
-    const availableSubCategories = CATEGORY_TREE[form.mainCategory] || [];
-
-    return (
-        <Modal
-            isOpen={isOpen}
-            onClose={onClose}
-            title={isEdit ? '編輯庫存品項' : '新增庫存品項'}
-            onConfirm={handleSave}
-        >
-            <div className="space-y-4">
-                <InputField
-                    label="品項名稱"
-                    value={form.name}
-                    onChange={e => setForm({ ...form, name: e.target.value })}
-                    placeholder="例：Panasonic 開關"
-                />
-                <div className="grid grid-cols-2 gap-4">
-                    <InputField
-                        label="規格/型號"
-                        value={form.spec}
-                        onChange={e => setForm({ ...form, spec: e.target.value })}
-                        placeholder="例：PN-001"
-                    />
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">主類別</label>
-                        <select
-                            value={form.mainCategory}
-                            onChange={e => handleMainCategoryChange(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500"
-                        >
-                            {Object.keys(CATEGORY_TREE).map(cat => (
-                                <option key={cat} value={cat}>{cat}</option>
-                            ))}
-                        </select>
-                    </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">子類別</label>
-                        <select
-                            value={form.category}
-                            onChange={e => setForm({ ...form, category: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500"
-                        >
-                            {availableSubCategories.map(cat => (
-                                <option key={cat} value={cat}>{cat}</option>
-                            ))}
-                        </select>
-                    </div>
-                    <InputField
-                        label="單位"
-                        value={form.unit}
-                        onChange={e => setForm({ ...form, unit: e.target.value })}
-                        placeholder="個、組、箱"
-                    />
-                </div>
-                <div className="grid grid-cols-3 gap-4">
-                    <InputField
-                        label="數量"
-                        type="number"
-                        value={form.quantity}
-                        onChange={e => setForm({ ...form, quantity: e.target.value })}
-                    />
-                    <InputField
-                        label="安全庫存"
-                        type="number"
-                        value={form.safeStock}
-                        onChange={e => setForm({ ...form, safeStock: e.target.value })}
-                    />
-                    <InputField
-                        label="存放位置"
-                        value={form.location}
-                        onChange={e => setForm({ ...form, location: e.target.value })}
-                        placeholder="A-01"
-                    />
-                </div>
-            </div>
-        </Modal>
-    );
-};
-
-
-// 出入庫 Modal
-const StockMovementModal = ({ isOpen, onClose, item, type, onConfirm }) => {
-    const [quantity, setQuantity] = useState(1);
-    const [note, setNote] = useState('');
-
-    useEffect(() => {
-        setQuantity(1);
-        setNote('');
-    }, [isOpen]);
-
-    const handleConfirm = () => {
-        onConfirm({
-            itemId: item.id,
-            itemName: item.name,
-            type: type,
-            quantity: parseInt(quantity),
-            date: new Date().toISOString().split('T')[0],
-            operator: 'Admin',
-            note
-        });
-    };
-
-    return (
-        <Modal
-            isOpen={isOpen}
-            onClose={onClose}
-            title={type === '入' ? '入庫登記' : '出庫登記'}
-            onConfirm={handleConfirm}
-        >
-            <div className="space-y-4">
-                <div className="bg-gray-50 rounded-lg p-3">
-                    <div className="text-sm text-gray-500">品項</div>
-                    <div className="font-bold text-gray-800">{item?.name}</div>
-                    <div className="text-xs text-gray-400">{item?.spec}</div>
-                    <div className="mt-2 text-sm">
-                        當前數量: <span className="font-bold">{item?.quantity}</span> {item?.unit}
-                    </div>
-                </div>
-                <InputField
-                    label={`${type === '入' ? '入庫' : '出庫'}數量`}
-                    type="number"
-                    value={quantity}
-                    onChange={e => setQuantity(e.target.value)}
-                    min={1}
-                />
-                <InputField
-                    label="備註"
-                    value={note}
-                    onChange={e => setNote(e.target.value)}
-                    placeholder={type === '入' ? '例：批量採購' : '例：出貨至林公館'}
-                />
-                {type === '出' && parseInt(quantity) > (item?.quantity || 0) && (
-                    <div className="text-red-500 text-sm flex items-center gap-1">
-                        <AlertTriangle size={14} />
-                        出庫數量超過庫存！
-                    </div>
-                )}
-            </div>
-        </Modal>
-    );
-};
-
-// 刪除確認 Modal
-const DeleteConfirmModal = ({ isOpen, onClose, item, onConfirm }) => (
-    <Modal isOpen={isOpen} onClose={onClose} title="確認刪除" onConfirm={onConfirm}>
-        <div className="text-center py-4">
-            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Trash2 size={32} className="text-red-500" />
-            </div>
-            <p className="text-gray-600">確定要刪除以下品項嗎？</p>
-            <p className="font-bold text-gray-800 mt-2">{item?.name}</p>
-            <p className="text-sm text-gray-500">{item?.spec}</p>
-            <p className="text-sm text-red-500 mt-4">此操作無法還原</p>
-        </div>
-    </Modal>
-);
+import ItemModal from '../components/inventory/ItemModal';
+import StockMovementModal from '../components/inventory/StockMovementModal';
+import DeleteConfirmModal from '../components/inventory/DeleteConfirmModal';
 
 // 主組件
 const Inventory = ({ data, addToast, onUpdateInventory }) => {
