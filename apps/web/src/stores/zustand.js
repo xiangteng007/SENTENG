@@ -255,7 +255,7 @@ state.addToast('Operation complete', 'success');
 // Subscribe to changes:
 const unsubscribe = useProjectsStore.subscribe(
   (state) => state.activeProject,
-  (activeProject) => console.log('Active project changed:', activeProject)
+  (activeProject) => console.warn('Active project changed:', activeProject)
 );
 */
 

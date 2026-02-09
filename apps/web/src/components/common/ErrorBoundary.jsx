@@ -50,7 +50,7 @@ export class ErrorBoundary extends React.Component {
       };
       
       // Log for debugging
-      console.log('[ErrorBoundary] Error report:', errorReport);
+      console.error('[ErrorBoundary] Error report:', errorReport);
       
       // TODO: Send to Sentry or custom API
       // await fetch('/api/errors', { method: 'POST', body: JSON.stringify(errorReport) });

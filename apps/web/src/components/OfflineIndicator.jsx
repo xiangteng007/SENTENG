@@ -44,7 +44,7 @@ export function OfflineIndicator() {
         setIsSyncing(true);
         try {
             await processPendingRequests((progress) => {
-                console.log('[OfflineIndicator] Sync progress:', progress);
+                console.warn('[OfflineIndicator] Sync progress:', progress);
             });
             const stats = await getQueueStats();
             setQueueStats(stats);

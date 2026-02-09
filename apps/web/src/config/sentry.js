@@ -47,11 +47,11 @@ export const sentryConfig = {
 export const initSentry = () => {
   // Only initialize if DSN is provided
   if (!sentryConfig.dsn) {
-    console.log('[Sentry] No DSN provided, skipping initialization');
+    console.warn('[Sentry] No DSN provided, skipping initialization');
     return;
   }
   
-  console.log('[Sentry] Initializing with environment:', sentryConfig.environment);
+  console.warn('[Sentry] Initializing with environment:', sentryConfig.environment);
   
   // Uncomment when @sentry/react is installed:
   // import * as Sentry from "@sentry/react";

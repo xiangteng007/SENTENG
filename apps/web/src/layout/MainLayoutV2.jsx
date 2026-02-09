@@ -53,7 +53,7 @@ export const MainLayoutV2 = ({ activeTab, setActiveTab, children, _addToast }) =
 
         setHasUpcomingEvents(upcoming);
       } catch (error) {
-        console.log('Calendar check skipped');
+        console.error('Calendar check skipped');
       }
     };
 

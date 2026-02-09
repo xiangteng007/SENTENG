@@ -57,11 +57,11 @@ export const AccountDetailsModal = ({ isOpen, onClose, account, allTransactions 
     }, [accountTransactions]);
 
     // DEBUG: Check what we're receiving
-    console.log('AccountDetailsModal render:', { isOpen, account, accountId, transactionCount: safeTransactions.length });
+    console.warn('AccountDetailsModal render:', { isOpen, account, accountId, transactionCount: safeTransactions.length });
 
     // NOW we can do conditional rendering - AFTER all hooks
     if (!isOpen || !account) {
-        console.log('Modal not rendering because:', { isOpen, hasAccount: !!account });
+        console.warn('Modal not rendering because:', { isOpen, hasAccount: !!account });
         return null;
     }
 

@@ -18,7 +18,7 @@ export const ga4Config = {
 // Initialize GA4
 export const initGA4 = () => {
   if (!ga4Config.measurementId) {
-    console.log('[GA4] No measurement ID provided, skipping initialization');
+    console.warn('[GA4] No measurement ID provided, skipping initialization');
     return;
   }
   
@@ -33,7 +33,7 @@ export const initGA4 = () => {
     send_page_view: false, // We'll track manually for SPA
   });
   
-  console.log('[GA4] Initialized with ID:', ga4Config.measurementId);
+  console.warn('[GA4] Initialized with ID:', ga4Config.measurementId);
 };
 
 // Track page view (for SPA)

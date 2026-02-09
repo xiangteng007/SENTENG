@@ -11,7 +11,7 @@ const callGASWithJSONP = (action, data = {}) => {
     const dataStr = encodeURIComponent(JSON.stringify(data));
     const url = `${GAS_API_URL}?action=${action}&data=${dataStr}&callback=${callbackName}`;
 
-    console.log(`🔗 GAS API Request: ${action}`, data);
+    console.warn(`🔗 GAS API Request: ${action}`, data);
 
     // 創建 script 標籤
     const script = document.createElement('script');
@@ -29,7 +29,7 @@ const callGASWithJSONP = (action, data = {}) => {
     window[callbackName] = (response) => {
       clearTimeout(timeout);
       cleanup();
-      console.log('✅ GAS API Response:', response);
+      console.warn('✅ GAS API Response:', response);
 
       // 檢查回應狀態 - 處理兩種回應格式
       // 格式1: {success: true, data: {...}}
@@ -75,16 +75,16 @@ export const GoogleService = {
 
   // 從 Google Sheets 載入資料
   loadFromSheet: async (sheetType) => {
-    console.log(`📥 Loading ${sheetType} from Google Sheets...`);
+    console.warn(`📥 Loading ${sheetType} from Google Sheets...`);
 
     try {
       const result = await callGASWithJSONP('load_from_sheet', { sheetType });
 
       if (result.success && result.data?.items) {
-        console.log(`✅ Loaded ${result.data.items.length} ${sheetType} items`);
+        console.warn(`✅ Loaded ${result.data.items.length} ${sheetType} items`);
         return { success: true, data: result.data.items };
       } else if (result.success && result.data?.status === 'empty') {
-        console.log(`📭 No ${sheetType} data found in Sheets`);
+        console.warn(`📭 No ${sheetType} data found in Sheets`);
         return { success: true, data: [] };
       } else {
         console.error(`❌ Failed to load ${sheetType}:`, result.error);
@@ -99,7 +99,7 @@ export const GoogleService = {
   fetchCalendarEvents: () => new Promise(resolve => { setTimeout(() => resolve([]), 1000); }),
 
   addToCalendar: async (event) => {
-    console.log(`📅 Adding calendar event: ${event.title}`);
+    console.warn(`📅 Adding calendar event: ${event.title}`);
 
     try {
       const result = await callGASWithJSONP('add_calendar_event', {
@@ -111,7 +111,7 @@ export const GoogleService = {
       });
 
       if (result.success) {
-        console.log("✅ Calendar event created successfully");
+        console.warn("✅ Calendar event created successfully");
       } else {
         console.error("❌ Calendar event creation failed:", result.error);
       }
@@ -130,7 +130,7 @@ export const GoogleService = {
   },
 
   updateCalendarEvent: async (eventId, updates) => {
-    console.log(`📅 Updating calendar event: ${eventId}`);
+    console.warn(`📅 Updating calendar event: ${eventId}`);
 
     try {
       const result = await callGASWithJSONP('update_calendar_event', {
@@ -139,7 +139,7 @@ export const GoogleService = {
       });
 
       if (result.success) {
-        console.log("✅ Calendar event updated successfully");
+        console.warn("✅ Calendar event updated successfully");
       } else {
         console.error("❌ Calendar event update failed:", result.error);
       }
@@ -152,7 +152,7 @@ export const GoogleService = {
   },
 
   deleteCalendarEvent: async (eventId) => {
-    console.log(`📅 Deleting calendar event: ${eventId}`);
+    console.error(`📅 Deleting calendar event: ${eventId}`);
 
     try {
       const result = await callGASWithJSONP('delete_calendar_event', {
@@ -160,7 +160,7 @@ export const GoogleService = {
       });
 
       if (result.success) {
-        console.log("✅ Calendar event deleted successfully");
+        console.warn("✅ Calendar event deleted successfully");
       } else {
         console.error("❌ Calendar event deletion failed:", result.error);
       }
@@ -173,7 +173,7 @@ export const GoogleService = {
   },
 
   syncToSheet: async (sheetName, data) => {
-    console.log(`📊 Syncing to Sheet [${sheetName}]:`, data.length, 'records');
+    console.error(`📊 Syncing to Sheet [${sheetName}]:`, data.length, 'records');
 
     try {
       const result = await callGASWithJSONP('sync_to_sheet', {
@@ -182,7 +182,7 @@ export const GoogleService = {
       });
 
       if (result.success) {
-        console.log(`✅ Synced to Sheet [${sheetName}]`);
+        console.warn(`✅ Synced to Sheet [${sheetName}]`);
       } else {
         console.error(`❌ Sheet sync failed [${sheetName}]:`, result.error);
       }
@@ -195,7 +195,7 @@ export const GoogleService = {
   },
 
   uploadToDrive: async (file, folderName, folderUrl) => {
-    console.log(`📤 Uploading file: ${file.name} to folder: ${folderName}`);
+    console.error(`📤 Uploading file: ${file.name} to folder: ${folderName}`);
 
     try {
       // Extract folder ID from URL if provided
@@ -216,7 +216,7 @@ export const GoogleService = {
 
       if (result.success) {
         const fileUrl = result.data?.fileUrl || `https://drive.google.com/file/d/${result.data?.fileId || 'unknown'}/view`;
-        console.log(`✅ File uploaded: ${fileUrl}`);
+        console.warn(`✅ File uploaded: ${fileUrl}`);
         return { success: true, url: fileUrl, fileId: result.data?.fileId };
       } else {
         console.error(`❌ File upload failed:`, result.error);
@@ -230,7 +230,7 @@ export const GoogleService = {
 
   // 獲取或創建「專案管理」根資料夾
   getOrCreateProjectRoot: async () => {
-    console.log(`📁 Getting or creating '專案管理' root folder...`);
+    console.warn(`📁 Getting or creating '專案管理' root folder...`);
 
     try {
       const result = await callGASWithJSONP('get_or_create_project_root', {
@@ -239,7 +239,7 @@ export const GoogleService = {
 
       if (result.success) {
         const folderUrl = result.data?.folderUrl || `https://drive.google.com/drive/folders/${result.data?.folderId || 'unknown'}`;
-        console.log(`✅ Project root folder ready: ${folderUrl}`);
+        console.warn(`✅ Project root folder ready: ${folderUrl}`);
         return { success: true, url: folderUrl, folderId: result.data?.folderId };
       } else {
         console.error(`❌ Project root folder failed:`, result.error);
@@ -253,7 +253,7 @@ export const GoogleService = {
 
   // 在「專案管理」資料夾下建立專案資料夾
   createDriveFolder: async (folderName, parentFolderId = null) => {
-    console.log(`📁 Creating Drive folder: ${folderName}${parentFolderId ? ' (in parent)' : ''}`);
+    console.warn(`📁 Creating Drive folder: ${folderName}${parentFolderId ? ' (in parent)' : ''}`);
 
     try {
       const result = await callGASWithJSONP('create_drive_folder', {
@@ -263,7 +263,7 @@ export const GoogleService = {
 
       if (result.success) {
         const folderUrl = result.data?.folderUrl || `https://drive.google.com/drive/folders/${result.data?.folderId || 'unknown'}`;
-        console.log(`✅ Drive folder created: ${folderUrl}`);
+        console.warn(`✅ Drive folder created: ${folderUrl}`);
         return { success: true, url: folderUrl, folderId: result.data?.folderId };
       } else {
         console.error(`❌ Drive folder creation failed:`, result.error);
@@ -278,7 +278,7 @@ export const GoogleService = {
   // 廠商專用：在指定的「廠商資料」資料夾下建立廠商資料夾
   createVendorFolder: async (vendorName) => {
     const VENDOR_PARENT_FOLDER_ID = '1cO5aF3MBBO6FoBHXgRokEUW1uaGjUjFy';
-    console.log(`📁 Creating vendor folder: ${vendorName} (in vendor root)`);
+    console.warn(`📁 Creating vendor folder: ${vendorName} (in vendor root)`);
 
     try {
       const result = await callGASWithJSONP('create_drive_folder', {
@@ -288,7 +288,7 @@ export const GoogleService = {
 
       if (result.success) {
         const folderUrl = result.data?.folderUrl || `https://drive.google.com/drive/folders/${result.data?.folderId || 'unknown'}`;
-        console.log(`✅ Vendor folder created: ${folderUrl}`);
+        console.warn(`✅ Vendor folder created: ${folderUrl}`);
         return { success: true, url: folderUrl, folderId: result.data?.folderId };
       } else {
         console.error(`❌ Vendor folder creation failed:`, result.error);
@@ -303,7 +303,7 @@ export const GoogleService = {
   // 客戶專用：在指定的「客戶資料」資料夾下建立客戶資料夾
   createClientFolder: async (clientName) => {
     const CLIENT_PARENT_FOLDER_ID = '1UcrNx19PWNvOR1gau8oywjFsIlNh22r0';
-    console.log(`📁 Creating client folder: ${clientName} (in client root)`);
+    console.warn(`📁 Creating client folder: ${clientName} (in client root)`);
 
     try {
       const result = await callGASWithJSONP('create_drive_folder', {
@@ -313,7 +313,7 @@ export const GoogleService = {
 
       if (result.success) {
         const folderUrl = result.data?.folderUrl || `https://drive.google.com/drive/folders/${result.data?.folderId || 'unknown'}`;
-        console.log(`✅ Client folder created: ${folderUrl}`);
+        console.warn(`✅ Client folder created: ${folderUrl}`);
         return { success: true, url: folderUrl, folderId: result.data?.folderId };
       } else {
         console.error(`❌ Client folder creation failed:`, result.error);
@@ -327,7 +327,7 @@ export const GoogleService = {
 
   // 列出指定資料夾內的子資料夾（用於關聯現有資料夾）
   listDriveFolders: async (parentFolderId = null) => {
-    console.log(`📂 Listing Drive folders...`);
+    console.warn(`📂 Listing Drive folders...`);
 
     try {
       const result = await callGASWithJSONP('list_drive_folders', {
@@ -335,7 +335,7 @@ export const GoogleService = {
       });
 
       if (result.success) {
-        console.log(`✅ Found ${result.data?.folders?.length || 0} folders`);
+        console.warn(`✅ Found ${result.data?.folders?.length || 0} folders`);
         return { success: true, folders: result.data?.folders || [] };
       } else {
         console.error(`❌ List folders failed:`, result.error);
@@ -349,7 +349,7 @@ export const GoogleService = {
 
   // 建立「營建物料成本快速估算指標與公式」資料夾及 Sheets
   createCostEstimatorFolder: async () => {
-    console.log(`📁 Creating Cost Estimator folder and database...`);
+    console.warn(`📁 Creating Cost Estimator folder and database...`);
 
     try {
       const result = await callGASWithJSONP('create_cost_estimator_folder', {
@@ -358,7 +358,7 @@ export const GoogleService = {
 
       if (result.success) {
         const folderUrl = result.data?.folderUrl || `https://drive.google.com/drive/folders/${result.data?.folderId || 'unknown'}`;
-        console.log(`✅ Cost Estimator folder created: ${folderUrl}`);
+        console.warn(`✅ Cost Estimator folder created: ${folderUrl}`);
         return {
           success: true,
           url: folderUrl,
@@ -378,13 +378,13 @@ export const GoogleService = {
 
   // 從 Drive 讀取物料價格資料
   getMaterialPrices: async () => {
-    console.log(`📊 Fetching material prices from Drive...`);
+    console.warn(`📊 Fetching material prices from Drive...`);
 
     try {
       const result = await callGASWithJSONP('get_material_prices', {});
 
       if (result.success) {
-        console.log(`✅ Material prices loaded`);
+        console.warn(`✅ Material prices loaded`);
         return { success: true, data: result.data };
       } else {
         console.error(`❌ Failed to load material prices:`, result.error);
@@ -398,7 +398,7 @@ export const GoogleService = {
 
   // 更新物料價格
   updateMaterialPrice: async (category, material) => {
-    console.log(`📝 Updating material price: ${material.name}...`);
+    console.warn(`📝 Updating material price: ${material.name}...`);
 
     try {
       const result = await callGASWithJSONP('update_material_price', {
@@ -407,7 +407,7 @@ export const GoogleService = {
       });
 
       if (result.success) {
-        console.log(`✅ Material price updated`);
+        console.warn(`✅ Material price updated`);
         return { success: true };
       } else {
         console.error(`❌ Failed to update material price:`, result.error);
@@ -421,7 +421,7 @@ export const GoogleService = {
 
   // 匯出估算清單到 Google Sheet
   exportEstimateToSheet: async (estimateName, items, totalCost) => {
-    console.log(`📊 Exporting estimate to Sheet: ${estimateName}...`);
+    console.warn(`📊 Exporting estimate to Sheet: ${estimateName}...`);
 
     try {
       const result = await callGASWithJSONP('export_estimate_to_sheet', {
@@ -442,7 +442,7 @@ export const GoogleService = {
 
       if (result.success) {
         const sheetUrl = result.data?.sheetUrl || '';
-        console.log(`✅ Estimate exported to Sheet: ${sheetUrl}`);
+        console.warn(`✅ Estimate exported to Sheet: ${sheetUrl}`);
         return {
           success: true,
           sheetUrl,
@@ -461,13 +461,13 @@ export const GoogleService = {
 
   // 初始化庫存 Sheet（建立資料夾和分頁）
   initInventorySheet: async () => {
-    console.log(`📦 Initializing Inventory Sheet...`);
+    console.warn(`📦 Initializing Inventory Sheet...`);
 
     try {
       const result = await callGASWithJSONP('init_inventory_sheet', {});
 
       if (result.success) {
-        console.log(`✅ Inventory Sheet initialized`);
+        console.warn(`✅ Inventory Sheet initialized`);
         return {
           success: true,
           folderId: result.data?.folderId,
@@ -487,7 +487,7 @@ export const GoogleService = {
 
   // 同步庫存資料到 Sheet
   syncInventoryToSheet: async (sheetId, items) => {
-    console.log(`📦 Syncing ${items.length} items to Inventory Sheet...`);
+    console.warn(`📦 Syncing ${items.length} items to Inventory Sheet...`);
 
     try {
       const result = await callGASWithJSONP('sync_inventory_to_sheet', {
@@ -506,7 +506,7 @@ export const GoogleService = {
       });
 
       if (result.success) {
-        console.log(`✅ Inventory synced to Sheet`);
+        console.warn(`✅ Inventory synced to Sheet`);
         return {
           success: true,
           sheetUrl: result.data?.sheetUrl,
@@ -524,7 +524,7 @@ export const GoogleService = {
 
   // 同步收支記錄到專案資料夾
   syncTransactionToProjectSheet: async (projectFolderId, projectName, transaction) => {
-    console.log(`💰 Syncing transaction to project: ${projectName}...`);
+    console.warn(`💰 Syncing transaction to project: ${projectName}...`);
 
     try {
       const result = await callGASWithJSONP('sync_project_transaction', {
@@ -534,7 +534,7 @@ export const GoogleService = {
       });
 
       if (result.success) {
-        console.log(`✅ Transaction synced to project Sheet`);
+        console.warn(`✅ Transaction synced to project Sheet`);
         return {
           success: true,
           sheetUrl: result.data?.sheetUrl,
@@ -552,7 +552,7 @@ export const GoogleService = {
 
   // 同步所有專案收支記錄
   syncAllProjectTransactions: async (projectFolderId, projectName, transactions) => {
-    console.log(`💰 Syncing ${transactions.length} transactions to project: ${projectName}...`);
+    console.warn(`💰 Syncing ${transactions.length} transactions to project: ${projectName}...`);
 
     try {
       const result = await callGASWithJSONP('sync_all_project_transactions', {
@@ -562,7 +562,7 @@ export const GoogleService = {
       });
 
       if (result.success) {
-        console.log(`✅ All transactions synced to project Sheet`);
+        console.warn(`✅ All transactions synced to project Sheet`);
         return {
           success: true,
           sheetUrl: result.data?.sheetUrl,
@@ -599,7 +599,7 @@ export const GoogleService = {
     }).replace(/:/g, '-');
     const sheetName = customName.trim() || `物料算量_${dateStr}_${timeStr}`;
 
-    console.log(`📊 Exporting material calculation to Sheet: ${sheetName}...`);
+    console.warn(`📊 Exporting material calculation to Sheet: ${sheetName}...`);
 
     try {
       const result = await callGASWithJSONP('export_material_calculation_to_folder', {
@@ -627,7 +627,7 @@ export const GoogleService = {
         const sheetId = innerData.sheetId || result.data?.sheetId || '';
         const folderUrl = innerData.folderUrl || result.data?.folderUrl || '';
 
-        console.log(`✅ Material calculation exported to Sheet: ${sheetUrl}`);
+        console.warn(`✅ Material calculation exported to Sheet: ${sheetUrl}`);
         return {
           success: true,
           sheetUrl,
@@ -650,7 +650,7 @@ export const GoogleService = {
 
   // 初始化「財務報表」資料夾
   initFinanceReportFolder: async () => {
-    console.log(`📁 Initializing '財務報表' folder...`);
+    console.warn(`📁 Initializing '財務報表' folder...`);
 
 
     try {
@@ -658,7 +658,7 @@ export const GoogleService = {
 
       if (result.success) {
         const folderUrl = result.data?.folderUrl || `https://drive.google.com/drive/folders/${result.data?.folderId || 'unknown'}`;
-        console.log(`✅ Finance report folder ready: ${folderUrl}`);
+        console.warn(`✅ Finance report folder ready: ${folderUrl}`);
         return {
           success: true,
           folderId: result.data?.folderId,
@@ -677,7 +677,7 @@ export const GoogleService = {
   // 匯出財務報表到 Sheet（按月份自動分類）
   exportFinanceReport: async (transactions, options = {}) => {
     const { dateRange, accountsMap = {}, projectsMap = {} } = options;
-    console.log(`📊 Exporting ${transactions.length} transactions to finance report...`);
+    console.warn(`📊 Exporting ${transactions.length} transactions to finance report...`);
 
     try {
       // 先確保資料夾存在
@@ -700,7 +700,7 @@ export const GoogleService = {
       });
 
       if (result.success) {
-        console.log(`✅ Finance report exported: ${result.data?.sheetUrl}`);
+        console.warn(`✅ Finance report exported: ${result.data?.sheetUrl}`);
         return {
           success: true,
           sheetUrl: result.data?.sheetUrl,
@@ -721,7 +721,7 @@ export const GoogleService = {
   // 搜尋財務記錄（跨 Sheet 搜尋）
   searchFinanceRecords: async (query, options = {}) => {
     const { startDate, endDate } = options;
-    console.log(`🔍 Searching finance records: "${query}"...`);
+    console.warn(`🔍 Searching finance records: "${query}"...`);
 
     try {
       // 先取得財務報表資料夾 ID
@@ -738,7 +738,7 @@ export const GoogleService = {
       });
 
       if (result.success) {
-        console.log(`✅ Found ${result.data?.count || 0} records`);
+        console.warn(`✅ Found ${result.data?.count || 0} records`);
         return {
           success: true,
           results: result.data?.results || [],

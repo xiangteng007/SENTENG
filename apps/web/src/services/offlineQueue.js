@@ -239,8 +239,8 @@ export async function getQueueStats() {
 // Auto-sync when back online
 if (typeof window !== 'undefined') {
     window.addEventListener('online', async () => {
-        console.log('[OfflineQueue] Back online, processing pending requests...');
+        console.warn('[OfflineQueue] Back online, processing pending requests...');
         const results = await processPendingRequests();
-        console.log('[OfflineQueue] Sync complete:', results);
+        console.warn('[OfflineQueue] Sync complete:', results);
     });
 }

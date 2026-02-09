@@ -199,7 +199,7 @@ export const capturePhotoWithTimestamp = async (options = {}) => {
           const locInfo = await getLocationInfo();
           location = locInfo.address;
         } catch (e) {
-          console.log('Location not available');
+          console.error('Location not available');
         }
         
         const timestampedBlob = await addPhotoTimestamp(file, {

@@ -41,13 +41,13 @@ export const AuthProvider = ({ children }) => {
                 // Store JWT token for subsequent API calls
                 api.setToken(response.access_token);
                 setBackendAuthenticated(true);
-                console.log('✅ Backend JWT obtained successfully');
+                console.warn('✅ Backend JWT obtained successfully');
 
                 // Fetch permissions from backend (this is the authoritative source for RBAC)
                 try {
                     const permissionsResponse = await api.get('/auth/permissions');
                     if (permissionsResponse) {
-                        console.log('✅ Permissions fetched:', permissionsResponse);
+                        console.warn('✅ Permissions fetched:', permissionsResponse);
                         // Merge backend permissions into firebaseUser object
                         firebaseUser.allowedPages = permissionsResponse.pages || [];
                         firebaseUser.actions = permissionsResponse.actions || {};

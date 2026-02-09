@@ -28,7 +28,7 @@ export const useApiData = (isAuthenticated = false) => {
     const loadData = useCallback(async () => {
         setLoading(true);
         setError(null);
-        console.log('📥 Loading data from API...', { isAuthenticated });
+        console.error('📥 Loading data from API...', { isAuthenticated });
 
         try {
             let clientsResult, projectsResult, vendorsResult;
@@ -41,7 +41,7 @@ export const useApiData = (isAuthenticated = false) => {
                     getVendors(),
                 ]);
             } else {
-                console.log('⚠️ Not authenticated, using mock data');
+                console.warn('⚠️ Not authenticated, using mock data');
                 setLoading(false);
                 return;
             }
@@ -64,14 +64,14 @@ export const useApiData = (isAuthenticated = false) => {
                         ? clientsResult.value
                         : (clientsResult.value.items || []);
                     newData.clients = clients.map(mapClientFromApi);
-                    console.log('✅ Clients loaded from Partners API:', newData.clients.length);
+                    console.warn('✅ Clients loaded from Partners API:', newData.clients.length);
                 }
 
                 // Projects from API
                 if (projectsResult.status === 'fulfilled' && projectsResult.value) {
                     const projects = Array.isArray(projectsResult.value) ? projectsResult.value : [];
                     newData.projects = projects.map(mapProjectFromApi);
-                    console.log('✅ Projects loaded from API:', newData.projects.length);
+                    console.warn('✅ Projects loaded from API:', newData.projects.length);
                 }
 
                 // Vendors from API
@@ -80,7 +80,7 @@ export const useApiData = (isAuthenticated = false) => {
                         ? vendorsResult.value
                         : (vendorsResult.value.items || []);
                     newData.vendors = vendors.map(mapVendorFromApi);
-                    console.log('✅ Vendors loaded from Partners API:', newData.vendors.length);
+                    console.warn('✅ Vendors loaded from Partners API:', newData.vendors.length);
                 }
 
                 // Inventory from API
@@ -89,7 +89,7 @@ export const useApiData = (isAuthenticated = false) => {
                         ? inventoryResult.value
                         : (inventoryResult.value.items || []);
                     newData.inventory = inventory;
-                    console.log('✅ Inventory loaded from API:', newData.inventory.length);
+                    console.warn('✅ Inventory loaded from API:', newData.inventory.length);
                 }
 
                 // Finance from API
@@ -105,12 +105,12 @@ export const useApiData = (isAuthenticated = false) => {
                         ? (Array.isArray(transactionsResult.value) ? transactionsResult.value : (transactionsResult.value.items || []))
                         : prev.finance.transactions,
                 };
-                console.log('✅ Finance loaded from API');
+                console.warn('✅ Finance loaded from API');
 
                 return newData;
             });
 
-            console.log('✅ Data loaded successfully');
+            console.warn('✅ Data loaded successfully');
         } catch (err) {
             console.error('❌ Failed to load data:', err);
             setError(err.message);

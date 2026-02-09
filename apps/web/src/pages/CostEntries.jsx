@@ -179,7 +179,7 @@ export default function CostEntries({ addToast }) {
             setEntries(entriesList);
             setProjects(projectsList);
             setVendors(vendorsList);
-            console.log('✅ Cost entries loaded:', entriesList.length);
+            console.warn('✅ Cost entries loaded:', entriesList.length);
         } catch (err) {
             console.error('❌ Failed to load cost entries:', err);
             setError(err.message);

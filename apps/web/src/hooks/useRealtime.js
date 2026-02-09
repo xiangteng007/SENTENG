@@ -68,12 +68,12 @@ export function useRealtime(token, options = {}) {
         });
 
         socket.on('connect', () => {
-            console.log('[Realtime] Connected');
+            console.warn('[Realtime] Connected');
             setIsConnected(true);
         });
 
         socket.on('disconnect', () => {
-            console.log('[Realtime] Disconnected');
+            console.warn('[Realtime] Disconnected');
             setIsConnected(false);
         });
 

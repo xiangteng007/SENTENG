@@ -159,7 +159,7 @@ export const clearSensitiveData = () => {
     }
   }
   
-  console.log(`[Security] Cleared ${cleared.length} sensitive items:`, cleared);
+  console.warn(`[Security] Cleared ${cleared.length} sensitive items:`, cleared);
   return cleared;
 };
 
@@ -236,7 +236,7 @@ export const logSecurityEvent = (eventType, details) => {
     ...details,
   };
   
-  console.log('[Security Event]', event);
+  console.warn('[Security Event]', event);
   
   // In production, send to monitoring service
   // analytics.track('security_event', event);

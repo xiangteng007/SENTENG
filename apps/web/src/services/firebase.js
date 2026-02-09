@@ -329,16 +329,16 @@ export const initializeDefaultRoles = async () => {
                     await updateDoc(doc(db, 'roles', roleName), {
                         allowedPages: mergedPages,
                     });
-                    console.log(`Updated ${roleName} with new pages:`, newPages);
+                    console.warn(`Updated ${roleName} with new pages:`, newPages);
                 }
             }
         }
-        console.log('Default roles initialized/updated');
+        console.warn('Default roles initialized/updated');
     } catch (error) {
         // Permission errors are expected for non-admin users
         // Fall back to local DEFAULT_ROLES (already available in code)
         if (error.code === 'permission-denied' || error.message?.includes('permission')) {
-            console.log('[Roles] Using local default roles (Firestore not writable)');
+            console.error('[Roles] Using local default roles (Firestore not writable)');
         } else {
             console.error('Error initializing default roles:', error);
         }

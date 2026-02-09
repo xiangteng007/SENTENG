@@ -24,7 +24,7 @@ export const initPerformanceMonitoring = () => {
       const entries = entryList.getEntries();
       const lastEntry = entries[entries.length - 1];
       metrics.LCP = lastEntry.startTime;
-      console.log(`[Perf] LCP: ${Math.round(metrics.LCP)}ms`);
+      console.warn(`[Perf] LCP: ${Math.round(metrics.LCP)}ms`);
     });
     lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
   } catch (e) {
@@ -36,7 +36,7 @@ export const initPerformanceMonitoring = () => {
     const fidObserver = new PerformanceObserver((entryList) => {
       const firstInput = entryList.getEntries()[0];
       metrics.FID = firstInput.processingStart - firstInput.startTime;
-      console.log(`[Perf] FID: ${Math.round(metrics.FID)}ms`);
+      console.warn(`[Perf] FID: ${Math.round(metrics.FID)}ms`);
     });
     fidObserver.observe({ type: 'first-input', buffered: true });
   } catch (e) {
@@ -66,7 +66,7 @@ export const initPerformanceMonitoring = () => {
       if (nav) {
         metrics.TTFB = nav.responseStart - nav.requestStart;
         metrics.FCP = nav.domContentLoadedEventEnd;
-        console.log(`[Perf] TTFB: ${Math.round(metrics.TTFB)}ms, FCP: ${Math.round(metrics.FCP)}ms`);
+        console.warn(`[Perf] TTFB: ${Math.round(metrics.TTFB)}ms, FCP: ${Math.round(metrics.FCP)}ms`);
       }
     }, 0);
   });
@@ -88,7 +88,7 @@ export const reportPerformanceMetrics = async () => {
     userAgent: navigator.userAgent
   };
   
-  console.log('[Perf] Metrics report:', report);
+  console.warn('[Perf] Metrics report:', report);
   
   // TODO: Send to analytics endpoint
   // await fetch('/api/analytics/performance', { method: 'POST', body: JSON.stringify(report) });
