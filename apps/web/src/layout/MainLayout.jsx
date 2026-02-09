@@ -181,7 +181,6 @@ const SidebarGroup = ({ group, items, activeTab, onItemClick, isExpanded, onTogg
     const [hasAutoExpanded, setHasAutoExpanded] = useState(false);
 
     // 只在首次發現活躍項目時自動展開（不會阻止手動收回）
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         if (hasActiveItem && !hasAutoExpanded && !isExpanded) {
             onToggleExpand(group.id, true);
