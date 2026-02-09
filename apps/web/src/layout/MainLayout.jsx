@@ -1,27 +1,9 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Calendar as CalendarIcon, Briefcase, Users, Wallet, HardHat, Package, Bell, LayoutDashboard, Image as ImageIcon, Menu, X, FileText, Ruler, Calculator, Building2, GripVertical, RotateCcw, LogOut, Settings, ChevronDown, Check, Loader2, Receipt, FileSignature, BarChart3, DollarSign, Wrench, ChevronRight, Link, Camera, Cpu, Home, ClipboardList, Truck, Shield, AlertTriangle, Construction as ConstructionIcon, Recycle, BookOpen, PhoneCall } from 'lucide-react';
+import { Calendar as CalendarIcon, Briefcase, Users, Wallet, HardHat, Package, Bell, LayoutDashboard, Image as ImageIcon, Menu, X, FileText, Ruler, Calculator, Building2, LogOut, Settings, ChevronDown, Receipt, FileSignature, BarChart3, DollarSign, Wrench, ChevronRight, Link, Camera, Cpu, Home, ClipboardList, Shield, Construction as ConstructionIcon, Recycle, BookOpen, PhoneCall } from 'lucide-react';
 import { NotificationPanel } from '../components/common/NotificationPanel';
 import { GoogleService } from '../services/GoogleService';
 import { useAuth } from '../context/AuthContext';
-import { saveUserMenuOrder, getUserMenuOrder } from '../services/firebase';
 
-// DnD Kit imports
-import {
-    DndContext,
-    closestCenter,
-    KeyboardSensor,
-    PointerSensor,
-    useSensor,
-    useSensors,
-} from '@dnd-kit/core';
-import {
-    arrayMove,
-    SortableContext,
-    sortableKeyboardCoordinates,
-    useSortable,
-    verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 
 // 所有選單項目定義
 const ALL_MENU_ITEMS = {
@@ -199,6 +181,7 @@ const SidebarGroup = ({ group, items, activeTab, onItemClick, isExpanded, onTogg
     const [hasAutoExpanded, setHasAutoExpanded] = useState(false);
 
     // 只在首次發現活躍項目時自動展開（不會阻止手動收回）
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         if (hasActiveItem && !hasAutoExpanded && !isExpanded) {
             onToggleExpand(group.id, true);
@@ -261,7 +244,7 @@ const SidebarGroup = ({ group, items, activeTab, onItemClick, isExpanded, onTogg
     );
 };
 
-export const MainLayout = ({ activeTab, setActiveTab, children, addToast }) => {
+export const MainLayout = ({ activeTab, setActiveTab, children, addToast: _addToast }) => {
     const { user, role, allowedPages, signOut } = useAuth();
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const [hasUpcomingEvents, setHasUpcomingEvents] = useState(false);

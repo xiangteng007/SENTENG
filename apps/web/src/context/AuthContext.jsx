@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 // Authentication Context Provider
 import { createContext, useContext, useState, useEffect } from 'react';
 import {
