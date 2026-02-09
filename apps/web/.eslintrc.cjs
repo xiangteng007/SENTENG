@@ -18,5 +18,6 @@ module.exports = {
       { allowConstantExport: true },
     ],
     'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', destructuredArrayIgnorePattern: '^_' }],
+    'no-console': ['warn', { allow: ['warn', 'error'] }],
   },
 };
