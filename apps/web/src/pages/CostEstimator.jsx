@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Calculator, FolderPlus, RefreshCw, Plus, Trash2, Package, Info, Edit2, X, Check, FileSpreadsheet, ExternalLink } from 'lucide-react';
 import { SectionTitle } from '../components/common/Indicators';
 import { GoogleService } from '../services/GoogleService';

@@ -1,27 +1,12 @@
 ﻿import { useState, useEffect, useMemo } from 'react';
-import { 
-  Plane, 
-  Plus, 
-  Search, 
-  Camera, 
-  Video,
-  Calendar,
-  MapPin,
-  Play,
-  Download,
-  Eye,
-  Cloud,
-  Thermometer,
-  Wind,
-  X,
-  Edit2,
-  Trash2
+import {
+    Plane, Plus, Search, Camera, Video, Calendar, Download, Eye, Thermometer, Wind, X, Trash2
 } from 'lucide-react';
 import api from '../services/api';
 import { useConfirm } from '../components/common/useConfirm';
 
 // Edit Flight Modal Component - Enhanced Design
-const EditFlightModal = ({ flight, projects, onClose, onSuccess }) => {
+const EditFlightModal = ({ flight, _projects, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
     missionName: flight?.missionName || '',
     project: flight?.project || '',

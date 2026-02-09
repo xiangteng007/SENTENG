@@ -1,16 +1,13 @@
 ﻿import { useState } from 'react';
 import {
-    Calculator, Plus, ChevronDown, ChevronUp, Trash2, RefreshCw, Info, Settings2, Layers
+    Plus, Trash2, Info, Layers
 } from 'lucide-react';
 import {
-    COMPONENT_REBAR_RATES, COMPONENT_TYPES, REBAR_SPECS, REBAR_USAGE_BY_COMPONENT,
-    WATERPROOF_MATERIALS, INSULATION_MATERIALS, TILE_SIZES, TILE_METHODS,
-    BUILDING_TYPES, SLAB_THICKNESS_OPTIONS, TAIWAN_REFERENCE_PRICES,
-    PARAPET_HEIGHTS, PROJECT_TEMPLATES, DEFAULT_WASTAGE, COMMON_OPENINGS,
+    TILE_SIZES, TILE_METHODS, DEFAULT_WASTAGE,
     formatNumber, applyWastage
 } from '../constants';
 import {
-    InputField, SelectField, OptionDetailCard, WastageControl, ResultDisplay, CostInput
+    InputField, WastageControl, ResultDisplay, CostInput
 } from '../components/shared';
 // 3️⃣ 磁磚工程計算器 (支援多列輸入)
 export const TileCalculator = ({ onAddRecord, vendors = [] }) => {
@@ -20,8 +17,8 @@ export const TileCalculator = ({ onAddRecord, vendors = [] }) => {
     const [tileRows, setTileRows] = useState([
         { id: 1, name: '', area: '', unit: 'ping', sizeIdx: 3, method: 'none' }
     ]);
-    const [customTileL, setCustomTileL] = useState('60');
-    const [customTileW, setCustomTileW] = useState('60');
+    const [customTileL, ] = useState('60');
+    const [customTileW, ] = useState('60');
     const [tileWastage, setTileWastage] = useState(DEFAULT_WASTAGE.tile);
     const [tileCustomWastage, setTileCustomWastage] = useState(false);
     const [tileCost, setTileCost] = useState(null);

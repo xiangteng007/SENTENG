@@ -1,17 +1,14 @@
 ﻿import { useState } from 'react';
 import {
-    Calculator, Plus, ChevronDown, ChevronUp, Trash2, RefreshCw, Info, Settings2
+    Info
 } from 'lucide-react';
 import {
-    COMPONENT_REBAR_RATES, COMPONENT_TYPES, REBAR_SPECS, REBAR_USAGE_BY_COMPONENT,
-    WATERPROOF_MATERIALS, INSULATION_MATERIALS, TILE_SIZES, TILE_METHODS,
-    BUILDING_TYPES, SLAB_THICKNESS_OPTIONS, TAIWAN_REFERENCE_PRICES,
-    PARAPET_HEIGHTS, PROJECT_TEMPLATES, DEFAULT_WASTAGE, COMMON_OPENINGS,
+    BUILDING_TYPES,
     WALL_THICKNESS_OPTIONS,
-    formatNumber, applyWastage
+    formatNumber
 } from '../constants';
 import {
-    InputField, SelectField, OptionDetailCard, WastageControl, ResultDisplay, CostInput
+    InputField, SelectField, ResultDisplay
 } from '../components/shared';
 // 5️⃣ 建築概估計算器
 export const BuildingEstimator = ({ onAddRecord }) => {

@@ -1,19 +1,17 @@
 ﻿import { useState } from 'react';
 import {
-    Calculator, Plus, ChevronDown, ChevronUp, Trash2, RefreshCw, Info, Settings2
+    Plus, Trash2, Info
 } from 'lucide-react';
 import {
-    COMPONENT_REBAR_RATES, COMPONENT_TYPES, REBAR_SPECS, REBAR_USAGE_BY_COMPONENT,
-    WATERPROOF_MATERIALS, INSULATION_MATERIALS, TILE_SIZES, TILE_METHODS,
-    BUILDING_TYPES, SLAB_THICKNESS_OPTIONS, TAIWAN_REFERENCE_PRICES,
-    PARAPET_HEIGHTS, PROJECT_TEMPLATES, DEFAULT_WASTAGE, COMMON_OPENINGS,
+    COMPONENT_REBAR_RATES, COMPONENT_TYPES,
+    PARAPET_HEIGHTS,
     formatNumber, applyWastage
 } from '../constants';
 import {
-    InputField, SelectField, OptionDetailCard, WastageControl, ResultDisplay, CostInput
+    OptionDetailCard, WastageControl, ResultDisplay
 } from '../components/shared';
-export // 0️⃣ 構件計算器 - 結構部位詳細計算 (模板+鋼筋)
-const ComponentCalculator = ({ onAddRecord, vendors = [] }) => {
+// 0️⃣ 構件計算器 - 結構部位詳細計算 (模板+鋼筋)
+export const ComponentCalculator = ({ onAddRecord, vendors: _vendors = [] }) => {
     const [componentType, setComponentType] = useState('column');
     const [wastage, setWastage] = useState(10);
     const [useCustomWastage, setUseCustomWastage] = useState(false);

@@ -6,28 +6,8 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import api from '../services/api';
-import { 
-  Bell, 
-  Settings, 
-  Mail, 
-  MessageSquare, 
-  Calendar, 
-  AlertTriangle, 
-  Check, 
-  CheckCheck,
-  X,
-  Trash2,
-  Clock,
-  DollarSign,
-  Briefcase,
-  FileText,
-  Users,
-  Filter,
-  RefreshCw,
-  Archive,
-  Star,
-  MoreVertical,
-  ChevronDown
+import {
+    Bell, Settings, Mail, MessageSquare, Calendar, AlertTriangle, Check, CheckCheck, X, Clock, DollarSign, Briefcase, FileText, Users, RefreshCw, Star, ChevronDown
 } from 'lucide-react';
 
 // Notification Item Component

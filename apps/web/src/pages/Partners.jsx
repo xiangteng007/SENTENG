@@ -1,11 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import {
-  Building2, Factory, User, Plus, Search, Edit2, Trash2, Phone,
-  Mail, Star, Cloud, CloudOff, ChevronDown, ChevronUp, X, Check,
-  MapPin, Hash, MessageCircle, Loader2, Users
+    Plus, Search, Edit2, Trash2, Phone, Mail, Star, Cloud, CloudOff, ChevronDown, ChevronUp, X, Check, MapPin, Hash, MessageCircle, Loader2, Users
 } from 'lucide-react';
 import { EmptyState } from '../components/common/EmptyState';
-import { Modal } from '../components/common/Modal';
 import {
   PARTNER_TYPES,
   PARTNER_CATEGORIES,
@@ -13,8 +10,8 @@ import {
   createPartner,
   updatePartner,
   deletePartner,
-  addPartnerContact,
-  deletePartnerContact,
+  _addPartnerContact,
+  _deletePartnerContact,
 } from '../services/partnersApi';
 
 // 星星評分

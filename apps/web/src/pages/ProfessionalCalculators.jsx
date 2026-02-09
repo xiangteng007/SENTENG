@@ -5,10 +5,7 @@
  */
 
 import { useState } from 'react';
-import { 
-  Calculator, Thermometer, Zap, Droplets,
-  ChevronRight, RotateCcw, Download
-} from 'lucide-react';
+import { Calculator, Thermometer, Zap, Droplets } from 'lucide-react';
 
 // ==================== BTU/坪數計算器 ====================
 const BTUCalculator = () => {
@@ -134,7 +131,7 @@ const BTUCalculator = () => {
 const CircuitCalculator = () => {
   const [power, setPower] = useState('');
   const [voltage, setVoltage] = useState('220');
-  const [phase, setPhase] = useState('single'); // single, three
+  const [phase, _setPhase] = useState('single'); // single, three
   const [powerFactor, setPowerFactor] = useState('0.85');
   const [length, setLength] = useState('20');
 
@@ -369,7 +366,7 @@ const PipeFlowCalculator = () => {
 };
 
 // ==================== 主組件 ====================
-export const ProfessionalCalculators = ({ addToast }) => {
+export const ProfessionalCalculators = ({ _addToast }) => {
   const [activeCalc, setActiveCalc] = useState('btu');
 
   const calculators = [

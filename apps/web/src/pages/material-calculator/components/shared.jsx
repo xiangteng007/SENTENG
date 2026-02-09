@@ -1,8 +1,8 @@
 ﻿import React, { useState } from 'react';
 import {
-    Calculator, Info, ChevronDown, ChevronUp, Copy, Check, Plus, RefreshCw
+    Calculator, Info, ChevronDown, ChevronUp, Copy, Check, Plus
 } from 'lucide-react';
-import { UNIT_CONVERSIONS, DEFAULT_WASTAGE, formatNumber, applyWastage } from '../constants';
+import { UNIT_CONVERSIONS, formatNumber } from '../constants';
 
 
 // ============================================
@@ -371,6 +371,7 @@ export const CostInput = ({ label, quantity, unit, unitLabel, vendors = [], onCh
             subtotal,
             note
         });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedVendor, spec, price, note, quantity]);
 
     return (

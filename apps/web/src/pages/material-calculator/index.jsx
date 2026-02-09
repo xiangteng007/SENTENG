@@ -1,12 +1,9 @@
 ﻿import { useState } from 'react';
 import {
-    Building2, Layers, Grid3X3, Paintbrush, BarChart3,
-    Calculator, Info, Droplets, Construction,
-    FileSpreadsheet, ExternalLink, Trash2, RefreshCw, Plus
+    Building2, Layers, Grid3X3, Paintbrush, BarChart3, Calculator, Info, Droplets, Construction, FileSpreadsheet, ExternalLink, Trash2, RefreshCw
 } from 'lucide-react';
 import { formatNumber } from './constants';
 import { UnitConverter } from './components/shared';
-import { ComponentCalculator } from './calculators/ComponentCalculator';
 import { StructureCalculator } from './calculators/StructureCalculator';
 import { MasonryCalculator } from './calculators/MasonryCalculator';
 import { TileCalculator } from './calculators/TileCalculator';

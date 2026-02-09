@@ -186,6 +186,7 @@ const SidebarGroup = ({ group, items, activeTab, onItemClick, isExpanded, onTogg
             onToggleExpand(group.id, true);
             setHasAutoExpanded(true);
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [hasActiveItem]);
 
     // 如果群組只有一個項目，直接顯示為可點擊項目

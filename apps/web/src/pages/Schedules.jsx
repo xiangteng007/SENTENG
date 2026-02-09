@@ -1,24 +1,12 @@
 ﻿import { useState, useEffect, useMemo } from 'react';
-import { 
-  Calendar, 
-  Plus, 
-  Filter, 
-  ChevronLeft, 
-  ChevronRight, 
-  Flag, 
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  BarChart3,
-  X,
-  Edit2,
-  Trash2
+import {
+    Calendar, Plus, ChevronLeft, ChevronRight, Flag, AlertTriangle, CheckCircle, X, Edit2, Trash2
 } from 'lucide-react';
 import api from '../services/api';
 import { useConfirm } from '../components/common/useConfirm';
 
 // Edit Schedule Modal Component
-const EditScheduleModal = ({ task, projects, onClose, onSuccess }) => {
+const EditScheduleModal = ({ task, _projects, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
     name: task?.name || '',
     project: task?.project || '',
@@ -151,7 +139,7 @@ export const Schedules = ({ addToast }) => {
   const [selectedProject, setSelectedProject] = useState('all');
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
-  const [selectedTask, setSelectedTask] = useState(null);
+  const [_selectedTask, setSelectedTask] = useState(null);
   const { confirm, ConfirmDialog } = useConfirm();
 
   // Fetch tasks

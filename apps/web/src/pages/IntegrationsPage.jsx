@@ -8,7 +8,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { integrationsApi } from '../services/integrationsApi';
-import { SyncStatusBadge } from '../components/common/SyncStatusBadge';
 import { useConfirm } from '../components/common/useConfirm';
 
 // Card 元件
@@ -28,7 +27,7 @@ const StatusRow = ({ label, value }) => (
 );
 
 export default function IntegrationsPage({ addToast }) {
-    const { canAccessPage, hasAction } = useAuth();
+    const { _canAccessPage, hasAction } = useAuth();
 
     const [status, setStatus] = useState(null);
     const [loading, setLoading] = useState(true);

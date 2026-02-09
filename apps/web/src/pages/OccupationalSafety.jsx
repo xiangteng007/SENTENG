@@ -5,10 +5,8 @@
  */
 
 import { useState, useMemo } from 'react';
-import { 
-  Shield, FileText, Calendar, AlertTriangle, 
-  Plus, Search, CheckCircle, Clock, Users,
-  Download, Upload, Eye, ChevronRight
+import {
+    Shield, FileText, AlertTriangle, Search, CheckCircle, Users, Download, Upload, Eye, ChevronRight
 } from 'lucide-react';
 
 // 文件類型配置
@@ -123,7 +121,7 @@ const SelfAssessmentChecklist = () => {
 
 // 教育訓練時數追蹤
 const TrainingHoursTracker = () => {
-  const [employees, setEmployees] = useState([]);
+  const [employees, _setEmployees] = useState([]);
 
   return (
     <div className="bg-white rounded-2xl border border-zinc-100 p-6">
@@ -188,6 +186,7 @@ export const OccupationalSafety = ({ addToast }) => {
       const matchesType = typeFilter === 'all' || doc.type === typeFilter;
       return matchesSearch && matchesType;
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, typeFilter]);
 
   return (

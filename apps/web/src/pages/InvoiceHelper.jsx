@@ -1,6 +1,8 @@
 
 import { useState, useEffect } from 'react';
-import { FileText, Calculator, Building2, User, Copy, RotateCcw, Check, AlertCircle, Info } from 'lucide-react';
+import {
+    Building2, User, Copy, RotateCcw, Check, AlertCircle, Info
+} from 'lucide-react';
 import { SectionTitle } from '../components/common/Indicators';
 
 // 數字轉中文大寫（正確處理萬、億單位）
@@ -261,7 +263,7 @@ export const InvoiceHelper = ({ addToast }) => {
                                 { id: 'taxable', label: '應稅 5%', color: 'blue' },
                                 { id: 'zeroRate', label: '零稅率', color: 'gray' },
                                 { id: 'exempt', label: '免稅', color: 'gray' }
-                            ].map(({ id, label, color }) => (
+                            ].map(({ id, label, _color }) => (
                                 <button
                                     key={id}
                                     onClick={() => setTaxType(id)}

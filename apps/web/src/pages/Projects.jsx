@@ -6,17 +6,18 @@ import { WidgetProjectVendors } from '../components/widgets/ProjectVendorsWidget
 import { WidgetProjectInventory } from '../components/widgets/ProjectInventoryWidget';
 import { AddVendorModal } from '../components/project/AddVendorModal';
 import { AddInventoryModal } from '../components/project/AddInventoryModal';
-import { Plus, ChevronLeft, Calendar as CalendarIcon, Upload, ImageIcon, Edit2, Save, X, Trash2, Database } from 'lucide-react';
+import {
+    Plus, ChevronLeft, ImageIcon, Edit2, Save, X, Trash2
+} from 'lucide-react';
 import { Modal } from '../components/common/Modal';
 import { InputField } from '../components/common/InputField';
 import { LocationField } from '../components/common/LocationField';
-import { ProgressBar } from '../components/common/Indicators';
 import SearchableSelect from '../components/common/SearchableSelect';
 import { projectsApi } from '../services/api';
 import { GoogleService } from '../services/GoogleService';
 
 // --- Missing Detail Widgets (Implementing inline for safety) ---
-const WidgetProjectRecords = ({ records, size, onAddRecord }) => (
+const WidgetProjectRecords = ({ records, _size, onAddRecord }) => (
     <div className="flex flex-col h-full">
         <div className="flex justify-between mb-3 items-center"><h4 className="text-xs font-bold text-gray-600">工程/會議紀錄</h4><button onClick={onAddRecord} className="text-morandi-blue-600 hover:bg-morandi-blue-50 p-1.5 rounded-lg transition-colors"><Plus size={14} /></button></div>
         <div className="flex-1 overflow-y-auto space-y-3 pr-1 custom-scrollbar">
@@ -31,7 +32,7 @@ const WidgetProjectRecords = ({ records, size, onAddRecord }) => (
     </div>
 );
 
-const WidgetProjectFinanceDetail = ({ transactions, size, onAddTx, onSyncToSheet, project }) => {
+const WidgetProjectFinanceDetail = ({ transactions, _size, onAddTx, onSyncToSheet, project }) => {
     const income = transactions.filter(t => t.type === '收入').reduce((acc, c) => acc + c.amount, 0);
     const expense = transactions.filter(t => t.type === '支出').reduce((acc, c) => acc + c.amount, 0);
     const balance = income - expense;
@@ -135,7 +136,7 @@ const WidgetProjectFinanceDetail = ({ transactions, size, onAddTx, onSyncToSheet
     );
 }
 
-const Projects = ({ data, loading, addToast, onSelectProject, activeProject, setActiveProject, onUpdateProject, onDeleteProject, allTransactions, onAddGlobalTx, accounts, allVendors, allInventory, allClients }) => {
+const Projects = ({ data, _loading, addToast, _onSelectProject, activeProject, setActiveProject, onUpdateProject, onDeleteProject, allTransactions, _onAddGlobalTx, accounts, allVendors, allInventory, allClients }) => {
 
     // List View State
     const [listWidgets, setListWidgets] = useState([{ id: 'wp-stats', type: 'project-stats', title: '專案概況', size: 'S' }, { id: 'wp-list', type: 'project-list', title: '專案列表', size: 'L' }]);
@@ -175,8 +176,8 @@ const Projects = ({ data, loading, addToast, onSelectProject, activeProject, set
     // Folder selection state
     const [folderMode, setFolderMode] = useState('auto'); // 'auto' = 自動新增, 'link' = 關聯現有
     const [existingFolderUrl, setExistingFolderUrl] = useState('');
-    const [existingFolders, setExistingFolders] = useState([]);
-    const [projectRootId, setProjectRootId] = useState(null);
+    const [_existingFolders, _setExistingFolders] = useState([]);
+    const [_projectRootId, _setProjectRootId] = useState(null);
 
 
     // Detail Modals
@@ -276,7 +277,7 @@ const Projects = ({ data, loading, addToast, onSelectProject, activeProject, set
     };
 
     // File Upload Handler - Upload to project's Drive folder
-    const handleFileUpload = async (e) => {
+    const _handleFileUpload = async (e) => {
         const file = e.target.files[0];
         if (file) {
             if (!activeProject.driveFolder) {
@@ -345,7 +346,7 @@ const Projects = ({ data, loading, addToast, onSelectProject, activeProject, set
     };
 
     // Record Handler - Save records with metadata via API
-    const handleAddRecord = async () => {
+    const _handleAddRecord = async () => {
         const record = {
             ...newRecord,
             id: `r-${Date.now()}`,
@@ -492,7 +493,7 @@ const Projects = ({ data, loading, addToast, onSelectProject, activeProject, set
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 auto-rows-auto">
-                    {detailWidgets.map((w, i) => (
+                    {detailWidgets.map((w, _i) => (
                         <WidgetWrapper key={w.id} widget={w} onResize={handleResize(detailWidgets, setDetailWidgets)}>
                             {w.type === 'info' && <WidgetProjectInfo project={activeProject} size={w.size} />}
                             {/* Reuse Widgets */}
@@ -570,7 +571,7 @@ const Projects = ({ data, loading, addToast, onSelectProject, activeProject, set
                     </button>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 auto-rows-auto">
-                    {listWidgets.map((w, i) => (
+                    {listWidgets.map((w, _i) => (
                         <WidgetWrapper key={w.id} widget={w} onResize={handleResize(listWidgets, setListWidgets)}>
                             {w.type === 'project-stats' && <WidgetProjectStats data={data} size={w.size} />}
                             {w.type === 'project-list' && <WidgetProjectList data={data} size={w.size} onSelectProject={setActiveProject} onAdd={() => setIsAddModalOpen(true)} />}

@@ -1,21 +1,7 @@
 ﻿import { useState, useEffect, useMemo } from 'react';
 import api from '../services/api';
-import { 
-  Box, 
-  Plus, 
-  Search, 
-  Upload, 
-  Download, 
-  Eye, 
-  Layers,
-  Maximize2,
-  Settings,
-  FileText,
-  RefreshCw,
-  Filter,
-  X,
-  Edit2,
-  Trash2
+import {
+    Box, Search, Upload, Download, Eye, Layers, Settings, RefreshCw, X, Edit2, Trash2
 } from 'lucide-react';
 import { useConfirm } from '../components/common/useConfirm';
 

@@ -1,4 +1,5 @@
-﻿// MaterialCalculator.jsx
+/* eslint-disable react-refresh/only-export-components */
+// MaterialCalculator.jsx
 // This file is now a re-export proxy for backward compatibility.
 // The actual implementation has been split into modular files under ./material-calculator/
 //

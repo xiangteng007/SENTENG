@@ -4,9 +4,7 @@
  */
 
 import { useState, useEffect, useMemo } from 'react';
-import {
-    FileText, Plus, Search, Edit2, Eye, DollarSign
-} from 'lucide-react';
+import { FileText, Plus, Search } from 'lucide-react';
 import { SectionTitle } from '../components/common/Indicators';
 
 import QuotationEditor from './QuotationEditor';

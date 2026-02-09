@@ -6,29 +6,11 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import api from '../services/api';
-import { 
-  TrendingUp, 
-  TrendingDown, 
-  DollarSign, 
-  Briefcase, 
-  Users, 
-  Calendar, 
-  Clock, 
-  AlertTriangle,
-  CheckCircle,
-  ArrowRight,
-  BarChart3,
-  PieChart,
-  Activity,
-  Target,
-  FileText,
-  Bell,
-  ChevronRight,
-  Sparkles,
-  Zap
+import {
+    TrendingUp, TrendingDown, DollarSign, Briefcase, Users, Calendar, AlertTriangle, BarChart3, Activity, Target, FileText, Bell, ChevronRight, Sparkles, Zap
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { StatCardPro, AlertCard, ProgressRing } from '../components/common/ModuleComponents';
+import { StatCardPro, AlertCard } from '../components/common/ModuleComponents';
 
 // Greeting based on time
 const getGreeting = () => {
@@ -39,7 +21,7 @@ const getGreeting = () => {
 };
 
 // Stat Card Component
-const StatCard = ({ title, value, change, icon: Icon, color, trend }) => {
+const _StatCard = ({ title, value, change, icon: Icon, color, trend }) => {
   const isPositive = trend === 'up';
   const TrendIcon = isPositive ? TrendingUp : TrendingDown;
   

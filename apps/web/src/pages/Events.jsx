@@ -1,6 +1,8 @@
 ﻿import { useState, useEffect, useMemo } from 'react';
 import api from '../services/api';
-import { Calendar, Plus, Filter, Search, Edit2, Trash2, Clock, MapPin, Users, X, Check, ChevronDown } from 'lucide-react';
+import {
+    Calendar, Plus, Search, Edit2, Trash2, Clock, MapPin, Users, X, Check
+} from 'lucide-react';
 import { EmptyState } from '../components/common/EmptyState';
 
 // 活動類型
@@ -97,7 +99,7 @@ const EventModal = ({ event, onSave, onClose }) => {
     });
   };
 
-  const selectedType = EVENT_TYPES[form.type] || EVENT_TYPES.OTHER;
+  const _selectedType = EVENT_TYPES[form.type] || EVENT_TYPES.OTHER;
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">

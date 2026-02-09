@@ -6,9 +6,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useConfirm } from '../components/common/useConfirm';
 import {
-    FileText, Plus, Search, Filter, Eye, Edit2, Trash2, Send,
-    Check, X, DollarSign, Calendar, Building2, Users, Receipt,
-    AlertCircle, Clock, CheckCircle, TrendingUp
+    FileText, Plus, Search, Receipt, Clock, CheckCircle, TrendingUp
 } from 'lucide-react';
 import { SectionTitle } from '../components/common/Indicators';
 import PaymentService, {
@@ -399,7 +397,7 @@ const PaymentEditor = ({ payment, onSave, onBack, addToast }) => {
 // ============================================
 // 請款單列表
 // ============================================
-const PaymentList = ({ onEdit, onBack, addToast }) => {
+const PaymentList = ({ onEdit, _onBack, addToast }) => {
     const [payments, setPayments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');

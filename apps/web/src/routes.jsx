@@ -1,12 +1,12 @@
+/* eslint-disable react-refresh/only-export-components */
 /**
  * routes.jsx — Central Route Configuration
  *
  * Extracted from App.jsx to improve maintainability.
  * All route definitions and their lazy-loaded components live here.
  */
-import { Suspense, lazy } from 'react';
+import { lazy } from 'react';
 import { Route, Navigate } from 'react-router-dom';
-import { PageLoadingSkeleton } from './components/common/PageLoadingSkeleton';
 
 // ===== Eagerly Loaded Pages (Critical Path) =====
 import Dashboard from './pages/Dashboard';
@@ -28,7 +28,7 @@ const MaterialGallery = lazy(() => import('./pages/MaterialGallery').then(m => (
 const InvoiceHelper = lazy(() => import('./pages/InvoiceHelper').then(m => ({ default: m.InvoiceHelper })));
 const Inventory = lazy(() => import('./pages/Inventory'));
 const Quotations = lazy(() => import('./pages/Quotations'));
-const QuotationEditor = lazy(() => import('./pages/QuotationEditor'));
+const _QuotationEditor = lazy(() => import('./pages/QuotationEditor'));
 const Contracts = lazy(() => import('./pages/Contracts'));
 const CostEntries = lazy(() => import('./pages/CostEntries'));
 const Payments = lazy(() => import('./pages/Payments'));

@@ -5,10 +5,8 @@
  */
 
 import { useState, useMemo } from 'react';
-import { 
-  Building2, FileText, Calendar, DollarSign, 
-  Plus, Search, Filter, ChevronRight, Clock,
-  CheckCircle, AlertTriangle, FileCheck, Users
+import {
+    Building2, FileText, Calendar, DollarSign, Plus, Search, ChevronRight, Clock, CheckCircle, AlertTriangle, FileCheck
 } from 'lucide-react';
 
 // 專案狀態標籤
@@ -154,6 +152,7 @@ export const GovernmentProjects = ({ addToast }) => {
       const matchesStatus = statusFilter === 'all' || project.status === statusFilter;
       return matchesSearch && matchesStatus;
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, statusFilter]);
 
   const stats = useMemo(() => ({
@@ -161,6 +160,7 @@ export const GovernmentProjects = ({ addToast }) => {
     bidding: mockProjects.filter(p => p.status === 'bidding').length,
     awarded: mockProjects.filter(p => p.status === 'awarded').length,
     inProgress: mockProjects.filter(p => p.status === 'inProgress').length,
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }), []);
 
   return (

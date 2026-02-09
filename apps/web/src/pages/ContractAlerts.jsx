@@ -5,10 +5,8 @@
  */
 
 import { useState, useMemo } from 'react';
-import { 
-  Bell, FileText, Calendar, Clock,
-  AlertTriangle, CheckCircle, ChevronRight,
-  Filter, Download, Mail, Settings
+import {
+    Bell, FileText, Calendar, Clock, AlertTriangle, CheckCircle, Mail, Settings
 } from 'lucide-react';
 
 // 提醒狀態
@@ -120,7 +118,7 @@ const StatsCard = ({ title, value, icon: Icon, color, trend }) => (
 );
 
 // 提醒設定
-const AlertSettings = ({ onClose }) => (
+const AlertSettings = ({ _onClose }) => (
   <div className="bg-white rounded-2xl border border-zinc-100 p-6">
     <div className="flex items-center justify-between mb-6">
       <h3 className="font-semibold text-zinc-900 flex items-center gap-2">
@@ -179,6 +177,7 @@ export const ContractAlerts = ({ addToast }) => {
       const matchesStatus = statusFilter === 'all' || statusKey === statusFilter;
       return matchesType && matchesStatus;
     }).sort((a, b) => getDaysRemaining(a.endDate) - getDaysRemaining(b.endDate));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [typeFilter, statusFilter]);
 
   const stats = useMemo(() => {
@@ -186,6 +185,7 @@ export const ContractAlerts = ({ addToast }) => {
     const warning = mockContracts.filter(c => getAlertStatus(getDaysRemaining(c.endDate)) === 'warning').length;
     const notice = mockContracts.filter(c => getAlertStatus(getDaysRemaining(c.endDate)) === 'notice').length;
     return { critical, warning, notice, total: mockContracts.length };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleAction = (contract, action) => {

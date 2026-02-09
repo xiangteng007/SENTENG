@@ -5,10 +5,8 @@
  */
 
 import { useState, useMemo } from 'react';
-import { 
-  FileText, Users, Calendar, Clock,
-  Plus, Search, Download, Eye, Edit,
-  CheckCircle, AlertTriangle, ChevronRight
+import {
+    FileText, Users, Calendar, Clock, Plus, Search, Download, Eye, CheckCircle, AlertTriangle
 } from 'lucide-react';
 
 // 契約類型
@@ -179,6 +177,7 @@ export const LaborContracts = ({ addToast }) => {
       const searchField = activeTab === 'templates' ? item.name : item.employeeName;
       return searchField.toLowerCase().includes(searchTerm.toLowerCase());
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, searchTerm]);
 
   return (

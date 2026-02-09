@@ -4,10 +4,9 @@
  * Expert Panel v4.9: Masonry, Carpentry, Painting Specialists 建議
  */
 
-import { useState, useMemo, useCallback } from 'react';
-import { 
-  Grid3X3, Palette, Box, Ruler,
-  RotateCcw, Download, Copy, ChevronRight
+import { useState, useMemo } from 'react';
+import {
+    Grid3X3, Palette, Box, Ruler, Copy
 } from 'lucide-react';
 
 // ==================== 磁磚排列預覽 ====================
@@ -17,7 +16,7 @@ const TileLayoutPreview = () => {
   const [tileWidth, setTileWidth] = useState(60); // cm
   const [tileHeight, setTileHeight] = useState(60); // cm
   const [pattern, setPattern] = useState('straight'); // straight, diagonal, herringbone
-  const [groutWidth, setGroutWidth] = useState(2); // mm
+  const [groutWidth, _setGroutWidth] = useState(2); // mm
 
   const layoutInfo = useMemo(() => {
     const tilesX = Math.ceil(roomWidth / tileWidth);
@@ -293,7 +292,7 @@ const CabinetPlanner = () => {
   const [width, setWidth] = useState(240); // cm
   const [height, setHeight] = useState(240); // cm
   const [depth, setDepth] = useState(60); // cm
-  const [style, setStyle] = useState('wardrobe');
+  const [_style, _setStyle] = useState('wardrobe');
   const [doors, setDoors] = useState(3);
 
   const specs = useMemo(() => {
@@ -419,7 +418,7 @@ const CabinetPlanner = () => {
 };
 
 // ==================== 主組件 ====================
-export const VisualEnhancements = ({ addToast }) => {
+export const VisualEnhancements = ({ _addToast }) => {
   const [activeTool, setActiveTool] = useState('tile');
 
   const tools = [

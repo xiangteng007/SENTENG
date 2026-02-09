@@ -1,8 +1,6 @@
 ﻿import { useState, useEffect, useMemo } from 'react';
 import {
-    DollarSign, Plus, Search, Filter, Calendar, Building2,
-    User, FileText, Check, Clock, AlertCircle, TrendingUp,
-    Edit, Trash2, X, Save, CreditCard, Download, RotateCcw
+    DollarSign, Plus, Search, Calendar, Building2, User, FileText, Check, Clock, AlertCircle, TrendingUp, Edit, Trash2, Save, CreditCard, Download, RotateCcw
 } from 'lucide-react';
 import { Modal } from '../components/common/Modal';
 import { InputField } from '../components/common/InputField';
@@ -161,6 +159,7 @@ export default function CostEntries({ addToast }) {
     // 載入資料
     useEffect(() => {
         loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const loadData = async () => {

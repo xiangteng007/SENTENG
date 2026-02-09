@@ -1,17 +1,13 @@
 ﻿
 import { useState, useEffect, useMemo } from 'react';
 import {
-    Package, Plus, Search, Filter, Edit2, Trash2,
-    ArrowDownCircle, ArrowUpCircle, AlertTriangle,
-    CheckCircle, XCircle, X, Save, History, MapPin,
-    BarChart3, TrendingDown, TrendingUp, Box,
-    FileSpreadsheet, ExternalLink, RefreshCw
+    Package, Plus, Search, Edit2, Trash2, ArrowDownCircle, ArrowUpCircle, AlertTriangle, XCircle, X, History, MapPin, TrendingDown, Box, FileSpreadsheet, ExternalLink, RefreshCw
 } from 'lucide-react';
 import { Badge } from '../components/common/Badge';
 
 import { SectionTitle } from '../components/common/Indicators';
 import { GoogleService } from '../services/GoogleService';
-import { StatCardPro, InventoryLevel } from '../components/common/ModuleComponents';
+import { StatCardPro } from '../components/common/ModuleComponents';
 
 // 庫存類別 - 兩層結構
 const CATEGORY_TREE = {

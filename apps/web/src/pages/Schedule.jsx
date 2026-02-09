@@ -1,6 +1,8 @@
 ﻿
 import { useState, useMemo } from 'react';
-import { ChevronLeft, ChevronRight, Plus, CalendarDays, Building2, X, RefreshCw, MapPin, Clock, FileText } from 'lucide-react';
+import {
+    ChevronLeft, ChevronRight, Plus, CalendarDays, Building2, RefreshCw, MapPin, FileText
+} from 'lucide-react';
 import { Modal } from '../components/common/Modal';
 import { InputField } from '../components/common/InputField';
 import { LocationField } from '../components/common/LocationField';
@@ -76,7 +78,7 @@ const Schedule = ({ data = [], loans = [], addToast, onUpdateCalendar }) => {
 
     // RBAC and Google integration status
     const { hasAction } = useAuth();
-    const { data: googleStatus, refetch: refetchGoogleStatus } = useGoogleIntegrationStatus();
+    const { data: googleStatus, refetch: _refetchGoogleStatus } = useGoogleIntegrationStatus();
     const canSyncEvent = hasAction?.('integrations.google.calendar', 'sync_event') ?? false;
 
     // 生成貸款還款提醒事件

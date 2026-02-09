@@ -5,10 +5,8 @@
  */
 
 import { useState, useMemo } from 'react';
-import { 
-  Scale, Users, Calendar, FileText, MessageSquare,
-  Plus, Search, AlertTriangle, CheckCircle, Clock,
-  ChevronRight, Filter
+import {
+    Scale, Calendar, FileText, MessageSquare, Plus, Search, AlertTriangle, CheckCircle, Clock
 } from 'lucide-react';
 
 // 案件狀態
@@ -108,7 +106,7 @@ export const LaborDisputes = ({ addToast }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterType, setFilterType] = useState('all');
-  const [selectedDispute, setSelectedDispute] = useState(null);
+  const [_selectedDispute, setSelectedDispute] = useState(null);
 
   const mockDisputes = [
     { id: 1, title: '加班費爭議', employee: '王小明', type: 'wage', status: 'negotiating', filedDate: '2026-01-15', claimAmount: 85000, description: '員工主張 2025 年加班費未足額給付' },
@@ -132,6 +130,7 @@ export const LaborDisputes = ({ addToast }) => {
       const matchesType = filterType === 'all' || d.type === filterType;
       return matchesSearch && matchesStatus && matchesType;
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, filterStatus, filterType]);
 
   const stats = useMemo(() => ({
@@ -139,6 +138,7 @@ export const LaborDisputes = ({ addToast }) => {
     open: mockDisputes.filter(d => d.status === 'open' || d.status === 'negotiating' || d.status === 'mediation').length,
     resolved: mockDisputes.filter(d => d.status === 'resolved').length,
     totalClaim: mockDisputes.reduce((sum, d) => sum + (d.claimAmount || 0), 0),
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }), []);
 
   return (

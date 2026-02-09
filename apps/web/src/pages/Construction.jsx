@@ -1,21 +1,6 @@
 ﻿import { useState, useEffect, useMemo } from 'react';
-import { 
-  Construction as ConstructionIcon, 
-  Plus, 
-  Filter, 
-  Search, 
-  Calendar, 
-  CheckCircle, 
-  AlertTriangle, 
-  Clock, 
-  X, 
-  Edit2, 
-  Trash2, 
-  ChevronDown,
-  BarChart3,
-  Users,
-  FileText,
-  MapPin
+import {
+    Construction as ConstructionIcon, Plus, Search, Calendar, CheckCircle, X, Edit2, Trash2, ChevronDown, BarChart3, Users, FileText, MapPin
 } from 'lucide-react';
 import api from '../services/api';
 import { useConfirm } from '../components/common/useConfirm';

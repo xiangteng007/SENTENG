@@ -1,5 +1,7 @@
 ﻿import { useState, useMemo } from 'react';
-import { BarChart3, Download, Filter, Calendar, FileText, DollarSign, Briefcase, Users, TrendingUp, PieChart, Loader2, Check } from 'lucide-react';
+import {
+    Download, Calendar, DollarSign, Briefcase, Users, TrendingUp, Loader2, Check
+} from 'lucide-react';
 
 // 報表定義
 const REPORT_TEMPLATES = {
@@ -72,7 +74,7 @@ const ReportCard = ({ report, onGenerate, generating }) => (
 );
 
 // 分類區塊
-const CategorySection = ({ category, data, onGenerate, generating }) => {
+const CategorySection = ({ _category, data, onGenerate, generating }) => {
   const Icon = data.icon;
   
   return (

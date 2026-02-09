@@ -44,7 +44,7 @@ const StatusBadge = ({ status }) => (
     </span>
 );
 
-const ChangeTypeBadge = ({ type }) => (
+const _ChangeTypeBadge = ({ type }) => (
     <span className={`px-2 py-1 rounded-full text-xs font-medium ${CHANGE_TYPE_COLORS[type]}`}>
         {CHANGE_TYPE_LABELS[type]}
     </span>
@@ -463,6 +463,7 @@ const ChangeOrderList = ({ quotationId, onEdit, onBack, addToast }) => {
 
     useEffect(() => {
         loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [quotationId]);
 
     const handleCreate = async () => {

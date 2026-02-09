@@ -1,19 +1,15 @@
 ﻿import { useState } from 'react';
 import {
-    Calculator, Plus, ChevronDown, ChevronUp, Trash2, RefreshCw, Info, Settings2
+    Info
 } from 'lucide-react';
 import {
-    COMPONENT_REBAR_RATES, COMPONENT_TYPES, REBAR_SPECS, REBAR_USAGE_BY_COMPONENT,
-    WATERPROOF_MATERIALS, INSULATION_MATERIALS, TILE_SIZES, TILE_METHODS,
-    BUILDING_TYPES, SLAB_THICKNESS_OPTIONS, TAIWAN_REFERENCE_PRICES,
-    PARAPET_HEIGHTS, PROJECT_TEMPLATES, DEFAULT_WASTAGE, COMMON_OPENINGS,
-    formatNumber, applyWastage
+    formatNumber
 } from '../constants';
 import {
-    InputField, SelectField, OptionDetailCard, WastageControl, ResultDisplay, CostInput
+    ResultDisplay, CostInput
 } from '../components/shared';
-export // 6️⃣ 鷹架計算器
-const ScaffoldingCalculator = ({ onAddRecord, vendors = [] }) => {
+// 6️⃣ 鷹架計算器
+export const ScaffoldingCalculator = ({ onAddRecord, vendors = [] }) => {
     const [perimeter, setPerimeter] = useState('');
     const [floorHeight, setFloorHeight] = useState('3.2');
     const [floors, setFloors] = useState('');

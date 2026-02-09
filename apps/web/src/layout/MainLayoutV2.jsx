@@ -31,7 +31,7 @@ const NotificationPanel = ({ isOpen, onClose }) => {
   );
 };
 
-export const MainLayoutV2 = ({ activeTab, setActiveTab, children, addToast }) => {
+export const MainLayoutV2 = ({ activeTab, setActiveTab, children, _addToast }) => {
   const { user, role, signOut } = useAuth();
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [hasUpcomingEvents, setHasUpcomingEvents] = useState(false);

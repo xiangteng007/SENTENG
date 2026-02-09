@@ -1,19 +1,6 @@
 ﻿import { useState, useEffect, useMemo } from 'react';
-import { 
-  Scale, 
-  Plus, 
-  Search, 
-  BookOpen, 
-  CheckCircle, 
-  AlertTriangle, 
-  Clock,
-  ExternalLink,
-  Tag,
-  FileText,
-  Filter,
-  X,
-  Edit2,
-  Trash2
+import {
+    Scale, Plus, Search, BookOpen, CheckCircle, Clock, ExternalLink, X, Edit2, Trash2
 } from 'lucide-react';
 import api from '../services/api';
 import { useConfirm } from '../components/common/useConfirm';

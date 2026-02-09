@@ -2,20 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useConfirm } from '../components/common/useConfirm';
 import {
-    Users,
-    Shield,
-    ChevronDown,
-    Search,
-    MoreVertical,
-    Trash2,
-    Edit3,
-    Check,
-    X,
-    UserCog,
-    Eye,
-    EyeOff,
-    Save,
-    RefreshCw
+    Users, Shield, Search, Trash2, Edit3, X, Eye, EyeOff, Save, RefreshCw
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import {
@@ -68,6 +55,7 @@ const UserManagement = ({ addToast }) => {
     // Load users and roles
     useEffect(() => {
         loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const loadData = async () => {

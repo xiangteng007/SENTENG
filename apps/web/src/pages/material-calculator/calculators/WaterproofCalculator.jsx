@@ -1,20 +1,17 @@
 ﻿import { useState } from 'react';
 import {
-    Calculator, Plus, ChevronDown, ChevronUp, Trash2, RefreshCw, Info, Settings2
+    Info
 } from 'lucide-react';
 import {
-    COMPONENT_REBAR_RATES, COMPONENT_TYPES, REBAR_SPECS, REBAR_USAGE_BY_COMPONENT,
-    WATERPROOF_MATERIALS, INSULATION_MATERIALS, TILE_SIZES, TILE_METHODS,
-    BUILDING_TYPES, SLAB_THICKNESS_OPTIONS, TAIWAN_REFERENCE_PRICES,
-    PARAPET_HEIGHTS, PROJECT_TEMPLATES, DEFAULT_WASTAGE, COMMON_OPENINGS,
+    WATERPROOF_MATERIALS, INSULATION_MATERIALS, DEFAULT_WASTAGE,
     UNIT_CONVERSIONS,
-    formatNumber, applyWastage
+    formatNumber
 } from '../constants';
 import {
-    InputField, SelectField, OptionDetailCard, WastageControl, ResultDisplay, CostInput
+    WastageControl, ResultDisplay, CostInput
 } from '../components/shared';
-export // 7️⃣ 防水/保溫計算器
-const WaterproofCalculator = ({ onAddRecord, vendors = [] }) => {
+// 7️⃣ 防水/保溫計算器
+export const WaterproofCalculator = ({ onAddRecord, vendors = [] }) => {
     const [calcType, setCalcType] = useState('waterproof'); // waterproof | insulation
     const [area, setArea] = useState('');
     const [materialType, setMaterialType] = useState(0);

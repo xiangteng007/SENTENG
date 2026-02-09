@@ -5,9 +5,8 @@
  */
 
 import React, { useState, useMemo } from 'react';
-import { 
-  Flag, Calendar, CheckCircle, Clock, AlertTriangle,
-  Plus, ChevronRight, Edit, Trash2, FileText
+import {
+    Flag, Calendar, CheckCircle, Clock, AlertTriangle, Plus, Edit, FileText
 } from 'lucide-react';
 
 // 里程碑狀態
@@ -172,7 +171,7 @@ export const MilestoneTracker = ({ addToast }) => {
   const [viewMode, setViewMode] = useState('list'); // list, gantt
   const [filterStatus, setFilterStatus] = useState('all');
   const [milestones, setMilestones] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [_loading, setLoading] = useState(false);
 
   // Fetch milestones from API
   React.useEffect(() => {

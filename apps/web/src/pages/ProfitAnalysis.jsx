@@ -3,19 +3,12 @@
  * 專案利潤、成本、請款綜合分析
  */
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import {
-    TrendingUp, TrendingDown, DollarSign, Percent, AlertTriangle,
-    CheckCircle, XCircle, BarChart3, PieChart, ArrowUpRight,
-    ArrowDownRight, Minus, Building2, Receipt, FileText, Info
+    TrendingUp, DollarSign, Percent, AlertTriangle, CheckCircle, XCircle, BarChart3, PieChart, ArrowUpRight, ArrowDownRight, Minus, Building2, Receipt, Info
 } from 'lucide-react';
 import { SectionTitle } from '../components/common/Indicators';
-import ProfitAnalysisService, {
-    PROFIT_STATUS,
-    PROFIT_STATUS_LABELS,
-    PROFIT_STATUS_COLORS,
-    COST_CATEGORY_LABELS,
-} from '../services/ProfitAnalysisService';
+import ProfitAnalysisService, { PROFIT_STATUS_LABELS, PROFIT_STATUS_COLORS } from '../services/ProfitAnalysisService';
 
 // ============================================
 // 格式化函數
@@ -303,6 +296,7 @@ const ProfitAnalysis = ({ addToast }) => {
 
     useEffect(() => {
         loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     if (loading) {

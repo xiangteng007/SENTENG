@@ -1,17 +1,14 @@
 ﻿import { useState } from 'react';
 import {
-    Calculator, Plus, ChevronDown, ChevronUp, Trash2, RefreshCw, Info, Settings2
+    Plus, Trash2, Info
 } from 'lucide-react';
 import {
-    COMPONENT_REBAR_RATES, COMPONENT_TYPES, REBAR_SPECS, REBAR_USAGE_BY_COMPONENT,
-    WATERPROOF_MATERIALS, INSULATION_MATERIALS, TILE_SIZES, TILE_METHODS,
-    BUILDING_TYPES, SLAB_THICKNESS_OPTIONS, TAIWAN_REFERENCE_PRICES,
-    PARAPET_HEIGHTS, PROJECT_TEMPLATES, DEFAULT_WASTAGE, COMMON_OPENINGS,
+    DEFAULT_WASTAGE,
     BRICK_PER_SQM, PLASTER_RATIOS,
     formatNumber, applyWastage
 } from '../constants';
 import {
-    InputField, SelectField, OptionDetailCard, WastageControl, ResultDisplay, CostInput
+    InputField, SelectField, WastageControl, ResultDisplay, CostInput
 } from '../components/shared';
 // 2️⃣ 泥作工程計算器 (支援多列輸入)
 export const MasonryCalculator = ({ onAddRecord, vendors = [] }) => {

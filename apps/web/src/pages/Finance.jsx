@@ -4,13 +4,12 @@ import { WidgetWrapper } from '../components/common/WidgetWrapper';
 import { WidgetFinanceAccounts, WidgetFinanceTrend, WidgetFinanceTransactions } from '../components/widgets/FinanceWidgets';
 import { AccountDetailsModal } from '../components/finance/AccountDetailsModal';
 import { FinanceExportModal } from '../components/finance/FinanceExportModal';
-import { FinanceSearchBar } from '../components/finance/FinanceSearchBar';
 import { LoanAccountCard } from '../components/finance/LoanAccountCard';
 import { LoanAccountModal } from '../components/finance/LoanAccountModal';
 import { Modal } from '../components/common/Modal';
 import { InputField } from '../components/common/InputField';
 import { SectionTitle } from '../components/common/Indicators';
-import { Plus, Download, Search, Building2 } from 'lucide-react';
+import { Plus, Download, Building2 } from 'lucide-react';
 import { GoogleService } from '../services/GoogleService';
 
 // 收支類別選項
@@ -19,7 +18,7 @@ const TX_CATEGORIES = {
     '支出': ['材料費', '人工費', '設備費', '運輸費', '其他支出']
 };
 
-const Finance = ({ data, loading, addToast, onAddTx, onUpdateAccounts, onUpdateLoans, allProjects = [] }) => {
+const Finance = ({ data, _loading, addToast, onAddTx, onUpdateAccounts, onUpdateLoans, allProjects = [] }) => {
     const [accounts, setAccounts] = useState(data.accounts || []);
     const accountsRef = useRef(accounts);
 
@@ -70,8 +69,8 @@ const Finance = ({ data, loading, addToast, onAddTx, onUpdateAccounts, onUpdateL
 
     // Export Modal State
     const [isExportModalOpen, setIsExportModalOpen] = useState(false);
-    const [searchResults, setSearchResults] = useState([]);
-    const [isSearching, setIsSearching] = useState(false);
+    const [_searchResults, setSearchResults] = useState([]);
+    const [_isSearching, setIsSearching] = useState(false);
 
     // Drag Refs
     const dragItem = useRef(null);
@@ -192,7 +191,7 @@ const Finance = ({ data, loading, addToast, onAddTx, onUpdateAccounts, onUpdateL
         setEditingLoan(null);
     };
 
-    const handleDeleteLoan = (loan) => {
+    const _handleDeleteLoan = (loan) => {
         setDeletingLoan(loan);
         setIsDeleteLoanModalOpen(true);
     };
@@ -246,7 +245,7 @@ const Finance = ({ data, loading, addToast, onAddTx, onUpdateAccounts, onUpdateL
     };
 
     // Finance Search Handler
-    const handleSearchFinance = async (query, options) => {
+    const _handleSearchFinance = async (query, options) => {
         setIsSearching(true);
         const result = await GoogleService.searchFinanceRecords(query, options);
         setIsSearching(false);

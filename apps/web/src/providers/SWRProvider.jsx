@@ -5,7 +5,6 @@
  * Wrap your app with this provider for global SWR configuration
  */
 
-import React from 'react';
 import { SWRConfig } from 'swr';
 import api from '../services/api';
 

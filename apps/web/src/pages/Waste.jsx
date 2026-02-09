@@ -1,21 +1,6 @@
 ﻿import { useState, useEffect, useMemo } from 'react';
-import { 
-  Trash2, 
-  Plus, 
-  Search, 
-  Truck, 
-  Scale, 
-  FileCheck,
-  AlertTriangle,
-  TrendingUp,
-  Calendar,
-  MapPin,
-  Recycle,
-  ChevronDown,
-  X,
-  AlertCircle,
-  Edit2,
-  CheckCircle
+import {
+    Trash2, Plus, Search, Truck, Scale, AlertTriangle, Calendar, MapPin, Recycle, ChevronDown, X, AlertCircle, Edit2, CheckCircle
 } from 'lucide-react';
 import api from '../services/api';
 import { useConfirm } from '../components/common/useConfirm';
@@ -220,6 +205,7 @@ export const Waste = ({ addToast }) => {
         setSelectedProjectId(items[0].id);
       }
     }).catch(console.error);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Fetch waste records
@@ -240,6 +226,7 @@ export const Waste = ({ addToast }) => {
 
   useEffect(() => {
     fetchRecords();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedProjectId]);
 
   // 篩選
@@ -272,6 +259,7 @@ export const Waste = ({ addToast }) => {
       recycleRate: Math.round((records.filter(r => r.isRecyclable).length / Math.max(records.length, 1)) * 100),
       byType,
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [records]);
 
   const getTypeInfo = (type) => wasteTypes.find(t => t.value === type) || wasteTypes[5];

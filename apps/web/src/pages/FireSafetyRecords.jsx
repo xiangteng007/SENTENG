@@ -5,10 +5,8 @@
  */
 
 import { useState, useMemo } from 'react';
-import { 
-  Flame, FileText, Calendar, AlertTriangle, 
-  Plus, Search, CheckCircle, Clock, Settings,
-  Bell, ChevronRight, AlertCircle
+import {
+    Flame, Calendar, AlertTriangle, Plus, Search, CheckCircle, Clock, Settings, Bell, AlertCircle
 } from 'lucide-react';
 
 // 設備狀態配置
@@ -180,6 +178,7 @@ export const FireSafetyRecords = ({ addToast }) => {
       const matchesStatus = statusFilter === 'all' || eq.status === statusFilter;
       return matchesSearch && matchesType && matchesStatus;
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, typeFilter, statusFilter]);
 
   return (

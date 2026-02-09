@@ -1,5 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { Plus, Search, Package, Calendar, DollarSign, Building2, FileText, CheckCircle, Clock, AlertCircle, X, Truck, ChevronDown, ChevronUp, Edit2, Trash2 } from 'lucide-react';
+import {
+    Plus, Search, Package, Calendar, Building2, FileText, CheckCircle, Clock, AlertCircle, X, Truck, ChevronDown, ChevronUp, Edit2, Trash2
+} from 'lucide-react';
 import api from '../services/api';
 import { useConfirm } from '../components/common/useConfirm';
 
@@ -428,6 +430,7 @@ const Procurements = () => {
 
   useEffect(() => {
     fetchProcurements();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statusFilter]);
 
   const fetchProcurements = async () => {
@@ -463,7 +466,7 @@ const Procurements = () => {
     }
   };
 
-  const handleUpdate = async (id, data) => {
+  const _handleUpdate = async (id, data) => {
     try {
       await api.patch(`/procurements/${id}`, data);
       fetchProcurements();

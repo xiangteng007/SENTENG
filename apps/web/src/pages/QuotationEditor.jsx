@@ -4,12 +4,11 @@
  * 提供類 Excel 表格編輯體驗
  */
 
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
     Save, ArrowLeft, Plus, Upload, Download,
     AlertCircle, Layers, FilePlus2, Search
 } from 'lucide-react';
-import { SectionTitle } from '../components/common/Indicators';
 // PERF: Dynamic import for PDF (1.58MB) - loads only when user clicks PDF button
 const QuotationPdfButton = React.lazy(() => 
     import('../components/quotation/QuotationPdfExport').then(m => ({ default: m.QuotationPdfButton }))
@@ -39,7 +38,7 @@ const QuotationEditor = ({ quotationId, onBack, addToast }) => {
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    const [isEditing, setIsEditing] = useState(true);
+    const [isEditing, _setIsEditing] = useState(true);
     const [selectedItemId, setSelectedItemId] = useState(null);
     const [showCatalog, setShowCatalog] = useState(false);
     const [showChangeOrders, setShowChangeOrders] = useState(false);
@@ -83,6 +82,7 @@ const QuotationEditor = ({ quotationId, onBack, addToast }) => {
         };
 
         loadQuotation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [quotationId]);
 
     // 計算總金額
@@ -203,6 +203,7 @@ const QuotationEditor = ({ quotationId, onBack, addToast }) => {
         setItems(prev => [...prev, newItem]);
         setHasChanges(true);
         addToast?.(`已新增「${catalogItem.name}」`, 'success');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [items]);
 
     // 儲存
@@ -229,7 +230,7 @@ const QuotationEditor = ({ quotationId, onBack, addToast }) => {
     // 組織階層結構
     const organizedItems = useMemo(() => {
         // 簡單平坦化 - 保持原始順序
-        return items.map((item, index) => {
+        return items.map((item, _index) => {
             let level = 0;
             if (item.type === ITEM_TYPES.SECTION) level = 1;
             if (item.type === ITEM_TYPES.ITEM) level = item.parentId ? 2 : 1;
