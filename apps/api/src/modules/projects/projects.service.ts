@@ -41,8 +41,7 @@ export class ProjectsService {
     } = query;
     const qb = this.projectRepo
       .createQueryBuilder("p")
-      .leftJoinAndSelect("p.partner", "partner")
-      .leftJoinAndSelect("p.client", "client"); // kept for backward compat until full migration
+      .leftJoinAndSelect("p.partner", "partner");
 
     if (status) qb.andWhere("p.status = :status", { status });
     if (projectType)
@@ -72,10 +71,9 @@ export class ProjectsService {
       where: { id },
       relations: [
         "partner",
-        "client",
         "phases",
         "projectVendors",
-        "projectVendors.vendor",
+        "projectVendors.partner",
         "tasks",
       ],
     });

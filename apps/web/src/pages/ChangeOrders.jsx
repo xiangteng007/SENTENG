@@ -617,6 +617,16 @@ const ChangeOrders = ({ quotationId, onBack, addToast }) => {
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [selectedQuotation, setSelectedQuotation] = useState(null);
 
+    // Guard: quotationId is required — rendered from /change-orders route without one
+    if (!quotationId) {
+        return (
+            <div className="text-center py-12 text-gray-500">
+                <p className="text-lg font-medium mb-2">請先選擇估價單</p>
+                <p className="text-sm">請從估價單頁面進入變更單管理</p>
+            </div>
+        );
+    }
+
     const handleEdit = (order, quotation) => {
         setSelectedOrder(order);
         setSelectedQuotation(quotation);

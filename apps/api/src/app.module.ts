@@ -49,6 +49,8 @@ import { ScheduleModule } from "@nestjs/schedule";
 import { TelegramModule } from "./modules/telegram/telegram.module";
 // Unified Partners CRM (Phase 7 - replaces legacy modules above)
 import { PartnersModule } from "./modules/partners/partners.module";
+// Supply Chain - Procurements
+import { ProcurementsModule } from "./modules/supply-chain/procurements/procurements.module";
 
 const logger = new Logger("TypeORM");
 
@@ -146,6 +148,8 @@ const logger = new Logger("TypeORM");
     TelegramModule,
     // Unified Partners CRM (Phase 7)
     PartnersModule,
+    // Supply Chain - Procurements
+    ProcurementsModule,
   ],
   controllers: [AppController],
   providers: [
