@@ -96,11 +96,18 @@ export const ROLE_PAGES: Record<number, string[]> = {
     // 總覽
     "dashboard",
     "schedule",
-    // 專案管理
+    // 專案業務
     "projects",
     "contracts",
     "change-orders",
-    // 財務中心
+    "milestones",
+    "contract-alerts",
+    // 政府標案
+    "government-projects",
+    // 人資管理
+    "labor-contracts",
+    "labor-disputes",
+    // 財務會計
     "finance",
     "quotations",
     "payments",
@@ -133,9 +140,13 @@ export const ROLE_PAGES: Record<number, string[]> = {
     "cost",
     "calc",
     "regulations",
+    "calculators",
+    "visual-tools",
     // 安全環保
     "insurance",
     "waste",
+    "safety",
+    "fire-safety",
     // 其他
     "events",
     "settings",
@@ -146,11 +157,18 @@ export const ROLE_PAGES: Record<number, string[]> = {
     // 總覽
     "dashboard",
     "schedule",
-    // 專案管理
+    // 專案業務
     "projects",
     "contracts",
     "change-orders",
-    // 財務中心
+    "milestones",
+    "contract-alerts",
+    // 政府標案
+    "government-projects",
+    // 人資管理
+    "labor-contracts",
+    "labor-disputes",
+    // 財務會計
     "finance",
     "quotations",
     "payments",
@@ -183,9 +201,13 @@ export const ROLE_PAGES: Record<number, string[]> = {
     "cost",
     "calc",
     "regulations",
+    "calculators",
+    "visual-tools",
     // 安全環保
     "insurance",
     "waste",
+    "safety",
+    "fire-safety",
     // 系統設定
     "user-management",
     "integrations",
@@ -199,11 +221,18 @@ export const ROLE_PAGES: Record<number, string[]> = {
     // 總覽
     "dashboard",
     "schedule",
-    // 專案管理
+    // 專案業務
     "projects",
     "contracts",
     "change-orders",
-    // 財務中心
+    "milestones",
+    "contract-alerts",
+    // 政府標案
+    "government-projects",
+    // 人資管理
+    "labor-contracts",
+    "labor-disputes",
+    // 財務會計
     "finance",
     "quotations",
     "payments",
@@ -236,9 +265,13 @@ export const ROLE_PAGES: Record<number, string[]> = {
     "cost",
     "calc",
     "regulations",
+    "calculators",
+    "visual-tools",
     // 安全環保
     "insurance",
     "waste",
+    "safety",
+    "fire-safety",
     // 系統設定
     "user-management",
     "integrations",
