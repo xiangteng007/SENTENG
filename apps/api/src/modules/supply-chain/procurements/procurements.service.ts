@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, FindOptionsWhere } from "typeorm";
+import { Repository } from "typeorm";
 import { Procurement, ProcurementBid } from "./procurement.entity";
 import {
   CreateProcurementDto,
@@ -18,24 +18,34 @@ export class ProcurementsService {
   ) {}
 
   async findAll(query: ProcurementQueryDto) {
-    const where: FindOptionsWhere<Procurement> = {};
-    if (query.status) where.status = query.status;
-    if (query.projectId) where.projectId = query.projectId;
+    const qb = this.procurementRepo
+      .createQueryBuilder("p")
+      .leftJoinAndSelect("p.awardedPartner", "awardedPartner");
 
-    const [items, total] = await this.procurementRepo.findAndCount({
-      where,
-      relations: ["project", "awardedPartner"],
-      order: { createdAt: "DESC" },
-    });
+    if (query.status) {
+      qb.andWhere("p.status = :status", { status: query.status });
+    }
+    if (query.projectId) {
+      qb.andWhere("p.projectId = :projectId", {
+        projectId: query.projectId,
+      });
+    }
+
+    qb.orderBy("p.createdAt", "DESC");
+
+    const [items, total] = await qb.getManyAndCount();
 
     return { items, total };
   }
 
   async findOne(id: string): Promise<Procurement> {
-    const procurement = await this.procurementRepo.findOne({
-      where: { id },
-      relations: ["project", "awardedPartner", "bids", "bids.partner"],
-    });
+    const procurement = await this.procurementRepo
+      .createQueryBuilder("p")
+      .leftJoinAndSelect("p.awardedPartner", "awardedPartner")
+      .leftJoinAndSelect("p.bids", "bids")
+      .leftJoinAndSelect("bids.partner", "bidPartner")
+      .where("p.id = :id", { id })
+      .getOne();
     if (!procurement) {
       throw new NotFoundException(`Procurement ${id} not found`);
     }
