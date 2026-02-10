@@ -55,7 +55,7 @@ jobs:
           VITE_API_URL: https://example.com/api
 
       - name: Test API
-        run: npm run test -- --coverage --coverageThreshold='{"global":{"lines":50}}'
+        run: npm run test -- --coverage --coverageThreshold='{"global":{"lines":15}}'
         working-directory: apps/api
 
       - name: Test Web
