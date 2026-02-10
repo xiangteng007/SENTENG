@@ -3,10 +3,45 @@
  * 
  * Report export service for generating PDF and Excel files.
  * Supports client data, quotations, contracts, payments/invoices.
+ * Uses exceljs (replacing xlsx due to Prototype Pollution vulnerability).
  */
 
-// xlsx is loaded dynamically to reduce initial bundle size (~200KB)
 import { saveAs } from 'file-saver';
+
+/**
+ * Helper: create an exceljs worksheet from JSON data
+ */
+async function createWorkbook() {
+    const ExcelJS = await import('exceljs');
+    return new ExcelJS.Workbook();
+}
+
+function addSheetFromData(workbook, sheetName, data, columnWidths = null) {
+    const worksheet = workbook.addWorksheet(sheetName);
+    if (!data || data.length === 0) return worksheet;
+
+    // Set columns from first row keys
+    const keys = Object.keys(data[0]);
+    worksheet.columns = keys.map((key, i) => ({
+        header: key,
+        key,
+        width: columnWidths?.[i]?.wch || 15,
+    }));
+
+    // Add rows
+    data.forEach(row => worksheet.addRow(row));
+
+    // Style header row
+    worksheet.getRow(1).font = { bold: true };
+
+    return worksheet;
+}
+
+async function saveWorkbook(workbook, filename) {
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(blob, `${filename}.xlsx`);
+}
 
 /**
  * Export data to Excel file
@@ -17,12 +52,9 @@ import { saveAs } from 'file-saver';
 export async function exportToExcel(data, filename, options = {}) {
     const {
         sheetName = 'Sheet1',
-        columnHeaders = null, // { fieldName: 'Display Header' }
-        columnWidths = null,  // [{ wch: 20 }, { wch: 30 }]
+        columnHeaders = null,
+        columnWidths = null,
     } = options;
-
-    // Dynamic import: only load xlsx when actually exporting (~200KB saved)
-    const XLSX = await import('xlsx');
 
     // Transform data with custom headers if provided
     let exportData = data;
@@ -36,21 +68,9 @@ export async function exportToExcel(data, filename, options = {}) {
         });
     }
 
-    // Create workbook and worksheet
-    const worksheet = XLSX.utils.json_to_sheet(exportData);
-
-    // Set column widths if provided
-    if (columnWidths) {
-        worksheet['!cols'] = columnWidths;
-    }
-
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
-
-    // Generate and save file
-    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    saveAs(blob, `${filename}.xlsx`);
+    const workbook = await createWorkbook();
+    addSheetFromData(workbook, sheetName, exportData, columnWidths);
+    await saveWorkbook(workbook, filename);
 }
 
 /**
@@ -70,15 +90,8 @@ export function exportClientsToExcel(clients) {
     };
 
     const columnWidths = [
-        { wch: 25 }, // name
-        { wch: 15 }, // shortName
-        { wch: 12 }, // taxId
-        { wch: 15 }, // contactPerson
-        { wch: 15 }, // phone
-        { wch: 25 }, // email
-        { wch: 40 }, // address
-        { wch: 10 }, // status
-        { wch: 12 }, // createdAt
+        { wch: 25 }, { wch: 15 }, { wch: 12 }, { wch: 15 },
+        { wch: 15 }, { wch: 25 }, { wch: 40 }, { wch: 10 }, { wch: 12 },
     ];
 
     exportToExcel(clients, `客戶清單_${formatDate(new Date())}`, {
@@ -92,9 +105,6 @@ export function exportClientsToExcel(clients) {
  * Export quotation to Excel
  */
 export async function exportQuotationToExcel(quotation) {
-    const XLSX = await import('xlsx');
-
-    // Header info
     const headerData = [{
         '報價單號': quotation.quotationNo,
         '客戶': quotation.clientName,
@@ -105,7 +115,6 @@ export async function exportQuotationToExcel(quotation) {
         '狀態': quotation.status,
     }];
 
-    // Line items
     const lineItems = (quotation.items || []).map((item, index) => ({
         '項次': index + 1,
         '項目名稱': item.itemName,
@@ -117,22 +126,13 @@ export async function exportQuotationToExcel(quotation) {
         '備註': item.notes || '',
     }));
 
-    // Create workbook with multiple sheets
-    const workbook = XLSX.utils.book_new();
-
-    const headerSheet = XLSX.utils.json_to_sheet(headerData);
-    XLSX.utils.book_append_sheet(workbook, headerSheet, '報價資訊');
-
-    const itemsSheet = XLSX.utils.json_to_sheet(lineItems);
-    itemsSheet['!cols'] = [
+    const workbook = await createWorkbook();
+    addSheetFromData(workbook, '報價資訊', headerData);
+    addSheetFromData(workbook, '項目明細', lineItems, [
         { wch: 6 }, { wch: 30 }, { wch: 20 }, { wch: 8 },
         { wch: 10 }, { wch: 12 }, { wch: 12 }, { wch: 20 },
-    ];
-    XLSX.utils.book_append_sheet(workbook, itemsSheet, '項目明細');
-
-    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    saveAs(blob, `報價單_${quotation.quotationNo}.xlsx`);
+    ]);
+    await saveWorkbook(workbook, `報價單_${quotation.quotationNo}`);
 }
 
 /**
