@@ -29,11 +29,11 @@ jobs:
         run: npm ci
 
       - name: Install API dependencies
-        run: npm ci
+        run: npm install
         working-directory: apps/api
 
       - name: Install Web dependencies
-        run: npm ci --legacy-peer-deps
+        run: npm install --legacy-peer-deps
         working-directory: apps/web
 
       - name: Lint API

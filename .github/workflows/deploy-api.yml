@@ -38,7 +38,7 @@ jobs:
         working-directory: .
 
       - name: Install API dependencies
-        run: npm ci
+        run: npm install
 
       - name: Build API
         run: npm run build
