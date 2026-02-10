@@ -133,18 +133,8 @@ jobs:
         run: |
           docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE }}:${{ github.sha }}
 
-      - name: Create GCP Secrets (idempotent)
-        run: |
-          for secret in db-username db-password db-database jwt-secret; do
-            if ! gcloud secrets describe $secret --project=${{ env.PROJECT_ID }} &>/dev/null; then
-              echo "Creating secret: $secret"
-              echo -n "placeholder" | gcloud secrets create $secret --data-file=- --project=${{ env.PROJECT_ID }}
-            fi
-          done
-          echo -n "${{ secrets.DB_USERNAME }}" | gcloud secrets versions add db-username --data-file=- --project=${{ env.PROJECT_ID }}
-          echo -n "${{ secrets.DB_PASSWORD }}" | gcloud secrets versions add db-password --data-file=- --project=${{ env.PROJECT_ID }}
-          echo -n "${{ secrets.DB_DATABASE }}" | gcloud secrets versions add db-database --data-file=- --project=${{ env.PROJECT_ID }}
-          echo -n "${{ secrets.JWT_SECRET }}" | gcloud secrets versions add jwt-secret --data-file=- --project=${{ env.PROJECT_ID }}
+      # GCP Secrets are managed via GCP Console
+      # The deploy step references them via --update-secrets
 
       - name: Deploy to Cloud Run
         run: |
