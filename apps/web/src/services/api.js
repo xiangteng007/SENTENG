@@ -1,5 +1,8 @@
-// API Configuration
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://erp-api-381507943724.asia-east1.run.app/api/v1';
+// API Configuration — VITE_API_URL must be set via environment variable
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+if (!API_BASE_URL) {
+    console.error('❌ VITE_API_URL is not configured. Set it in .env or Vercel environment.');
+}
 
 class ApiService {
     constructor() {

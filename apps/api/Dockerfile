@@ -6,39 +6,40 @@ RUN apk add --no-cache python3 make g++
 
 WORKDIR /app
 
-# Copy package files
+# Copy package files FIRST for better layer caching (CI3)
 COPY package*.json ./
 COPY tsconfig*.json ./
 COPY nest-cli.json ./
 
 # Install ALL dependencies (including devDependencies for build)
-# Using npm install instead of npm ci because package-lock.json is not committed to the repo
 # Using --legacy-peer-deps to resolve peer dependency conflicts
-RUN npm install --legacy-peer-deps
+RUN npm install --legacy-peer-deps --production=false
 
-# Copy source code
+# Copy source code (this layer busts cache only when code changes)
 COPY src ./src
 
 # Build the application
 RUN npm run build
 
-# Debug: verify dist was created (main.js should be at dist/main.js)
-RUN echo "=== Dist contents ===" && ls -la dist/ && echo "=== main.js check ===" && test -f dist/main.js && echo "main.js found!"
+# Verify dist was created
+RUN test -f dist/main.js && echo "✅ main.js found"
 
-# Production stage
+# Production stage — only production deps
 FROM node:20-alpine
 
 WORKDIR /app
 
+# Copy package files and install production-only deps
+COPY package*.json ./
+RUN npm install --legacy-peer-deps --omit=dev && npm cache clean --force
+
 # Copy built application from builder stage
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package*.json ./
 
 ENV NODE_ENV=production
 ENV PORT=8080
 
 EXPOSE 8080
 
-# Run the application (NestJS compiles to dist/main.js)
+# Run the application
 CMD ["node", "dist/main.js"]

@@ -101,7 +101,8 @@ const logger = new Logger("TypeORM");
               ? {
                   connectionTimeoutMillis: 15000,
                   idleTimeoutMillis: 30000,
-                  max: 10,
+                  max: 20,
+                  keepAlive: true,
                 }
               : {},
         };

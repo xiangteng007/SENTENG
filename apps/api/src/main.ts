@@ -56,7 +56,8 @@ async function runMigrations() {
       await dataSource.destroy();
     } catch (error) {
       logger.error("Migration failed:", error);
-      // Don't throw - allow app to start even if migrations fail
+      // Fatal: schema-entity mismatch will cause runtime errors
+      process.exit(1);
     }
   }
 }
@@ -135,98 +136,77 @@ async function bootstrap() {
   // Global prefix
   app.setGlobalPrefix("api/v1");
 
-  // OpenAPI/Swagger Documentation (P2 - Production Readiness)
-  const config = new DocumentBuilder()
-    .setTitle("SENTENG ERP API")
-    .setDescription(
-      `
-## 盛騰 ERP 系統 API 文檔
+  // OpenAPI/Swagger Documentation — only in non-production
+  if (process.env.NODE_ENV !== "production") {
+    const config = new DocumentBuilder()
+      .setTitle("SENTENG ERP API")
+      .setDescription("盛騰 ERP 系統 API 文檔")
+      .setVersion("1.0.0")
+      .setContact("SENTENG Tech", "https://senteng.co", "dev@senteng.co")
+      .addBearerAuth(
+        {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+          description: "Enter JWT token",
+        },
+        "JWT-auth",
+      )
+      .addTag("auth", "認證相關 API")
+      .addTag("users", "使用者管理")
+      .addTag("projects", "專案管理")
+      .addTag("partners", "合作夥伴 CRM")
+      .addTag("quotations", "報價單")
+      .addTag("contracts", "合約管理")
+      .addTag("payments", "請款管理")
+      .addTag("finance", "財務管理")
+      .addTag("inventory", "庫存管理")
+      .addTag("invoices", "發票管理")
+      .addTag("integrations", "Google 整合")
+      .addTag("health", "健康檢查")
+      .addTag("cost-entries", "成本分錄")
+      .addTag("change-orders", "變更單管理")
+      .addTag("site-logs", "工地日誌")
+      .addTag("construction", "營建管理")
+      .addTag("drone", "無人機管理")
+      .addTag("bim", "BIM 模型")
+      .addTag("cmm", "施工材料計算")
+      .addTag("schedules", "排程管理")
+      .addTag("regulations", "法規爬蟲")
+      .addTag("smart-home", "智慧家庭")
+      .addTag("insurance", "保險管理")
+      .addTag("waste", "廢棄物管理")
+      .addTag("events", "事件管理")
+      .addTag("telegram", "Telegram Bot")
+      .addTag("platform", "平台管理 (RBAC/Audit)")
+      .addTag("profit-analysis", "毛利分析")
+      .addTag("storage", "檔案儲存")
+      .addTag("realtime", "即時通訊")
+      .addTag("notifications", "通知服務")
+      .addTag("reports", "報表匯出")
+      .addTag("supply-chain", "供應鏈管理")
+      .build();
 
-### 模組概覽
-- **認證 (Auth)**: JWT 認證、權限管理
-- **用戶 (Users)**: 使用者 CRUD、角色管理
-- **客戶 (Clients)**: 客戶資料、聯絡人管理
-- **供應商 (Vendors)**: 供應商、評鑑、採購
-- **專案 (Projects)**: 專案生命週期管理
-- **報價 (Quotations)**: 估價單 CRUD
-- **合約 (Contracts)**: 合約管理
-- **財務 (Finance)**: 交易、統計
-- **庫存 (Inventory)**: 物料管理
-- **整合 (Integrations)**: Google Calendar/Contacts 同步
-
-### 安全特性
-- HttpOnly Cookie JWT 認證
-- CSRF 雙重提交保護
-- 速率限制 (60 req/min)
-- Audit Log 安全日誌
-    `,
-    )
-    .setVersion("1.0.0")
-    .setContact("SENTENG Tech", "https://senteng.co", "dev@senteng.co")
-    .addBearerAuth(
-      {
-        type: "http",
-        scheme: "bearer",
-        bearerFormat: "JWT",
-        description: "Enter JWT token",
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup("api/docs", app, document, {
+      customSiteTitle: "SENTENG ERP API Docs",
+      customCss: ".swagger-ui .topbar { display: none }",
+      swaggerOptions: {
+        persistAuthorization: true,
+        docExpansion: "none",
+        filter: true,
+        showExtensions: true,
       },
-      "JWT-auth",
-    )
-    .addTag("auth", "認證相關 API")
-    .addTag("users", "使用者管理")
-    .addTag("clients", "客戶管理")
-    .addTag("vendors", "供應商管理")
-    .addTag("projects", "專案管理")
-    .addTag("quotations", "報價單")
-    .addTag("contracts", "合約管理")
-    .addTag("payments", "請款管理")
-    .addTag("finance", "財務管理")
-    .addTag("inventory", "庫存管理")
-    .addTag("integrations", "Google 整合")
-    .addTag("health", "健康檢查")
-    .addTag("partners", "合作夥伴 CRM")
-    .addTag("cost-entries", "成本分錄")
-    .addTag("change-orders", "變更單管理")
-    .addTag("invoices", "發票管理")
-    .addTag("site-logs", "工地日誌")
-    .addTag("construction", "營建管理")
-    .addTag("drone", "無人機管理")
-    .addTag("bim", "BIM 模型")
-    .addTag("cmm", "施工材料計算")
-    .addTag("schedules", "排程管理")
-    .addTag("regulations", "法規爬蟲")
-    .addTag("smart-home", "智慧家庭")
-    .addTag("insurance", "保險管理")
-    .addTag("waste", "廢棄物管理")
-    .addTag("events", "事件管理")
-    .addTag("telegram", "Telegram Bot")
-    .addTag("platform", "平台管理 (RBAC/Audit)")
-    .addTag("profit-analysis", "毛利分析")
-    .addTag("storage", "檔案儲存")
-    .addTag("realtime", "即時通訊")
-    .addTag("contacts", "聯絡人管理")
-    .addTag("notifications", "通知服務")
-    .addTag("reports", "報表匯出")
-    .addTag("supply-chain", "供應鏈管理")
-    .build();
-
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup("api/docs", app, document, {
-    customSiteTitle: "SENTENG ERP API Docs",
-    customCss: ".swagger-ui .topbar { display: none }",
-    swaggerOptions: {
-      persistAuthorization: true,
-      docExpansion: "none",
-      filter: true,
-      showExtensions: true,
-    },
-  });
+    });
+  }
 
   const port = process.env.PORT || 3000;
   const logger = new Logger("Bootstrap");
   await app.listen(port, "0.0.0.0");
   logger.log(`🚀 API Server running on http://localhost:${port}/api/v1`);
-  logger.log(`📚 Swagger Docs: http://localhost:${port}/api/docs`);
+  if (process.env.NODE_ENV !== "production") {
+    logger.log(`📚 Swagger Docs: http://localhost:${port}/api/docs`);
+  }
   logger.log(`🔐 Security: HttpOnly Cookies, Audit Logging, Rate Limiting`);
 }
 bootstrap();

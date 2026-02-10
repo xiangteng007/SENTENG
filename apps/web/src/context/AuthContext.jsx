@@ -41,13 +41,11 @@ export const AuthProvider = ({ children }) => {
                 // Store JWT token for subsequent API calls
                 api.setToken(response.access_token);
                 setBackendAuthenticated(true);
-                console.warn('✅ Backend JWT obtained successfully');
 
                 // Fetch permissions from backend (this is the authoritative source for RBAC)
                 try {
                     const permissionsResponse = await api.get('/auth/permissions');
                     if (permissionsResponse) {
-                        console.warn('✅ Permissions fetched:', permissionsResponse);
                         // Merge backend permissions into firebaseUser object
                         firebaseUser.allowedPages = permissionsResponse.pages || [];
                         firebaseUser.actions = permissionsResponse.actions || {};
@@ -55,34 +53,10 @@ export const AuthProvider = ({ children }) => {
                         firebaseUser.role = permissionsResponse.role || firebaseUser.role || 'user';
                     }
                 } catch (permErr) {
-                    // Set comprehensive default permissions to prevent empty sidebar
-                    // This allows users to access all basic features when permission API fails
-                    firebaseUser.allowedPages = [
-                        // 總覽
-                        'dashboard', 'schedule', 'events',
-                        // 專案管理
-                        'projects', 'contracts', 'change-orders',
-                        // 財務中心
-                        'finance', 'quotations', 'payments', 'invoice',
-                        // 關係人
-                        'clients', 'vendors', 'contacts',
-                        // 供應鏈
-                        'procurements', 'inventory',
-                        // 工地管理
-                        'site-logs', 'construction', 'schedules',
-                        // 分析報表
-                        'cost-entries', 'profit', 'reports',
-                        // 智慧管理
-                        'bim', 'drone', 'smart-home',
-                        // 工具箱
-                        'materials', 'materials-calc', 'unit', 'cost', 'calc', 'regulations',
-                        // 安全環保
-                        'insurance', 'waste',
-                    ];
-                    // Admin pages only for admin roles
-                    if (firebaseUser.role === 'admin' || firebaseUser.role === 'super_admin') {
-                        firebaseUser.allowedPages.push('user-management', 'integrations', 'notifications');
-                    }
+                    // Minimal fallback: only dashboard when permission API fails
+                    // Prevents unauthorized access to sensitive modules
+                    console.error('⚠️ Permission API failed, using minimal fallback:', permErr.message);
+                    firebaseUser.allowedPages = ['dashboard'];
                     firebaseUser.actions = {};
                 }
 
