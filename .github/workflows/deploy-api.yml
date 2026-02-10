@@ -137,6 +137,14 @@ jobs:
       # TODO: Grant roles/secretmanager.secretAccessor to 381507943724-compute@developer.gserviceaccount.com
       #       then switch back to --update-secrets for better security
 
+      # Clear old secret-type bindings that conflict with --set-env-vars
+      - name: Clear legacy secret bindings
+        run: |
+          gcloud run services update ${{ env.SERVICE }} \
+            --region ${{ env.REGION }} \
+            --remove-secrets=DB_USERNAME,DB_PASSWORD,DB_DATABASE,JWT_SECRET \
+            2>/dev/null || echo "No legacy secrets to clear (OK)"
+
       - name: Deploy to Cloud Run
         run: |
           REVISION_SUFFIX=$(date +%Y%m%d-%H%M%S)
