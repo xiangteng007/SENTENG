@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Calendar as CalendarIcon, Briefcase, Users, Wallet, HardHat, Package, Bell, LayoutDashboard, Image as ImageIcon, Menu, X, FileText, Ruler, Calculator, Building2, LogOut, Settings, ChevronDown, Receipt, FileSignature, BarChart3, DollarSign, Wrench, ChevronRight, Link, Camera, Cpu, Home, ClipboardList, Shield, Construction as ConstructionIcon, Recycle, BookOpen, PhoneCall } from 'lucide-react';
+import { Calendar as CalendarIcon, Briefcase, Users, Wallet, HardHat, Package, Bell, LayoutDashboard, Image as ImageIcon, Menu, X, FileText, Ruler, Calculator, Building2, LogOut, Settings, ChevronDown, Receipt, FileSignature, BarChart3, DollarSign, Wrench, ChevronRight, Link, Camera, Cpu, Home, ClipboardList, Shield, Construction as ConstructionIcon, Recycle, BookOpen, PhoneCall, Flag, Scale, Flame, Landmark, UserCheck, Palette } from 'lucide-react';
 import { NotificationPanel } from '../components/common/NotificationPanel';
 import { GoogleService } from '../services/GoogleService';
 import { useAuth } from '../context/AuthContext';
@@ -58,6 +58,18 @@ const ALL_MENU_ITEMS = {
     // 安全環保
     'insurance': { id: 'insurance', icon: Shield, label: '保險管理' },
     'waste': { id: 'waste', icon: Recycle, label: '廢棄物管理' },
+    'safety': { id: 'safety', icon: UserCheck, label: '職安衛' },
+    'fire-safety': { id: 'fire-safety', icon: Flame, label: '消防檢測' },
+    
+    // 專案業務（擴充）
+    'partners': { id: 'partners', icon: Users, label: '合作夥伴' },
+    'milestones': { id: 'milestones', icon: Flag, label: '履約管理' },
+    'contract-alerts': { id: 'contract-alerts', icon: Bell, label: '合約到期' },
+    'government-projects': { id: 'government-projects', icon: Landmark, label: '政府標案' },
+    'labor-contracts': { id: 'labor-contracts', icon: FileText, label: '勞動契約' },
+    'labor-disputes': { id: 'labor-disputes', icon: Scale, label: '勞資爭議' },
+    'calculators': { id: 'calculators', icon: Calculator, label: '專業計算器' },
+    'visual-tools': { id: 'visual-tools', icon: Palette, label: '視覺設計' },
     
     // 系統設定
     'user-management': { id: 'user-management', icon: Settings, label: '使用者管理' },
@@ -65,86 +77,20 @@ const ALL_MENU_ITEMS = {
     'notifications': { id: 'notifications', icon: Bell, label: '通知設定' },
 };
 
-// 群組定義（優化版分組結構）
+// 群組定義（與 Sidebar.jsx 同步，12 群組）
 const MENU_GROUPS = [
-    {
-        id: 'overview',
-        label: '總覽',
-        icon: LayoutDashboard,
-        items: ['dashboard', 'schedule', 'events'],
-        defaultExpanded: true,
-    },
-    {
-        id: 'project',
-        label: '專案管理',
-        icon: Briefcase,
-        items: ['projects', 'contracts', 'change-orders'],
-        defaultExpanded: true,
-    },
-    {
-        id: 'finance',
-        label: '財務中心',
-        icon: Wallet,
-        items: ['finance', 'quotations', 'payments', 'invoice'],
-        defaultExpanded: true,
-    },
-    {
-        id: 'parties',
-        label: '關係人',
-        icon: Users,
-        items: ['clients', 'vendors', 'contacts'],
-        defaultExpanded: false,
-    },
-    {
-        id: 'supply-chain',
-        label: '供應鏈',
-        icon: Package,
-        items: ['procurements', 'inventory'],
-        defaultExpanded: false,
-    },
-    {
-        id: 'site',
-        label: '工地管理',
-        icon: ConstructionIcon,
-        items: ['site-logs', 'construction', 'schedules'],
-        defaultExpanded: false,
-    },
-    {
-        id: 'analytics',
-        label: '分析報表',
-        icon: BarChart3,
-        items: ['cost-entries', 'profit', 'reports'],
-        defaultExpanded: false,
-    },
-    {
-        id: 'smart',
-        label: '智慧管理',
-        icon: Cpu,
-        items: ['bim', 'drone', 'smart-home'],
-        defaultExpanded: false,
-    },
-    {
-        id: 'tools',
-        label: '工具箱',
-        icon: Wrench,
-        items: ['materials', 'materials-calc', 'regulations'],
-        defaultExpanded: false,
-    },
-    {
-        id: 'safety',
-        label: '安全環保',
-        icon: Shield,
-        items: ['insurance', 'waste'],
-        defaultExpanded: false,
-    },
-    {
-        id: 'admin',
-        label: '系統設定',
-        icon: Settings,
-        items: ['user-management', 'integrations', 'notifications'],
-        defaultExpanded: false,
-        adminOnly: true,
-    },
+    { id: 'overview', label: '總覽', icon: LayoutDashboard, items: ['dashboard', 'schedule', 'events'], defaultExpanded: true },
+    { id: 'project', label: '專案業務', icon: Briefcase, items: ['projects', 'partners', 'contracts', 'quotations', 'change-orders', 'milestones', 'contract-alerts'], defaultExpanded: true },
+    { id: 'government', label: '政府標案', icon: Landmark, items: ['government-projects'], defaultExpanded: false },
+    { id: 'hr', label: '人資管理', icon: UserCheck, items: ['labor-contracts', 'labor-disputes'], defaultExpanded: false },
+    { id: 'supply', label: '供應鏈', icon: Package, items: ['procurements', 'inventory'], defaultExpanded: false },
+    { id: 'finance', label: '財務會計', icon: Wallet, items: ['finance', 'invoice', 'payments'], defaultExpanded: true },
+    { id: 'analytics', label: '分析報表', icon: BarChart3, items: ['cost-entries', 'profit', 'reports'], defaultExpanded: false },
+    { id: 'site', label: '工地管理', icon: ConstructionIcon, items: ['site-logs', 'construction', 'schedules'], defaultExpanded: false },
+    { id: 'smart', label: '智慧管理', icon: Cpu, items: ['bim', 'drone', 'smart-home'], defaultExpanded: false },
+    { id: 'tools', label: '工具箱', icon: Wrench, items: ['materials', 'materials-calc', 'cost', 'regulations', 'calculators', 'visual-tools'], defaultExpanded: false },
+    { id: 'safety', label: '安全環保', icon: Shield, items: ['insurance', 'waste', 'safety', 'fire-safety'], defaultExpanded: false },
+    { id: 'admin', label: '系統設定', icon: Settings, items: ['user-management', 'integrations', 'notifications'], defaultExpanded: false, adminOnly: true },
 ];
 
 // localStorage key
