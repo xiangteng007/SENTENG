@@ -76,7 +76,7 @@ export class Procurement {
   @Column({ type: "jsonb", nullable: true })
   attachments: { name: string; url: string; uploadedAt: string }[];
 
-  @Column({ name: "awarded_vendor_id", nullable: true })
+  @Column({ name: "awarded_vendor_id", type: "uuid", nullable: true })
   /** @deprecated Use awardedPartnerId instead */
   awardedVendorId: string;
 
@@ -116,14 +116,14 @@ export class ProcurementBid {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column({ name: "procurement_id" })
+  @Column({ name: "procurement_id", type: "uuid" })
   procurementId: string;
 
   @ManyToOne(() => Procurement, (p) => p.bids, { onDelete: "CASCADE" })
   @JoinColumn({ name: "procurement_id" })
   procurement: Procurement;
 
-  @Column({ name: "vendor_id" })
+  @Column({ name: "vendor_id", type: "uuid" })
   /** @deprecated Use partnerId instead */
   vendorId: string;
 
