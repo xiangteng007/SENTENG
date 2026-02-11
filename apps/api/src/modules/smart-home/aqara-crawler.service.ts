@@ -1,5 +1,8 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { chromium, Browser, Page } from "playwright";
+// playwright is dynamically imported at runtime to avoid crashing
+// the container when it's not installed in production Docker images
+type PlaywrightBrowser = import("playwright").Browser;
+type PlaywrightPage = import("playwright").Page;
 
 export interface AqaraProduct {
   productId: string;
@@ -37,9 +40,10 @@ export class AqaraCrawlerService {
   async crawlProducts(): Promise<AqaraProduct[]> {
     this.logger.log("Starting Aqara product crawl...");
     const products: AqaraProduct[] = [];
-    let browser: Browser | null = null;
+    let browser: PlaywrightBrowser | null = null;
 
     try {
+      const { chromium } = await import("playwright");
       browser = await chromium.launch({
         headless: true,
         args: ["--no-sandbox", "--disable-setuid-sandbox"],
@@ -106,7 +110,7 @@ export class AqaraCrawlerService {
   }
 
   private async extractCategories(
-    page: Page,
+    page: PlaywrightPage,
   ): Promise<{ name: string; selector: string }[]> {
     const categories: { name: string; selector: string }[] = [];
 
@@ -152,7 +156,7 @@ export class AqaraCrawlerService {
   }
 
   private async extractProductsFromCategory(
-    page: Page,
+    page: PlaywrightPage,
     categoryName: string,
   ): Promise<AqaraProduct[]> {
     const products: AqaraProduct[] = [];
@@ -222,9 +226,10 @@ export class AqaraCrawlerService {
 
   async getProductSpecs(productUrl: string): Promise<Record<string, string>> {
     const specs: Record<string, string> = {};
-    let browser: Browser | null = null;
+    let browser: PlaywrightBrowser | null = null;
 
     try {
+      const { chromium } = await import("playwright");
       browser = await chromium.launch({ headless: true });
       const page = await browser.newPage();
 
