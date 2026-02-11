@@ -155,4 +155,6 @@ jobs:
             --allow-unauthenticated \
             --add-cloudsql-instances=${{ env.PROJECT_ID }}:${{ env.REGION }}:erp-postgres \
             --revision-suffix=${REVISION_SUFFIX} \
+            --cpu-boost \
+            --timeout=600 \
             --set-env-vars="NODE_ENV=production,GCP_PROJECT_ID=${{ env.PROJECT_ID }},GCP_BUCKET_NAME=senteng-erp-files,DB_HOST=/cloudsql/${{ env.PROJECT_ID }}:${{ env.REGION }}:erp-postgres,DB_PORT=5432,DB_USERNAME=${{ secrets.DB_USERNAME }},DB_PASSWORD=${{ secrets.DB_PASSWORD }},DB_DATABASE=${{ secrets.DB_DATABASE }},JWT_SECRET=${{ secrets.JWT_SECRET }},CORS_ORIGINS=https://senteng.co,FRONTEND_URL=https://senteng.co"
